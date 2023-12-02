@@ -1,4 +1,6 @@
-﻿namespace Clocktower.Agent
+﻿using Clocktower.Game;
+
+namespace Clocktower.Agent
 {
     internal class HumanStoryteller : IStoryteller
     {
@@ -16,6 +18,46 @@
                                                  Character believedCharacter, Alignment believedAlignment)
         {
             form.AssignCharacter(name, realCharacter, realAlignment, believedCharacter, believedAlignment);
+        }
+
+        public void Night(int nightNumber)
+        {
+            form.Night(nightNumber);
+        }
+
+        public void Day(int dayNumber)
+        {
+            form.Day(dayNumber);
+        }
+
+        public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
+        {
+            form.MinionInformation(minion, demon, fellowMinions);
+        }
+
+        public void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
+        {
+            form.DemonInformation(demon, minions, notInPlayCharacters);
+        }
+
+        public void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders)
+        {
+            form.NotifyGodfather(godfather, outsiders);
+        }
+
+        public void NotifySteward(Player steward, Player goodPlayer)
+        {
+            form.NotifySteward(steward, goodPlayer);
+        }
+
+        public void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character)
+        {
+            form.NotifyLibrarian(librarian, playerA, playerB, character);
+        }
+
+        public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)
+        {
+            form.NotifyEmpath(empath, neighbourA, neighbourB, evilCount);
         }
 
         private StorytellerForm form;

@@ -14,6 +14,11 @@ namespace Clocktower
             };
         }
 
+        public static Color CharacterToColor(Character character)
+        {
+            return character < Character.Imp ? Color.Blue : Color.Red;
+        }
+
         public static string CharacterToText(Character character)
         {
             return character.ToString().Replace('_', ' ');

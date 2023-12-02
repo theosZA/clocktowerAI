@@ -11,8 +11,20 @@ namespace Clocktower
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // No configuration of the game yet. We just create a new instance of the game with 8 human players with fixed characters.
-            clocktowerGame = new();
+            try
+            {
+                // No configuration of the game yet. We just create a new instance of the game with 8 human players with fixed characters.
+                clocktowerGame = new();
+
+                while (!clocktowerGame.Finished)
+                {
+                    clocktowerGame.RunPhase();
+                }
+            }
+            catch (Exception exception)
+            {
+                statusStrip.Text = exception.Message;
+            }
         }
 
         private ClocktowerGame? clocktowerGame;

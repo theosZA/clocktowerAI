@@ -6,10 +6,12 @@ namespace Clocktower.Game
     /// Represents a player in a Blood on the Clocktower game and all information about that player.
     /// A player has an agent that actually takes actions for it.
     /// </summary>
-    internal class Player
+    public class Player
     {
         public string Name { get; }
         public IAgent Agent { get; }
+
+        public bool Alive { get; private set; } = true;
 
         public Character? RealCharacter { get; private set; }
         public Alignment? RealAlignment { get; private set; }

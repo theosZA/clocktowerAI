@@ -31,6 +31,7 @@
             mainMenu = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
+            statusStrip = new StatusStrip();
             mainMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -57,11 +58,19 @@
             newToolStripMenuItem.Text = "&New";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
+            // statusStrip
+            // 
+            statusStrip.Location = new Point(0, 428);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(800, 22);
+            statusStrip.TabIndex = 1;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(statusStrip);
             Controls.Add(mainMenu);
             MainMenuStrip = mainMenu;
             Name = "MainForm";
@@ -77,5 +86,6 @@
         private MenuStrip mainMenu;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
+        private StatusStrip statusStrip;
     }
 }
