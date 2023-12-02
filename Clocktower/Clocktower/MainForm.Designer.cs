@@ -32,7 +32,10 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
             statusStrip = new StatusStrip();
+            statusLabel = new ToolStripStatusLabel();
+            advanceButton = new Button();
             mainMenu.SuspendLayout();
+            statusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // mainMenu
@@ -54,22 +57,40 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(180, 22);
+            newToolStripMenuItem.Size = new Size(98, 22);
             newToolStripMenuItem.Text = "&New";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
             // statusStrip
             // 
+            statusStrip.Items.AddRange(new ToolStripItem[] { statusLabel });
             statusStrip.Location = new Point(0, 428);
             statusStrip.Name = "statusStrip";
             statusStrip.Size = new Size(800, 22);
             statusStrip.TabIndex = 1;
+            // 
+            // statusLabel
+            // 
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new Size(0, 17);
+            // 
+            // advanceButton
+            // 
+            advanceButton.Enabled = false;
+            advanceButton.Location = new Point(12, 76);
+            advanceButton.Name = "advanceButton";
+            advanceButton.Size = new Size(75, 23);
+            advanceButton.TabIndex = 2;
+            advanceButton.Text = "Advance";
+            advanceButton.UseVisualStyleBackColor = true;
+            advanceButton.Click += advanceButton_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(advanceButton);
             Controls.Add(statusStrip);
             Controls.Add(mainMenu);
             MainMenuStrip = mainMenu;
@@ -77,6 +98,8 @@
             Text = "Blood on the Clocktower";
             mainMenu.ResumeLayout(false);
             mainMenu.PerformLayout();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -87,5 +110,7 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private StatusStrip statusStrip;
+        private Button advanceButton;
+        private ToolStripStatusLabel statusLabel;
     }
 }

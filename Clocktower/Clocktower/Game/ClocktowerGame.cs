@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Clocktower.Game
@@ -85,8 +86,13 @@ namespace Clocktower.Game
                     // TBD
                     break;
 
+                case Phase.Day:
+                case Phase.Evening:
+                    // TBD
+                    break;
+
                 default:
-                    throw new NotImplementedException($"Phase {phase} not yet implemented");
+                    throw new InvalidEnumArgumentException(nameof(phase));
             }
 
             AdvancePhase();
@@ -160,9 +166,38 @@ namespace Clocktower.Game
 
         private void RunNight()
         {
-            throw new NotImplementedException("Subsequent nights not yet implemented");
+            // Philosopher
+
+            // Poisoner
+
+            // Monk
+
+            // Scarlet Woman
+
+            // Imp
+
+            // Assassin
+
+            // Godfather
+
+            // Sweetheart
+
+            // Tinker
+
+            // Ravenkeeper
+
+            // Empath
+            var empath = GetPlayer(Character.Empath);
+            if (empath != null)
+            {
+                RunEmpath(empath);
+            }
+
+            // Fortune Teller
+
+            // Undertaker
         }
-        
+
         private void AdvancePhase()
         {
             switch (phase)

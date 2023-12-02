@@ -16,14 +16,38 @@ namespace Clocktower
                 // No configuration of the game yet. We just create a new instance of the game with 8 human players with fixed characters.
                 clocktowerGame = new();
 
-                while (!clocktowerGame.Finished)
-                {
-                    clocktowerGame.RunPhase();
-                }
+                advanceButton.Enabled = true;
+
+                Advance();
             }
             catch (Exception exception)
             {
-                statusStrip.Text = exception.Message;
+                statusLabel.Text = exception.Message;
+            }
+        }
+
+        private void advanceButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Advance();
+            }
+            catch (Exception exception)
+            {
+                statusLabel.Text = exception.Message;
+            }
+        }
+
+        private void Advance()
+        {
+            if (clocktowerGame == null || clocktowerGame.Finished)
+            {
+                return;
+            }
+            clocktowerGame.RunPhase();
+            if (clocktowerGame.Finished)
+            {
+                advanceButton.Enabled = false;
             }
         }
 
