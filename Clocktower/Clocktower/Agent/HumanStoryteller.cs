@@ -30,6 +30,11 @@ namespace Clocktower.Agent
             form.Day(dayNumber);
         }
 
+        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        {
+            form.PlayerDiedAtNight(newlyDeadPlayer);
+        }
+
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             form.MinionInformation(minion, demon, fellowMinions);
@@ -58,6 +63,11 @@ namespace Clocktower.Agent
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)
         {
             form.NotifyEmpath(empath, neighbourA, neighbourB, evilCount);
+        }
+
+        public void ChoiceFromImp(Player imp, Player target)
+        {
+            form.ChoiceFromImp(imp, target);
         }
 
         private StorytellerForm form;

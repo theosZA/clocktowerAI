@@ -24,6 +24,11 @@ namespace Clocktower.Agent
             form.Day(dayNumber);
         }
 
+        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        {
+            form.PlayerDiedAtNight(newlyDeadPlayer);
+        }
+
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             form.MinionInformation(demon, fellowMinions);
@@ -54,10 +59,9 @@ namespace Clocktower.Agent
             form.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
-        public async Task<Player> GetImpChoice(IReadOnlyCollection<Player> players)
+        public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
-            form.RequestImpChoice(players);
-            return null;
+            form.RequestChoiceFromImp(players, onChoice);
         }
 
         private HumanAgentForm form;

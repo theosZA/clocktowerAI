@@ -13,7 +13,7 @@ namespace Clocktower.Night
 
         public void RunEvent(Action onEventFinished)
         {
-            var steward = grimoire.GetPlayer(Character.Steward);
+            var steward = grimoire.GetAlivePlayer(Character.Steward);
             if (steward != null)
             {
                 // For now we give them a hardcoded player.

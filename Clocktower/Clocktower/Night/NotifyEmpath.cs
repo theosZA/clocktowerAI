@@ -13,7 +13,7 @@ namespace Clocktower.Night
 
         public void RunEvent(Action onEventFinished)
         {
-            var empath = grimoire.GetPlayer(Character.Empath);
+            var empath = grimoire.GetAlivePlayer(Character.Empath);
             if (empath != null)
             {
                 var livingNeighbours = grimoire.GetLivingNeighbours(empath);

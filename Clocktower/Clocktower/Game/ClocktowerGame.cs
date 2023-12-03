@@ -54,7 +54,7 @@ namespace Clocktower.Game
                 case Phase.Morning:
                     storyteller.Day(dayNumber);
                     grimoire.Day(dayNumber);
-                    // TBD
+                    RunMorning();
                     break;
 
                 case Phase.Day:
@@ -95,7 +95,7 @@ namespace Clocktower.Game
                 // Poisoner...
                 // Monk...
                 // Scarlet Woman...
-                // Imp...
+                new ChoiceFromImp(storyteller, grimoire),
                 // Assassin...
                 // Godfather...
                 // Sweetheart...
@@ -117,6 +117,21 @@ namespace Clocktower.Game
             nightEvents[currentIndex].RunEvent(() => { RunNightEvents(nightEvents, currentIndex + 1); });
         }
 
+        private void RunMorning()
+        {
+            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight));
+            foreach (var newlyDeadPlayer in newlyDeadPlayers)
+            {
+                newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
+                newlyDeadPlayer.Kill();
+                storyteller.PlayerDiedAtNight(newlyDeadPlayer);
+                foreach (var player in grimoire.Players)
+                {
+                    player.Agent.PlayerDiedAtNight(newlyDeadPlayer);
+                }
+            }
+        }
+
         private void AdvancePhase()
         {
             switch (phase)
@@ -126,7 +141,9 @@ namespace Clocktower.Game
                     break;
 
                 case Phase.Morning:
-                    phase = Phase.Day;
+                    // phase = Phase.Day;
+                    phase = Phase.Night;
+                    ++dayNumber;
                     break;
 
                 case Phase.Day:

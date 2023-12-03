@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using System.Reflection;
 
 namespace Clocktower
 {
@@ -26,6 +27,12 @@ namespace Clocktower
         public void Day(int dayNumber)
         {
             outputText.AppendBoldText($"\nDay {dayNumber}\n\n");
+        }
+
+        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        {
+            outputText.AppendBoldText(newlyDeadPlayer.Name);
+            outputText.AppendText(" died in the night.\n");
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
@@ -132,17 +139,22 @@ namespace Clocktower
             }
         }
 
-        public void RequestImpChoice(IReadOnlyCollection<Player> players)
+        public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
             outputText.AppendText("As the ");
             AppendCharacterText(Character.Imp);
-            outputText.AppendText(" please choose a player to kill.");
+            outputText.AppendText(" please choose a player to kill...\n");
 
             choicesComboBox.Items.Clear();
             foreach (var player in players)
             {
                 choicesComboBox.Items.Add(player.Name);
             }
+            choicesComboBox.Enabled = true;
+            chooseButton.Enabled = true;
+
+            this.players = players;
+            this.onChoice = onChoice;
         }
 
         private void AppendCharacterText(Character character)
@@ -163,5 +175,19 @@ namespace Clocktower
                 first = false;
             }
         }
+        private void chooseButton_Click(object sender, EventArgs e)
+        {
+            var player = players?.FirstOrDefault(player => player.Name == (string)choicesComboBox.SelectedItem);
+            if (player != null)
+            {
+                chooseButton.Enabled = false;
+                choicesComboBox.Enabled = false;
+                choicesComboBox.Items.Clear();
+                onChoice?.Invoke(player);
+            }
+        }
+
+        private IReadOnlyCollection<Player>? players;
+        private Action<Player>? onChoice;
     }
 }

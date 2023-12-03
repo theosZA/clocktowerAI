@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent;
+using System.Runtime.CompilerServices;
 
 namespace Clocktower.Game
 {
@@ -11,7 +12,7 @@ namespace Clocktower.Game
         public string Name { get; }
         public IAgent Agent { get; }
 
-        public bool Alive { get; private set; } = true;
+        public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight);
 
         public Character? RealCharacter { get; private set; }
         public Alignment? RealAlignment { get; private set; }
@@ -20,6 +21,8 @@ namespace Clocktower.Game
         public Alignment? Alignment => believedAlignment ?? RealAlignment;
 
         public bool DrunkOrPoisoned => RealCharacter.HasValue && RealCharacter.Value == Game.Character.Drunk;
+
+        public List<Token> Tokens { get; } = new();
 
         public Player(string name, IAgent agent)
         {
@@ -50,7 +53,14 @@ namespace Clocktower.Game
             Agent.AssignCharacter(believedCharacter, believedAlignment);
         }
 
+        public void Kill()
+        {
+            alive = false;
+        }
+
         private Character? believedCharacter;
         private Alignment? believedAlignment;
+
+        private bool alive = true;
     }
 }

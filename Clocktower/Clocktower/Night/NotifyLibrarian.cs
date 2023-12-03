@@ -13,7 +13,7 @@ namespace Clocktower.Night
 
         public void RunEvent(Action onEventFinished)
         {
-            var librarian = grimoire.GetPlayer(Character.Librarian);
+            var librarian = grimoire.GetAlivePlayer(Character.Librarian);
             if (librarian != null)
             {
                 // For now we give them a hardcoded pair of players and the outsider 'Drunk'.

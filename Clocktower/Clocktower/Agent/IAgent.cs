@@ -8,6 +8,7 @@ namespace Clocktower.Agent
 
         public void Night(int nightNumber);
         public void Day(int dayNumber);
+        public void PlayerDiedAtNight(Player newlyDeadPlayer);
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
@@ -17,6 +18,6 @@ namespace Clocktower.Agent
         public void NotifyLibrarian(Player playerA, Player playerB, Character character);
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
 
-        public Task<Player> GetImpChoice(IReadOnlyCollection<Player> players);
+        public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice);
     }
 }

@@ -30,6 +30,7 @@
         {
             outputText = new RichTextBox();
             choicesComboBox = new ComboBox();
+            chooseButton = new Button();
             SuspendLayout();
             // 
             // outputText
@@ -49,11 +50,23 @@
             choicesComboBox.Size = new Size(288, 23);
             choicesComboBox.TabIndex = 1;
             // 
+            // chooseButton
+            // 
+            chooseButton.Enabled = false;
+            chooseButton.Location = new Point(312, 401);
+            chooseButton.Name = "chooseButton";
+            chooseButton.Size = new Size(75, 23);
+            chooseButton.TabIndex = 2;
+            chooseButton.Text = "Choose";
+            chooseButton.UseVisualStyleBackColor = true;
+            chooseButton.Click += chooseButton_Click;
+            // 
             // HumanAgentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(801, 441);
+            Controls.Add(chooseButton);
             Controls.Add(choicesComboBox);
             Controls.Add(outputText);
             Name = "HumanAgentForm";
@@ -65,5 +78,6 @@
 
         private RichTextBox outputText;
         private ComboBox choicesComboBox;
+        private Button chooseButton;
     }
 }

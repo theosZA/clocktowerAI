@@ -7,6 +7,8 @@ namespace Clocktower.Game
     /// </summary>
     internal class Grimoire
     {
+        public IReadOnlyCollection<Player> Players => players;
+
         public Grimoire(IDictionary<string, IAgent> playerAgents)
         {
             players = playerAgents.Select(playerAgent => new Player(playerAgent.Key, playerAgent.Value)).ToList();
@@ -42,6 +44,11 @@ namespace Clocktower.Game
                     }
                 }
             }
+        }
+
+        public Player? GetAlivePlayer(Character believedCharacter)
+        {
+            return players.FirstOrDefault(player => player.Alive && player.Character == believedCharacter);
         }
 
         public Player? GetPlayer(Character believedCharacter)

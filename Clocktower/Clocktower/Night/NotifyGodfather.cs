@@ -13,7 +13,7 @@ namespace Clocktower.Night
 
         public void RunEvent(Action onEventFinished)
         {
-            var godfather = grimoire.GetPlayer(Character.Godfather);
+            var godfather = grimoire.GetAlivePlayer(Character.Godfather);
             if (godfather != null)
             {
                 var outsiders = grimoire.GetOutsiders().ToList();

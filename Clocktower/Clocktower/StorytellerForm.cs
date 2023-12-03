@@ -39,6 +39,12 @@ namespace Clocktower
             outputText.AppendBoldText($"\nDay {dayNumber}\n\n");
         }
 
+        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        {
+            AppendPlayerText(newlyDeadPlayer);
+            outputText.AppendText(" died in the night.\n");
+        }
+
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             AppendPlayerText(minion);
@@ -148,6 +154,14 @@ namespace Clocktower
             {
                 outputText.AppendText(") are evil.\n");
             }
+        }
+
+        public void ChoiceFromImp(Player imp, Player target)
+        {
+            AppendPlayerText(imp);
+            outputText.AppendText(" has chosen to kill ");
+            AppendPlayerText(target);
+            outputText.AppendText(".\n");
         }
 
         private void AppendPlayerText(Player player)
