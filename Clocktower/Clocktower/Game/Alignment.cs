@@ -1,4 +1,4 @@
-﻿namespace Clocktower
+﻿namespace Clocktower.Game
 {
     public enum Alignment
     {

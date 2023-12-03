@@ -19,6 +19,8 @@ namespace Clocktower.Game
         public Character? Character => believedCharacter ?? RealCharacter;
         public Alignment? Alignment => believedAlignment ?? RealAlignment;
 
+        public bool DrunkOrPoisoned => RealCharacter.HasValue && RealCharacter.Value == Game.Character.Drunk;
+
         public Player(string name, IAgent agent)
         {
             Name = name;

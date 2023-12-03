@@ -33,7 +33,7 @@ namespace Clocktower
             outputText.AppendText("As a minion, you learn that ");
             outputText.AppendBoldText(demon.Name, Color.Red);
             outputText.AppendText(" is your demon");
-            
+
             if (fellowMinions.Count == 1)
             {
                 outputText.AppendText(" and your fellow minion is ");
@@ -80,12 +80,7 @@ namespace Clocktower
             }
 
             outputText.AppendText(", and that the following characters are not in play: ");
-            outputText.AppendText(TextUtilities.CharacterToText(notInPlayCharacters.First()), TextUtilities.CharacterToColor(notInPlayCharacters.First()));
-            foreach (var character in notInPlayCharacters.Skip(1))
-            {
-                outputText.AppendText(", ");
-                outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
-            }
+            AppendCharacters(notInPlayCharacters);
             outputText.AppendText(".\n");
         }
 
@@ -97,7 +92,7 @@ namespace Clocktower
                 return;
             }
             outputText.AppendText("You learn that the following outsiders are in play: ");
-            AppendCharacterList(outsiders);
+            AppendCharacters(outsiders);
             outputText.AppendText(".\n");
         }
 
@@ -115,7 +110,7 @@ namespace Clocktower
             outputText.AppendText(" or ");
             outputText.AppendBoldText(playerB.Name);
             outputText.AppendText(" is the ");
-            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
+            AppendCharacterText(character);
             outputText.AppendText(".\n");
         }
 
@@ -137,7 +132,25 @@ namespace Clocktower
             }
         }
 
-        private void AppendCharacterList(IReadOnlyCollection<Character> characters)
+        public void RequestImpChoice(IReadOnlyCollection<Player> players)
+        {
+            outputText.AppendText("As the ");
+            AppendCharacterText(Character.Imp);
+            outputText.AppendText(" please choose a player to kill.");
+
+            choicesComboBox.Items.Clear();
+            foreach (var player in players)
+            {
+                choicesComboBox.Items.Add(player.Name);
+            }
+        }
+
+        private void AppendCharacterText(Character character)
+        {
+            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
+        }
+
+        private void AppendCharacters(IReadOnlyCollection<Character> characters)
         {
             bool first = true;
             foreach (var character in characters)
@@ -146,7 +159,7 @@ namespace Clocktower
                 {
                     outputText.AppendText(", ");
                 }
-                outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
+                AppendCharacterText(character);
                 first = false;
             }
         }

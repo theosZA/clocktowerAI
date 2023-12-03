@@ -16,5 +16,7 @@ namespace Clocktower.Agent
         public void NotifySteward(Player goodPlayer);
         public void NotifyLibrarian(Player playerA, Player playerB, Character character);
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
+
+        public Task<Player> GetImpChoice(IReadOnlyCollection<Player> players);
     }
 }

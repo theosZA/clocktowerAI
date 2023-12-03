@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Clocktower.Game;
+using System.ComponentModel;
 
 namespace Clocktower
 {

@@ -54,6 +54,12 @@ namespace Clocktower.Agent
             form.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
+        public async Task<Player> GetImpChoice(IReadOnlyCollection<Player> players)
+        {
+            form.RequestImpChoice(players);
+            return null;
+        }
+
         private HumanAgentForm form;
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             outputText = new RichTextBox();
+            choicesComboBox = new ComboBox();
             SuspendLayout();
             // 
             // outputText
@@ -39,11 +40,21 @@
             outputText.TabIndex = 0;
             outputText.Text = "";
             // 
+            // choicesComboBox
+            // 
+            choicesComboBox.Enabled = false;
+            choicesComboBox.FormattingEnabled = true;
+            choicesComboBox.Location = new Point(18, 401);
+            choicesComboBox.Name = "choicesComboBox";
+            choicesComboBox.Size = new Size(288, 23);
+            choicesComboBox.TabIndex = 1;
+            // 
             // HumanAgentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(801, 441);
+            Controls.Add(choicesComboBox);
             Controls.Add(outputText);
             Name = "HumanAgentForm";
             Text = "HumanAgentForm";
@@ -53,5 +64,6 @@
         #endregion
 
         private RichTextBox outputText;
+        private ComboBox choicesComboBox;
     }
 }
