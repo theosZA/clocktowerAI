@@ -59,9 +59,19 @@ namespace Clocktower.Agent
             form.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
+        public void NotifyRavenkeeper(Player target, Character character)
+        {
+            form.NotifyRavenkeeper(target, character);
+        }
+
         public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
             form.RequestChoiceFromImp(players, onChoice);
+        }
+
+        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        {
+            form.RequestChoiceFromRavenkeeper(players, onChoice);
         }
 
         private HumanAgentForm form;

@@ -55,18 +55,24 @@ namespace Clocktower.Game
                     storyteller.Day(dayNumber);
                     grimoire.Day(dayNumber);
                     RunMorning();
+                    AdvancePhase();
+                    RunPhase();
                     break;
 
                 case Phase.Day:
+                    // TBD
+                    AdvancePhase();
+                    RunPhase();
+                    break;
+
                 case Phase.Evening:
                     // TBD
+                    AdvancePhase();
                     break;
 
                 default:
                     throw new InvalidEnumArgumentException(nameof(phase));
             }
-
-            AdvancePhase();
         }
 
         private void RunFirstNight()
@@ -100,7 +106,7 @@ namespace Clocktower.Game
                 // Godfather...
                 // Sweetheart...
                 // Tinker...
-                // Ravenkeeper...
+                new ChoiceFromRavenkeeper(storyteller, grimoire),
                 new NotifyEmpath(storyteller, grimoire)
                 // Fortune Teller...
                 // Undertaker...
@@ -111,6 +117,8 @@ namespace Clocktower.Game
         {
             if (currentIndex >= nightEvents.Length)
             {   // finished
+                AdvancePhase();
+                RunPhase();
                 return;
             }
 
@@ -141,9 +149,7 @@ namespace Clocktower.Game
                     break;
 
                 case Phase.Morning:
-                    // phase = Phase.Day;
-                    phase = Phase.Night;
-                    ++dayNumber;
+                    phase = Phase.Day;
                     break;
 
                 case Phase.Day:

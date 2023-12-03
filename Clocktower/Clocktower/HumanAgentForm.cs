@@ -14,6 +14,8 @@ namespace Clocktower
 
         public void AssignCharacter(Character character, Alignment alignment)
         {
+            Text += $" ({TextUtilities.CharacterToText(character)})";
+
             outputText.AppendText("You are the ");
             outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.AlignmentToColor(alignment));
             outputText.AppendText(".\n");
@@ -139,22 +141,31 @@ namespace Clocktower
             }
         }
 
+        public void NotifyRavenkeeper(Player target, Character character)
+        {
+            outputText.AppendText("You learn that ");
+            outputText.AppendBoldText(target.Name);
+            outputText.AppendText(" is the ");
+            AppendCharacterText(character);
+            outputText.AppendText(".\n");
+        }
+
         public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
             outputText.AppendText("As the ");
             AppendCharacterText(Character.Imp);
             outputText.AppendText(" please choose a player to kill...\n");
 
-            choicesComboBox.Items.Clear();
-            foreach (var player in players)
-            {
-                choicesComboBox.Items.Add(player.Name);
-            }
-            choicesComboBox.Enabled = true;
-            chooseButton.Enabled = true;
+            PopulateChoices(players, onChoice);
+        }
 
-            this.players = players;
-            this.onChoice = onChoice;
+        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        {
+            outputText.AppendText("As the ");
+            AppendCharacterText(Character.Ravenkeeper);
+            outputText.AppendText(" please choose a player whose character you wish to learn...\n");
+
+            PopulateChoices(players, onChoice);
         }
 
         private void AppendCharacterText(Character character)
@@ -175,6 +186,21 @@ namespace Clocktower
                 first = false;
             }
         }
+
+        private void PopulateChoices(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        {
+            choicesComboBox.Items.Clear();
+            foreach (var player in players)
+            {
+                choicesComboBox.Items.Add(player.Name);
+            }
+            choicesComboBox.Enabled = true;
+            chooseButton.Enabled = true;
+
+            this.players = players;
+            this.onChoice = onChoice;
+        }
+
         private void chooseButton_Click(object sender, EventArgs e)
         {
             var player = players?.FirstOrDefault(player => player.Name == (string)choicesComboBox.SelectedItem);
@@ -183,6 +209,9 @@ namespace Clocktower
                 chooseButton.Enabled = false;
                 choicesComboBox.Enabled = false;
                 choicesComboBox.Items.Clear();
+
+                outputText.AppendBoldText($">> {player.Name}\n", Color.Green);
+
                 onChoice?.Invoke(player);
             }
         }

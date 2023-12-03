@@ -70,6 +70,11 @@ namespace Clocktower.Agent
             form.ChoiceFromImp(imp, target);
         }
 
+        public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
+        {
+            form.ChoiceFromRavenkeeper(ravenkeeper, target, character);
+        }
+
         private StorytellerForm form;
     }
 }

@@ -23,7 +23,10 @@ namespace Clocktower.Night
             imp.Agent.RequestChoiceFromImp(grimoire.Players, player =>
             {
                 storyteller.ChoiceFromImp(imp, player);
-                player.Tokens.Add(Token.DiedAtNight);
+                if (player.Alive)
+                {
+                    player.Tokens.Add(Token.DiedAtNight);
+                }
                 onEventFinished();
             });
         }

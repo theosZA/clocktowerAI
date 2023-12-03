@@ -164,6 +164,16 @@ namespace Clocktower
             outputText.AppendText(".\n");
         }
 
+        public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
+        {
+            AppendPlayerText(ravenkeeper);
+            outputText.AppendText(" chooses ");
+            AppendPlayerText(target);
+            outputText.AppendText(" and learns that they are the ");
+            AppendCharacterText(character);
+            outputText.AppendText(".\n");
+        }
+
         private void AppendPlayerText(Player player)
         {
             outputText.AppendBoldText(player.Name);
