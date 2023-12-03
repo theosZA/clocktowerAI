@@ -49,6 +49,11 @@ namespace Clocktower.Agent
             form.NotifyLibrarian(playerA, playerB, character);
         }
 
+        public void NotifyInvestigator(Player playerA, Player playerB, Character character)
+        {
+            form.NotifyInvestigator(playerA, playerB, character);
+        }
+
         public void NotifySteward(Player goodPlayer)
         {
             form.NotifySteward(goodPlayer);

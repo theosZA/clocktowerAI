@@ -18,7 +18,8 @@ namespace Clocktower.Game
         {
             // For now we assign hardcoded characters.
 
-            players[0].AssignCharacter(Character.Steward, Alignment.Good);
+            //players[0].AssignCharacter(Character.Steward, Alignment.Good);
+            players[0].AssignCharacter(Character.Investigator, Alignment.Good);
             players[1].AssignCharacter(Character.Imp, Alignment.Evil);
             players[2].AssignCharacter(Character.Godfather, Alignment.Evil);
             players[3].AssignCharacter(Character.Recluse, Alignment.Good);

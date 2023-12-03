@@ -123,6 +123,17 @@ namespace Clocktower
             outputText.AppendText(".\n");
         }
 
+        public void NotifyInvestigator(Player playerA, Player playerB, Character character)
+        {
+            outputText.AppendText("You learn that either ");
+            outputText.AppendBoldText(playerA.Name);
+            outputText.AppendText(" or ");
+            outputText.AppendBoldText(playerB.Name);
+            outputText.AppendText(" is the ");
+            AppendCharacterText(character);
+            outputText.AppendText(".\n");
+        }
+
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
             outputText.AppendText("You learn that ");

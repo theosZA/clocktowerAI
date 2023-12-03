@@ -44,14 +44,19 @@ namespace Clocktower.Agent
             form.NotifyGodfather(godfather, outsiders);
         }
 
-        public void NotifySteward(Player steward, Player goodPlayer)
-        {
-            form.NotifySteward(steward, goodPlayer);
-        }
-
         public void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character)
         {
             form.NotifyLibrarian(librarian, playerA, playerB, character);
+        }
+
+        public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
+        {
+            form.NotifyInvestigator(investigator, playerA, playerB, character);
+        }
+
+        public void NotifySteward(Player steward, Player goodPlayer)
+        {
+            form.NotifySteward(steward, goodPlayer);
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)

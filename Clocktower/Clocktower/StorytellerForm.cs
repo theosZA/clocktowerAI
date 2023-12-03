@@ -35,15 +35,6 @@ namespace Clocktower
             }
         }
 
-        public void AssignCharacter(string name, Character character, Alignment alignment)
-        {
-        }
-
-        public void AssignCharacter(string name, Character realCharacter, Alignment realAlignment,
-                                                 Character believedCharacter, Alignment believedAlignment)
-        {
-        }
-
         public void Night(int nightNumber)
         {
             outputText.AppendBoldText($"\nNight {nightNumber}\n\n");
@@ -132,14 +123,6 @@ namespace Clocktower
 
         }
 
-        public void NotifySteward(Player steward, Player goodPlayer)
-        {
-            AppendPlayerText(steward);
-            outputText.AppendText(" learns that ");
-            AppendPlayerText(goodPlayer);
-            outputText.AppendText(" is a good player.\n");
-        }
-
         public void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character)
         {
             AppendPlayerText(librarian);
@@ -150,6 +133,26 @@ namespace Clocktower
             outputText.AppendText(" is the ");
             AppendCharacterText(character);
             outputText.AppendText(".\n");
+        }
+
+        public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
+        {
+            AppendPlayerText(investigator);
+            outputText.AppendText(" learns that ");
+            AppendPlayerText(playerA);
+            outputText.AppendText(" or ");
+            AppendPlayerText(playerB);
+            outputText.AppendText(" is the ");
+            AppendCharacterText(character);
+            outputText.AppendText(".\n");
+        }
+
+        public void NotifySteward(Player steward, Player goodPlayer)
+        {
+            AppendPlayerText(steward);
+            outputText.AppendText(" learns that ");
+            AppendPlayerText(goodPlayer);
+            outputText.AppendText(" is a good player.\n");
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)

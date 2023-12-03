@@ -14,8 +14,9 @@ namespace Clocktower.Agent
         void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         void NotifyGodfather(IReadOnlyCollection<Character> outsiders);
-        void NotifySteward(Player goodPlayer);
         void NotifyLibrarian(Player playerA, Player playerB, Character character);
+        void NotifyInvestigator(Player playerA, Player playerB, Character character);
+        void NotifySteward(Player goodPlayer);
         void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
         void NotifyRavenkeeper(Player target, Character character);
 
