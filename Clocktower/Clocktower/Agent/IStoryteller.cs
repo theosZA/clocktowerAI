@@ -4,9 +4,7 @@ namespace Clocktower.Agent
 {
     internal interface IStoryteller
     {
-        void AssignCharacter(string name, Character character, Alignment alignment);
-        void AssignCharacter(string name, Character realCharacter, Alignment realAlignment,
-                                                 Character believedCharacter, Alignment believedAlignment);
+        void AssignCharacter(Player player);
 
         void Night(int nightNumber);
         void Day(int dayNumber);

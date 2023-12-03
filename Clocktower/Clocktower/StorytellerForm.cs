@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using System.Numerics;
+using System.Xml.Linq;
 
 namespace Clocktower
 {
@@ -10,23 +11,37 @@ namespace Clocktower
             InitializeComponent();
         }
 
+        public void AssignCharacter(Player player)
+        {
+            if (player.RealCharacter == null || player.Character == null || player.RealAlignment == null || player.Alignment == null)
+            {
+                throw new InvalidOperationException("Player has not been assigned a character/alignment");
+            }
+            if (player.Character == player.RealCharacter)
+            {
+                outputText.AppendBoldText(player.Name);
+                outputText.AppendText(" is the ");
+                outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
+                outputText.AppendText(".\n");
+            }
+            else
+            {
+                outputText.AppendBoldText(player.Name);
+                outputText.AppendText(" believes they are the ");
+                outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
+                outputText.AppendText(" but they are actually the ");
+                outputText.AppendText(TextUtilities.CharacterToText(player.RealCharacter.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
+                outputText.AppendText(".\n");
+            }
+        }
+
         public void AssignCharacter(string name, Character character, Alignment alignment)
         {
-            outputText.AppendBoldText(name);
-            outputText.AppendText(" is the ");
-            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.AlignmentToColor(alignment));
-            outputText.AppendText(".\n");
         }
 
         public void AssignCharacter(string name, Character realCharacter, Alignment realAlignment,
                                                  Character believedCharacter, Alignment believedAlignment)
         {
-            outputText.AppendBoldText(name);
-            outputText.AppendText(" believes they are the ");
-            outputText.AppendText(TextUtilities.CharacterToText(believedCharacter), TextUtilities.AlignmentToColor(believedAlignment));
-            outputText.AppendText(" but they are actually the ");
-            outputText.AppendText(TextUtilities.CharacterToText(realCharacter), TextUtilities.AlignmentToColor(realAlignment));
-            outputText.AppendText(".\n");
         }
 
         public void Night(int nightNumber)

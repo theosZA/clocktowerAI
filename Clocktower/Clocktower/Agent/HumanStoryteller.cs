@@ -9,15 +9,9 @@ namespace Clocktower.Agent
             this.form = form;
         }
 
-        public void AssignCharacter(string name, Character character, Alignment alignment)
+        public void AssignCharacter(Player player)
         {
-            form.AssignCharacter(name, character, alignment);
-        }
-
-        public void AssignCharacter(string name, Character realCharacter, Alignment realAlignment,
-                                                 Character believedCharacter, Alignment believedAlignment)
-        {
-            form.AssignCharacter(name, realCharacter, realAlignment, believedCharacter, believedAlignment);
+            form.AssignCharacter(player);
         }
 
         public void Night(int nightNumber)

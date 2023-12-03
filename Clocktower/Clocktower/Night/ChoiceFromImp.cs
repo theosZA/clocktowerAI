@@ -26,6 +26,16 @@ namespace Clocktower.Night
                 if (player.Alive)
                 {
                     player.Tokens.Add(Token.DiedAtNight);
+                    if (player == imp)
+                    {   // Star-pass
+                        // For now it just goes to the first alive minion.
+                        var newImp = grimoire.GetMinions().FirstOrDefault(minion => minion.Alive);
+                        if (newImp != null)
+                        {
+                            newImp.AssignCharacter(Character.Imp, Alignment.Evil);
+                            storyteller.AssignCharacter(newImp);
+                        }
+                    }
                 }
                 onEventFinished();
             });

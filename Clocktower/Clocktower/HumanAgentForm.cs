@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using System.Reflection;
 
 namespace Clocktower
 {
@@ -9,12 +8,13 @@ namespace Clocktower
         {
             InitializeComponent();
 
+            this.playerName = playerName;
             Text = playerName;
         }
 
         public void AssignCharacter(Character character, Alignment alignment)
         {
-            Text += $" ({TextUtilities.CharacterToText(character)})";
+            Text = $"{playerName} ({TextUtilities.CharacterToText(character)})";
 
             outputText.AppendText("You are the ");
             outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.AlignmentToColor(alignment));
@@ -215,6 +215,8 @@ namespace Clocktower
                 onChoice?.Invoke(player);
             }
         }
+
+        private string playerName;
 
         private IReadOnlyCollection<Player>? players;
         private Action<Player>? onChoice;

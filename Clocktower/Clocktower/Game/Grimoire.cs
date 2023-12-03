@@ -31,18 +31,7 @@ namespace Clocktower.Game
             // Notify storyteller of characters.
             foreach (var player in players)
             {
-                if (player.Character.HasValue && player.RealCharacter.HasValue && player.Alignment.HasValue && player.RealAlignment.HasValue)
-                {
-                    if (player.Character == player.RealCharacter && player.Alignment == player.RealAlignment)
-                    {
-                        storyteller.AssignCharacter(player.Name, player.Character.Value, player.Alignment.Value);
-                    }
-                    else
-                    {
-                        storyteller.AssignCharacter(player.Name, player.RealCharacter.Value, player.RealAlignment.Value,
-                                                                 player.Character.Value, player.Alignment.Value);
-                    }
-                }
+                storyteller.AssignCharacter(player);
             }
         }
 
