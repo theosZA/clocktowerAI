@@ -1,5 +1,5 @@
 ﻿using Clocktower.Agent;
-using Clocktower.Night;
+using Clocktower.Events;
 using System.ComponentModel;
 
 namespace Clocktower.Game
@@ -66,8 +66,7 @@ namespace Clocktower.Game
                     break;
 
                 case Phase.Evening:
-                    // TBD
-                    AdvancePhase();
+                    RunEvening();
                     break;
 
                 default:
@@ -77,7 +76,7 @@ namespace Clocktower.Game
 
         private void RunFirstNight()
         {
-            RunNightEvents(new INightEvent[]
+            RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
                 new MinionInformation(storyteller, grimoire),
@@ -95,7 +94,7 @@ namespace Clocktower.Game
 
         private void RunNight()
         {
-            RunNightEvents(new INightEvent[]
+            RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
                 // Poisoner...
@@ -113,7 +112,7 @@ namespace Clocktower.Game
             });
         }
 
-        private void RunNightEvents(INightEvent[] nightEvents, int currentIndex = 0)
+        private void RunNightEvents(IGameEvent[] nightEvents, int currentIndex = 0)
         {
             if (currentIndex >= nightEvents.Length)
             {   // finished
@@ -138,6 +137,15 @@ namespace Clocktower.Game
                     player.Agent.PlayerDiedAtNight(newlyDeadPlayer);
                 }
             }
+        }
+
+        private void RunEvening()
+        {
+            new Nominations(storyteller, grimoire, random).RunEvent(() =>
+            {
+                AdvancePhase();
+                RunPhase();
+            });
         }
 
         private void AdvancePhase()
@@ -165,6 +173,7 @@ namespace Clocktower.Game
 
         private Grimoire grimoire;
         private IStoryteller storyteller;
+        private Random random = new();
 
         private int dayNumber;
         private Phase phase;

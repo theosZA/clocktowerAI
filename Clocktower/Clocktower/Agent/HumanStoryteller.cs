@@ -29,6 +29,16 @@ namespace Clocktower.Agent
             form.PlayerDiedAtNight(newlyDeadPlayer);
         }
 
+        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
+        {
+            form.PlayerIsExecuted(executedPlayer, playerDies);
+        }
+
+        public void DayEndsWithNoExecution()
+        {
+            form.DayEndsWithNoExecution();
+        }
+
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             form.MinionInformation(minion, demon, fellowMinions);
@@ -72,6 +82,21 @@ namespace Clocktower.Agent
         public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
         {
             form.ChoiceFromRavenkeeper(ravenkeeper, target, character);
+        }
+
+        public void AnnounceNomination(Player nominator, Player nominee)
+        {
+            form.AnnounceNomination(nominator, nominee);
+        }
+
+        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        {
+            form.AnnounceVote(voter, nominee, votedToExecute);
+        }
+
+        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        {
+            form.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
         }
 
         private StorytellerForm form;

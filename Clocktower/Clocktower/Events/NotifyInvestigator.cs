@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class NotifyInvestigator : INightEvent
+    internal class NotifyInvestigator : IGameEvent
     {
         public NotifyInvestigator(IStoryteller storyteller, Grimoire grimoire)
         {

@@ -1,9 +1,11 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
+using System.Diagnostics;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class ChoiceFromImp : INightEvent
+    internal class ChoiceFromImp : IGameEvent
     {
         public ChoiceFromImp(IStoryteller storyteller, Grimoire grimoire)
         {
@@ -20,8 +22,13 @@ namespace Clocktower.Night
                 return;
             }
 
-            imp.Agent.RequestChoiceFromImp(grimoire.Players, player =>
+            var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
+            imp.Agent.RequestChoiceFromImp(options, option =>
             {
+                var playerOption = option as PlayerOption;
+                Debug.Assert(playerOption != null);
+                var player = playerOption.Player;
+
                 storyteller.ChoiceFromImp(imp, player);
                 if (player.Alive)
                 {

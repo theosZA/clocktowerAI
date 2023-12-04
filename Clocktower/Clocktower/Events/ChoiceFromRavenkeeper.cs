@@ -1,9 +1,11 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
+using System.Diagnostics;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class ChoiceFromRavenkeeper : INightEvent
+    internal class ChoiceFromRavenkeeper : IGameEvent
     {
         public ChoiceFromRavenkeeper(IStoryteller storyteller, Grimoire grimoire)
         {
@@ -20,8 +22,13 @@ namespace Clocktower.Night
                 return;
             }
 
-            ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players, player =>
+            var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
+            ravenkeeper.Agent.RequestChoiceFromRavenkeeper(options, option =>
             {
+                var playerOption = option as PlayerOption;
+                Debug.Assert(playerOption != null);
+                var player = playerOption.Player;
+
                 if (!player.RealCharacter.HasValue)
                 {
                     throw new ArgumentException("Player does not have character assigned");

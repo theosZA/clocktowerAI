@@ -36,6 +36,15 @@ namespace Clocktower.Game
             }
         }
 
+        public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)
+        {
+            int lastPlayerIndex = players.IndexOf(lastPlayer);
+            for (int offset = 1; offset <= players.Count; ++offset)
+            {
+                yield return players[(lastPlayerIndex + offset) % players.Count];
+            }
+        }
+
         public Player? GetAlivePlayer(Character believedCharacter)
         {
             return players.FirstOrDefault(player => player.Alive && player.Character == believedCharacter);

@@ -1,9 +1,9 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class NotifyEmpath : INightEvent
+    internal class NotifyEmpath : IGameEvent
     {
         public NotifyEmpath(IStoryteller storyteller, Grimoire grimoire)
         {

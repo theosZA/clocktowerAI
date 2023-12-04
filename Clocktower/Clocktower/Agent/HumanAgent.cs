@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
 
 namespace Clocktower.Agent
 {
@@ -27,6 +28,16 @@ namespace Clocktower.Agent
         public void PlayerDiedAtNight(Player newlyDeadPlayer)
         {
             form.PlayerDiedAtNight(newlyDeadPlayer);
+        }
+
+        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
+        {
+            form.PlayerIsExecuted(executedPlayer, playerDies);
+        }
+
+        public void DayEndsWithNoExecution()
+        {
+            form.DayEndsWithNoExecution();
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
@@ -69,14 +80,39 @@ namespace Clocktower.Agent
             form.NotifyRavenkeeper(target, character);
         }
 
-        public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        public void RequestChoiceFromImp(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
-            form.RequestChoiceFromImp(players, onChoice);
+            form.RequestChoiceFromImp(options, onChoice);
         }
 
-        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
-            form.RequestChoiceFromRavenkeeper(players, onChoice);
+            form.RequestChoiceFromRavenkeeper(options, onChoice);
+        }
+
+        public void GetNomination(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        {
+            form.GetNomination(options, onChoice);
+        }
+
+        public void AnnounceNomination(Player nominator, Player nominee)
+        {
+            form.AnnounceNomination(nominator, nominee);
+        }
+
+        public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        {
+            form.GetVote(options, onChoice);
+        }
+
+        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        {
+            form.AnnounceVote(voter, nominee, votedToExecute);
+        }
+        
+        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        {
+            form.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
         }
 
         private HumanAgentForm form;

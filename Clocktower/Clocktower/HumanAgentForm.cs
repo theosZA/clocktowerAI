@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
 
 namespace Clocktower
 {
@@ -14,7 +15,9 @@ namespace Clocktower
 
         public void AssignCharacter(Character character, Alignment _)
         {
-            Text = $"{playerName} ({TextUtilities.CharacterToText(character)})";
+            this.character = character;
+
+            SetTitleText();
 
             outputText.AppendFormattedText("You are the %c.\n", character);
         }
@@ -32,6 +35,29 @@ namespace Clocktower
         public void PlayerDiedAtNight(Player newlyDeadPlayer)
         {
             outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer);
+            CheckForDeath(newlyDeadPlayer);
+        }
+
+        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
+        {
+            if (playerDies)
+            {
+                outputText.AppendFormattedText("%p is executed and dies.\n", executedPlayer);
+                CheckForDeath(executedPlayer);
+            }
+            else if (executedPlayer.Alive)
+            {
+                outputText.AppendFormattedText("%p is executed but does not die.\n", executedPlayer);
+            }
+            else
+            {
+                outputText.AppendFormattedText("%p's corpse is executed.\n", executedPlayer);
+            }
+        }
+
+        public void DayEndsWithNoExecution()
+        {
+            outputText.AppendText("There is no execution and the day ends.\n");
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
@@ -79,50 +105,119 @@ namespace Clocktower
             outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
         }
 
-        public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        public void RequestChoiceFromImp(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
-            PopulateChoices(players, onChoice);
+            PopulateOptions(options, onChoice);
         }
 
-        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
             outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
-            PopulateChoices(players, onChoice);
+            PopulateOptions(options, onChoice);
         }
 
-        private void PopulateChoices(IReadOnlyCollection<Player> players, Action<Player> onChoice)
+        public void GetNomination(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
-            choicesComboBox.Items.Clear();
-            foreach (var player in players)
+            outputText.AppendText("Please nominate a player or pass...\n");
+            PopulateOptions(options, onChoice);
+        }
+
+        public void AnnounceNomination(Player nominator, Player nominee)
+        {
+            outputText.AppendFormattedText("%p nominates %p.\n", nominator, nominee);
+        }
+
+        public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        {
+            var voteOption = (VoteOption)(options.First(option => option is VoteOption));
+            outputText.AppendFormattedText("If you wish, you may vote for executing %p or pass...\n", voteOption.Nominee);
+            PopulateOptions(options, onChoice);
+        }
+
+        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        {
+            if (votedToExecute)
             {
-                choicesComboBox.Items.Add(player.Name);
+                outputText.AppendFormattedText("%p votes to execute %p.\n", voter, nominee);
+            }
+            else
+            {
+                outputText.AppendFormattedText("%p does not vote.\n", voter, nominee);
+            }
+        }
+
+        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        {
+            if (beatsCurrent)
+            {
+                outputText.AppendFormattedText("%p received %b votes. That is enough to put them on the block.\n", nominee, voteCount);
+            }
+            else if (tiesCurrent)
+            {
+                outputText.AppendFormattedText("%p received %b votes which is a tie. No one is on the block.\n", nominee, voteCount);
+            }
+            else
+            {
+                outputText.AppendFormattedText("%p received %b votes which is not enough.\n", nominee, voteCount);
+            }
+        }
+
+        private void PopulateOptions(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        {
+            this.options = options;
+            this.onChoice = onChoice;
+
+            choicesComboBox.Items.Clear();
+            foreach (var option in options)
+            {
+                choicesComboBox.Items.Add(option.Name);
             }
             choicesComboBox.Enabled = true;
             chooseButton.Enabled = true;
+        }
 
-            this.players = players;
-            this.onChoice = onChoice;
+        private void SetTitleText()
+        {
+            Text = $"{playerName} ({TextUtilities.CharacterToText(character)})";
+            if (!alive)
+            {
+                Text += " GHOST";
+            }
+        }
+
+        private void CheckForDeath(Player playerWhoDied)
+        {
+            if (alive && playerWhoDied.Name == playerName)
+            {
+                alive = false;
+                SetTitleText();
+            }
         }
 
         private void chooseButton_Click(object sender, EventArgs e)
         {
-            var player = players?.FirstOrDefault(player => player.Name == (string)choicesComboBox.SelectedItem);
-            if (player != null)
-            {
-                chooseButton.Enabled = false;
-                choicesComboBox.Enabled = false;
-                choicesComboBox.Items.Clear();
-
-                outputText.AppendBoldText($">> {player.Name}\n", Color.Green);
-
-                onChoice?.Invoke(player);
+            var option = options?.FirstOrDefault(option => option.Name == (string)choicesComboBox.SelectedItem);
+            if (option == null)
+            {   // No valid option has been chosen.
+                return;
             }
+
+            chooseButton.Enabled = false;
+            choicesComboBox.Enabled = false;
+            choicesComboBox.Items.Clear();
+            choicesComboBox.Text = null;
+
+            outputText.AppendBoldText($">> {option.Name}\n", Color.Green);
+
+            onChoice?.Invoke(option);
         }
 
         private string playerName;
+        private Character character;
+        private bool alive = true;
 
-        private IReadOnlyCollection<Player>? players;
-        private Action<Player>? onChoice;
+        private IReadOnlyCollection<IOption> options;
+        private Action<IOption>? onChoice;
     }
 }

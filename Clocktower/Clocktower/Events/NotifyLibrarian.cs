@@ -1,9 +1,9 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class NotifyLibrarian : INightEvent
+    internal class NotifyLibrarian : IGameEvent
     {
         public NotifyLibrarian(IStoryteller storyteller, Grimoire grimoire)
         {

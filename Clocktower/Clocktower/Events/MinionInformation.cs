@@ -1,9 +1,9 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 
-namespace Clocktower.Night
+namespace Clocktower.Events
 {
-    internal class MinionInformation : INightEvent
+    internal class MinionInformation : IGameEvent
     {
         public MinionInformation(IStoryteller storyteller, Grimoire grimoire)
         {
