@@ -1,6 +1,4 @@
 ﻿using Clocktower.Game;
-using System.Numerics;
-using System.Xml.Linq;
 
 namespace Clocktower
 {
@@ -19,19 +17,11 @@ namespace Clocktower
             }
             if (player.Character == player.RealCharacter)
             {
-                outputText.AppendBoldText(player.Name);
-                outputText.AppendText(" is the ");
-                outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
-                outputText.AppendText(".\n");
+                outputText.AppendFormattedText("%p is the %c.\n", player, player.Character);
             }
             else
             {
-                outputText.AppendBoldText(player.Name);
-                outputText.AppendText(" believes they are the ");
-                outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
-                outputText.AppendText(" but they are actually the ");
-                outputText.AppendText(TextUtilities.CharacterToText(player.RealCharacter.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
-                outputText.AppendText(".\n");
+                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, player.RealCharacter);
             }
         }
 
@@ -47,191 +37,59 @@ namespace Clocktower
 
         public void PlayerDiedAtNight(Player newlyDeadPlayer)
         {
-            AppendPlayerText(newlyDeadPlayer);
-            outputText.AppendText(" died in the night.\n");
+            outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer, StorytellerView);
         }
 
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
-            AppendPlayerText(minion);
-            outputText.AppendText(" learns that ");
-            AppendPlayerText(demon);
-            outputText.AppendText(" is their demon");
-
-            if (fellowMinions.Count == 1)
-            {
-                outputText.AppendText(" and that their fellow minion is ");
-                AppendPlayerText(fellowMinions.First());
-            }
-            else if (fellowMinions.Count == 2)
-            {
-                outputText.AppendText(" and that their fellow minions are ");
-                AppendPlayerText(fellowMinions.First());
-                outputText.AppendText(" and ");
-                AppendPlayerText(fellowMinions.Last());
-            }
-
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText($"%p learns that %p is their demon and that their fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", minion, demon, fellowMinions, StorytellerView);
         }
 
         public void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            AppendPlayerText(demon);
-            outputText.AppendText(" learns that ");
-            if (minions.Count == 1)
-            {
-                AppendPlayerText(minions.First());
-                outputText.AppendText(" is their minion");
-            }
-            else if (minions.Count == 2)
-            {
-                AppendPlayerText(minions.First());
-                outputText.AppendText(" and ");
-                AppendPlayerText(minions.Last());
-                outputText.AppendText(" are their minions");
-            }
-            else if (minions.Count == 3)
-            {
-                AppendPlayerText(minions.First());
-                outputText.AppendText(", ");
-                AppendPlayerText(minions.Skip(1).First());
-                outputText.AppendText(" and ");
-                AppendPlayerText(minions.Last());
-                outputText.AppendText(" are their minions");
-            }
-            else
-            {
-                throw new ArgumentException("There must be exactly 1-3 minions");
-            }
-
-            outputText.AppendText(", and that the following characters are not in play: ");
-            AppendCharacters(notInPlayCharacters);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText($"%p learns that %P {(minions.Count > 1 ? "are their minions" : "is their minion")}, and that the following characters are not in play: %C.\n", demon, minions, notInPlayCharacters, StorytellerView);
         }
 
         public void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders)
         {
-            AppendPlayerText(godfather);
             if (outsiders.Count == 0)
             {
-                outputText.AppendText(" learns that there are no outsiders in play.");
+                outputText.AppendFormattedText("%p learns that there are no outsiders in play.\n", godfather, StorytellerView);
                 return;
             }
-            outputText.AppendText(" learns that the following outsiders are in play: ");
-            AppendCharacters(outsiders);
-            outputText.AppendText(".\n");
-
+            outputText.AppendFormattedText("%p learns that the following outsiders are in play: %C\n", godfather, outsiders, StorytellerView);
         }
 
         public void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character)
         {
-            AppendPlayerText(librarian);
-            outputText.AppendText(" learns that ");
-            AppendPlayerText(playerA);
-            outputText.AppendText(" or ");
-            AppendPlayerText(playerB);
-            outputText.AppendText(" is the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", librarian, playerA, playerB, character, StorytellerView);
         }
 
         public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
         {
-            AppendPlayerText(investigator);
-            outputText.AppendText(" learns that ");
-            AppendPlayerText(playerA);
-            outputText.AppendText(" or ");
-            AppendPlayerText(playerB);
-            outputText.AppendText(" is the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", investigator, playerA, playerB, character, StorytellerView);
         }
 
         public void NotifySteward(Player steward, Player goodPlayer)
         {
-            AppendPlayerText(steward);
-            outputText.AppendText(" learns that ");
-            AppendPlayerText(goodPlayer);
-            outputText.AppendText(" is a good player.\n");
+            outputText.AppendFormattedText("%p learns that %p is a good player.\n", steward, goodPlayer, StorytellerView);
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)
         {
-            AppendPlayerText(empath);
-            outputText.AppendText(" learns that ");
-            outputText.AppendBoldText(evilCount.ToString());
-            outputText.AppendText(" of their living neighbours (");
-            AppendPlayerText(neighbourA);
-            outputText.AppendText(" and ");
-            AppendPlayerText(neighbourB);
-            if (evilCount == 1)
-            {
-                outputText.AppendText(") is evil.\n");
-            }
-            else
-            {
-                outputText.AppendText(") are evil.\n");
-            }
+            outputText.AppendFormattedText($"%p learns that %b of their living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", empath, evilCount, neighbourA, neighbourB, StorytellerView);
         }
 
         public void ChoiceFromImp(Player imp, Player target)
         {
-            AppendPlayerText(imp);
-            outputText.AppendText(" has chosen to kill ");
-            AppendPlayerText(target);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
         }
 
         public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
         {
-            AppendPlayerText(ravenkeeper);
-            outputText.AppendText(" chooses ");
-            AppendPlayerText(target);
-            outputText.AppendText(" and learns that they are the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("%p chooses %p and learns that they are the %c.\n", ravenkeeper, target, character, StorytellerView);
         }
 
-        private void AppendPlayerText(Player player)
-        {
-            outputText.AppendBoldText(player.Name);
-            if (player.Character.HasValue && player.RealCharacter.HasValue && player.Alignment.HasValue && player.RealAlignment.HasValue)
-            {
-                outputText.AppendText(" (");
-
-                if (player.Character == player.RealCharacter)
-                {
-                    outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
-                }
-                else
-                {
-                    outputText.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
-                    outputText.AppendText("/");
-                    outputText.AppendText(TextUtilities.CharacterToText(player.RealCharacter.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
-                }
-
-                outputText.AppendText(")");
-            }
-        }
-
-        private void AppendCharacterText(Character character)
-        {
-            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
-        }
-
-        private void AppendCharacters(IReadOnlyCollection<Character> characters)
-        {
-            bool first = true;
-            foreach (var character in characters)
-            {
-                if (!first)
-                {
-                    outputText.AppendText(", ");
-                }
-                AppendCharacterText(character);
-                first = false;
-            }
-        }
-
+        private const bool StorytellerView = true;
     }
 }

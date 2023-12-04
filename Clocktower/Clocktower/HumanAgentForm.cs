@@ -12,13 +12,11 @@ namespace Clocktower
             Text = playerName;
         }
 
-        public void AssignCharacter(Character character, Alignment alignment)
+        public void AssignCharacter(Character character, Alignment _)
         {
             Text = $"{playerName} ({TextUtilities.CharacterToText(character)})";
 
-            outputText.AppendText("You are the ");
-            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.AlignmentToColor(alignment));
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("You are the %c.\n", character);
         }
 
         public void Night(int nightNumber)
@@ -33,169 +31,64 @@ namespace Clocktower
 
         public void PlayerDiedAtNight(Player newlyDeadPlayer)
         {
-            outputText.AppendBoldText(newlyDeadPlayer.Name);
-            outputText.AppendText(" died in the night.\n");
+            outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer);
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
-            outputText.AppendText("As a minion, you learn that ");
-            outputText.AppendBoldText(demon.Name, Color.Red);
-            outputText.AppendText(" is your demon");
-
-            if (fellowMinions.Count == 1)
-            {
-                outputText.AppendText(" and your fellow minion is ");
-                outputText.AppendBoldText(fellowMinions.First().Name, Color.Red);
-            }
-            else if (fellowMinions.Count == 2)
-            {
-                outputText.AppendText(" and your fellow minions are ");
-                outputText.AppendBoldText(fellowMinions.First().Name, Color.Red);
-                outputText.AppendText(" and ");
-                outputText.AppendBoldText(fellowMinions.Last().Name, Color.Red);
-            }
-
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", demon, fellowMinions);
         }
 
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            outputText.AppendText("As a demon, you learn that ");
-            if (minions.Count == 1)
-            {
-                outputText.AppendBoldText(minions.First().Name, Color.Red);
-                outputText.AppendText(" is your minion");
-            }
-            else if (minions.Count == 2)
-            {
-                outputText.AppendBoldText(minions.First().Name, Color.Red);
-                outputText.AppendText(" and ");
-                outputText.AppendBoldText(minions.Last().Name, Color.Red);
-                outputText.AppendText(" are your minions");
-            }
-            else if (minions.Count == 3)
-            {
-                outputText.AppendBoldText(minions.First().Name, Color.Red);
-                outputText.AppendText(", ");
-                outputText.AppendBoldText(minions.Skip(1).First().Name, Color.Red);
-                outputText.AppendText(" and ");
-                outputText.AppendBoldText(minions.Last().Name, Color.Red);
-                outputText.AppendText(" are your minions");
-            }
-            else
-            {
-                throw new ArgumentException("There must be exactly 1-3 minions");
-            }
-
-            outputText.AppendText(", and that the following characters are not in play: ");
-            AppendCharacters(notInPlayCharacters);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.\n", minions, notInPlayCharacters);
         }
 
         public void NotifyGodfather(IReadOnlyCollection<Character> outsiders)
         {
             if (outsiders.Count == 0)
             {
-                outputText.AppendText("You learn that there are no outsiders in play.");
+                outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
                 return;
             }
-            outputText.AppendText("You learn that the following outsiders are in play: ");
-            AppendCharacters(outsiders);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("You learn that the following outsiders are in play: %C.\n", outsiders);
         }
 
         public void NotifySteward(Player goodPlayer)
         {
-            outputText.AppendText("You learn that ");
-            outputText.AppendBoldText(goodPlayer.Name);
-            outputText.AppendText(" is a good player.\n");
+            outputText.AppendFormattedText("You learn that %p is a good player.\n", goodPlayer);
         }
 
         public void NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
-            outputText.AppendText("You learn that either ");
-            outputText.AppendBoldText(playerA.Name);
-            outputText.AppendText(" or ");
-            outputText.AppendBoldText(playerB.Name);
-            outputText.AppendText(" is the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
         }
 
         public void NotifyInvestigator(Player playerA, Player playerB, Character character)
         {
-            outputText.AppendText("You learn that either ");
-            outputText.AppendBoldText(playerA.Name);
-            outputText.AppendText(" or ");
-            outputText.AppendBoldText(playerB.Name);
-            outputText.AppendText(" is the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
         }
 
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            outputText.AppendText("You learn that ");
-            outputText.AppendBoldText(evilCount.ToString());
-            outputText.AppendText(" of your living neighbours (");
-            outputText.AppendBoldText(neighbourA.Name);
-            outputText.AppendText(" and ");
-            outputText.AppendBoldText(neighbourB.Name);
-            if (evilCount == 1)
-            {
-                outputText.AppendText(") is evil.\n");
-            }
-            else
-            {
-                outputText.AppendText(") are evil.\n");
-            }
+            outputText.AppendFormattedText($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", evilCount, neighbourA, neighbourB);
         }
 
         public void NotifyRavenkeeper(Player target, Character character)
         {
-            outputText.AppendText("You learn that ");
-            outputText.AppendBoldText(target.Name);
-            outputText.AppendText(" is the ");
-            AppendCharacterText(character);
-            outputText.AppendText(".\n");
+            outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
         }
 
         public void RequestChoiceFromImp(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
-            outputText.AppendText("As the ");
-            AppendCharacterText(Character.Imp);
-            outputText.AppendText(" please choose a player to kill...\n");
-
+            outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
             PopulateChoices(players, onChoice);
         }
 
         public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<Player> players, Action<Player> onChoice)
         {
-            outputText.AppendText("As the ");
-            AppendCharacterText(Character.Ravenkeeper);
-            outputText.AppendText(" please choose a player whose character you wish to learn...\n");
-
+            outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
             PopulateChoices(players, onChoice);
-        }
-
-        private void AppendCharacterText(Character character)
-        {
-            outputText.AppendText(TextUtilities.CharacterToText(character), TextUtilities.CharacterToColor(character));
-        }
-
-        private void AppendCharacters(IReadOnlyCollection<Character> characters)
-        {
-            bool first = true;
-            foreach (var character in characters)
-            {
-                if (!first)
-                {
-                    outputText.AppendText(", ");
-                }
-                AppendCharacterText(character);
-                first = false;
-            }
         }
 
         private void PopulateChoices(IReadOnlyCollection<Player> players, Action<Player> onChoice)
