@@ -15,31 +15,6 @@ namespace Clocktower.Agent
             form.AssignCharacter(character, alignment);
         }
 
-        public void Night(int nightNumber)
-        {
-            form.Night(nightNumber);
-        }
-
-        public void Day(int dayNumber)
-        {
-            form.Day(dayNumber);
-        }
-
-        public void PlayerDiedAtNight(Player newlyDeadPlayer)
-        {
-            form.PlayerDiedAtNight(newlyDeadPlayer);
-        }
-
-        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
-        {
-            form.PlayerIsExecuted(executedPlayer, playerDies);
-        }
-
-        public void DayEndsWithNoExecution()
-        {
-            form.DayEndsWithNoExecution();
-        }
-
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             form.MinionInformation(demon, fellowMinions);
@@ -95,24 +70,9 @@ namespace Clocktower.Agent
             form.GetNomination(options, onChoice);
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee)
-        {
-            form.AnnounceNomination(nominator, nominee);
-        }
-
         public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
             form.GetVote(options, onChoice);
-        }
-
-        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
-        {
-            form.AnnounceVote(voter, nominee, votedToExecute);
-        }
-        
-        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
-        {
-            form.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
         }
 
         private HumanAgentForm form;

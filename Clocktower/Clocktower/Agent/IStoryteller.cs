@@ -6,12 +6,6 @@ namespace Clocktower.Agent
     {
         void AssignCharacter(Player player);
 
-        void Night(int nightNumber);
-        void Day(int dayNumber);
-        void PlayerDiedAtNight(Player newlyDeadPlayer);
-        void PlayerIsExecuted(Player executedPlayer, bool playerDies);
-        void DayEndsWithNoExecution();
-
         void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions);
         void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
@@ -23,9 +17,5 @@ namespace Clocktower.Agent
 
         void ChoiceFromImp(Player imp, Player target);
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
-
-        void AnnounceNomination(Player nominator, Player nominee);
-        void AnnounceVote(Player voter, Player nominee, bool votedToExecute);
-        void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
     }
 }

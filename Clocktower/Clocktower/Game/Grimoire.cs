@@ -87,22 +87,6 @@ namespace Clocktower.Game
             return (GetNextLivingPlayer(myIndex, players.Count - 1), GetNextLivingPlayer(myIndex, 1));
         }
 
-        public void Night(int nightNumber)
-        {
-            foreach (var player in players)
-            {
-                player.Agent.Night(nightNumber);
-            }
-        }
-
-        public void Day(int dayNumber)
-        {
-            foreach (var player in players)
-            {
-                player.Agent.Day(dayNumber);
-            }
-        }
-
         private static CharacterType CharacterTypeFromCharacter(Character character)
         {
             if ((int)character < 1000)

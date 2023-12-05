@@ -21,6 +21,7 @@ namespace Clocktower.Game
             var forms = playerNames.Select(name => new HumanAgentForm(name)).ToList();
             var agents = forms.Select(form => (IAgent)new HumanAgent(form)).ToList();
 
+            observers = new ObserverCollection(forms.Cast<IGameObserver>().Append(storytellerForm));
             grimoire = new Grimoire(playerNames.Zip(agents).ToDictionary(x => x.First, x => x.Second));
 
             foreach (var form in forms)
@@ -39,8 +40,7 @@ namespace Clocktower.Game
             switch (phase)
             {
                 case Phase.Night:
-                    storyteller.Night(dayNumber);
-                    grimoire.Night(dayNumber);
+                    observers.Night(dayNumber);
                     if (dayNumber == 1)
                     {
                         RunFirstNight();
@@ -52,8 +52,7 @@ namespace Clocktower.Game
                     break;
 
                 case Phase.Morning:
-                    storyteller.Day(dayNumber);
-                    grimoire.Day(dayNumber);
+                    observers.Day(dayNumber);
                     RunMorning();
                     AdvancePhase();
                     RunPhase();
@@ -131,17 +130,13 @@ namespace Clocktower.Game
             {
                 newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                 newlyDeadPlayer.Kill();
-                storyteller.PlayerDiedAtNight(newlyDeadPlayer);
-                foreach (var player in grimoire.Players)
-                {
-                    player.Agent.PlayerDiedAtNight(newlyDeadPlayer);
-                }
+                observers.PlayerDiedAtNight(newlyDeadPlayer);
             }
         }
 
         private void RunEvening()
         {
-            new Nominations(storyteller, grimoire, random).RunEvent(() =>
+            new Nominations(storyteller, grimoire, observers, random).RunEvent(() =>
             {
                 AdvancePhase();
                 RunPhase();
@@ -173,6 +168,7 @@ namespace Clocktower.Game
 
         private Grimoire grimoire;
         private IStoryteller storyteller;
+        private ObserverCollection observers;
         private Random random = new();
 
         private int dayNumber;

@@ -6,10 +6,11 @@ namespace Clocktower.Events
 {
     internal class Nominations : IGameEvent
     {
-        public Nominations(IStoryteller storyteller, Grimoire grimoire, Random random)
+        public Nominations(IStoryteller storyteller, Grimoire grimoire, ObserverCollection observers, Random random)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.observers = observers;
             this.random = random;
         }
 
@@ -75,11 +76,7 @@ namespace Clocktower.Events
             playersWhoHaveAlreadyNominated.Add(nominator);
             playersWhoHaveAlreadyBeenNominated.Add(nominee);
 
-            storyteller.AnnounceNomination(nominator, nominee);
-            foreach (var player in grimoire.Players)
-            {
-                player.Agent.AnnounceNomination(nominator, nominee);
-            }
+            observers.AnnounceNomination(nominator, nominee);
 
             HandleVote(nominee, voteCount =>
             {
@@ -87,11 +84,7 @@ namespace Clocktower.Events
                 bool beatsCurrent = voteCount >= minVotesRequired && (!highestVoteCount.HasValue || voteCount > highestVoteCount.Value);
                 bool tiesCurrent = highestVoteCount.HasValue && voteCount == highestVoteCount.Value;
 
-                storyteller.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
-                foreach (var player in grimoire.Players)
-                {
-                    player.Agent.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
-                }
+                observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
 
                 if (tiesCurrent)
                 {
@@ -123,11 +116,7 @@ namespace Clocktower.Events
             }, choice => 
             {
                 bool votedToExecute = choice is VoteOption;
-                storyteller.AnnounceVote(currentPlayer, nominee, votedToExecute);
-                foreach (var player in grimoire.Players)
-                {
-                    player.Agent.AnnounceVote(currentPlayer, nominee, votedToExecute);
-                }
+                observers.AnnounceVote(currentPlayer, nominee, votedToExecute);
                 if (votedToExecute)
                 {
                     ++currentVoteCount;
@@ -148,24 +137,21 @@ namespace Clocktower.Events
         {
             if (playerOnTheBlock == null)
             {
-                storyteller.DayEndsWithNoExecution();
-                foreach (var player in grimoire.Players)
-                {
-                    player.Agent.DayEndsWithNoExecution();
-                }
-
+                observers.DayEndsWithNoExecution();
                 return;
             }
 
-            storyteller.PlayerIsExecuted(playerOnTheBlock, playerDies: playerOnTheBlock.Alive);
-            foreach (var player in grimoire.Players)
+            bool playerDies = playerOnTheBlock.Alive;
+            observers.PlayerIsExecuted(playerOnTheBlock, playerDies);
+            if (playerDies)
             {
-                player.Agent.PlayerIsExecuted(playerOnTheBlock, playerDies: playerOnTheBlock.Alive);
+                playerOnTheBlock.Kill();
             }
         }
 
         private IStoryteller storyteller;
         private Grimoire grimoire;
+        private ObserverCollection observers;
         private Random random;
 
         private Player? playerOnTheBlock;

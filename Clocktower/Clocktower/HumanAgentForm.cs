@@ -1,9 +1,10 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Options;
 
 namespace Clocktower
 {
-    public partial class HumanAgentForm : Form
+    public partial class HumanAgentForm : Form, IGameObserver
     {
         public HumanAgentForm(string playerName)
         {
@@ -217,7 +218,7 @@ namespace Clocktower
         private Character character;
         private bool alive = true;
 
-        private IReadOnlyCollection<IOption> options;
+        private IReadOnlyCollection<IOption>? options;
         private Action<IOption>? onChoice;
     }
 }

@@ -1,8 +1,9 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 
 namespace Clocktower
 {
-    public partial class StorytellerForm : Form
+    public partial class StorytellerForm : Form, IGameObserver
     {
         public StorytellerForm()
         {
