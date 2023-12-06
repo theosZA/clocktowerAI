@@ -9,7 +9,7 @@ namespace Clocktower.Game
     /// </summary>
     internal class ClocktowerGame
     {
-        public bool Finished => false;
+        public bool Finished => GetWinner().HasValue;
 
         public ClocktowerGame()
         {
@@ -30,6 +30,34 @@ namespace Clocktower.Game
             }
 
             grimoire.AssignCharacters(storyteller);
+        }
+
+        public Alignment? GetWinner()
+        {
+            // The game is over if there are no living demons...
+            if (!grimoire.Players.Any(player => player.Alive && player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Demon))
+            {
+                return Alignment.Good;
+            }
+
+            // ...or there are fewer than 3 players alive.
+            if (grimoire.Players.Count(player => player.Alive) < 3)
+            {
+                return Alignment.Evil;
+            }
+
+            return null;
+        }
+
+        public void AnnounceWinner()
+        {
+            var winner = GetWinner();
+            if (winner.HasValue)
+            {
+                observers.AnnounceWinner(winner.Value,
+                                         grimoire.Players.Where(player => player.RealAlignment == winner.Value).ToList(),
+                                         grimoire.Players.Where(player => player.RealAlignment != winner.Value).ToList());
+            }
         }
 
         public async Task RunNightAndDay()

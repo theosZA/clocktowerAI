@@ -18,6 +18,7 @@ namespace Clocktower
                 {
                     await clocktowerGame.RunNightAndDay();
                 }
+                clocktowerGame.AnnounceWinner();
             }
             catch (Exception exception)
             {

@@ -20,6 +20,30 @@ namespace Clocktower.Game
         public Character? Character => believedCharacter ?? RealCharacter;
         public Alignment? Alignment => believedAlignment ?? RealAlignment;
 
+        public CharacterType? CharacterType
+        {
+            get
+            {
+                if (RealCharacter == null)
+                {
+                    return null;
+                }
+                else  if ((int)RealCharacter < 1000)
+                {
+                    return Game.CharacterType.Townsfolk;
+                }
+                if ((int)RealCharacter < 2000)
+                {
+                    return Game.CharacterType.Outsider;
+                }
+                if ((int)RealCharacter < 3000)
+                {
+                    return Game.CharacterType.Demon;
+                }
+                return Game.CharacterType.Minion;
+            }
+        }
+
         public bool DrunkOrPoisoned => RealCharacter.HasValue && RealCharacter.Value == Game.Character.Drunk;
 
         public List<Token> Tokens { get; } = new();

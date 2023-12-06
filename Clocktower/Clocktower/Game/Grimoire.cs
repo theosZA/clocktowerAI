@@ -67,17 +67,17 @@ namespace Clocktower.Game
 
         public Player GetDemon()
         {
-            return players.First(player => player.RealCharacter.HasValue && CharacterTypeFromCharacter(player.RealCharacter.Value) == CharacterType.Demon);
+            return players.First(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Demon);
         }
 
         public IEnumerable<Player> GetMinions()
         {
-            return players.Where(player => player.RealCharacter.HasValue && CharacterTypeFromCharacter(player.RealCharacter.Value) == CharacterType.Minion);
+            return players.Where(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Minion);
         }
 
         public IEnumerable<Character> GetOutsiders()
         {
-            return players.Where(player => player.RealCharacter.HasValue && CharacterTypeFromCharacter(player.RealCharacter.Value) == CharacterType.Outsider)
+            return players.Where(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Outsider)
                           .Select(player => player.RealCharacter ?? (Character)(-1));
         }
 
@@ -85,23 +85,6 @@ namespace Clocktower.Game
         {
             int myIndex = players.IndexOf(player);
             return (GetNextLivingPlayer(myIndex, players.Count - 1), GetNextLivingPlayer(myIndex, 1));
-        }
-
-        private static CharacterType CharacterTypeFromCharacter(Character character)
-        {
-            if ((int)character < 1000)
-            {
-                return CharacterType.Townsfolk;
-            }
-            if ((int)character < 2000)
-            {
-                return CharacterType.Outsider;
-            }
-            if ((int)character < 3000)
-            {
-                return CharacterType.Demon;
-            }
-            return CharacterType.Minion;
         }
 
         private Player GetNextLivingPlayer(int startIndex, int increment)

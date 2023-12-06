@@ -33,6 +33,14 @@ namespace Clocktower.Observer
             }
         }
 
+        public void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
+        {
+            foreach (var observer in observers)
+            {
+                observer.AnnounceWinner(winner, winners, losers);
+            }
+        }
+
         public void Day(int dayNumber)
         {
             foreach (var observer in observers)

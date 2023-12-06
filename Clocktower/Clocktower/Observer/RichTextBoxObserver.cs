@@ -11,6 +11,23 @@ namespace Clocktower.Observer
             this.outputText = outputText;
         }
 
+        public void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
+        {
+            bool forceStorytellerView = true;   // Game over - everyone can know who was what.
+            if (winner == Alignment.Good)
+            {
+                outputText.AppendBoldText("\nThe GOOD team has won!\n\n", Color.Green);
+                outputText.AppendFormattedText("Winning with the good team are: %P.\n", winners, forceStorytellerView);
+                outputText.AppendFormattedText("Losing with the evil team are: %P.\n", losers, forceStorytellerView);
+            }
+            else
+            {
+                outputText.AppendBoldText("\nThe EVIL team has won!\n\n", Color.Red);
+                outputText.AppendFormattedText("Winning with the evil team are: %P.\n", winners, forceStorytellerView);
+                outputText.AppendFormattedText("Losing with the good team are: %P.\n", losers, forceStorytellerView);
+            }
+        }
+
         public void Night(int nightNumber)
         {
             outputText.AppendBoldText($"\nNight {nightNumber}\n\n");
