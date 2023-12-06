@@ -23,6 +23,7 @@ namespace Clocktower
             catch (Exception exception)
             {
                 statusLabel.Text = exception.Message;
+                Console.WriteLine(exception.ToString());
             }
         }
     }

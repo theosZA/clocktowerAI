@@ -54,6 +54,11 @@ namespace Clocktower.Agent
             form.ChoiceFromImp(imp, target);
         }
 
+        public void ChoiceFromAssassin(Player assassin, Player? target)
+        {
+            form.ChoiceFromAssassin(assassin, target);
+        }
+
         public void ChoiceFromGodfather(Player godfather, Player target)
         {
             form.ChoiceFromGodfather(godfather, target);

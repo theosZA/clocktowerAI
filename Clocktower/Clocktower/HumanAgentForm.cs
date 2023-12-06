@@ -104,6 +104,12 @@ namespace Clocktower
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a player to kill...\n", Character.Assassin);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Godfather);

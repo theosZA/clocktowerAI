@@ -84,6 +84,18 @@ namespace Clocktower
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
         }
 
+        public void ChoiceFromAssassin(Player assassin, Player? target)
+        {
+            if (target == null)
+            {
+                outputText.AppendFormattedText("%p is not using their ability tonight.\n", assassin, StorytellerView);
+            }
+            else
+            {
+                outputText.AppendFormattedText("%p has chosen to kill %p.\n", assassin, target, StorytellerView);
+            }
+        }
+
         public void ChoiceFromGodfather(Player godfather, Player target)
         {
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", godfather, target, StorytellerView);
