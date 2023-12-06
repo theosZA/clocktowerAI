@@ -90,12 +90,19 @@ namespace Clocktower.Game
 
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {
-                var choice = await player.Agent.GetVote(voteOptions);
-                bool votedToExecute = choice is VoteOption;
-                observers.AnnounceVote(player, nominee, votedToExecute);
-                if (votedToExecute)
+                if (player.Alive || player.HasGhostVote)
                 {
-                    ++voteCount;
+                    var choice = await player.Agent.GetVote(voteOptions);
+                    bool votedToExecute = choice is VoteOption;
+                    observers.AnnounceVote(player, nominee, votedToExecute);
+                    if (votedToExecute)
+                    {
+                        ++voteCount;
+                        if (!player.Alive)
+                        {
+                            player.UseGhostVote();
+                        }
+                    }
                 }
             }
 

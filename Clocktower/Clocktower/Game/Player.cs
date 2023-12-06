@@ -1,5 +1,4 @@
 ﻿using Clocktower.Agent;
-using System.Runtime.CompilerServices;
 
 namespace Clocktower.Game
 {
@@ -13,6 +12,7 @@ namespace Clocktower.Game
         public IAgent Agent { get; }
 
         public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight);
+        public bool HasGhostVote { get; private set; } = true;
 
         public Character? RealCharacter { get; private set; }
         public Alignment? RealAlignment { get; private set; }
@@ -56,6 +56,12 @@ namespace Clocktower.Game
         public void Kill()
         {
             alive = false;
+            Agent.YouAreDead();
+        }
+
+        public void UseGhostVote()
+        {
+            HasGhostVote = false;
         }
 
         private Character? believedCharacter;

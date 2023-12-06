@@ -15,6 +15,11 @@ namespace Clocktower.Agent
             form.AssignCharacter(character, alignment);
         }
 
+        public void YouAreDead()
+        {
+            form.YouAreDead();
+        }
+
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             form.MinionInformation(demon, fellowMinions);

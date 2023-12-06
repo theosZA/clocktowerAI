@@ -27,6 +27,15 @@ namespace Clocktower
             outputText.AppendFormattedText("You are the %c.\n", character);
         }
 
+        public void YouAreDead()
+        {
+            alive = false;
+
+            SetTitleText();
+
+            outputText.AppendBoldText("You are dead and are now a ghost. You may only vote one more time.\n");
+        }
+
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             outputText.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", demon, fellowMinions);

@@ -6,6 +6,7 @@ namespace Clocktower.Agent
     public interface IAgent
     {
         void AssignCharacter(Character character, Alignment alignment);
+        void YouAreDead();
 
         void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);
         void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);

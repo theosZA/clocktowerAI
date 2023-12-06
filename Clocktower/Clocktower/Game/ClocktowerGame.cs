@@ -15,18 +15,18 @@ namespace Clocktower.Game
         {
             var storytellerForm = new StorytellerForm();
             storyteller = new HumanStoryteller(storytellerForm);
-            storytellerForm.Show();
 
             var playerNames = new[] { "Alison", "Barry", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
-            var forms = playerNames.Select(name => new HumanAgentForm(name)).ToList();
-            var agents = forms.Select(form => (IAgent)new HumanAgent(form)).ToList();
+            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name));
+            var players = playerNames.Select(name => new Player(name, new HumanAgent(playerForms[name])));
 
-            observers = new ObserverCollection(forms.Select(form => form.Observer).Append(storytellerForm.Observer));
-            grimoire = new Grimoire(playerNames.Zip(agents).ToDictionary(x => x.First, x => x.Second));
+            observers = new ObserverCollection(playerForms.Select(form => form.Value.Observer).Append(storytellerForm.Observer));
+            grimoire = new Grimoire(players);
 
-            foreach (var form in forms)
+            storytellerForm.Show();
+            foreach (var form in playerForms)
             {
-                form.Show();
+                form.Value.Show();
             }
 
             grimoire.AssignCharacters(storyteller);

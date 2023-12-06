@@ -9,9 +9,9 @@ namespace Clocktower.Game
     {
         public IReadOnlyCollection<Player> Players => players;
 
-        public Grimoire(IDictionary<string, IAgent> playerAgents)
+        public Grimoire(IEnumerable<Player> players)
         {
-            players = playerAgents.Select(playerAgent => new Player(playerAgent.Key, playerAgent.Value)).ToList();
+            this.players = players.ToList();
         }
 
         public void AssignCharacters(IStoryteller storyteller)

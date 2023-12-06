@@ -56,7 +56,14 @@ namespace Clocktower.Observer
         {
             if (votedToExecute)
             {
-                outputText.AppendFormattedText("%p votes to execute %p.\n", voter, nominee, StorytellerView);
+                if (voter.Alive)
+                {
+                    outputText.AppendFormattedText("%p votes to execute %p.\n", voter, nominee, StorytellerView);
+                }
+                else
+                {
+                    outputText.AppendFormattedText("%p uses their ghost vote to execute %p.\n", voter, nominee, StorytellerView);
+                }
             }
             else
             {
