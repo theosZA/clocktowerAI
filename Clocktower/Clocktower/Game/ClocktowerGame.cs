@@ -17,7 +17,7 @@ namespace Clocktower.Game
             storyteller = new HumanStoryteller(storytellerForm);
 
             var playerNames = new[] { "Alison", "Barry", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
-            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name));
+            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name, random));
             var players = playerNames.Select(name => new Player(name, new HumanAgent(playerForms[name])));
 
             observers = new ObserverCollection(playerForms.Select(form => form.Value.Observer).Append(storytellerForm.Observer));

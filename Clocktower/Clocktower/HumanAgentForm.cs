@@ -8,14 +8,24 @@ namespace Clocktower
     {
         public IGameObserver Observer { get; private set; }
 
-        public HumanAgentForm(string playerName)
+        public bool AutoAct
+        {
+            get => autoCheckbox.Checked;
+            set => autoCheckbox.Checked = value;
+        }
+
+        public HumanAgentForm(string playerName, Random random)
         {
             InitializeComponent();
+
+            this.random = random;
 
             this.playerName = playerName;
             Text = playerName;
 
             Observer = new RichTextBoxObserver(outputText);
+
+            AutoAct = true; // for testing
         }
 
         public void AssignCharacter(Character character, Alignment _)
@@ -108,6 +118,23 @@ namespace Clocktower
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
         {
+            if (AutoAct)
+            {
+                // If Pass is an option, pick it half the time.
+                var passOption = options.FirstOrDefault(option => option is PassOption);
+                if (passOption != null && random.Next(2) == 1)
+                {
+                    return Task.FromResult(passOption);
+                }
+
+                // For now, just pick an option at random.
+                // Exclude dead players and ourself from our choices.
+                var autoOptions = options.Where(option => option is not PassOption)
+                                         .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
+                                         .ToList();
+                return Task.FromResult(autoOptions.RandomPick(random));
+            }
+
             this.options = options;
 
             choicesComboBox.Items.Clear();
@@ -157,6 +184,8 @@ namespace Clocktower
 
             OnChoice?.Invoke(option);
         }
+
+        private Random random;
 
         private string playerName;
         private Character character;

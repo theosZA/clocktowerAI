@@ -10,5 +10,10 @@
                 (list[i], list[j]) = (list[j], list[i]);
             }
         }
+
+        public static T RandomPick<T>(this IList<T> list, Random random)
+        {
+            return list[random.Next(list.Count)];
+        }
     }
 }

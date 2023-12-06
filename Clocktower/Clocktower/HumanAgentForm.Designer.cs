@@ -31,6 +31,7 @@
             outputText = new RichTextBox();
             choicesComboBox = new ComboBox();
             chooseButton = new Button();
+            autoCheckbox = new CheckBox();
             SuspendLayout();
             // 
             // outputText
@@ -38,7 +39,7 @@
             outputText.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             outputText.Location = new Point(14, 12);
             outputText.Name = "outputText";
-            outputText.Size = new Size(435, 351);
+            outputText.Size = new Size(446, 351);
             outputText.TabIndex = 0;
             outputText.Text = "";
             // 
@@ -64,17 +65,29 @@
             chooseButton.UseVisualStyleBackColor = true;
             chooseButton.Click += chooseButton_Click;
             // 
+            // autoCheckbox
+            // 
+            autoCheckbox.AutoSize = true;
+            autoCheckbox.Location = new Point(408, 375);
+            autoCheckbox.Name = "autoCheckbox";
+            autoCheckbox.Size = new Size(52, 19);
+            autoCheckbox.TabIndex = 3;
+            autoCheckbox.Text = "Auto";
+            autoCheckbox.UseVisualStyleBackColor = true;
+            // 
             // HumanAgentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(462, 413);
+            ClientSize = new Size(472, 413);
+            Controls.Add(autoCheckbox);
             Controls.Add(chooseButton);
             Controls.Add(choicesComboBox);
             Controls.Add(outputText);
             Name = "HumanAgentForm";
             Text = "HumanAgentForm";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -82,5 +95,6 @@
         private RichTextBox outputText;
         private ComboBox choicesComboBox;
         private Button chooseButton;
+        private CheckBox autoCheckbox;
     }
 }
