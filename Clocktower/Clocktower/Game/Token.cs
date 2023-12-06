@@ -2,6 +2,8 @@
 {
     public enum Token
     {
-        DiedAtNight
+        KilledByDemon,
+        DiedAtNight,
+        GodfatherKillsTonight
     }
 }

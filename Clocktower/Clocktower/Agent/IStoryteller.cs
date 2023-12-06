@@ -16,6 +16,7 @@ namespace Clocktower.Agent
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
 
         void ChoiceFromImp(Player imp, Player target);
+        void ChoiceFromGodfather(Player godfather, Player target);
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
     }
 }

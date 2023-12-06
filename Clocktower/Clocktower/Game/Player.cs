@@ -11,7 +11,7 @@ namespace Clocktower.Game
         public string Name { get; }
         public IAgent Agent { get; }
 
-        public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight);
+        public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight) && !Tokens.Contains(Token.KilledByDemon);
         public bool HasGhostVote { get; private set; } = true;
 
         public Character? RealCharacter { get; private set; }

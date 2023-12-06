@@ -122,6 +122,14 @@ namespace Clocktower.Game
             if (playerDies)
             {
                 playerOnTheBlock.Kill();
+
+                if (playerOnTheBlock.CharacterType == CharacterType.Outsider)
+                {
+                    foreach (var player in grimoire.Players.Where(player => player.Character == Character.Godfather))
+                    {
+                        player.Tokens.Add(Token.GodfatherKillsTonight);
+                    }
+                }
             }
         }
 

@@ -48,7 +48,14 @@ namespace Clocktower
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
-            outputText.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", demon, fellowMinions);
+            if (fellowMinions.Any())
+            {
+                outputText.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", demon, fellowMinions);
+            }
+            else
+            {
+                outputText.AppendFormattedText($"As a minion, you learn that %p is your demon.\n", demon);
+            }
         }
 
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -97,6 +104,12 @@ namespace Clocktower
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Godfather);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
@@ -120,9 +133,9 @@ namespace Clocktower
         {
             if (AutoAct)
             {
-                // If Pass is an option, pick it half the time.
+                // If Pass is an option, pick it 40% of the time.
                 var passOption = options.FirstOrDefault(option => option is PassOption);
-                if (passOption != null && random.Next(2) == 1)
+                if (passOption != null && random.Next(5) < 2)
                 {
                     return Task.FromResult(passOption);
                 }

@@ -16,7 +16,7 @@ namespace Clocktower.Events
         public async Task RunEvent()
         {
             var ravenkeeper = grimoire.GetPlayer(Character.Ravenkeeper);
-            if (ravenkeeper == null || !ravenkeeper.Tokens.Contains(Token.DiedAtNight)) // Needs to exclude Godfather and Assassin!
+            if (ravenkeeper == null || !ravenkeeper.Tokens.Contains(Token.KilledByDemon))
             {
                 return;
             }

@@ -106,7 +106,7 @@ namespace Clocktower.Game
                 // Scarlet Woman...
                 new ChoiceFromImp(storyteller, grimoire),
                 // Assassin...
-                // Godfather...
+                new ChoiceFromGodfather(storyteller, grimoire),
                 // Sweetheart...
                 // Tinker...
                 new ChoiceFromRavenkeeper(storyteller, grimoire),
@@ -116,23 +116,32 @@ namespace Clocktower.Game
             });
         }
 
-        private static async Task RunNightEvents(IEnumerable<IGameEvent> nightEvents)
+        private async Task RunNightEvents(IEnumerable<IGameEvent> nightEvents)
         {
             foreach (var nightEvent in nightEvents)
             {
                 await nightEvent.RunEvent();
+                if (Finished)
+                {
+                    return;
+                }
             }
         }
 
         private async Task RunDay()
         {
             // Announce kills that happened in the night.
-            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight));
+            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon));
             foreach (var newlyDeadPlayer in newlyDeadPlayers)
             {
                 newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
+                newlyDeadPlayer.Tokens.Remove(Token.KilledByDemon);
                 newlyDeadPlayer.Kill();
                 observers.PlayerDiedAtNight(newlyDeadPlayer);
+                if (Finished)
+                {
+                    return;
+                }
             }
 
             // TBD Conversations during the day.

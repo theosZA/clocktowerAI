@@ -30,7 +30,7 @@ namespace Clocktower.Events
             storyteller.ChoiceFromImp(imp, player);
             if (player.Alive)
             {
-                player.Tokens.Add(Token.DiedAtNight);
+                player.Tokens.Add(Token.KilledByDemon);
                 if (player == imp)
                 {   // Star-pass
                     // For now it just goes to the first alive minion.

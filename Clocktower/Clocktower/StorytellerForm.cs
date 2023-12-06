@@ -34,7 +34,14 @@ namespace Clocktower
 
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
-            outputText.AppendFormattedText($"%p learns that %p is their demon and that their fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", minion, demon, fellowMinions, StorytellerView);
+            if (fellowMinions.Any())
+            {
+                outputText.AppendFormattedText($"%p learns that %p is their demon and that their fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", minion, demon, fellowMinions, StorytellerView);
+            }
+            else
+            {
+                outputText.AppendFormattedText($"%p learns that %p is their demon.\n", minion, demon, StorytellerView);
+            }
         }
 
         public void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -76,6 +83,12 @@ namespace Clocktower
         {
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
         }
+
+        public void ChoiceFromGodfather(Player godfather, Player target)
+        {
+            outputText.AppendFormattedText("%p has chosen to kill %p.\n", godfather, target, StorytellerView);
+        }
+
 
         public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
         {
