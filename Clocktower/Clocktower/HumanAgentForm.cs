@@ -1,17 +1,21 @@
-﻿using Clocktower.Agent;
-using Clocktower.Game;
+﻿using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Options;
 
 namespace Clocktower
 {
-    public partial class HumanAgentForm : Form, IGameObserver
+    public partial class HumanAgentForm : Form
     {
+        public IGameObserver Observer { get; private set; }
+
         public HumanAgentForm(string playerName)
         {
             InitializeComponent();
 
             this.playerName = playerName;
             Text = playerName;
+
+            Observer = new RichTextBoxObserver(outputText);
         }
 
         public void AssignCharacter(Character character, Alignment _)
@@ -21,44 +25,6 @@ namespace Clocktower
             SetTitleText();
 
             outputText.AppendFormattedText("You are the %c.\n", character);
-        }
-
-        public void Night(int nightNumber)
-        {
-            outputText.AppendBoldText($"\nNight {nightNumber}\n\n");
-        }
-
-        public void Day(int dayNumber)
-        {
-            outputText.AppendBoldText($"\nDay {dayNumber}\n\n");
-        }
-
-        public void PlayerDiedAtNight(Player newlyDeadPlayer)
-        {
-            outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer);
-            CheckForDeath(newlyDeadPlayer);
-        }
-
-        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
-        {
-            if (playerDies)
-            {
-                outputText.AppendFormattedText("%p is executed and dies.\n", executedPlayer);
-                CheckForDeath(executedPlayer);
-            }
-            else if (executedPlayer.Alive)
-            {
-                outputText.AppendFormattedText("%p is executed but does not die.\n", executedPlayer);
-            }
-            else
-            {
-                outputText.AppendFormattedText("%p's corpse is executed.\n", executedPlayer);
-            }
-        }
-
-        public void DayEndsWithNoExecution()
-        {
-            outputText.AppendText("There is no execution and the day ends.\n");
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
@@ -124,44 +90,11 @@ namespace Clocktower
             PopulateOptions(options, onChoice);
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee)
-        {
-            outputText.AppendFormattedText("%p nominates %p.\n", nominator, nominee);
-        }
-
         public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
         {
             var voteOption = (VoteOption)(options.First(option => option is VoteOption));
             outputText.AppendFormattedText("If you wish, you may vote for executing %p or pass...\n", voteOption.Nominee);
             PopulateOptions(options, onChoice);
-        }
-
-        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
-        {
-            if (votedToExecute)
-            {
-                outputText.AppendFormattedText("%p votes to execute %p.\n", voter, nominee);
-            }
-            else
-            {
-                outputText.AppendFormattedText("%p does not vote.\n", voter, nominee);
-            }
-        }
-
-        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
-        {
-            if (beatsCurrent)
-            {
-                outputText.AppendFormattedText("%p received %b votes. That is enough to put them on the block.\n", nominee, voteCount);
-            }
-            else if (tiesCurrent)
-            {
-                outputText.AppendFormattedText("%p received %b votes which is a tie. No one is on the block.\n", nominee, voteCount);
-            }
-            else
-            {
-                outputText.AppendFormattedText("%p received %b votes which is not enough.\n", nominee, voteCount);
-            }
         }
 
         private void PopulateOptions(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
@@ -184,15 +117,6 @@ namespace Clocktower
             if (!alive)
             {
                 Text += " GHOST";
-            }
-        }
-
-        private void CheckForDeath(Player playerWhoDied)
-        {
-            if (alive && playerWhoDied.Name == playerName)
-            {
-                alive = false;
-                SetTitleText();
             }
         }
 

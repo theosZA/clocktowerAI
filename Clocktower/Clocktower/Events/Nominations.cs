@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Options;
 
 namespace Clocktower.Events

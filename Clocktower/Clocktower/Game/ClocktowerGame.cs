@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
+using Clocktower.Observer;
 using System.ComponentModel;
 
 namespace Clocktower.Game
@@ -21,7 +22,7 @@ namespace Clocktower.Game
             var forms = playerNames.Select(name => new HumanAgentForm(name)).ToList();
             var agents = forms.Select(form => (IAgent)new HumanAgent(form)).ToList();
 
-            observers = new ObserverCollection(forms.Cast<IGameObserver>().Append(storytellerForm));
+            observers = new ObserverCollection(forms.Select(form => form.Observer).Append(storytellerForm.Observer));
             grimoire = new Grimoire(playerNames.Zip(agents).ToDictionary(x => x.First, x => x.Second));
 
             foreach (var form in forms)

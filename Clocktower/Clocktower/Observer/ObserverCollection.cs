@@ -1,6 +1,6 @@
 ﻿using Clocktower.Game;
 
-namespace Clocktower.Agent
+namespace Clocktower.Observer
 {
     internal class ObserverCollection : IGameObserver
     {
@@ -19,7 +19,7 @@ namespace Clocktower.Agent
 
         public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
-            foreach(var observer in observers)
+            foreach (var observer in observers)
             {
                 observer.AnnounceVote(voter, nominee, votedToExecute);
             }

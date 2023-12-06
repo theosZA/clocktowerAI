@@ -1,11 +1,11 @@
 ﻿using Clocktower.Game;
 
-namespace Clocktower.Agent
+namespace Clocktower.Observer
 {
     /// <summary>
     /// An observer sees public information such as public changes to the game state.
     /// </summary>
-    internal interface IGameObserver
+    public interface IGameObserver
     {
         void Night(int nightNumber);
         void Day(int dayNumber);
