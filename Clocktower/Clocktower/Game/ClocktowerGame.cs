@@ -1,7 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
 using Clocktower.Observer;
-using System.ComponentModel;
 
 namespace Clocktower.Game
 {
@@ -31,52 +30,29 @@ namespace Clocktower.Game
             }
 
             grimoire.AssignCharacters(storyteller);
-
-            dayNumber = 1;
-            phase = Phase.Night;
         }
 
-        public void RunPhase()
+        public async Task RunNightAndDay()
         {
-            switch (phase)
+            ++dayNumber;
+
+            observers.Night(dayNumber);
+            if (dayNumber == 1)
             {
-                case Phase.Night:
-                    observers.Night(dayNumber);
-                    if (dayNumber == 1)
-                    {
-                        RunFirstNight();
-                    }
-                    else
-                    {
-                        RunNight();
-                    }
-                    break;
-
-                case Phase.Morning:
-                    observers.Day(dayNumber);
-                    RunMorning();
-                    AdvancePhase();
-                    RunPhase();
-                    break;
-
-                case Phase.Day:
-                    // TBD
-                    AdvancePhase();
-                    RunPhase();
-                    break;
-
-                case Phase.Evening:
-                    RunEvening();
-                    break;
-
-                default:
-                    throw new InvalidEnumArgumentException(nameof(phase));
+                await RunFirstNight();
             }
+            else
+            {
+                await RunNight();
+            }
+
+            observers.Day(dayNumber);
+            await RunDay();
         }
 
-        private void RunFirstNight()
+        private async Task RunFirstNight()
         {
-            RunNightEvents(new IGameEvent[]
+            await RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
                 new MinionInformation(storyteller, grimoire),
@@ -92,9 +68,9 @@ namespace Clocktower.Game
             });
         }
 
-        private void RunNight()
+        private async Task RunNight()
         {
-            RunNightEvents(new IGameEvent[]
+            await RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
                 // Poisoner...
@@ -112,20 +88,17 @@ namespace Clocktower.Game
             });
         }
 
-        private void RunNightEvents(IGameEvent[] nightEvents, int currentIndex = 0)
+        private static async Task RunNightEvents(IEnumerable<IGameEvent> nightEvents)
         {
-            if (currentIndex >= nightEvents.Length)
-            {   // finished
-                AdvancePhase();
-                RunPhase();
-                return;
+            foreach (var nightEvent in nightEvents)
+            {
+                await nightEvent.RunEvent();
             }
-
-            nightEvents[currentIndex].RunEvent(() => { RunNightEvents(nightEvents, currentIndex + 1); });
         }
 
-        private void RunMorning()
+        private async Task RunDay()
         {
+            // Announce kills that happened in the night.
             var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight));
             foreach (var newlyDeadPlayer in newlyDeadPlayers)
             {
@@ -133,46 +106,18 @@ namespace Clocktower.Game
                 newlyDeadPlayer.Kill();
                 observers.PlayerDiedAtNight(newlyDeadPlayer);
             }
+
+            // TBD Conversations during the day.
+
+            // Nominations.
+            await new Nominations(storyteller, grimoire, observers, random).RunNominations();
         }
 
-        private void RunEvening()
-        {
-            new Nominations(storyteller, grimoire, observers, random).RunEvent(() =>
-            {
-                AdvancePhase();
-                RunPhase();
-            });
-        }
+        private readonly Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly ObserverCollection observers;
+        private readonly Random random = new();
 
-        private void AdvancePhase()
-        {
-            switch (phase)
-            {
-                case Phase.Night:
-                    phase = Phase.Morning;
-                    break;
-
-                case Phase.Morning:
-                    phase = Phase.Day;
-                    break;
-
-                case Phase.Day:
-                    phase = Phase.Evening;
-                    break;
-
-                case Phase.Evening:
-                    phase = Phase.Night;
-                    ++dayNumber;
-                    break;
-            }
-        }
-
-        private Grimoire grimoire;
-        private IStoryteller storyteller;
-        private ObserverCollection observers;
-        private Random random = new();
-
-        private int dayNumber;
-        private Phase phase;
+        private int dayNumber = 0;
     }
 }

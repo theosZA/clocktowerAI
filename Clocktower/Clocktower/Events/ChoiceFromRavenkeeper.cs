@@ -13,64 +13,61 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public async Task RunEvent()
         {
             var ravenkeeper = grimoire.GetPlayer(Character.Ravenkeeper);
             if (ravenkeeper == null || !ravenkeeper.Tokens.Contains(Token.DiedAtNight)) // Needs to exclude Godfather and Assassin!
             {
-                onEventFinished();
                 return;
             }
 
             var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
-            ravenkeeper.Agent.RequestChoiceFromRavenkeeper(options, option =>
-            {
-                var playerOption = option as PlayerOption;
-                Debug.Assert(playerOption != null);
-                var player = playerOption.Player;
 
-                if (!player.RealCharacter.HasValue)
+            var choice = await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(options);
+            var playerOption = choice as PlayerOption;
+            Debug.Assert(playerOption != null);
+            var player = playerOption.Player;
+
+            if (!player.RealCharacter.HasValue)
+            {
+                throw new ArgumentException("Player does not have character assigned");
+            }
+            var character = player.RealCharacter.Value;
+            if (character == Character.Recluse)
+            {
+                // Hard-coded misinfo
+                character = Character.Imp;
+            }
+            else if (ravenkeeper.DrunkOrPoisoned)
+            {
+                if (!player.Alignment.HasValue)
                 {
-                    throw new ArgumentException("Player does not have character assigned");
+                    throw new ArgumentException("Player does not have alignment assigned");
                 }
-                var character = player.RealCharacter.Value;
-                if (character == Character.Recluse)
+                if (player.Alignment.Value == Alignment.Evil)
+                {
+                    // Hard-coded bluffs
+                    if (character == Character.Imp)
+                    {
+                        character = Character.Soldier;
+                    }
+                    else
+                    {
+                        character = Character.Fortune_Teller;
+                    }
+                }
+                else if (player != ravenkeeper)
                 {
                     // Hard-coded misinfo
                     character = Character.Imp;
                 }
-                else if (ravenkeeper.DrunkOrPoisoned)
-                {
-                    if (!player.Alignment.HasValue)
-                    {
-                        throw new ArgumentException("Player does not have alignment assigned");
-                    }
-                    if (player.Alignment.Value == Alignment.Evil)
-                    {
-                        // Hard-coded bluffs
-                        if (character == Character.Imp)
-                        {
-                            character = Character.Soldier;
-                        }
-                        else
-                        {
-                            character = Character.Fortune_Teller;
-                        }
-                    }
-                    else if (player != ravenkeeper)
-                    {
-                        // Hard-coded misinfo
-                        character = Character.Imp;
-                    }
-                }
+            }
 
-                storyteller.ChoiceFromRavenkeeper(ravenkeeper, player, character);
-                ravenkeeper.Agent.NotifyRavenkeeper(player, character);
-                onEventFinished();
-            });
+            storyteller.ChoiceFromRavenkeeper(ravenkeeper, player, character);
+            ravenkeeper.Agent.NotifyRavenkeeper(player, character);
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

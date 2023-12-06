@@ -33,7 +33,6 @@
             newToolStripMenuItem = new ToolStripMenuItem();
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
-            advanceButton = new Button();
             mainMenu.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
@@ -74,23 +73,11 @@
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(0, 17);
             // 
-            // advanceButton
-            // 
-            advanceButton.Enabled = false;
-            advanceButton.Location = new Point(12, 76);
-            advanceButton.Name = "advanceButton";
-            advanceButton.Size = new Size(75, 23);
-            advanceButton.TabIndex = 2;
-            advanceButton.Text = "Advance";
-            advanceButton.UseVisualStyleBackColor = true;
-            advanceButton.Click += advanceButton_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(advanceButton);
             Controls.Add(statusStrip);
             Controls.Add(mainMenu);
             MainMenuStrip = mainMenu;
@@ -110,7 +97,6 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private StatusStrip statusStrip;
-        private Button advanceButton;
         private ToolStripStatusLabel statusLabel;
     }
 }

@@ -55,24 +55,24 @@ namespace Clocktower.Agent
             form.NotifyRavenkeeper(target, character);
         }
 
-        public void RequestChoiceFromImp(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
-            form.RequestChoiceFromImp(options, onChoice);
+            return await form.RequestChoiceFromImp(options);
         }
 
-        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
-            form.RequestChoiceFromRavenkeeper(options, onChoice);
+            return await form.RequestChoiceFromRavenkeeper(options);
         }
 
-        public void GetNomination(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
-            form.GetNomination(options, onChoice);
+            return await form.GetNomination(options);
         }
 
-        public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options)
         {
-            form.GetVote(options, onChoice);
+            return await form.GetVote(options);
         }
 
         private HumanAgentForm form;

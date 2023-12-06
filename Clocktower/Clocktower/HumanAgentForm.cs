@@ -72,35 +72,34 @@ namespace Clocktower
             outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
         }
 
-        public void RequestChoiceFromImp(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
-            PopulateOptions(options, onChoice);
+            return await PopulateOptions(options);
         }
 
-        public void RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
-            PopulateOptions(options, onChoice);
+            return await PopulateOptions(options);
         }
 
-        public void GetNomination(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendText("Please nominate a player or pass...\n");
-            PopulateOptions(options, onChoice);
+            return await PopulateOptions(options);
         }
 
-        public void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options)
         {
             var voteOption = (VoteOption)(options.First(option => option is VoteOption));
             outputText.AppendFormattedText("If you wish, you may vote for executing %p or pass...\n", voteOption.Nominee);
-            PopulateOptions(options, onChoice);
+            return await PopulateOptions(options);
         }
 
-        private void PopulateOptions(IReadOnlyCollection<IOption> options, Action<IOption> onChoice)
+        private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
         {
             this.options = options;
-            this.onChoice = onChoice;
 
             choicesComboBox.Items.Clear();
             foreach (var option in options)
@@ -109,6 +108,18 @@ namespace Clocktower
             }
             choicesComboBox.Enabled = true;
             chooseButton.Enabled = true;
+
+            var taskCompletionSource = new TaskCompletionSource<IOption>();
+
+            void onChoiceHandler(IOption option)
+            {
+                taskCompletionSource.SetResult(option);
+                this.OnChoice -= onChoiceHandler;
+            }
+
+            this.OnChoice += onChoiceHandler;
+
+            return taskCompletionSource.Task;
         }
 
         private void SetTitleText()
@@ -135,7 +146,7 @@ namespace Clocktower
 
             outputText.AppendBoldText($">> {option.Name}\n", Color.Green);
 
-            onChoice?.Invoke(option);
+            OnChoice?.Invoke(option);
         }
 
         private string playerName;
@@ -143,6 +154,8 @@ namespace Clocktower
         private bool alive = true;
 
         private IReadOnlyCollection<IOption>? options;
-        private Action<IOption>? onChoice;
+
+        public delegate void ChoiceEventHandler(IOption choice);
+        private event ChoiceEventHandler? OnChoice;
     }
 }

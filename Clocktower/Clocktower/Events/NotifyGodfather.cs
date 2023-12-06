@@ -11,7 +11,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var godfather = grimoire.GetAlivePlayer(Character.Godfather);
             if (godfather != null)
@@ -21,10 +21,10 @@ namespace Clocktower.Events
                 storyteller.NotifyGodfather(godfather, outsiders);
             }
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

@@ -11,7 +11,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var empath = grimoire.GetAlivePlayer(Character.Empath);
             if (empath != null)
@@ -32,7 +32,7 @@ namespace Clocktower.Events
                 storyteller.NotifyEmpath(empath, livingNeighbours.Item1, livingNeighbours.Item2, evilCount);
             }
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
         private static Alignment GetEmpathAlignment(Player player)
@@ -44,7 +44,7 @@ namespace Clocktower.Events
             return player.RealAlignment ?? Alignment.Good;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

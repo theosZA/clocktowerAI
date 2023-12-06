@@ -33,6 +33,7 @@
             // 
             // outputText
             // 
+            outputText.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             outputText.Location = new Point(12, 12);
             outputText.Name = "outputText";
             outputText.Size = new Size(776, 391);

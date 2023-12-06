@@ -11,7 +11,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var librarian = grimoire.GetAlivePlayer(Character.Librarian);
             if (librarian != null)
@@ -23,10 +23,10 @@ namespace Clocktower.Events
                 storyteller.NotifyLibrarian(librarian, librarianTargetA, librarianTargetB, Character.Drunk);
             }
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

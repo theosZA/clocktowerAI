@@ -11,7 +11,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var demon = grimoire.GetDemon();
             var minions = grimoire.GetMinions().ToList();
@@ -19,10 +19,10 @@ namespace Clocktower.Events
             demon.Agent.DemonInformation(minions, notInPlayCharacters);
             storyteller.DemonInformation(demon, minions, notInPlayCharacters);
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

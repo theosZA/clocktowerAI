@@ -1,11 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clocktower.Events
 {
@@ -17,7 +12,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var investigator = grimoire.GetAlivePlayer(Character.Investigator);
             if (investigator != null)
@@ -54,10 +49,10 @@ namespace Clocktower.Events
                 }
             }
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

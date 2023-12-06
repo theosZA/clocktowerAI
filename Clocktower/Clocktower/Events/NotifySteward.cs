@@ -11,7 +11,7 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public void RunEvent(Action onEventFinished)
+        public Task RunEvent()
         {
             var steward = grimoire.GetAlivePlayer(Character.Steward);
             if (steward != null)
@@ -22,10 +22,10 @@ namespace Clocktower.Events
                 storyteller.NotifySteward(steward, stewardTarget);
             }
 
-            onEventFinished();
+            return Task.CompletedTask;
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
     }
 }

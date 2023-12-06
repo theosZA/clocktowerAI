@@ -17,10 +17,10 @@ namespace Clocktower.Agent
         void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
         void NotifyRavenkeeper(Player target, Character character);
 
-        void RequestChoiceFromImp(IReadOnlyCollection<IOption> options, Action<IOption> onChoice);
-        void RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options, Action<IOption> onChoice);
+        Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
 
-        void GetNomination(IReadOnlyCollection<IOption> options, Action<IOption> onChoice);
-        void GetVote(IReadOnlyCollection<IOption> options, Action<IOption> onChoice);
+        Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
+        Task<IOption> GetVote(IReadOnlyCollection<IOption> options);
     }
 }
