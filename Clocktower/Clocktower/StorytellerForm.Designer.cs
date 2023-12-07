@@ -31,6 +31,7 @@
             outputText = new RichTextBox();
             chooseButton = new Button();
             choicesComboBox = new ComboBox();
+            autoCheckbox = new CheckBox();
             SuspendLayout();
             // 
             // outputText
@@ -64,17 +65,30 @@
             choicesComboBox.Size = new Size(288, 23);
             choicesComboBox.TabIndex = 3;
             // 
+            // autoCheckbox
+            // 
+            autoCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            autoCheckbox.AutoSize = true;
+            autoCheckbox.Location = new Point(736, 418);
+            autoCheckbox.Name = "autoCheckbox";
+            autoCheckbox.Size = new Size(52, 19);
+            autoCheckbox.TabIndex = 5;
+            autoCheckbox.Text = "Auto";
+            autoCheckbox.UseVisualStyleBackColor = true;
+            // 
             // StorytellerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(autoCheckbox);
             Controls.Add(chooseButton);
             Controls.Add(choicesComboBox);
             Controls.Add(outputText);
             Name = "StorytellerForm";
             Text = "Storyteller";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -82,5 +96,6 @@
         private RichTextBox outputText;
         private Button chooseButton;
         private ComboBox choicesComboBox;
+        private CheckBox autoCheckbox;
     }
 }

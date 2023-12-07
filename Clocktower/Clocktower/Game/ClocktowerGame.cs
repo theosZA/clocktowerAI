@@ -13,7 +13,7 @@ namespace Clocktower.Game
 
         public ClocktowerGame()
         {
-            var storytellerForm = new StorytellerForm();
+            var storytellerForm = new StorytellerForm(random);
             storyteller = new HumanStoryteller(storytellerForm);
 
             var playerNames = new[] { "Alison", "Barry", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };

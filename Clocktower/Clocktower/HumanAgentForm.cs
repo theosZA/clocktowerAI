@@ -204,9 +204,9 @@ namespace Clocktower
             OnChoice?.Invoke(option);
         }
 
-        private Random random;
+        private readonly Random random;
 
-        private string playerName;
+        private readonly string playerName;
         private Character character;
         private bool alive = true;
 

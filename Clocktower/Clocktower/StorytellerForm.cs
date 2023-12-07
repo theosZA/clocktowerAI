@@ -8,13 +8,24 @@ namespace Clocktower
     {
         public IGameObserver Observer { get; private set; }
 
-        public StorytellerForm()
+        public bool AutoAct
+        {
+            get => autoCheckbox.Checked;
+            set => autoCheckbox.Checked = value;
+        }
+
+        public StorytellerForm(Random random)
         {
             InitializeComponent();
+
+            this.random = random;
+
             Observer = new RichTextBoxObserver(outputText)
             {
                 StorytellerView = true
             };
+
+            AutoAct = false; // for testing
         }
 
         public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
@@ -113,6 +124,23 @@ namespace Clocktower
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
         {
+            if (AutoAct)
+            {
+                // If Pass is an option, pick it 75% of the time.
+                var passOption = options.FirstOrDefault(option => option is PassOption);
+                if (passOption != null && random.Next(4) < 3)
+                {
+                    return Task.FromResult(passOption);
+                }
+
+                // For now, just pick an option at random.
+                // Exclude dead players from our choices.
+                var autoOptions = options.Where(option => option is not PassOption)
+                                         .Where(option => option is not PlayerOption playerOption || playerOption.Player.Alive)
+                                         .ToList();
+                return Task.FromResult(autoOptions.RandomPick(random));
+            }
+
             this.options = options;
 
             choicesComboBox.Items.Clear();
@@ -153,6 +181,8 @@ namespace Clocktower
 
             OnChoice?.Invoke(option);
         }
+
+        private readonly Random random;
 
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;
