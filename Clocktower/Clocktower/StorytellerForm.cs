@@ -35,6 +35,18 @@ namespace Clocktower
             return await PopulateOptions(drunkCandidates);
         }
 
+        public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
+        {
+            outputText.AppendFormattedText("Choose one player who %p will see as a good player.", steward, StorytellerView);
+            if (steward.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(stewardPingCandidates);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))

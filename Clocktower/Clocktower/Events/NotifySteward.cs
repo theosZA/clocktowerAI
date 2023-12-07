@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
 
 namespace Clocktower.Events
 {
@@ -11,17 +12,18 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public Task RunEvent()
+        public async Task RunEvent()
         {
             foreach (var steward in grimoire.GetLivingPlayers(Character.Steward))
             {
-                var stewardTarget = steward.DrunkOrPoisoned ? grimoire.Players.First(player => player.Alignment == Alignment.Evil) : grimoire.Players.First(player => player != steward && player.Alignment == Alignment.Good);
+                var options = grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))
+                                              .Select(player => new PlayerOption(player))
+                                              .ToList();
+                var stewardTarget = ((PlayerOption)await storyteller.GetStewardPing(steward, options)).Player;
 
                 steward.Agent.NotifySteward(stewardTarget);
                 storyteller.NotifySteward(steward, stewardTarget);
             }
-
-            return Task.CompletedTask;
         }
 
         private readonly IStoryteller storyteller;

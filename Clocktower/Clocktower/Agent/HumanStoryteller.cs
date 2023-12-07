@@ -15,6 +15,11 @@ namespace Clocktower.Agent
             return await form.GetDrunk(drunkCandidates);
         }
 
+        public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
+        {
+            return await form.GetStewardPing(steward, stewardPingCandidates);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);
