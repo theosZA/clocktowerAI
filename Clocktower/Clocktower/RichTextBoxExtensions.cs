@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using System.Linq;
 
 namespace Clocktower
 {
@@ -9,7 +8,13 @@ namespace Clocktower
         /// Writes to the given RichTextBox with formatting using format specifier '%'.
         /// </summary>
         /// <param name="box">The RichTextBox to write the text to.</param>
-        /// <param name="text">Writes the given text to the output textbox, only substituting variables as %n: normal, %b: bold, %p: formatted as a player, %P: formatted as a player list, %c: formatted as a character, %C: formatted as a character list.</param>
+        /// <param name="text">
+        /// Writes the given text to the output textbox, only substituting variables as 
+        /// %n: normal, %b: bold,
+        /// %p: formatted as a player, %P: formatted as a player list,
+        /// %c: formatted as a character, %C: formatted as a character list.
+        /// %a: formatted as an alignment
+        /// </param>
         /// <param name="objects">
         /// Objects to substitute into the output text. For %p the object must be a Player, for %P the object must be an IEnumerable<Player>, for %c the object must be a Character, and for %C the object must be an IEnumerable<Character>.
         /// You can enable storyteller view for your objects (which may display more info than is publicly known) by including a true boolean as an additional parameter.
@@ -77,6 +82,13 @@ namespace Clocktower
                         else if (objects[0] is IEnumerable<Character> charactersEnumerable)
                         {
                             box.AppendCharacters(charactersEnumerable.ToList());
+                        }
+                        break;
+
+                    case 'a':
+                        if (objects[0] is Alignment alignment)
+                        {
+                            box.AppendText($"{alignment}", TextUtilities.AlignmentToColor(alignment));
                         }
                         break;
 

@@ -151,7 +151,17 @@ namespace Clocktower
                 var autoOptions = options.Where(option => option is not PassOption)
                                          .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
                                          .ToList();
-                return Task.FromResult(autoOptions.RandomPick(random));
+                if (autoOptions.Count > 0)
+                {
+                    return Task.FromResult(autoOptions.RandomPick(random));
+                }
+
+                // No okay options. Then pick Pass if we can.
+                if (passOption != null)
+                {
+                    return Task.FromResult(passOption);
+                }
+                return Task.FromResult(options.First());
             }
 
             this.options = options;

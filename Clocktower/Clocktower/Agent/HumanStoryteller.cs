@@ -20,6 +20,11 @@ namespace Clocktower.Agent
             return await form.GetStewardPing(steward, stewardPingCandidates);
         }
 
+        public async Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions)
+        {
+            return await form.GetEmpathNumber(empath, neighbourA, neighbourB, empathOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);

@@ -1,5 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Clocktower.Events
 {
@@ -11,41 +13,55 @@ namespace Clocktower.Events
             this.grimoire = grimoire;
         }
 
-        public Task RunEvent()
+        public async Task RunEvent()
         {
             foreach (var empath in grimoire.GetLivingPlayers(Character.Empath))
             {
-                var livingNeighbours = grimoire.GetLivingNeighbours(empath);
-
-                int evilCount = 0;
-                if (GetEmpathAlignment(livingNeighbours.Item1) == Alignment.Evil)
-                {
-                    ++evilCount;
-                }
-                if (GetEmpathAlignment(livingNeighbours.Item2) == Alignment.Evil)
-                {
-                    ++evilCount;
-                }
-
-                if (empath.DrunkOrPoisoned)
-                {
-                    evilCount = (evilCount == 0 ? 1 : 0);
-                }
-
-                empath.Agent.NotifyEmpath(livingNeighbours.Item1, livingNeighbours.Item2, evilCount);
-                storyteller.NotifyEmpath(empath, livingNeighbours.Item1, livingNeighbours.Item2, evilCount);
+                var (neighbourA, neighbourB) = grimoire.GetLivingNeighbours(empath);
+                int evilCount = await GetEmpathNumber(empath, neighbourA, neighbourB);
+                empath.Agent.NotifyEmpath(neighbourA, neighbourB, evilCount);
+                storyteller.NotifyEmpath(empath, neighbourA, neighbourB, evilCount);
             }
-
-            return Task.CompletedTask;
         }
 
-        private static Alignment GetEmpathAlignment(Player player)
+        private async Task<int> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB)
         {
-            if (player.Character == Character.Recluse)
+            var possibleEmpathNumbers = GetPossibleEmpathNumbers(empath, neighbourA, neighbourB).ToList();
+            if (possibleEmpathNumbers.Count == 1)
             {
-                return Alignment.Evil;  // Note that this doesn't have to be evil, but then requires storyteller input.
+                return possibleEmpathNumbers[0];
             }
-            return player.Alignment;
+
+            var choice = await storyteller.GetEmpathNumber(empath, neighbourA, neighbourB, possibleEmpathNumbers.Select(number => new NumberOption(number)).ToList());
+            return ((NumberOption)choice).Number;
+        }
+
+        private static IEnumerable<int> GetPossibleEmpathNumbers(Player empath, Player neighbourA, Player neighbourB)
+        {
+            if (empath.DrunkOrPoisoned)
+            {
+                yield return 0;
+                yield return 1;
+                yield return 2;
+            }
+            else
+            {
+                if (neighbourA.Character == Character.Recluse)
+                {
+                    yield return (neighbourB.Alignment == Alignment.Evil ? 1 : 0);
+                    yield return (neighbourB.Alignment == Alignment.Evil ? 1 : 0) + 1;
+                }
+                else if (neighbourB.Character == Character.Recluse)
+                {
+                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0);
+                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0) + 1;
+                }
+                else
+                {
+                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0)
+                               + (neighbourB.Alignment == Alignment.Evil ? 1 : 0);
+                }
+            }
         }
 
         private readonly IStoryteller storyteller;

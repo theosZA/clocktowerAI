@@ -47,6 +47,25 @@ namespace Clocktower
             return await PopulateOptions(stewardPingCandidates);
         }
 
+        public async Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions)
+        {
+            outputText.AppendFormattedText("Choose what number to show to %p. Their living neighbours are %p and %p.", empath, neighbourA, neighbourB, StorytellerView);
+            if (empath.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.\n", Color.Purple);
+            }
+            else if (neighbourA.Character == Character.Recluse)
+            {
+                outputText.AppendFormattedText(" Reminder that %p could register as %a.\n", neighbourA, Alignment.Evil, StorytellerView);
+            }
+            else if (neighbourB.Character == Character.Recluse)
+            {
+                outputText.AppendFormattedText(" Reminder that %p could register as %a.\n", neighbourB, Alignment.Evil, StorytellerView);
+            }
+
+            return await PopulateOptions(empathOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))

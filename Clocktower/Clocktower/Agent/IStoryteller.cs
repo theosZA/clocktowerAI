@@ -7,6 +7,7 @@ namespace Clocktower.Agent
     {
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
+        Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
 
         void AssignCharacter(Player player);
 
