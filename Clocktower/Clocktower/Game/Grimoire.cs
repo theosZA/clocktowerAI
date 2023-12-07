@@ -16,10 +16,10 @@ namespace Clocktower.Game
 
         public void AssignCharacters(IStoryteller storyteller)
         {
-            // Notify storyteller of characters.
             foreach (var player in players)
             {
                 storyteller.AssignCharacter(player);
+                player.Agent.AssignCharacter(player.Character, player.Alignment);
             }
         }
 

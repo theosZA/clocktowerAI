@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
+using Clocktower.Options;
 
 namespace Clocktower
 {
@@ -14,6 +15,13 @@ namespace Clocktower
             {
                 StorytellerView = true
             };
+        }
+
+        public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
+        {
+            outputText.AppendFormattedText("Choose one townsfolk who will be the %c...\n", Character.Drunk);
+
+            return await PopulateOptions(drunkCandidates);
         }
 
         public void AssignCharacter(Player player)
@@ -102,6 +110,53 @@ namespace Clocktower
         {
             outputText.AppendFormattedText("%p chooses %p and learns that they are the %c.\n", ravenkeeper, target, character, StorytellerView);
         }
+
+        private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
+        {
+            this.options = options;
+
+            choicesComboBox.Items.Clear();
+            foreach (var option in options)
+            {
+                choicesComboBox.Items.Add(option.Name);
+            }
+            choicesComboBox.Enabled = true;
+            chooseButton.Enabled = true;
+
+            var taskCompletionSource = new TaskCompletionSource<IOption>();
+
+            void onChoiceHandler(IOption option)
+            {
+                taskCompletionSource.SetResult(option);
+                OnChoice -= onChoiceHandler;
+            }
+
+            OnChoice += onChoiceHandler;
+
+            return taskCompletionSource.Task;
+        }
+
+        private void chooseButton_Click(object sender, EventArgs e)
+        {
+            var option = options?.FirstOrDefault(option => option.Name == (string)choicesComboBox.SelectedItem);
+            if (option == null)
+            {   // No valid option has been chosen.
+                return;
+            }
+
+            chooseButton.Enabled = false;
+            choicesComboBox.Enabled = false;
+            choicesComboBox.Items.Clear();
+            choicesComboBox.Text = null;
+
+            outputText.AppendBoldText($">> {option.Name}\n", Color.Green);
+
+            OnChoice?.Invoke(option);
+        }
+
+        public delegate void ChoiceEventHandler(IOption choice);
+        private event ChoiceEventHandler? OnChoice;
+        private IReadOnlyCollection<IOption>? options;
 
         private const bool StorytellerView = true;
     }

@@ -35,7 +35,6 @@ namespace Clocktower.Game
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
-            players[0].Tokens.Add(Token.IsTheDrunk);
 
             grimoire = new Grimoire(players);
 
@@ -78,6 +77,11 @@ namespace Clocktower.Game
 
         public async Task RunNightAndDay()
         {
+            if (dayNumber == 0)
+            {
+                await Setup();
+            }
+
             ++dayNumber;
 
             observers.Night(dayNumber);
@@ -92,6 +96,14 @@ namespace Clocktower.Game
 
             observers.Day(dayNumber);
             await RunDay();
+        }
+
+        private async Task Setup()
+        {
+            await RunNightEvents(new IGameEvent[]
+            {
+                new AssignDrunk(storyteller, grimoire)
+            });
         }
 
         private async Task RunFirstNight()

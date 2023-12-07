@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
 
 namespace Clocktower.Agent
 {
@@ -7,6 +8,11 @@ namespace Clocktower.Agent
         public HumanStoryteller(StorytellerForm form)
         {
             this.form = form;
+        }
+
+        public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
+        {
+            return await form.GetDrunk(drunkCandidates);
         }
 
         public void AssignCharacter(Player player)

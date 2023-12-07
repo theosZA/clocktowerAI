@@ -27,6 +27,11 @@ namespace Clocktower.Events
                     ++evilCount;
                 }
 
+                if (empath.DrunkOrPoisoned)
+                {
+                    evilCount = (evilCount == 0 ? 1 : 0);
+                }
+
                 empath.Agent.NotifyEmpath(livingNeighbours.Item1, livingNeighbours.Item2, evilCount);
                 storyteller.NotifyEmpath(empath, livingNeighbours.Item1, livingNeighbours.Item2, evilCount);
             }

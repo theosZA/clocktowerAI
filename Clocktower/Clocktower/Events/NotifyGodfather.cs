@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather).Where(player => player.Tokens.Contains(Token.GodfatherKillsTonight)))
+            foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather))
             {
                 var outsiders = grimoire.Players.Where(player => player.CharacterType == CharacterType.Outsider)
                                                 .Select(player => player.Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk : player.Character)

@@ -169,10 +169,10 @@ namespace Clocktower
             void onChoiceHandler(IOption option)
             {
                 taskCompletionSource.SetResult(option);
-                this.OnChoice -= onChoiceHandler;
+                OnChoice -= onChoiceHandler;
             }
 
-            this.OnChoice += onChoiceHandler;
+            OnChoice += onChoiceHandler;
 
             return taskCompletionSource.Task;
         }
@@ -210,9 +210,8 @@ namespace Clocktower
         private Character character;
         private bool alive = true;
 
-        private IReadOnlyCollection<IOption>? options;
-
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;
+        private IReadOnlyCollection<IOption>? options;
     }
 }

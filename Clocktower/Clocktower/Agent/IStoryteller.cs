@@ -1,9 +1,12 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
 
 namespace Clocktower.Agent
 {
     internal interface IStoryteller
     {
+        Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
+
         void AssignCharacter(Player player);
 
         void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions);

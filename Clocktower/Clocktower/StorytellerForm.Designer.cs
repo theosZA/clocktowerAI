@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             outputText = new RichTextBox();
+            chooseButton = new Button();
+            choicesComboBox = new ComboBox();
             SuspendLayout();
             // 
             // outputText
@@ -40,11 +42,35 @@
             outputText.TabIndex = 0;
             outputText.Text = "";
             // 
+            // chooseButton
+            // 
+            chooseButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chooseButton.Enabled = false;
+            chooseButton.Location = new Point(306, 415);
+            chooseButton.Name = "chooseButton";
+            chooseButton.Size = new Size(75, 23);
+            chooseButton.TabIndex = 4;
+            chooseButton.Text = "Choose";
+            chooseButton.UseVisualStyleBackColor = true;
+            chooseButton.Click += chooseButton_Click;
+            // 
+            // choicesComboBox
+            // 
+            choicesComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            choicesComboBox.Enabled = false;
+            choicesComboBox.FormattingEnabled = true;
+            choicesComboBox.Location = new Point(12, 415);
+            choicesComboBox.Name = "choicesComboBox";
+            choicesComboBox.Size = new Size(288, 23);
+            choicesComboBox.TabIndex = 3;
+            // 
             // StorytellerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(chooseButton);
+            Controls.Add(choicesComboBox);
             Controls.Add(outputText);
             Name = "StorytellerForm";
             Text = "Storyteller";
@@ -54,5 +80,7 @@
         #endregion
 
         private RichTextBox outputText;
+        private Button chooseButton;
+        private ComboBox choicesComboBox;
     }
 }
