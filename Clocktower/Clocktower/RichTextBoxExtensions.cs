@@ -124,21 +124,16 @@ namespace Clocktower
         public static void AppendPlayer(this RichTextBox box, Player player, bool storytellerView = false)
         {
             box.AppendBoldText(player.Name);
-            if (storytellerView && player.Character.HasValue && player.RealCharacter.HasValue && player.Alignment.HasValue && player.RealAlignment.HasValue)
+            if (storytellerView)
             {
                 box.AppendText(" (");
 
-                if (player.Character == player.RealCharacter)
+                if (player.Tokens.Contains(Token.IsTheDrunk))
                 {
-                    box.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
+                    box.AppendText(TextUtilities.CharacterToText(Character.Drunk), TextUtilities.AlignmentToColor(player.Alignment));
+                    box.AppendText("-");
                 }
-                else
-                {
-                    box.AppendText(TextUtilities.CharacterToText(player.Character.Value), TextUtilities.AlignmentToColor(player.Alignment.Value));
-                    box.AppendText("/");
-                    box.AppendText(TextUtilities.CharacterToText(player.RealCharacter.Value), TextUtilities.AlignmentToColor(player.RealAlignment.Value));
-                }
-
+                box.AppendText($"{TextUtilities.CharacterToText(player.Character)}", TextUtilities.AlignmentToColor(player.Alignment));
                 box.AppendText(")");
             }
         }

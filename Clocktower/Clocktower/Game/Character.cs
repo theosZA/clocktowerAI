@@ -21,11 +21,11 @@
         Recluse,
         Drunk,
 
-        Imp = 2000,
-
-        Godfather = 3000,
+        Godfather = 2000,
         Poisoner,
         Assassin,
-        Scarlet_Woman
+        Scarlet_Woman,
+
+        Imp = 3000
     }
 }

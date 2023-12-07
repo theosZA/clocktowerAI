@@ -14,26 +14,23 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var assassin = grimoire.GetPlayer(Character.Assassin);
-            if (assassin == null || assassin.Tokens.Contains(Token.UsedOncePerGameAbility))
+            foreach (var assassin in grimoire.GetLivingPlayers(Character.Assassin).Where(player => !player.Tokens.Contains(Token.UsedOncePerGameAbility)))
             {
-                return;
-            }
+                var options = grimoire.Players.Select(player => (IOption)new PlayerOption(player))
+                                              .Prepend(new PassOption())
+                                              .ToList();
 
-            var options = grimoire.Players.Select(player => (IOption)new PlayerOption(player))
-                                          .Prepend(new PassOption())
-                                          .ToList();
+                var choice = await assassin.Agent.RequestChoiceFromAssassin(options);
+                var target = choice is PlayerOption playerOption ? playerOption.Player : null;
+                storyteller.ChoiceFromAssassin(assassin, target);
 
-            var choice = await assassin.Agent.RequestChoiceFromAssassin(options);
-            var target = choice is PlayerOption playerOption ? playerOption.Player : null;
-            storyteller.ChoiceFromAssassin(assassin, target);
-
-            if (target != null)
-            {
-                assassin.Tokens.Add(Token.UsedOncePerGameAbility);
-                if (!assassin.DrunkOrPoisoned)
+                if (target != null)
                 {
-                    target.Tokens.Add(Token.DiedAtNight);
+                    assassin.Tokens.Add(Token.UsedOncePerGameAbility);
+                    if (!assassin.DrunkOrPoisoned)
+                    {
+                        target.Tokens.Add(Token.DiedAtNight);
+                    }
                 }
             }
         }

@@ -13,11 +13,10 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var steward = grimoire.GetAlivePlayer(Character.Steward);
-            if (steward != null)
+            foreach (var steward in grimoire.GetLivingPlayers(Character.Steward))
             {
-                // For now we give them a hardcoded player.
-                var stewardTarget = steward.DrunkOrPoisoned ? grimoire.GetRequiredPlayer(Character.Imp) : grimoire.GetRequiredPlayer(Character.Ravenkeeper);
+                var stewardTarget = steward.DrunkOrPoisoned ? grimoire.Players.First(player => player.Alignment == Alignment.Evil) : grimoire.Players.First(player => player != steward && player.Alignment == Alignment.Good);
+
                 steward.Agent.NotifySteward(stewardTarget);
                 storyteller.NotifySteward(steward, stewardTarget);
             }

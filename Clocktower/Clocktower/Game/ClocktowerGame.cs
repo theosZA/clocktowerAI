@@ -17,10 +17,26 @@ namespace Clocktower.Game
             storyteller = new HumanStoryteller(storytellerForm);
 
             var playerNames = new[] { "Alison", "Barry", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
-            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name, random));
-            var players = playerNames.Select(name => new Player(name, new HumanAgent(playerForms[name])));
 
+            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name, random));
             observers = new ObserverCollection(playerForms.Select(form => form.Value.Observer).Append(storytellerForm.Observer));
+
+            // For now we assign hardcoded characters.
+            var charactersAlignments = new[]
+            {
+                (Character.Steward, Alignment.Good),
+                (Character.Imp, Alignment.Evil),
+                (Character.Godfather, Alignment.Evil),
+                (Character.Recluse, Alignment.Good),
+                (Character.Slayer, Alignment.Good),
+                (Character.Empath, Alignment.Good),
+                (Character.Librarian, Alignment.Good),
+                (Character.Ravenkeeper, Alignment.Good)
+            };
+
+            var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
+            players[0].Tokens.Add(Token.IsTheDrunk);
+
             grimoire = new Grimoire(players);
 
             storytellerForm.Show();
@@ -35,7 +51,7 @@ namespace Clocktower.Game
         public Alignment? GetWinner()
         {
             // The game is over if there are no living demons...
-            if (!grimoire.Players.Any(player => player.Alive && player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Demon))
+            if (!grimoire.Players.Any(player => player.Alive && player.CharacterType == CharacterType.Demon))
             {
                 return Alignment.Good;
             }
@@ -55,8 +71,8 @@ namespace Clocktower.Game
             if (winner.HasValue)
             {
                 observers.AnnounceWinner(winner.Value,
-                                         grimoire.Players.Where(player => player.RealAlignment == winner.Value).ToList(),
-                                         grimoire.Players.Where(player => player.RealAlignment != winner.Value).ToList());
+                                         grimoire.Players.Where(player => player.Alignment == winner.Value).ToList(),
+                                         grimoire.Players.Where(player => player.Alignment != winner.Value).ToList());
             }
         }
 

@@ -14,67 +14,44 @@ namespace Clocktower.Game
         public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight) && !Tokens.Contains(Token.KilledByDemon);
         public bool HasGhostVote { get; private set; } = true;
 
-        public Character? RealCharacter { get; private set; }
-        public Alignment? RealAlignment { get; private set; }
+        /// <summary>
+        /// The character whose ability the player has. This corresponds to the character token that would be in the physical grimoire.
+        /// In some cases the player's real character is something else (e.g. Drunk, Lunatic), and in other cases the player just has
+        /// this character's ability (e.g. Philosopher, Alchemist). In these situations a Token is added to Tokens that indicates the
+        /// real situation.
+        /// </summary>
+        public Character Character { get; private set; }
+        /// <summary>
+        /// The player's real alignment. The player may believe differently, e.g. if they're a Marionette or Lunatic.
+        /// </summary>
+        public Alignment Alignment { get; private set; }
 
-        public Character? Character => believedCharacter ?? RealCharacter;
-        public Alignment? Alignment => believedAlignment ?? RealAlignment;
-
-        public CharacterType? CharacterType
+        public CharacterType CharacterType
         {
-            get
+            get => (int)Character switch
             {
-                if (RealCharacter == null)
-                {
-                    return null;
-                }
-                else  if ((int)RealCharacter < 1000)
-                {
-                    return Game.CharacterType.Townsfolk;
-                }
-                if ((int)RealCharacter < 2000)
-                {
-                    return Game.CharacterType.Outsider;
-                }
-                if ((int)RealCharacter < 3000)
-                {
-                    return Game.CharacterType.Demon;
-                }
-                return Game.CharacterType.Minion;
-            }
+                < 1000 => Tokens.Contains(Token.IsTheDrunk) ? CharacterType.Outsider : CharacterType.Townsfolk,
+                < 2000 => CharacterType.Outsider,
+                < 3000 => CharacterType.Minion,
+                _ => CharacterType.Demon
+            };
         }
 
-        public bool DrunkOrPoisoned => RealCharacter.HasValue && RealCharacter.Value == Game.Character.Drunk;
+        public bool DrunkOrPoisoned => Tokens.Contains(Token.IsTheDrunk);
 
         public List<Token> Tokens { get; } = new();
 
-        public Player(string name, IAgent agent)
+        public Player(string name, IAgent agent, Character character, Alignment alignment)
         {
             Name = name;
             Agent = agent;
+            Character = character;
+            Alignment = alignment;
         }
 
-        public void AssignCharacter(Character character, Alignment alignment)
+        public void ChangeCharacter(Character newCharacter)
         {
-            RealCharacter = character;
-            RealAlignment = alignment;
-
-            believedCharacter = null;
-            believedAlignment = null;
-
-            Agent.AssignCharacter(character, alignment);
-        }
-
-        public void AssignCharacter(Character character, Alignment alignment,
-                                    Character believedCharacter, Alignment believedAlignment)
-        {
-            RealCharacter = character;
-            RealAlignment = alignment;
-
-            this.believedCharacter = believedCharacter;
-            this.believedAlignment = believedAlignment;
-
-            Agent.AssignCharacter(believedCharacter, believedAlignment);
+            Character = newCharacter;
         }
 
         public void Kill()
@@ -87,9 +64,6 @@ namespace Clocktower.Game
         {
             HasGhostVote = false;
         }
-
-        private Character? believedCharacter;
-        private Alignment? believedAlignment;
 
         private bool alive = true;
     }

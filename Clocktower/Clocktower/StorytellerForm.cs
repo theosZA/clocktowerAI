@@ -18,17 +18,13 @@ namespace Clocktower
 
         public void AssignCharacter(Player player)
         {
-            if (player.RealCharacter == null || player.Character == null || player.RealAlignment == null || player.Alignment == null)
+            if (player.Tokens.Contains(Token.IsTheDrunk))
             {
-                throw new InvalidOperationException("Player has not been assigned a character/alignment");
-            }
-            if (player.Character == player.RealCharacter)
-            {
-                outputText.AppendFormattedText("%p is the %c.\n", player, player.Character);
+                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, Character.Drunk);
             }
             else
             {
-                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, player.RealCharacter);
+                outputText.AppendFormattedText("%p is the %c.\n", player, player.Character);
             }
         }
 

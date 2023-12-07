@@ -13,8 +13,8 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var demon = grimoire.GetDemon();
-            var minions = grimoire.GetMinions().ToList();
+            var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion).ToList();
+            var demon = grimoire.Players.First(player => player.CharacterType == CharacterType.Demon);
             foreach (var minion in minions)
             {
                 minion.Agent.MinionInformation(demon, minions.Except(new[] { minion }).ToList());

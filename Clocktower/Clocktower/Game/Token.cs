@@ -4,6 +4,7 @@
     {
         KilledByDemon,
         DiedAtNight,
+        IsTheDrunk,
         UsedOncePerGameAbility,
         GodfatherKillsTonight
     }

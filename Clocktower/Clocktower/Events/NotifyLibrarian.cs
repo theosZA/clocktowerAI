@@ -13,14 +13,15 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var librarian = grimoire.GetAlivePlayer(Character.Librarian);
-            if (librarian != null)
+            foreach (var librarian in grimoire.GetLivingPlayers(Character.Librarian))
             {
-                // For now we give them a hardcoded pair of players and the outsider 'Drunk'.
-                var librarianTargetA = librarian.DrunkOrPoisoned ? grimoire.GetRequiredPlayer(Character.Imp) : grimoire.GetRequiredRealPlayer(Character.Drunk);
-                var librarianTargetB = grimoire.GetRequiredPlayer(Character.Empath);
-                librarian.Agent.NotifyLibrarian(librarianTargetA, librarianTargetB, Character.Drunk);
-                storyteller.NotifyLibrarian(librarian, librarianTargetA, librarianTargetB, Character.Drunk);
+                var librarianOther = grimoire.Players.First(player => player != librarian && player.CharacterType != CharacterType.Outsider);
+                var librarianOutsider = librarian.DrunkOrPoisoned ? grimoire.Players.Last(player => player != librarian && player.CharacterType != CharacterType.Outsider)
+                                                                 : grimoire.Players.First(player => player.CharacterType == CharacterType.Outsider);
+                var character = librarian.DrunkOrPoisoned || librarianOutsider.Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk
+                                                                                                                 : librarianOutsider.Character;
+                librarian.Agent.NotifyLibrarian(librarianOther, librarianOutsider, character);
+                storyteller.NotifyLibrarian(librarian, librarianOther, librarianOutsider, character);
             }
 
             return Task.CompletedTask;

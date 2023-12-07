@@ -13,8 +13,7 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var empath = grimoire.GetAlivePlayer(Character.Empath);
-            if (empath != null)
+            foreach (var empath in grimoire.GetLivingPlayers(Character.Empath))
             {
                 var livingNeighbours = grimoire.GetLivingNeighbours(empath);
 
@@ -37,11 +36,11 @@ namespace Clocktower.Events
 
         private static Alignment GetEmpathAlignment(Player player)
         {
-            if (player.RealCharacter.HasValue && player.RealCharacter == Character.Recluse)
+            if (player.Character == Character.Recluse)
             {
                 return Alignment.Evil;  // Note that this doesn't have to be evil, but then requires storyteller input.
             }
-            return player.RealAlignment ?? Alignment.Good;
+            return player.Alignment;
         }
 
         private readonly IStoryteller storyteller;

@@ -16,20 +16,6 @@ namespace Clocktower.Game
 
         public void AssignCharacters(IStoryteller storyteller)
         {
-            // For now we assign hardcoded characters.
-
-            //players[0].AssignCharacter(Character.Steward, Alignment.Good);
-            players[0].AssignCharacter(Character.Investigator, Alignment.Good);
-            players[1].AssignCharacter(Character.Imp, Alignment.Evil);
-            players[2].AssignCharacter(Character.Assassin, Alignment.Evil);
-            //players[2].AssignCharacter(Character.Godfather, Alignment.Evil);
-            players[3].AssignCharacter(Character.Recluse, Alignment.Good);
-            players[4].AssignCharacter(Character.Slayer, Alignment.Good);
-            players[5].AssignCharacter(Character.Empath, Alignment.Good);
-            players[6].AssignCharacter(Character.Drunk, Alignment.Good,
-                                       Character.Librarian, Alignment.Good);
-            players[7].AssignCharacter(Character.Ravenkeeper, Alignment.Good);
-
             // Notify storyteller of characters.
             foreach (var player in players)
             {
@@ -40,46 +26,20 @@ namespace Clocktower.Game
         public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)
         {
             int lastPlayerIndex = players.IndexOf(lastPlayer);
-            for (int offset = 1; offset <= players.Count; ++offset)
+            for (int offset = 1; offset < players.Count; ++offset) 
             {
                 yield return players[(lastPlayerIndex + offset) % players.Count];
             }
         }
 
-        public Player? GetAlivePlayer(Character believedCharacter)
+        /// <summary>
+        /// Returns all living players with the given character ability (or that believe they are that character, e.g. Drunk or Lunatic).
+        /// </summary>
+        /// <param name="character">The character ability to filter by.</param>
+        /// <returns>A collection of living players with the given character ability.</returns>
+        public IEnumerable<Player> GetLivingPlayers(Character character)
         {
-            return players.FirstOrDefault(player => player.Alive && player.Character == believedCharacter);
-        }
-
-        public Player? GetPlayer(Character believedCharacter)
-        {
-            return players.FirstOrDefault(player => player.Character == believedCharacter);
-        }
-
-        public Player GetRequiredPlayer(Character believedCharacter)
-        {
-            return players.First(player => player.Character == believedCharacter);
-        }
-
-        public Player GetRequiredRealPlayer(Character realCharacter)
-        {
-            return players.First(player => player.RealCharacter == realCharacter);
-        }
-
-        public Player GetDemon()
-        {
-            return players.First(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Demon);
-        }
-
-        public IEnumerable<Player> GetMinions()
-        {
-            return players.Where(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Minion);
-        }
-
-        public IEnumerable<Character> GetOutsiders()
-        {
-            return players.Where(player => player.CharacterType.HasValue && player.CharacterType.Value == CharacterType.Outsider)
-                          .Select(player => player.RealCharacter ?? (Character)(-1));
+            return Players.Where(player => player.Alive && player.Character == character);
         }
 
         public (Player, Player) GetLivingNeighbours(Player player)

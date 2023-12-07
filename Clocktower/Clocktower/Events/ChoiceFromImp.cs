@@ -15,30 +15,27 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var imp = grimoire.GetAlivePlayer(Character.Imp);
-            if (imp == null)
+            foreach (var imp in grimoire.GetLivingPlayers(Character.Imp))
             {
-                return;
-            }
+                var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
+                var choice = await imp.Agent.RequestChoiceFromImp(options);
+                var playerOption = choice as PlayerOption;
+                Debug.Assert(playerOption != null);
+                var player = playerOption.Player;
 
-            var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
-            var choice = await imp.Agent.RequestChoiceFromImp(options);
-            var playerOption = choice as PlayerOption;
-            Debug.Assert(playerOption != null);
-            var player = playerOption.Player;
-
-            storyteller.ChoiceFromImp(imp, player);
-            if (player.Alive)
-            {
-                player.Tokens.Add(Token.KilledByDemon);
-                if (player == imp)
-                {   // Star-pass
-                    // For now it just goes to the first alive minion.
-                    var newImp = grimoire.GetMinions().FirstOrDefault(minion => minion.Alive);
-                    if (newImp != null)
-                    {
-                        newImp.AssignCharacter(Character.Imp, Alignment.Evil);
-                        storyteller.AssignCharacter(newImp);
+                storyteller.ChoiceFromImp(imp, player);
+                if (player.Alive)
+                {
+                    player.Tokens.Add(Token.KilledByDemon);
+                    if (player == imp)
+                    {   // Star-pass
+                        // For now it just goes to the first alive minion.
+                        var newImp = grimoire.Players.FirstOrDefault(player => player.Alive && player.CharacterType == CharacterType.Minion);
+                        if (newImp != null)
+                        {
+                            newImp.ChangeCharacter(Character.Imp);
+                            storyteller.AssignCharacter(newImp);
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
-using System.Diagnostics;
 
 namespace Clocktower.Events
 {
@@ -14,35 +13,32 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var investigator = grimoire.GetAlivePlayer(Character.Investigator);
-            if (investigator != null)
+            foreach (var investigator in grimoire.GetLivingPlayers(Character.Investigator))
             {
-                // Hard-coded
                 if (investigator.DrunkOrPoisoned)
                 {
-                    var investigatorTargetA = grimoire.GetRequiredPlayer(Character.Librarian);
-                    var investigatorTargetB = grimoire.GetRequiredPlayer(Character.Slayer);
+                    var investigatorTargetA = grimoire.Players.First(player => player != investigator && player.Alignment == Alignment.Good);
+                    var investigatorTargetB = grimoire.Players.Last(player => player != investigator && player.Alignment == Alignment.Good);
                     var minionCharacter = Character.Assassin;
                     investigator.Agent.NotifyInvestigator(investigatorTargetA, investigatorTargetB, minionCharacter);
                     storyteller.NotifyInvestigator(investigator, investigatorTargetA, investigatorTargetB, minionCharacter);
                 }
                 else
                 {
-                    var recluse = grimoire.GetPlayer(Character.Recluse);
+                    var recluse = grimoire.Players.FirstOrDefault(player => player.Character == Character.Recluse);
                     if (recluse != null)
                     {
                         var investigatorTargetA = recluse;
-                        var investigatorTargetB = grimoire.GetRequiredPlayer(Character.Slayer);
+                        var investigatorTargetB = grimoire.Players.First(player => player != investigator && player.Alignment == Alignment.Good);
                         var minionCharacter = Character.Assassin;
                         investigator.Agent.NotifyInvestigator(investigatorTargetA, investigatorTargetB, minionCharacter);
                         storyteller.NotifyInvestigator(investigator, investigatorTargetA, investigatorTargetB, minionCharacter);
                     }
                     else
                     {
-                        var investigatorTargetA = grimoire.GetMinions().First();
-                        var investigatorTargetB = grimoire.GetRequiredPlayer(Character.Slayer);
-                        Debug.Assert(investigatorTargetA.Character.HasValue);
-                        var minionCharacter = investigatorTargetA.Character.Value;
+                        var investigatorTargetA = grimoire.Players.First(player => player.CharacterType == CharacterType.Minion);
+                        var investigatorTargetB = grimoire.Players.First(player => player != investigator && player.Alignment == Alignment.Good);
+                        var minionCharacter = investigatorTargetA.Character;
                         investigator.Agent.NotifyInvestigator(investigatorTargetA, investigatorTargetB, minionCharacter);
                         storyteller.NotifyInvestigator(investigator, investigatorTargetA, investigatorTargetB, minionCharacter);
                     }
