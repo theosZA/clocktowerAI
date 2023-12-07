@@ -158,7 +158,17 @@ namespace Clocktower.Game
 
         private async Task RunDay()
         {
-            // Announce kills that happened in the night.
+            AnnounceNightKills();
+            if (!Finished)
+            {
+                // TBD Conversations during the day.
+
+                await new Nominations(storyteller, grimoire, observers, random).RunNominations();
+            }
+        }
+
+        private void AnnounceNightKills()
+        {
             var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon));
             foreach (var newlyDeadPlayer in newlyDeadPlayers)
             {
@@ -171,11 +181,6 @@ namespace Clocktower.Game
                     return;
                 }
             }
-
-            // TBD Conversations during the day.
-
-            // Nominations.
-            await new Nominations(storyteller, grimoire, observers, random).RunNominations();
         }
 
         private readonly Grimoire grimoire;
