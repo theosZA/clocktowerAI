@@ -3,13 +3,14 @@ using Clocktower.Options;
 
 namespace Clocktower.Agent
 {
-    internal interface IStoryteller
+    public interface IStoryteller
     {
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
         Task<IOption> GetFortuneTellerReading(Player empath, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
+        Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
 
         void AssignCharacter(Player player);
 
@@ -20,6 +21,7 @@ namespace Clocktower.Agent
         void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character);
         void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character);
         void NotifySteward(Player steward, Player goodPlayer);
+        void NotifyShugenja(Player shugenja, bool clockwise);
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
 
         void ChoiceFromImp(Player imp, Player target);

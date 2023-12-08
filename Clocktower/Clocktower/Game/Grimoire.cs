@@ -5,7 +5,7 @@ namespace Clocktower.Game
     /// <summary>
     /// The Grimoire holds all of our players.
     /// </summary>
-    internal class Grimoire
+    public class Grimoire
     {
         public IReadOnlyCollection<Player> Players => players;
 
@@ -26,7 +26,7 @@ namespace Clocktower.Game
         public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)
         {
             int lastPlayerIndex = players.IndexOf(lastPlayer);
-            for (int offset = 1; offset < players.Count; ++offset) 
+            for (int offset = 1; offset <= players.Count; ++offset) 
             {
                 yield return players[(lastPlayerIndex + offset) % players.Count];
             }

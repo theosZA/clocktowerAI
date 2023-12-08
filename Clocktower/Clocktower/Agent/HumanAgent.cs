@@ -50,6 +50,11 @@ namespace Clocktower.Agent
             form.NotifySteward(goodPlayer);
         }
 
+        public void NotifyShugenja(bool clockwise)
+        {
+            form.NotifyShugenja(clockwise);
+        }
+
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
             form.NotifyEmpath(neighbourA, neighbourB, evilCount);

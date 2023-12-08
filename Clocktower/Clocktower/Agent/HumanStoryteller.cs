@@ -35,6 +35,11 @@ namespace Clocktower.Agent
             return await form.GetFortuneTellerReading(fortuneTeller, targetA, targetB, readingOptions);
         }
 
+        public async Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions)
+        {
+            return await form.GetShugenjaDirection(shugenja, grimoire, shugenjaOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);
@@ -68,6 +73,11 @@ namespace Clocktower.Agent
         public void NotifySteward(Player steward, Player goodPlayer)
         {
             form.NotifySteward(steward, goodPlayer);
+        }
+
+        public void NotifyShugenja(Player shugenja, bool clockwise)
+        {
+            form.NotifyShugenja(shugenja, clockwise);
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)

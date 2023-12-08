@@ -24,13 +24,13 @@ namespace Clocktower.Game
             // For now we assign hardcoded characters.
             var charactersAlignments = new[]
             {
-                (Character.Steward, Alignment.Good),
                 (Character.Imp, Alignment.Evil),
-                (Character.Godfather, Alignment.Evil),
-                (Character.Recluse, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
-                (Character.Fortune_Teller, Alignment.Good),
+                (Character.Shugenja, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
+                (Character.Recluse, Alignment.Good),
+                (Character.Godfather, Alignment.Evil),
+                (Character.Fortune_Teller, Alignment.Good),
                 (Character.Ravenkeeper, Alignment.Good)
             };
 
@@ -120,8 +120,8 @@ namespace Clocktower.Game
                 new NotifyInvestigator(storyteller, grimoire),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
-                new NotifySteward(storyteller, grimoire)
-                // Shugenja...
+                new NotifySteward(storyteller, grimoire),
+                new NotifyShugenja(storyteller, grimoire)
             });
         }
 

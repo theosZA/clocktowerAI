@@ -94,6 +94,43 @@ namespace Clocktower
             return await PopulateOptions(readingOptions);
         }
 
+        public async Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions)
+        {
+            outputText.AppendFormattedText("Choose whether to indicate 'Clockwise' or 'Counter-clockwise' to %p to indicate the direction to the nearest evil player.", shugenja, StorytellerView);
+
+            IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
+
+            var firstEvilClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                        .First(pair => pair.player.Alignment == Alignment.Evil);
+            outputText.AppendFormattedText(" The first evil player going clockwise is %p, %n steps away.", firstEvilClockwise.player, firstEvilClockwise.Item2, StorytellerView);
+
+            var firstEvilCounterclockwise = allPlayersClockwise.Reverse()
+                                                               .Select((player, i) => (player, i + 1))
+                                                               .First(pair => pair.player.Alignment == Alignment.Evil);
+            outputText.AppendFormattedText(" The first evil player going counter-clockwise is %p, %n steps away.", firstEvilCounterclockwise.player, firstEvilCounterclockwise.Item2, StorytellerView);
+
+            if (allPlayersClockwise.Any(player => player.Character == Character.Recluse))
+            {
+                int recluseStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                        .First(pair => pair.player.Character == Character.Recluse).Item2;
+                if (recluseStepsClockwise < firstEvilClockwise.Item2)
+                {
+                    outputText.AppendFormattedText(" There is also a %c %n steps clockwise and they may register as evil.", Character.Recluse, recluseStepsClockwise, StorytellerView);
+                }
+                int recluseStepsCounterclockwise = allPlayersClockwise.Reverse()
+                                                                      .Select((player, i) => (player, i + 1))
+                                                                      .First(pair => pair.player.Character == Character.Recluse).Item2;
+                if (recluseStepsCounterclockwise < firstEvilCounterclockwise.Item2)
+                {
+                    outputText.AppendFormattedText(" There is also a %c %n steps counter-clockwise and they may register as evil.", Character.Recluse, recluseStepsCounterclockwise, StorytellerView);
+                }
+            }
+
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(shugenjaOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))
@@ -146,6 +183,11 @@ namespace Clocktower
         public void NotifySteward(Player steward, Player goodPlayer)
         {
             outputText.AppendFormattedText("%p learns that %p is a good player.\n", steward, goodPlayer, StorytellerView);
+        }
+
+        public void NotifyShugenja(Player shugenja, bool clockwise)
+        {
+            outputText.AppendFormattedText("%p learns that the nearest %a to them is in the %b direction.\n", shugenja, Alignment.Evil, clockwise ? "clockwise" : "counter-clockwise", StorytellerView);
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)

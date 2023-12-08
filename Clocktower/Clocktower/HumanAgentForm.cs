@@ -78,6 +78,11 @@ namespace Clocktower
             outputText.AppendFormattedText("You learn that %p is a good player.\n", goodPlayer);
         }
 
+        public void NotifyShugenja(bool clockwise)
+        {
+            outputText.AppendFormattedText("You learn that the nearest %a to you is in the %b direction.\n", Alignment.Evil, clockwise ? "clockwise" : "counter-clockwise");
+        }
+
         public void NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);

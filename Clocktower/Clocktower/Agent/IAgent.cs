@@ -15,6 +15,8 @@ namespace Clocktower.Agent
         void NotifyLibrarian(Player playerA, Player playerB, Character character);
         void NotifyInvestigator(Player playerA, Player playerB, Character character);
         void NotifySteward(Player goodPlayer);
+        void NotifyShugenja(bool clockwise);
+
         void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
         void NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         void NotifyRavenkeeper(Player target, Character character);
