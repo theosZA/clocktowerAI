@@ -12,6 +12,7 @@ namespace Clocktower.Observer
         void Night(int nightNumber);
         void Day(int dayNumber);
 
+        void NoOneDiedAtNight();
         void PlayerDiedAtNight(Player newlyDeadPlayer);
         void PlayerIsExecuted(Player executedPlayer, bool playerDies);
         void DayEndsWithNoExecution();

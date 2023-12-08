@@ -38,6 +38,11 @@ namespace Clocktower.Observer
             outputText.AppendBoldText($"\nDay {dayNumber}\n\n");
         }
 
+        public void NoOneDiedAtNight()
+        {
+            outputText.AppendText("No one died in the night.\n");
+        }
+
         public void PlayerDiedAtNight(Player newlyDeadPlayer)
         {
             outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer, StorytellerView);

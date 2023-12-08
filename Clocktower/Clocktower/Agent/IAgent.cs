@@ -22,6 +22,7 @@ namespace Clocktower.Agent
         void NotifyRavenkeeper(Player target, Character character);
 
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options);
 

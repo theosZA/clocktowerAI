@@ -90,6 +90,11 @@ namespace Clocktower.Agent
             form.ChoiceFromImp(imp, target);
         }
 
+        public void ChoiceFromPoisoner(Player poisoner, Player target)
+        {
+            form.ChoiceFromPoisoner(poisoner, target);
+        }
+
         public void ChoiceFromAssassin(Player assassin, Player? target)
         {
             form.ChoiceFromAssassin(assassin, target);

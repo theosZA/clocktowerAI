@@ -25,12 +25,12 @@ namespace Clocktower.Game
             var charactersAlignments = new[]
             {
                 (Character.Imp, Alignment.Evil),
-                (Character.Slayer, Alignment.Good),
                 (Character.Shugenja, Alignment.Good),
+                (Character.Slayer, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
                 (Character.Recluse, Alignment.Good),
-                (Character.Godfather, Alignment.Evil),
-                (Character.Fortune_Teller, Alignment.Good),
+                (Character.Poisoner, Alignment.Evil),
+                (Character.Empath, Alignment.Good),
                 (Character.Ravenkeeper, Alignment.Good)
             };
 
@@ -114,7 +114,7 @@ namespace Clocktower.Game
                 // Philosopher...
                 new MinionInformation(storyteller, grimoire),
                 new DemonInformation(storyteller, grimoire),
-                // Poisoner...
+                new ChoiceFromPoisoner(storyteller, grimoire),
                 new NotifyGodfather(storyteller, grimoire),
                 new NotifyLibrarian(storyteller, grimoire),
                 new NotifyInvestigator(storyteller, grimoire),
@@ -127,10 +127,16 @@ namespace Clocktower.Game
 
         private async Task RunNight()
         {
+            // Clear expired tokens.
+            foreach (var player in grimoire.Players)
+            {
+                player.Tokens.Remove(Token.PoisonedByPoisoner);
+            }
+
             await RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
-                // Poisoner...
+                new ChoiceFromPoisoner(storyteller, grimoire),
                 // Monk...
                 // Scarlet Woman...
                 new ChoiceFromImp(storyteller, grimoire),
@@ -159,7 +165,10 @@ namespace Clocktower.Game
 
         private async Task RunDay()
         {
-            AnnounceNightKills();
+            if (dayNumber > 1)
+            {
+                AnnounceNightKills();
+            }
             if (!Finished)
             {
                 // TBD Conversations during the day.
@@ -170,17 +179,18 @@ namespace Clocktower.Game
 
         private void AnnounceNightKills()
         {
-            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon));
+            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon)).ToList();
+            if (newlyDeadPlayers.Count == 0)
+            {
+                observers.NoOneDiedAtNight();
+                return;
+            }
             foreach (var newlyDeadPlayer in newlyDeadPlayers)
             {
                 observers.PlayerDiedAtNight(newlyDeadPlayer);
                 newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                 newlyDeadPlayer.Tokens.Remove(Token.KilledByDemon);
                 newlyDeadPlayer.Kill();
-                if (Finished)
-                {
-                    return;
-                }
             }
         }
 

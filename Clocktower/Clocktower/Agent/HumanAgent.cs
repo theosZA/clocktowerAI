@@ -75,6 +75,11 @@ namespace Clocktower.Agent
             return await form.RequestChoiceFromImp(options);
         }
 
+        public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
+        {
+            return await form.RequestChoiceFromPoisoner(options);
+        }
+
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
             return await form.RequestChoiceFromAssassin(options);

@@ -97,6 +97,10 @@ namespace Clocktower
         public async Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions)
         {
             outputText.AppendFormattedText("Choose whether to indicate 'Clockwise' or 'Counter-clockwise' to %p to indicate the direction to the nearest evil player.", shugenja, StorytellerView);
+            if (shugenja.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
 
             IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
 
@@ -198,6 +202,11 @@ namespace Clocktower
         public void ChoiceFromImp(Player imp, Player target)
         {
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
+        }
+
+        public void ChoiceFromPoisoner(Player poisoner, Player target)
+        {
+            outputText.AppendFormattedText("%p has chosen to poison %p.\n", poisoner, target, StorytellerView);
         }
 
         public void ChoiceFromAssassin(Player assassin, Player? target)
