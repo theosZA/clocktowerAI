@@ -70,6 +70,11 @@ namespace Clocktower.Agent
             form.NotifyRavenkeeper(target, character);
         }
 
+        public void NotifyUndertaker(Player executedPlayer, Character character)
+        {
+            form.NotifyUndertaker(executedPlayer, character);
+        }
+
         public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             return await form.RequestChoiceFromImp(options);

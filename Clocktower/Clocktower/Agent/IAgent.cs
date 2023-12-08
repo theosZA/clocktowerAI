@@ -20,6 +20,7 @@ namespace Clocktower.Agent
         void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
         void NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         void NotifyRavenkeeper(Player target, Character character);
+        void NotifyUndertaker(Player executedPlayer, Character character);
 
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);

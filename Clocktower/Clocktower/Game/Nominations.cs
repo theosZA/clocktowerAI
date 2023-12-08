@@ -121,7 +121,7 @@ namespace Clocktower.Game
             observers.PlayerIsExecuted(playerOnTheBlock, playerDies);
             if (playerDies)
             {
-                new Kills(storyteller, grimoire).DayKill(playerOnTheBlock);
+                new Kills(storyteller, grimoire).Execute(playerOnTheBlock);
             }
         }
 

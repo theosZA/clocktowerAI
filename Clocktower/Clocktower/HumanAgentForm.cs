@@ -117,6 +117,11 @@ namespace Clocktower
             outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
         }
 
+        public void NotifyUndertaker(Player executedPlayer, Character character)
+        {
+            outputText.AppendFormattedText("You learn that %p is the %c.\n", executedPlayer, character);
+        }
+
         public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);

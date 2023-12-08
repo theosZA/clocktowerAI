@@ -10,6 +10,12 @@ namespace Clocktower.Game
             this.grimoire = grimoire;
         }
 
+        public void Execute(Player player)
+        {
+            player.Tokens.Add(Token.Executed);
+            DayKill(player);
+        }
+
         public void DayKill(Player player)
         {
             HandleDayDeath(player);

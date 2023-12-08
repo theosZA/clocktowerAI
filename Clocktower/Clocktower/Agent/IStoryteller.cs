@@ -14,6 +14,7 @@ namespace Clocktower.Agent
         Task<IOption> GetFortuneTellerReading(Player empath, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
         Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
         Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions);
+        Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions);
 
         void AssignCharacter(Player player);
 
@@ -26,6 +27,7 @@ namespace Clocktower.Agent
         void NotifySteward(Player steward, Player goodPlayer);
         void NotifyShugenja(Player shugenja, bool clockwise);
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
+        void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
 
         void ChoiceFromImp(Player imp, Player target);
         void ChoiceFromPoisoner(Player poisoner, Player target);

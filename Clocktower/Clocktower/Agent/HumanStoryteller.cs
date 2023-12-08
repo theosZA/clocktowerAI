@@ -55,6 +55,11 @@ namespace Clocktower.Agent
             return await form.GetCharacterForRavenkeeper(ravenkeeper, target, ravenkeeperOptions);
         }
 
+        public async Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions)
+        {
+            return await form.GetCharacterForUndertaker(undertaker, executedPlayer, undertakerOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);
@@ -128,6 +133,11 @@ namespace Clocktower.Agent
         public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)
         {
             form.ChoiceFromRavenkeeper(ravenkeeper, target, character);
+        }
+
+        public void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter)
+        {
+            form.NotifyUndertaker(undertaker, executedPlayer, executedCharacter);
         }
 
         public void ScarletWomanTrigger(Player demon, Player scarletWoman)

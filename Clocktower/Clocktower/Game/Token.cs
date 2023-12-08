@@ -10,6 +10,7 @@
         FortuneTellerRedHerring,
         UsedOncePerGameAbility,
         GodfatherKillsTonight,
+        Executed,
         ProtectedByMonk
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
-using System.Numerics;
 
 namespace Clocktower
 {
@@ -162,6 +161,18 @@ namespace Clocktower
             return await PopulateOptions(ravenkeeperOptions);
         }
 
+        public async Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions)
+        {
+            outputText.AppendFormattedText("%p was executed yesterday. Choose a character for %p to learn.", executedPlayer, undertaker, StorytellerView);
+            if (undertaker.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(undertakerOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))
@@ -224,6 +235,11 @@ namespace Clocktower
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)
         {
             outputText.AppendFormattedText($"%p learns that %b of their living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", empath, evilCount, neighbourA, neighbourB, StorytellerView);
+        }
+
+        public void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter)
+        {
+            outputText.AppendFormattedText($"%p learns that the recently executed %p is the %c.\n", undertaker, executedPlayer, executedCharacter, StorytellerView);
         }
 
         public void ChoiceFromImp(Player imp, Player target)

@@ -56,12 +56,12 @@ namespace Clocktower.Game
             {
                 (Character.Imp, Alignment.Evil),
                 (Character.Shugenja, Alignment.Good),
-                (Character.Slayer, Alignment.Good),
+                (Character.Undertaker, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Sweetheart, Alignment.Good),
+                (Character.Recluse, Alignment.Good),
                 (Character.Investigator, Alignment.Good),
                 (Character.Empath, Alignment.Good),
-                (Character.Scarlet_Woman, Alignment.Evil)
+                (Character.Poisoner, Alignment.Evil)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -177,9 +177,15 @@ namespace Clocktower.Game
                 // Tinker...
                 new ChoiceFromRavenkeeper(storyteller, grimoire, scriptCharacters),
                 new NotifyEmpath(storyteller, grimoire),
-                new ChoiceFromFortuneTeller(storyteller, grimoire)
-                // Undertaker...
+                new ChoiceFromFortuneTeller(storyteller, grimoire),
+                new NotifyUndertaker(storyteller, grimoire, scriptCharacters)
             });
+
+            // Clear expired tokens.
+            foreach (var player in grimoire.Players)
+            {
+                player.Tokens.Remove(Token.Executed);
+            }
         }
 
         private async Task RunNightEvents(IEnumerable<IGameEvent> nightEvents)
