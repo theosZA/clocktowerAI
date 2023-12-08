@@ -45,6 +45,11 @@ namespace Clocktower.Agent
             return await form.GetShugenjaDirection(shugenja, grimoire, shugenjaOptions);
         }
 
+        public async Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions)
+        {
+            return await form.GetCharacterForRavenkeeper(ravenkeeper, target, ravenkeeperOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);

@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
 using Clocktower.Observer;
+using System.Collections.ObjectModel;
 
 namespace Clocktower.Game
 {
@@ -13,6 +14,36 @@ namespace Clocktower.Game
 
         public ClocktowerGame()
         {
+            // "A Simple Matter"
+            scriptCharacters = new List<Character>
+            {   // Townsfolk
+                Character.Steward,
+                Character.Investigator,
+                Character.Librarian,
+                Character.Shugenja,
+                Character.Empath,
+                Character.Fortune_Teller,
+                Character.Undertaker,
+                Character.Monk,
+                Character.Fisherman,
+                Character.Slayer,
+                Character.Philosopher,
+                Character.Soldier,
+                Character.Ravenkeeper,
+                // Outsiders
+                Character.Tinker,
+                Character.Sweetheart,
+                Character.Recluse,
+                Character.Drunk,
+                // Minions
+                Character.Godfather,
+                Character.Poisoner,
+                Character.Assassin,
+                Character.Scarlet_Woman,
+                // Demons
+                Character.Imp
+            };
+
             var storytellerForm = new StorytellerForm(random);
             storyteller = new HumanStoryteller(storytellerForm);
 
@@ -28,10 +59,10 @@ namespace Clocktower.Game
                 (Character.Shugenja, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Sweetheart, Alignment.Good),
+                (Character.Recluse, Alignment.Good),
                 (Character.Poisoner, Alignment.Evil),
                 (Character.Empath, Alignment.Good),
-                (Character.Monk, Alignment.Good)
+                (Character.Ravenkeeper, Alignment.Good)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -145,7 +176,7 @@ namespace Clocktower.Game
                 new ChoiceFromGodfather(storyteller, grimoire),
                 new SweetheartDrunk(storyteller, grimoire),
                 // Tinker...
-                new ChoiceFromRavenkeeper(storyteller, grimoire),
+                new ChoiceFromRavenkeeper(storyteller, grimoire, scriptCharacters),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire)
                 // Undertaker...
@@ -195,6 +226,7 @@ namespace Clocktower.Game
             }
         }
 
+        private readonly List<Character> scriptCharacters;
         private readonly Grimoire grimoire;
         private readonly IStoryteller storyteller;
         private readonly ObserverCollection observers;

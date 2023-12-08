@@ -143,6 +143,18 @@ namespace Clocktower
             return await PopulateOptions(shugenjaOptions);
         }
 
+        public async Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions)
+        {
+            outputText.AppendFormattedText("%p has died and has chosen to learn the character of %p. Choose a character for them to learn.", ravenkeeper, target, StorytellerView);
+            if (ravenkeeper.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(ravenkeeperOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))
