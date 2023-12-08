@@ -40,7 +40,7 @@ namespace Clocktower.Events
             {
                 return true;                
             }
-            if (targetA.Character == Character.Recluse || targetB.Character == Character.Recluse)
+            if (targetA.CanRegisterAsDemon || targetB.CanRegisterAsDemon)
             {
                 return await GetReadingFromStoryteller(fortuneTeller, targetA, targetB);
             }

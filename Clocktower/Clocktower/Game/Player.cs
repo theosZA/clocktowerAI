@@ -41,6 +41,10 @@ namespace Clocktower.Game
 
         public List<Token> Tokens { get; } = new();
 
+        public bool CanRegisterAsEvil => Alignment == Alignment.Evil || (Character == Character.Recluse && !DrunkOrPoisoned);
+        public bool CanRegisterAsDemon => CharacterType == CharacterType.Demon || (Character == Character.Recluse && !DrunkOrPoisoned);
+        public bool CanRegisterAsMinion => CharacterType == CharacterType.Minion || (Character == Character.Recluse && !DrunkOrPoisoned);
+
         public Player(string name, IAgent agent, Character character, Alignment alignment)
         {
             Name = name;

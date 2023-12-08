@@ -46,20 +46,29 @@ namespace Clocktower.Events
             }
             else
             {
-                if (neighbourA.Character == Character.Recluse)
+                int minEvilCount = 0;
+                int maxEvilCount = 0;
+                if (neighbourA.Alignment == Alignment.Evil)
                 {
-                    yield return (neighbourB.Alignment == Alignment.Evil ? 1 : 0);
-                    yield return (neighbourB.Alignment == Alignment.Evil ? 1 : 0) + 1;
+                    ++minEvilCount;
+                    ++maxEvilCount;
                 }
-                else if (neighbourB.Character == Character.Recluse)
+                else if (neighbourA.CanRegisterAsEvil)
                 {
-                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0);
-                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0) + 1;
+                    ++maxEvilCount;
                 }
-                else
+                if (neighbourB.Alignment == Alignment.Evil)
                 {
-                    yield return (neighbourA.Alignment == Alignment.Evil ? 1 : 0)
-                               + (neighbourB.Alignment == Alignment.Evil ? 1 : 0);
+                    ++minEvilCount;
+                    ++maxEvilCount;
+                }
+                else if (neighbourB.CanRegisterAsEvil)
+                {
+                    ++maxEvilCount;
+                }
+                for (int evilCount = minEvilCount; evilCount <= maxEvilCount; ++evilCount)
+                {
+                    yield return evilCount;
                 }
             }
         }

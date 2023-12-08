@@ -33,34 +33,30 @@ namespace Clocktower.Events
             IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
             IReadOnlyCollection<Player> allPlayersCounterclockwise = allPlayersClockwise.Reverse().ToList();
 
-            var evilStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                        .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
-            var evilStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                      .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
+            var minEvilStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                           .First(pair => pair.player.CanRegisterAsEvil).Item2;
+            var maxEvilStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                           .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
+            var minEvilStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
+                                                                         .First(pair => pair.player.CanRegisterAsEvil).Item2;
+            var maxEvilStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
+                                                                         .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
 
-            if (allPlayersClockwise.Any(player => player.Character == Character.Recluse))
-            {
-                var recluseStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                               .First(pair => pair.player.Character == Character.Recluse).Item2;
-                var recluseStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                             .First(pair => pair.player.Character == Character.Recluse).Item2;
-
-                if (recluseStepsClockwise <= evilStepsCounterclockwise && evilStepsCounterclockwise < evilStepsClockwise)
-                {   // If we count the Recluse as evil, then this would be clockwise (or equal) instead of counter-clockwise.
-                    return await GetDirectionFromStoryteller(shugenja);
-                }
-                if (recluseStepsCounterclockwise <= evilStepsClockwise && evilStepsClockwise < evilStepsCounterclockwise)
-                {   // If we count the Recluse as evil, then this would be counter-clockwise (or equal) instead of clockwise.
-                    return await GetDirectionFromStoryteller(shugenja);
-                }
-                // If we counted the Recluse as evil, it wouldn't change anything. Proceed to default handling.
+            if (minEvilStepsClockwise <= maxEvilStepsCounterclockwise && maxEvilStepsCounterclockwise < maxEvilStepsClockwise)
+            {   // If we count the Recluse as evil, then this would be clockwise (or equal) instead of counter-clockwise.
+                return await GetDirectionFromStoryteller(shugenja);
             }
+            if (minEvilStepsCounterclockwise <= maxEvilStepsClockwise && maxEvilStepsClockwise < maxEvilStepsCounterclockwise)
+            {   // If we count the Recluse as evil, then this would be counter-clockwise (or equal) instead of clockwise.
+                return await GetDirectionFromStoryteller(shugenja);
+            }
+            // Even if we count the Recluse as evil, it woun't change anything. Proceed to default handling.
 
-            if (evilStepsClockwise == evilStepsCounterclockwise)
+            if (maxEvilStepsClockwise == maxEvilStepsCounterclockwise)
             {
                 return await GetDirectionFromStoryteller(shugenja);
             }
-            return evilStepsClockwise < evilStepsCounterclockwise;
+            return maxEvilStepsClockwise < maxEvilStepsCounterclockwise;
         }
 
         private async Task<bool> GetDirectionFromStoryteller(Player shugenja)

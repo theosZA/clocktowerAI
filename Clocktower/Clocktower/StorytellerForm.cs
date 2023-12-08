@@ -1,6 +1,7 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
+using System.Numerics;
 
 namespace Clocktower
 {
@@ -61,11 +62,11 @@ namespace Clocktower
             {
                 outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
             }
-            else if (neighbourA.Character == Character.Recluse)
+            else if (neighbourA.Alignment != Alignment.Evil && neighbourA.CanRegisterAsEvil)
             {
                 outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourA, Alignment.Evil, StorytellerView);
             }
-            else if (neighbourB.Character == Character.Recluse)
+            else if (neighbourB.Alignment != Alignment.Evil && neighbourB.CanRegisterAsEvil)
             {
                 outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourB, Alignment.Evil, StorytellerView);
             }
@@ -81,11 +82,11 @@ namespace Clocktower
             {
                 outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
             }
-            else if (targetA.Character == Character.Recluse)
+            else if (targetA.CharacterType != CharacterType.Demon && targetA.CanRegisterAsDemon)
             {
                 outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetA, Alignment.Evil, StorytellerView);
             }
-            else if (targetB.Character == Character.Recluse)
+            else if (targetB.CharacterType != CharacterType.Demon && targetB.CanRegisterAsDemon)
             {
                 outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetB, Alignment.Evil, StorytellerView);
             }
@@ -103,30 +104,30 @@ namespace Clocktower
             }
 
             IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
+            IReadOnlyCollection<Player> allPlayersCounterclockwise = allPlayersClockwise.Reverse().ToList();
 
-            var firstEvilClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                        .First(pair => pair.player.Alignment == Alignment.Evil);
-            outputText.AppendFormattedText(" The first evil player going clockwise is %p, %n steps away.", firstEvilClockwise.player, firstEvilClockwise.Item2, StorytellerView);
+            var (evilClockwise, stepsClockwise) = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                                     .First(pair => pair.player.Alignment == Alignment.Evil);
+            outputText.AppendFormattedText(" The first evil player going clockwise is %p, %n steps away.", evilClockwise, stepsClockwise, StorytellerView);
 
-            var firstEvilCounterclockwise = allPlayersClockwise.Reverse()
-                                                               .Select((player, i) => (player, i + 1))
-                                                               .First(pair => pair.player.Alignment == Alignment.Evil);
-            outputText.AppendFormattedText(" The first evil player going counter-clockwise is %p, %n steps away.", firstEvilCounterclockwise.player, firstEvilCounterclockwise.Item2, StorytellerView);
+            var (evilCounterclockwise, stepsCounterclockwise) = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
+                                                                                          .First(pair => pair.player.Alignment == Alignment.Evil);
+            outputText.AppendFormattedText(" The first evil player going counter-clockwise is %p, %n steps away.", evilCounterclockwise, stepsCounterclockwise, StorytellerView);
 
-            if (allPlayersClockwise.Any(player => player.Character == Character.Recluse))
+            if (allPlayersClockwise.Any(player => player.Alignment != Alignment.Evil && player.CanRegisterAsEvil))
             {
-                int recluseStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                        .First(pair => pair.player.Character == Character.Recluse).Item2;
-                if (recluseStepsClockwise < firstEvilClockwise.Item2)
+                var (possibleEvilClockwise, possibleStepsClockwise) = allPlayersClockwise.Select((player, i) => (player, i + 1))
+                                                                                         .First(pair => pair.player.Alignment != Alignment.Evil && pair.player.CanRegisterAsEvil);
+                if (possibleStepsClockwise < stepsClockwise)
                 {
-                    outputText.AppendFormattedText(" There is also a %c %n steps clockwise and they may register as evil.", Character.Recluse, recluseStepsClockwise, StorytellerView);
+                    outputText.AppendFormattedText(" %p is %n steps clockwise and they may register as evil.", possibleEvilClockwise, possibleStepsClockwise, StorytellerView);
                 }
-                int recluseStepsCounterclockwise = allPlayersClockwise.Reverse()
-                                                                      .Select((player, i) => (player, i + 1))
-                                                                      .First(pair => pair.player.Character == Character.Recluse).Item2;
-                if (recluseStepsCounterclockwise < firstEvilCounterclockwise.Item2)
+
+                var (possibleEvilCounterclockwise, possibleStepsCounterclockwise) = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
+                                                                                                              .First(pair => pair.player.Alignment != Alignment.Evil && pair.player.CanRegisterAsEvil);
+                if (possibleStepsCounterclockwise < stepsCounterclockwise)
                 {
-                    outputText.AppendFormattedText(" There is also a %c %n steps counter-clockwise and they may register as evil.", Character.Recluse, recluseStepsCounterclockwise, StorytellerView);
+                    outputText.AppendFormattedText(" %p is %n steps counter-clockwise and they may register as evil.", possibleEvilCounterclockwise, possibleStepsCounterclockwise, StorytellerView);
                 }
             }
 
