@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent;
+using Clocktower.Events;
 using Clocktower.Observer;
 using Clocktower.Options;
 
@@ -21,7 +22,7 @@ namespace Clocktower.Game
                 var nomination = await RequestNomination();
                 if (!nomination.HasValue)
                 {   // No more nominations.
-                    EndDay();
+                    await EndDay();
                     return;
                 }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
@@ -109,7 +110,7 @@ namespace Clocktower.Game
             return voteCount;
         }
 
-        private void EndDay()
+        private async Task EndDay()
         {
             if (playerOnTheBlock == null)
             {
@@ -130,13 +131,17 @@ namespace Clocktower.Game
                         player.Tokens.Add(Token.GodfatherKillsTonight);
                     }
                 }
+                if (playerOnTheBlock.Character == Character.Sweetheart && !playerOnTheBlock.DrunkOrPoisoned)
+                {
+                    await new SweetheartDrunk(storyteller, grimoire).RunEvent();
+                }
             }
         }
 
-        private IStoryteller storyteller;
-        private Grimoire grimoire;
-        private ObserverCollection observers;
-        private Random random;
+        private readonly IStoryteller storyteller;
+        private readonly Grimoire grimoire;
+        private readonly ObserverCollection observers;
+        private readonly Random random;
 
         private Player? playerOnTheBlock;
         private int? highestVoteCount;

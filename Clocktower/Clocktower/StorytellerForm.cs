@@ -36,6 +36,13 @@ namespace Clocktower
             return await PopulateOptions(drunkCandidates);
         }
 
+        public async Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates)
+        {
+            outputText.AppendFormattedText("The %c has died. Choose one player to be drunk from now on...\n", Character.Sweetheart);
+
+            return await PopulateOptions(drunkCandidates);
+        }
+
         public async Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates)
         {
             outputText.AppendFormattedText("Choose one player to be the red herring (to register as the Demon) for the %c...\n", Character.Fortune_Teller);

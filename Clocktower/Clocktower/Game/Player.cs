@@ -37,7 +37,7 @@ namespace Clocktower.Game
             };
         }
 
-        public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || token == Token.PoisonedByPoisoner).Any();
+        public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || token == Token.SweetheartDrunk || token == Token.PoisonedByPoisoner).Any();
 
         public List<Token> Tokens { get; } = new();
 

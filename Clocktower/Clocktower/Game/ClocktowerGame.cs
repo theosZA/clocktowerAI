@@ -28,7 +28,7 @@ namespace Clocktower.Game
                 (Character.Shugenja, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Recluse, Alignment.Good),
+                (Character.Sweetheart, Alignment.Good),
                 (Character.Poisoner, Alignment.Evil),
                 (Character.Empath, Alignment.Good),
                 (Character.Monk, Alignment.Good)
@@ -143,7 +143,7 @@ namespace Clocktower.Game
                 new ChoiceFromImp(storyteller, grimoire),
                 new ChoiceFromAssassin(storyteller, grimoire),
                 new ChoiceFromGodfather(storyteller, grimoire),
-                // Sweetheart...
+                new SweetheartDrunk(storyteller, grimoire),
                 // Tinker...
                 new ChoiceFromRavenkeeper(storyteller, grimoire),
                 new NotifyEmpath(storyteller, grimoire),

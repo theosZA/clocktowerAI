@@ -15,6 +15,11 @@ namespace Clocktower.Agent
             return await form.GetDrunk(drunkCandidates);
         }
 
+        public async Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates)
+        {
+            return await form.GetSweetheartDrunk(drunkCandidates);
+        }
+
         public async Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates)
         {
             return await form.GetFortuneTellerRedHerring(redHerringCandidates);
