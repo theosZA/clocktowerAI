@@ -100,11 +100,11 @@ namespace Clocktower.Game
 
         private async Task Setup()
         {
-            await RunNightEvents(new IGameEvent[]
+            if (addDrunkToGame)
             {
-                new AssignDrunk(storyteller, grimoire),
-                new AssignFortuneTellerRedHerring(storyteller, grimoire)
-            });
+                await new AssignDrunk(storyteller, grimoire).RunEvent();
+            }
+            await new AssignFortuneTellerRedHerring(storyteller, grimoire).RunEvent();
         }
 
         private async Task RunFirstNight()
@@ -190,5 +190,7 @@ namespace Clocktower.Game
         private readonly Random random = new();
 
         private int dayNumber = 0;
+
+        private bool addDrunkToGame = false;
     }
 }
