@@ -1,7 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
-using System.Diagnostics;
 
 namespace Clocktower.Events
 {
@@ -19,17 +18,15 @@ namespace Clocktower.Events
             {
                 var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
 
-                var choice = await godfather.Agent.RequestChoiceFromGodfather(options);
-                var playerOption = choice as PlayerOption;
-                Debug.Assert(playerOption != null);
-                var player = playerOption.Player;
-                storyteller.ChoiceFromGodfather(godfather, player);
+                var choice = (PlayerOption)await godfather.Agent.RequestChoiceFromGodfather(options);
+                var target = choice.Player;
+                storyteller.ChoiceFromGodfather(godfather, target);
 
-                if (!godfather.DrunkOrPoisoned)
-                {
-                    player.Tokens.Add(Token.DiedAtNight);
-                }
                 godfather.Tokens.Remove(Token.GodfatherKillsTonight);
+                if (!godfather.DrunkOrPoisoned && target.Alive)
+                {
+                    new Kills(storyteller, grimoire).NightKill(target);
+                }
             }
         }
 

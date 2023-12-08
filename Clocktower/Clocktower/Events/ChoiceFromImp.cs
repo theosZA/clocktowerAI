@@ -24,17 +24,29 @@ namespace Clocktower.Events
                 storyteller.ChoiceFromImp(imp, target);
                 if (!imp.DrunkOrPoisoned && target.Alive && target.CanBeKilledByDemon)
                 {
-                    target.Tokens.Add(Token.KilledByDemon);
                     if (target == imp)
                     {
-                        await ImpStarPass();
+                        await StarPass(target);
+                    }
+                    else
+                    {
+                        new Kills(storyteller, grimoire).DemonKill(target);
                     }
                 }
             }
         }
 
-        private async Task ImpStarPass()
+        private async Task StarPass(Player dyingImp)
         {
+            // We need to check if a Scarlet Woman will become the new Imp. If so, that will already be handled.
+            bool scarletWomanCatchesStarPass = grimoire.Players.Count(player => player.Alive) >= 5 && grimoire.Players.Any(player => player.Character == Character.Scarlet_Woman && !player.DrunkOrPoisoned);
+
+            new Kills(storyteller, grimoire).DemonKill(dyingImp);
+            if (scarletWomanCatchesStarPass)
+            {
+                return;
+            }
+
             var newImp = await GetNewImp();
             if (newImp == null)
             {

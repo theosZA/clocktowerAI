@@ -1,7 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
 using Clocktower.Observer;
-using System.Collections.ObjectModel;
 
 namespace Clocktower.Game
 {
@@ -47,7 +46,7 @@ namespace Clocktower.Game
             var storytellerForm = new StorytellerForm(random);
             storyteller = new HumanStoryteller(storytellerForm);
 
-            var playerNames = new[] { "Alison", "Barry", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
+            var playerNames = new[] { "Alison", "Bart", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
 
             var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name, random));
             observers = new ObserverCollection(playerForms.Select(form => form.Value.Observer).Append(storytellerForm.Observer));
@@ -59,10 +58,10 @@ namespace Clocktower.Game
                 (Character.Shugenja, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Recluse, Alignment.Good),
-                (Character.Poisoner, Alignment.Evil),
+                (Character.Sweetheart, Alignment.Good),
+                (Character.Investigator, Alignment.Good),
                 (Character.Empath, Alignment.Good),
-                (Character.Godfather, Alignment.Evil)
+                (Character.Scarlet_Woman, Alignment.Evil)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -170,7 +169,7 @@ namespace Clocktower.Game
                 // Philosopher...
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new ChoiceFromMonk(storyteller, grimoire),
-                // Scarlet Woman...
+                // Scarlet Woman - this is their theoretical place in the night order, but they actually become the demon immediately
                 new ChoiceFromImp(storyteller, grimoire),
                 new ChoiceFromAssassin(storyteller, grimoire),
                 new ChoiceFromGodfather(storyteller, grimoire),
@@ -234,6 +233,6 @@ namespace Clocktower.Game
 
         private int dayNumber = 0;
 
-        private bool addDrunkToGame = true;
+        private bool addDrunkToGame = false;
     }
 }

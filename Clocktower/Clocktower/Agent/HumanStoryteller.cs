@@ -130,6 +130,11 @@ namespace Clocktower.Agent
             form.ChoiceFromRavenkeeper(ravenkeeper, target, character);
         }
 
-        private StorytellerForm form;
+        public void ScarletWomanTrigger(Player demon, Player scarletWoman)
+        {
+            form.ScarletWomanTrigger(demon, scarletWoman);
+        }
+
+        private readonly StorytellerForm form;
     }
 }

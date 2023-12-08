@@ -263,6 +263,11 @@ namespace Clocktower
             outputText.AppendFormattedText("%p chooses %p and learns that they are the %c.\n", ravenkeeper, target, character, StorytellerView);
         }
 
+        public void ScarletWomanTrigger(Player demon, Player scarletWoman)
+        {
+            outputText.AppendFormattedText("%p has died and so %p becomes the new %c.\n", demon, scarletWoman, Character.Imp, StorytellerView);
+        }
+
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
         {
             if (AutoAct)

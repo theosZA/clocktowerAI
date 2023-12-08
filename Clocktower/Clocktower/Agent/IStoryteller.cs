@@ -33,5 +33,7 @@ namespace Clocktower.Agent
         void ChoiceFromGodfather(Player godfather, Player target);
         void ChoiceFromMonk(Player monk, Player target);
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
+
+        void ScarletWomanTrigger(Player demon, Player scarletWoman);
     }
 }

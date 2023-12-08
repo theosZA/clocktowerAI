@@ -1,4 +1,6 @@
 ﻿using Clocktower.Agent;
+using Clocktower.Events;
+using Clocktower.Options;
 
 namespace Clocktower.Game
 {
@@ -26,8 +28,14 @@ namespace Clocktower.Game
         public void ChangeCharacter(Player player, Character newCharacter)
         {
             player.Tokens.Remove(Token.UsedOncePerGameAbility);
-            var oldCharacter = player.Character;
-            switch (oldCharacter)
+            RemoveTokensForCharacter(player.Character);
+            player.ChangeCharacter(newCharacter);
+        }
+
+        public void RemoveTokensForCharacter(Character character)
+        {
+            // Remove any ongoing effects that character has.
+            switch (character)
             {
                 case Character.Fortune_Teller:
                     RemoveToken(Token.FortuneTellerRedHerring);
@@ -45,7 +53,6 @@ namespace Clocktower.Game
                     RemoveToken(Token.PoisonedByPoisoner);
                     break;
             }
-            player.ChangeCharacter(newCharacter);
         }
 
         public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)
