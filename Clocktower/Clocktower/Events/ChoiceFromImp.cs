@@ -21,7 +21,7 @@ namespace Clocktower.Events
                 var target = choice.Player;
 
                 storyteller.ChoiceFromImp(imp, target);
-                if (!imp.DrunkOrPoisoned && target.Alive && !target.Tokens.Contains(Token.ProtectedByMonk))
+                if (!imp.DrunkOrPoisoned && target.Alive && target.CanBeKilledByDemon)
                 {
                     target.Tokens.Add(Token.KilledByDemon);
                     if (target == imp)

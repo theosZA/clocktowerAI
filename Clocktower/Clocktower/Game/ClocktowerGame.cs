@@ -62,7 +62,7 @@ namespace Clocktower.Game
                 (Character.Recluse, Alignment.Good),
                 (Character.Poisoner, Alignment.Evil),
                 (Character.Empath, Alignment.Good),
-                (Character.Ravenkeeper, Alignment.Good)
+                (Character.Soldier, Alignment.Good)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
