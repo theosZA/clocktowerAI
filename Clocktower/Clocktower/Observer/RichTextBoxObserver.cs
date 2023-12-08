@@ -48,6 +48,11 @@ namespace Clocktower.Observer
             outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer, StorytellerView);
         }
 
+        public void PlayerDies(Player newlyDeadPlayer)
+        {
+            outputText.AppendFormattedText("%p dies.\n", newlyDeadPlayer, StorytellerView);
+        }
+
         public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
         {
             if (playerDies)

@@ -55,13 +55,13 @@ namespace Clocktower.Game
             var charactersAlignments = new[]
             {
                 (Character.Imp, Alignment.Evil),
-                (Character.Shugenja, Alignment.Good),
+                (Character.Sweetheart, Alignment.Good),
                 (Character.Undertaker, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Recluse, Alignment.Good),
+                (Character.Tinker, Alignment.Good),
                 (Character.Investigator, Alignment.Good),
                 (Character.Empath, Alignment.Good),
-                (Character.Poisoner, Alignment.Evil)
+                (Character.Godfather, Alignment.Evil)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -174,7 +174,7 @@ namespace Clocktower.Game
                 new ChoiceFromAssassin(storyteller, grimoire),
                 new ChoiceFromGodfather(storyteller, grimoire),
                 new SweetheartDrunk(storyteller, grimoire),
-                // Tinker...
+                new TinkerOption(storyteller, grimoire, observers, duringDay: false),
                 new ChoiceFromRavenkeeper(storyteller, grimoire, scriptCharacters),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
@@ -206,9 +206,12 @@ namespace Clocktower.Game
             {
                 AnnounceNightKills();
             }
+            await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
+
             if (!Finished)
             {
                 // TBD Conversations during the day.
+                // await new TinkerOption(storyteller, grimoire, duringDay: true).RunEvent(); - add back when there are conversations first, otherwise this is a duplicate check
 
                 await new Nominations(storyteller, grimoire, observers, random).RunNominations();
             }

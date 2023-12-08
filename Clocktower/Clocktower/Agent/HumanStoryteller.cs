@@ -60,6 +60,11 @@ namespace Clocktower.Agent
             return await form.GetCharacterForUndertaker(undertaker, executedPlayer, undertakerOptions);
         }
 
+        public async Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            return await form.ShouldKillTinker(tinker, yesOrNo);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);

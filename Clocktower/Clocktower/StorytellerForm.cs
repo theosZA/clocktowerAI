@@ -173,6 +173,12 @@ namespace Clocktower
             return await PopulateOptions(undertakerOptions);
         }
 
+        public async Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            outputText.AppendFormattedText("%p can die at any time. Kill them now?\n", tinker, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))

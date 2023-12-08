@@ -81,6 +81,14 @@ namespace Clocktower.Observer
             }
         }
 
+        public void PlayerDies(Player newlyDeadPlayer)
+        {
+            foreach (var observer in observers)
+            {
+                observer.PlayerDies(newlyDeadPlayer);
+            }
+        }
+
         public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
         {
             foreach (var observer in observers)

@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent;
+using Clocktower.Events;
 using Clocktower.Observer;
 using Clocktower.Options;
 
@@ -21,7 +22,7 @@ namespace Clocktower.Game
                 var nomination = await RequestNomination();
                 if (!nomination.HasValue)
                 {   // No more nominations.
-                    EndDay();
+                    await EndDay();
                     return;
                 }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
@@ -109,10 +110,11 @@ namespace Clocktower.Game
             return voteCount;
         }
 
-        private void EndDay()
+        private async Task EndDay()
         {
             if (playerOnTheBlock == null)
             {
+                await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
                 observers.DayEndsWithNoExecution();
                 return;
             }
@@ -123,6 +125,7 @@ namespace Clocktower.Game
             {
                 new Kills(storyteller, grimoire).Execute(playerOnTheBlock);
             }
+            await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
         }
 
         private readonly IStoryteller storyteller;
