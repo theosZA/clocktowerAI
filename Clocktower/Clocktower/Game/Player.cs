@@ -58,6 +58,7 @@ namespace Clocktower.Game
         public void ChangeCharacter(Character newCharacter)
         {
             Character = newCharacter;
+            Agent.AssignCharacter(Character, Alignment);
         }
 
         public void Kill()

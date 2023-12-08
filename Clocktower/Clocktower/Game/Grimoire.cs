@@ -23,6 +23,31 @@ namespace Clocktower.Game
             }
         }
 
+        public void ChangeCharacter(Player player, Character newCharacter)
+        {
+            player.Tokens.Remove(Token.UsedOncePerGameAbility);
+            var oldCharacter = player.Character;
+            switch (oldCharacter)
+            {
+                case Character.Fortune_Teller:
+                    RemoveToken(Token.FortuneTellerRedHerring);
+                    break;
+
+                case Character.Monk:
+                    RemoveToken(Token.ProtectedByMonk);
+                    break;
+
+                case Character.Sweetheart:
+                    RemoveToken(Token.SweetheartDrunk);
+                    break;
+
+                case Character.Poisoner:
+                    RemoveToken(Token.PoisonedByPoisoner);
+                    break;
+            }
+            player.ChangeCharacter(newCharacter);
+        }
+
         public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)
         {
             int lastPlayerIndex = players.IndexOf(lastPlayer);
@@ -56,6 +81,14 @@ namespace Clocktower.Game
                 index = (index + increment) % players.Count;
             }
             return players[index];
+        }
+
+        private void RemoveToken(Token token)
+        {
+            foreach (var player in players)
+            {
+                player.Tokens.Remove(token);
+            }
         }
 
         private readonly List<Player> players;

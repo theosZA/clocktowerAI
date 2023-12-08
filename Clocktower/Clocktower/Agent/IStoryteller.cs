@@ -5,6 +5,7 @@ namespace Clocktower.Agent
 {
     public interface IStoryteller
     {
+        Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates);

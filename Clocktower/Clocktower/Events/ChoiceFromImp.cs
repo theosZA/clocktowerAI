@@ -14,7 +14,8 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var imp in grimoire.GetLivingPlayers(Character.Imp))
+            var imps = grimoire.GetLivingPlayers(Character.Imp).ToList();   // Fix the imp(s) first, so that minions who receive a star-pass don't get to kill.
+            foreach (var imp in imps)
             {
                 var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
                 var choice = (PlayerOption)await imp.Agent.RequestChoiceFromImp(options);
@@ -25,16 +26,39 @@ namespace Clocktower.Events
                 {
                     target.Tokens.Add(Token.KilledByDemon);
                     if (target == imp)
-                    {   // Star-pass
-                        // For now it just goes to the first alive minion.
-                        var newImp = grimoire.Players.FirstOrDefault(player => player.Alive && player.CharacterType == CharacterType.Minion);
-                        if (newImp != null)
-                        {
-                            newImp.ChangeCharacter(Character.Imp);
-                            storyteller.AssignCharacter(newImp);
-                        }
+                    {
+                        await ImpStarPass();
                     }
                 }
+            }
+        }
+
+        private async Task ImpStarPass()
+        {
+            var newImp = await GetNewImp();
+            if (newImp == null)
+            {
+                return;
+            }
+            grimoire.ChangeCharacter(newImp, Character.Imp);
+            storyteller.AssignCharacter(newImp);
+        }
+
+        private async Task<Player?> GetNewImp()
+        {
+            var aliveMinions = grimoire.Players.Where(player => player.Alive && player.CharacterType == CharacterType.Minion).ToList();
+            switch (aliveMinions.Count)
+            {
+                case 0: // Nobody to star-pass to!
+                    return null;
+
+                case 1:
+                    return aliveMinions[0];
+
+                default:
+                    var options = aliveMinions.Select(minion => (IOption)new PlayerOption(minion)).ToList();
+                    var choice = (PlayerOption)await storyteller.GetNewImp(options);
+                    return choice.Player;
             }
         }
 

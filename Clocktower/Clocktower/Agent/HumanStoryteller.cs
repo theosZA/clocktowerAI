@@ -10,6 +10,11 @@ namespace Clocktower.Agent
             this.form = form;
         }
 
+        public async Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates)
+        {
+            return await form.GetNewImp(impCandidates);
+        }
+
         public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
         {
             return await form.GetDrunk(drunkCandidates);

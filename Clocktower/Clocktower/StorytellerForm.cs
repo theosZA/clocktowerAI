@@ -29,6 +29,13 @@ namespace Clocktower
             AutoAct = false; // for testing
         }
 
+        public async Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates)
+        {
+            outputText.AppendFormattedText("The %c has star-passed. Choose a minion to become the new %c...\n", Character.Imp, Character.Imp);
+
+            return await PopulateOptions(impCandidates);
+        }
+
         public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
         {
             outputText.AppendFormattedText("Choose one townsfolk who will be the %c...\n", Character.Drunk);
