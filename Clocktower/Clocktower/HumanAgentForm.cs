@@ -147,6 +147,12 @@ namespace Clocktower
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a player to protect...\n", Character.Monk);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);

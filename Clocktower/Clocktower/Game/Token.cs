@@ -8,6 +8,7 @@
         PoisonedByPoisoner,
         FortuneTellerRedHerring,
         UsedOncePerGameAbility,
-        GodfatherKillsTonight
+        GodfatherKillsTonight,
+        ProtectedByMonk
     }
 }

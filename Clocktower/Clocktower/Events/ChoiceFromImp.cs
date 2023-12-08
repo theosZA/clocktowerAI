@@ -1,7 +1,6 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
-using System.Diagnostics;
 
 namespace Clocktower.Events
 {
@@ -18,16 +17,14 @@ namespace Clocktower.Events
             foreach (var imp in grimoire.GetLivingPlayers(Character.Imp))
             {
                 var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
-                var choice = await imp.Agent.RequestChoiceFromImp(options);
-                var playerOption = choice as PlayerOption;
-                Debug.Assert(playerOption != null);
-                var player = playerOption.Player;
+                var choice = (PlayerOption)await imp.Agent.RequestChoiceFromImp(options);
+                var target = choice.Player;
 
-                storyteller.ChoiceFromImp(imp, player);
-                if (!imp.DrunkOrPoisoned && player.Alive)
+                storyteller.ChoiceFromImp(imp, target);
+                if (!imp.DrunkOrPoisoned && target.Alive && !target.Tokens.Contains(Token.ProtectedByMonk))
                 {
-                    player.Tokens.Add(Token.KilledByDemon);
-                    if (player == imp)
+                    target.Tokens.Add(Token.KilledByDemon);
+                    if (target == imp)
                     {   // Star-pass
                         // For now it just goes to the first alive minion.
                         var newImp = grimoire.Players.FirstOrDefault(player => player.Alive && player.CharacterType == CharacterType.Minion);

@@ -28,6 +28,7 @@ namespace Clocktower.Agent
         void ChoiceFromPoisoner(Player poisoner, Player target);
         void ChoiceFromAssassin(Player assassin, Player? target);
         void ChoiceFromGodfather(Player godfather, Player target);
+        void ChoiceFromMonk(Player monk, Player target);
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
     }
 }

@@ -31,7 +31,7 @@ namespace Clocktower.Game
                 (Character.Recluse, Alignment.Good),
                 (Character.Poisoner, Alignment.Evil),
                 (Character.Empath, Alignment.Good),
-                (Character.Ravenkeeper, Alignment.Good)
+                (Character.Monk, Alignment.Good)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -131,13 +131,14 @@ namespace Clocktower.Game
             foreach (var player in grimoire.Players)
             {
                 player.Tokens.Remove(Token.PoisonedByPoisoner);
+                player.Tokens.Remove(Token.ProtectedByMonk);
             }
 
             await RunNightEvents(new IGameEvent[]
             {
                 // Philosopher...
                 new ChoiceFromPoisoner(storyteller, grimoire),
-                // Monk...
+                new ChoiceFromMonk(storyteller, grimoire),
                 // Scarlet Woman...
                 new ChoiceFromImp(storyteller, grimoire),
                 new ChoiceFromAssassin(storyteller, grimoire),
