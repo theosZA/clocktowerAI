@@ -5,6 +5,7 @@
         KilledByDemon,
         DiedAtNight,
         IsTheDrunk,
+        FortuneTellerRedHerring,
         UsedOncePerGameAbility,
         GodfatherKillsTonight
     }

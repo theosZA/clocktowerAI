@@ -29,7 +29,7 @@ namespace Clocktower.Game
                 (Character.Godfather, Alignment.Evil),
                 (Character.Recluse, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
-                (Character.Empath, Alignment.Good),
+                (Character.Fortune_Teller, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
                 (Character.Ravenkeeper, Alignment.Good)
             };
@@ -102,7 +102,8 @@ namespace Clocktower.Game
         {
             await RunNightEvents(new IGameEvent[]
             {
-                new AssignDrunk(storyteller, grimoire)
+                new AssignDrunk(storyteller, grimoire),
+                new AssignFortuneTellerRedHerring(storyteller, grimoire)
             });
         }
 
@@ -118,7 +119,7 @@ namespace Clocktower.Game
                 new NotifyLibrarian(storyteller, grimoire),
                 new NotifyInvestigator(storyteller, grimoire),
                 new NotifyEmpath(storyteller, grimoire),
-                // Fortune Teller...
+                new ChoiceFromFortuneTeller(storyteller, grimoire),
                 new NotifySteward(storyteller, grimoire)
                 // Shugenja...
             });
@@ -138,8 +139,8 @@ namespace Clocktower.Game
                 // Sweetheart...
                 // Tinker...
                 new ChoiceFromRavenkeeper(storyteller, grimoire),
-                new NotifyEmpath(storyteller, grimoire)
-                // Fortune Teller...
+                new NotifyEmpath(storyteller, grimoire),
+                new ChoiceFromFortuneTeller(storyteller, grimoire)
                 // Undertaker...
             });
         }
@@ -172,10 +173,10 @@ namespace Clocktower.Game
             var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon));
             foreach (var newlyDeadPlayer in newlyDeadPlayers)
             {
+                observers.PlayerDiedAtNight(newlyDeadPlayer);
                 newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                 newlyDeadPlayer.Tokens.Remove(Token.KilledByDemon);
                 newlyDeadPlayer.Kill();
-                observers.PlayerDiedAtNight(newlyDeadPlayer);
                 if (Finished)
                 {
                     return;

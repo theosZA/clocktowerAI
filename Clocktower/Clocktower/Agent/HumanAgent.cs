@@ -55,6 +55,11 @@ namespace Clocktower.Agent
             form.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
+        public void NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
+        {
+            form.NotifyFortuneTeller(targetA, targetB, reading);
+        }
+
         public void NotifyRavenkeeper(Player target, Character character)
         {
             form.NotifyRavenkeeper(target, character);
@@ -73,6 +78,11 @@ namespace Clocktower.Agent
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
             return await form.RequestChoiceFromGodfather(options);
+        }
+
+        public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
+        {
+            return await form.RequestChoiceFromFortuneTeller(options);
         }
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)

@@ -16,11 +16,14 @@ namespace Clocktower.Agent
         void NotifyInvestigator(Player playerA, Player playerB, Character character);
         void NotifySteward(Player goodPlayer);
         void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
+        void NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         void NotifyRavenkeeper(Player target, Character character);
 
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options);
+
+        Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
 
         Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);

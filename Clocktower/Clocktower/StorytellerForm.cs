@@ -35,6 +35,13 @@ namespace Clocktower
             return await PopulateOptions(drunkCandidates);
         }
 
+        public async Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates)
+        {
+            outputText.AppendFormattedText("Choose one player to be the red herring (to register as the Demon) for the %c...\n", Character.Fortune_Teller);
+
+            return await PopulateOptions(redHerringCandidates);
+        }
+
         public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
         {
             outputText.AppendFormattedText("Choose one player who %p will see as a good player.", steward, StorytellerView);
@@ -52,18 +59,39 @@ namespace Clocktower
             outputText.AppendFormattedText("Choose what number to show to %p. Their living neighbours are %p and %p.", empath, neighbourA, neighbourB, StorytellerView);
             if (empath.DrunkOrPoisoned)
             {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.\n", Color.Purple);
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
             }
             else if (neighbourA.Character == Character.Recluse)
             {
-                outputText.AppendFormattedText(" Reminder that %p could register as %a.\n", neighbourA, Alignment.Evil, StorytellerView);
+                outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourA, Alignment.Evil, StorytellerView);
             }
             else if (neighbourB.Character == Character.Recluse)
             {
-                outputText.AppendFormattedText(" Reminder that %p could register as %a.\n", neighbourB, Alignment.Evil, StorytellerView);
+                outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourB, Alignment.Evil, StorytellerView);
             }
+            outputText.AppendText("\n");
 
             return await PopulateOptions(empathOptions);
+        }
+
+        public async Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> readingOptions)
+        {
+            outputText.AppendFormattedText("Choose whether to say 'Yes' or 'No' to %p to indicate whether they've seen a Demon between %p and %p.", fortuneTeller, targetA, targetB, StorytellerView);
+            if (fortuneTeller.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            else if (targetA.Character == Character.Recluse)
+            {
+                outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetA, Alignment.Evil, StorytellerView);
+            }
+            else if (targetB.Character == Character.Recluse)
+            {
+                outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetB, Alignment.Evil, StorytellerView);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(readingOptions);
         }
 
         public void AssignCharacter(Player player)

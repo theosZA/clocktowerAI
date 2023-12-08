@@ -1,8 +1,5 @@
 ﻿namespace Clocktower.Options
 {
-    /// <summary>
-    /// Represents voting in favour of the current nomination.
-    /// </summary>
     internal class NumberOption : IOption
     {
         public string Name => $"{Number}";

@@ -15,6 +15,11 @@ namespace Clocktower.Agent
             return await form.GetDrunk(drunkCandidates);
         }
 
+        public async Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates)
+        {
+            return await form.GetFortuneTellerRedHerring(redHerringCandidates);
+        }
+
         public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
         {
             return await form.GetStewardPing(steward, stewardPingCandidates);
@@ -23,6 +28,11 @@ namespace Clocktower.Agent
         public async Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions)
         {
             return await form.GetEmpathNumber(empath, neighbourA, neighbourB, empathOptions);
+        }
+
+        public async Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> readingOptions)
+        {
+            return await form.GetFortuneTellerReading(fortuneTeller, targetA, targetB, readingOptions);
         }
 
         public void AssignCharacter(Player player)

@@ -6,8 +6,10 @@ namespace Clocktower.Agent
     internal interface IStoryteller
     {
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
+        Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
+        Task<IOption> GetFortuneTellerReading(Player empath, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
 
         void AssignCharacter(Player player);
 

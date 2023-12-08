@@ -88,6 +88,20 @@ namespace Clocktower
             outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
         }
 
+        public void NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
+        {
+            if (reading)
+            {
+                outputText.AppendBoldText("Yes");
+                outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB);
+            }
+            else
+            {
+                outputText.AppendBoldText("No");
+                outputText.AppendFormattedText($", neither of %p or %p is the demon.\n", targetA, targetB);
+            }
+        }
+
         public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
             outputText.AppendFormattedText($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", evilCount, neighbourA, neighbourB);
@@ -116,6 +130,12 @@ namespace Clocktower
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose two players...\n", Character.Fortune_Teller);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
@@ -139,29 +159,9 @@ namespace Clocktower
         {
             if (AutoAct)
             {
-                // If Pass is an option, pick it 40% of the time.
-                var passOption = options.FirstOrDefault(option => option is PassOption);
-                if (passOption != null && random.Next(5) < 2)
-                {
-                    return Task.FromResult(passOption);
-                }
-
-                // For now, just pick an option at random.
-                // Exclude dead players and ourself from our choices.
-                var autoOptions = options.Where(option => option is not PassOption)
-                                         .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
-                                         .ToList();
-                if (autoOptions.Count > 0)
-                {
-                    return Task.FromResult(autoOptions.RandomPick(random));
-                }
-
-                // No okay options. Then pick Pass if we can.
-                if (passOption != null)
-                {
-                    return Task.FromResult(passOption);
-                }
-                return Task.FromResult(options.First());
+                var autoChosenOption = AutoChooseOption(options);
+                outputText.AppendBoldText($">> {autoChosenOption.Name}\n", Color.Green);
+                return Task.FromResult(autoChosenOption);
             }
 
             this.options = options;
@@ -185,6 +185,33 @@ namespace Clocktower
             OnChoice += onChoiceHandler;
 
             return taskCompletionSource.Task;
+        }
+
+        private IOption AutoChooseOption(IReadOnlyCollection<IOption> options)
+        {
+            // If Pass is an option, pick it 40% of the time.
+            var passOption = options.FirstOrDefault(option => option is PassOption);
+            if (passOption != null && random.Next(5) < 2)
+            {
+                return passOption;
+            }
+
+            // For now, just pick an option at random.
+            // Exclude dead players and ourself from our choices.
+            var autoOptions = options.Where(option => option is not PassOption)
+                                     .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
+                                     .ToList();
+            if (autoOptions.Count > 0)
+            {
+                return autoOptions.RandomPick(random);
+            }
+
+            // No okay options. Then pick Pass if we can.
+            if (passOption != null)
+            {
+                return passOption;
+            }
+            return options.ToList().RandomPick(random);
         }
 
         private void SetTitleText()
