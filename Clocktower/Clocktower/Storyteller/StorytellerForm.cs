@@ -59,6 +59,23 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(redHerringCandidates);
         }
 
+        public async Task<IOption> GetInvestigatorPings(Player investigator, IReadOnlyCollection<IOption> investigatorPingCandidates)
+        {
+            outputText.AppendFormattedText("Choose two players who %p will see as a minion, and the character they will see them as.", investigator, StorytellerView);
+            if (investigator.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            var possibleMinions = new HashSet<Player>(investigatorPingCandidates.Select(option => ((CharacterForTwoPlayersOption)option).PlayerA));
+            foreach (var misregister in possibleMinions.Where(player => player.CanRegisterAsMinion && player.CharacterType != CharacterType.Minion))
+            {
+                outputText.AppendFormattedText(" Remember that %p could register as a minion.", misregister, StorytellerView);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(investigatorPingCandidates);
+        }
+
         public async Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates)
         {
             outputText.AppendFormattedText("Choose two players who %p will see as an outsider, and the character they will see them as.", librarian, StorytellerView);

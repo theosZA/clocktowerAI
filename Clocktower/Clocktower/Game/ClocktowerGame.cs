@@ -44,7 +44,7 @@ namespace Clocktower.Game
                 Character.Imp
             };
 
-            var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgie", "Harry" };
+            var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgina", "Harry" };
             var agents = CreateAgents(playerNames, random);
 
             storyteller = CreateStoryteller(random);
@@ -124,7 +124,7 @@ namespace Clocktower.Game
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new NotifyGodfather(storyteller, grimoire),
                 new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random),
-                new NotifyInvestigator(storyteller, grimoire),
+                new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
                 new NotifySteward(storyteller, grimoire),
@@ -263,7 +263,7 @@ namespace Clocktower.Game
                 (Character.Imp, Alignment.Evil),
                 (Character.Monk, Alignment.Good),
                 (Character.Undertaker, Alignment.Good),
-                (Character.Librarian, Alignment.Good),
+                (Character.Soldier, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
                 (Character.Investigator, Alignment.Good),
                 (Character.Recluse, Alignment.Good),
@@ -295,6 +295,6 @@ namespace Clocktower.Game
 
         private int dayNumber = 0;
 
-        private bool addDrunkToGame = true;
+        private bool addDrunkToGame = false;
     }
 }
