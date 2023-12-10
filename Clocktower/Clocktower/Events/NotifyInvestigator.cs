@@ -37,7 +37,7 @@ namespace Clocktower.Events
         {
             var minionCharacters = scriptCharacters.Where(character => 2000 <= (int)character && (int)character < 3000);
             // Exclude the investigator from their own ping.
-            var players = grimoire.Players.Where(player => player != investigator);
+            var players = grimoire.Players.Where(player => player != investigator).ToList();
 
             if (investigator.DrunkOrPoisoned)
             {   // Drunk or poisoned. They can see any two players as any minion.

@@ -21,9 +21,7 @@ namespace Clocktower.Events
                 return;
             }
 
-            var redHerringOptions = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon)
-                                                    .Select(player => new PlayerOption(player))
-                                                    .ToList();
+            var redHerringOptions = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon).ToOptions();
             var redHerring = ((PlayerOption)await storyteller.GetFortuneTellerRedHerring(redHerringOptions)).Player;
             redHerring.Tokens.Add(Token.FortuneTellerRedHerring);
         }

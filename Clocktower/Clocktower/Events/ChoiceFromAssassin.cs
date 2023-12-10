@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var assassin in grimoire.GetLivingPlayers(Character.Assassin).Where(player => !player.Tokens.Contains(Token.UsedOncePerGameAbility)))
             {
-                var options = grimoire.Players.Select(player => (IOption)new PlayerOption(player))
+                var options = grimoire.Players.ToOptions()
                                               .Prepend(new PassOption())
                                               .ToList();
 

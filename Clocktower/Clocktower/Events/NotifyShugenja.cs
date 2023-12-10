@@ -61,7 +61,7 @@ namespace Clocktower.Events
 
         private async Task<bool> GetDirectionFromStoryteller(Player shugenja)
         {
-            return await storyteller.GetShugenjaDirection(shugenja, grimoire, new IOption[] { new ClockwiseOption(), new CounterclockwiseOption() }) is ClockwiseOption;
+            return await storyteller.GetShugenjaDirection(shugenja, grimoire, OptionsBuilder.DirectionOptions) is ClockwiseOption;
         }
 
         private readonly IStoryteller storyteller;

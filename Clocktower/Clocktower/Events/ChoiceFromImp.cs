@@ -17,7 +17,7 @@ namespace Clocktower.Events
             var imps = grimoire.GetLivingPlayers(Character.Imp).ToList();   // Fix the imp(s) first, so that minions who receive a star-pass don't get to kill.
             foreach (var imp in imps)
             {
-                var options = grimoire.Players.Select(player => new PlayerOption(player)).ToList();
+                var options = grimoire.Players.ToOptions();
                 var choice = (PlayerOption)await imp.Agent.RequestChoiceFromImp(options);
                 var target = choice.Player;
 
@@ -68,8 +68,7 @@ namespace Clocktower.Events
                     return aliveMinions[0];
 
                 default:
-                    var options = aliveMinions.Select(minion => (IOption)new PlayerOption(minion)).ToList();
-                    var choice = (PlayerOption)await storyteller.GetNewImp(options);
+                    var choice = (PlayerOption)await storyteller.GetNewImp(aliveMinions.ToOptions());
                     return choice.Player;
             }
         }

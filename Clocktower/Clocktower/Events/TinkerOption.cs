@@ -24,7 +24,7 @@ namespace Clocktower.Events
         {
             foreach (var tinker in grimoire.GetLivingPlayers(Character.Tinker).Where(player => !player.DrunkOrPoisoned))
             {
-                if (await storyteller.ShouldKillTinker(tinker, new IOption[] { new NoOption(), new YesOption() }) is YesOption)
+                if (await storyteller.ShouldKillTinker(tinker, OptionsBuilder.YesOrNo) is YesOption)
                 {
                     var kills = new Kills(storyteller, grimoire);
                     if (duringDay)

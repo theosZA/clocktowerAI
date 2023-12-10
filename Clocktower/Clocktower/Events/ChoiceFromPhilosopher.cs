@@ -33,14 +33,10 @@ namespace Clocktower.Events
 
         private IEnumerable<IOption> GetOptions()
         {
-            return GetPossibleCharacters().Select(character => (IOption)new CharacterOption(character))
-                                          .Prepend(new PassOption());
-        }
-
-        private IEnumerable<Character> GetPossibleCharacters()
-        {
             // Only good characters are allowed. We'll also exclude Philosopher, because that only makes sense with weird abilities like the Barista's.
-            return scriptCharacters.Where(character => (int)character < 2000 && character != Character.Philosopher);
+            return scriptCharacters.Where(character => (int)character < 2000 && character != Character.Philosopher)
+                                   .ToOptions()
+                                   .Prepend(new PassOption());
         }
 
         private void ApplyPhilosopherChoice(Player philosopher, Character character)

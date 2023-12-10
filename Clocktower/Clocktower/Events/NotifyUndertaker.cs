@@ -34,8 +34,7 @@ namespace Clocktower.Events
             {
                 return possibleCharacters.First();
             }
-            var options = possibleCharacters.Select(character => (IOption)new CharacterOption(character)).ToList();
-            var choice = (CharacterOption)await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, options);
+            var choice = (CharacterOption)await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, possibleCharacters.ToOptions());
             return choice.Character;
         }
 

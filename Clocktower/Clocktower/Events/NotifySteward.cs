@@ -17,8 +17,7 @@ namespace Clocktower.Events
             foreach (var steward in grimoire.GetLivingPlayers(Character.Steward))
             {
                 var options = grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))
-                                              .Select(player => new PlayerOption(player))
-                                              .ToList();
+                                              .ToOptions();
                 var stewardTarget = ((PlayerOption)await storyteller.GetStewardPing(steward, options)).Player;
 
                 steward.Agent.NotifySteward(stewardTarget);

@@ -16,18 +16,10 @@ namespace Clocktower.Events
         {
             foreach (var fortuneTeller in grimoire.Players.Where(player => player.Character == Character.Fortune_Teller))
             {
-                var options = GetOptions().ToList();
-                var targets = (TwoPlayersOption)await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(options);
+                var targets = (TwoPlayersOption)await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players.ToTwoPlayersOptions());
                 bool reading = await GetReading(fortuneTeller, targets.PlayerA, targets.PlayerB);
                 fortuneTeller.Agent.NotifyFortuneTeller(targets.PlayerA, targets.PlayerB, reading);
             }
-        }
-
-        private IEnumerable<IOption> GetOptions()
-        {
-            return grimoire.Players.SelectMany(playerA => grimoire.Players.Select(playerB => (playerA, playerB)))
-                                   .Where(pair => pair.playerA != pair.playerB)
-                                   .Select(pair => new TwoPlayersOption(pair.playerA, pair.playerB));
         }
 
         private async Task<bool> GetReading(Player fortuneTeller, Player targetA, Player targetB)
@@ -49,8 +41,7 @@ namespace Clocktower.Events
 
         private async Task<bool> GetReadingFromStoryteller(Player fortuneTeller, Player targetA, Player targetB)
         {
-            var option = await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, new IOption[] { new NoOption(), new YesOption() });
-            return option is YesOption;
+            return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;
         }
 
         private readonly IStoryteller storyteller;

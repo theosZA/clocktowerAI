@@ -21,7 +21,7 @@ namespace Clocktower.Events
         {
             foreach (var fisherman in GetPlayersWhoCanAskForFishermanAdvice())
             {
-                if (await fisherman.Agent.PromptFishermanAdvice(new IOption[] { new YesOption(), new NoOption() }) is YesOption)
+                if (await fisherman.Agent.PromptFishermanAdvice(OptionsBuilder.YesOrNo) is YesOption)
                 {
                     fisherman.Tokens.Add(Token.UsedOncePerGameAbility);
                     var advice = await storyteller.GetFishermanAdvice(fisherman);

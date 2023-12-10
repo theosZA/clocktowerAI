@@ -29,20 +29,7 @@ namespace Clocktower.Events
 
         private async Task<ThreeCharactersOption> GetDemonBluffs(Player demon)
         {
-            var options = GetOptions(demon).ToList();
-            return (ThreeCharactersOption)await storyteller.GetDemonBluffs(demon, options);
-        }
-
-        private IEnumerable<IOption> GetOptions(Player demon)
-        {
-            var availableBluffs = GetAvailableBluffs();
-
-            return from bluffA in availableBluffs
-                   from bluffB in availableBluffs
-                   where bluffA != bluffB
-                   from bluffC in availableBluffs
-                   where bluffA != bluffC && bluffB != bluffC
-                   select new ThreeCharactersOption(bluffA, bluffB, bluffC);
+            return (ThreeCharactersOption)await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList().ToThreeCharactersOptions());
         }
 
         private IEnumerable<Character> GetAvailableBluffs()

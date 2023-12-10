@@ -62,7 +62,7 @@ namespace Clocktower.Events
         private IReadOnlyCollection<IOption> GetNominationOptions(Player player)
         {
             return grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated)
-                                   .Select(player => (IOption)new PlayerOption(player))
+                                   .ToOptions()
                                    .Prepend(new PassOption())
                                    .ToList();
         }
@@ -97,11 +97,7 @@ namespace Clocktower.Events
         {
             int voteCount = 0;
 
-            var voteOptions = new IOption[]
-            {
-                new PassOption(),
-                new VoteOption(nominee)
-            };
+            var voteOptions = nominee.ToVoteOptions();
 
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {

@@ -18,6 +18,6 @@ namespace Clocktower.Options
             this.bluff = bluff;
         }
 
-        private bool bluff;
+        private readonly bool bluff;
     }
 }
