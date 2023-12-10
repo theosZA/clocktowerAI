@@ -59,6 +59,18 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(redHerringCandidates);
         }
 
+        public async Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates)
+        {
+            outputText.AppendFormattedText("Choose two players who %p will see as an outsider, and the character they will see them as.", librarian, StorytellerView);
+            if (librarian.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(librarianPingCandidates);
+        }
+
         public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
         {
             outputText.AppendFormattedText("Choose one player who %p will see as a good player.", steward, StorytellerView);

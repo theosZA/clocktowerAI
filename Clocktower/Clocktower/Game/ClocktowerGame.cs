@@ -123,7 +123,7 @@ namespace Clocktower.Game
                 new DemonInformation(storyteller, grimoire),
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new NotifyGodfather(storyteller, grimoire),
-                new NotifyLibrarian(storyteller, grimoire),
+                new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random),
                 new NotifyInvestigator(storyteller, grimoire),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
@@ -266,7 +266,7 @@ namespace Clocktower.Game
                 (Character.Librarian, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
                 (Character.Investigator, Alignment.Good),
-                (Character.Soldier, Alignment.Good),
+                (Character.Recluse, Alignment.Good),
                 (Character.Scarlet_Woman, Alignment.Evil)
             };
 
