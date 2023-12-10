@@ -20,12 +20,12 @@ namespace Clocktower.Events
                 var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => (int)character < 2000 && character != Character.Philosopher));
                 if (character != null)
                 {
-                    ApplyPhilosopherChoice(philosopher, character.Value);
+                    await ApplyPhilosopherChoice(philosopher, character.Value);
                 }
             }   
         }
 
-        private void ApplyPhilosopherChoice(Player philosopher, Character character)
+        private async Task ApplyPhilosopherChoice(Player philosopher, Character character)
         {
             if (philosopher.DrunkOrPoisoned)
             {   // The Philosopher believes they've gained their new ability, but they haven't.
@@ -43,6 +43,18 @@ namespace Clocktower.Events
                 philosopherDrunkedPlayer?.Tokens.Add(Token.PhilosopherDrunk);
 
                 storyteller.ChoiceFromPhilosopher(philosopher, philosopherDrunkedPlayer, character);
+
+                await ApplyImmediateEffectsOfCharacter(philosopher, character);
+            }
+        }
+
+        private async Task ApplyImmediateEffectsOfCharacter(Player philosopher, Character character)
+        {
+            philosopher.Tokens.Add(Token.PhilosopherUsedAbilityTonight);    // Any start-knowing information will be provided later tonight as indicated by this token.
+            if (character == Character.Fortune_Teller)
+            {
+                var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
+                (await storyteller.GetFortuneTellerRedHerring(redHerringCandidates)).Tokens.Add(Token.PhilosopherFortuneTellerRedHerring);
             }
         }
 

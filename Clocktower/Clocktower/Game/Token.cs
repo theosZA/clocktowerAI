@@ -11,6 +11,8 @@
         PhilosopherDrunk,
         PoisonedByPoisoner,
         FortuneTellerRedHerring,
+        PhilosopherFortuneTellerRedHerring,
+        PhilosopherUsedAbilityTonight,
         UsedOncePerGameAbility,
         GodfatherKillsTonight,
         Executed,

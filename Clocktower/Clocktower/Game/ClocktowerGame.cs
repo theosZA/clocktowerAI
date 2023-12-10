@@ -153,6 +153,7 @@ namespace Clocktower.Game
                 new ChoiceFromGodfather(storyteller, grimoire),
                 new SweetheartDrunk(storyteller, grimoire),
                 new TinkerOption(storyteller, grimoire, observers, duringDay: false),
+                new NotifyPhilosopherStartKnowing(storyteller, grimoire, scriptCharacters, random),
                 new ChoiceFromRavenkeeper(storyteller, grimoire, scriptCharacters),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
@@ -163,6 +164,7 @@ namespace Clocktower.Game
             foreach (var player in grimoire.Players)
             {
                 player.Tokens.Remove(Token.Executed);
+                player.Tokens.Remove(Token.PhilosopherUsedAbilityTonight);
             }
         }
 

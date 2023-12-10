@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var fortuneTeller in grimoire.Players.Where(player => player.Character == Character.Fortune_Teller))
+            foreach (var fortuneTeller in grimoire.GetLivingPlayers(Character.Fortune_Teller))
             {
                 var (targetA, targetB) = await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players);
                 bool reading = await GetReading(fortuneTeller, targetA, targetB);
@@ -28,9 +28,13 @@ namespace Clocktower.Events
             {
                 return await GetReadingFromStoryteller(fortuneTeller, targetA, targetB);
             }
-            if (targetA.CharacterType == CharacterType.Demon || targetB.CharacterType == CharacterType.Demon || targetA.Tokens.Contains(Token.FortuneTellerRedHerring) || targetB.Tokens.Contains(Token.FortuneTellerRedHerring))
+            if (targetA.CharacterType == CharacterType.Demon || targetB.CharacterType == CharacterType.Demon)
             {
                 return true;                
+            }
+            if (IsRedHerring(fortuneTeller, targetA) || IsRedHerring(fortuneTeller, targetB))
+            {
+                return true;
             }
             if (targetA.CanRegisterAsDemon || targetB.CanRegisterAsDemon)
             {
@@ -42,6 +46,18 @@ namespace Clocktower.Events
         private async Task<bool> GetReadingFromStoryteller(Player fortuneTeller, Player targetA, Player targetB)
         {
             return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB);
+        }
+
+        private static bool IsRedHerring(Player fortuneTeller, Player target)
+        {
+            if (fortuneTeller.Tokens.Contains(Token.IsThePhilosopher))
+            {
+                return target.Tokens.Contains(Token.PhilosopherFortuneTellerRedHerring);
+            }
+            else
+            {
+                return target.Tokens.Contains(Token.FortuneTellerRedHerring);
+            }
         }
 
         private readonly IStoryteller storyteller;
