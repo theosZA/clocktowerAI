@@ -2,10 +2,12 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 
-namespace Clocktower
+namespace Clocktower.Agent
 {
-    public partial class HumanAgentForm : Form
+    public partial class HumanAgentForm : Form, IAgent
     {
+        public string PlayerName { get; private set; }
+
         public IGameObserver Observer { get; private set; }
 
         public bool AutoAct
@@ -20,12 +22,17 @@ namespace Clocktower
 
             this.random = random;
 
-            this.playerName = playerName;
+            PlayerName = playerName;
             Text = playerName;
 
             Observer = new RichTextBoxObserver(outputText);
 
             AutoAct = true; // for testing
+        }
+
+        public void StartGame()
+        {
+            Show();
         }
 
         public void AssignCharacter(Character character, Alignment _)
@@ -229,7 +236,7 @@ namespace Clocktower
             // Exclude dead players and ourself from our choices.
             // Also exclude Slayer-shot options unless we are the slayer.
             var autoOptions = options.Where(option => option is not PassOption)
-                                     .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
+                                     .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != PlayerName))
                                      .Where(option => option is not SlayerShotOption || character == Character.Slayer)
                                      .ToList();
             if (autoOptions.Count > 0)
@@ -247,7 +254,11 @@ namespace Clocktower
 
         private void SetTitleText()
         {
-            Text = $"{playerName} ({TextUtilities.CharacterToText(character)})";
+            Text = PlayerName;
+            if (character != null)
+            {
+                Text += $" ({TextUtilities.CharacterToText(character.Value)})";
+            }
             if (!alive)
             {
                 Text += " GHOST";
@@ -274,8 +285,7 @@ namespace Clocktower
 
         private readonly Random random;
 
-        private readonly string playerName;
-        private Character character;
+        private Character? character;
         private bool alive = true;
 
         public delegate void ChoiceEventHandler(IOption choice);

@@ -1,10 +1,15 @@
 ﻿using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Options;
 
-namespace Clocktower.Agent
+namespace Clocktower.Storyteller
 {
     public interface IStoryteller
     {
+        IGameObserver Observer { get; }
+
+        void Start();
+
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates);

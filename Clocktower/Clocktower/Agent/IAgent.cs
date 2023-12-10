@@ -1,10 +1,17 @@
 ﻿using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Options;
 
 namespace Clocktower.Agent
 {
     public interface IAgent
     {
+        string PlayerName { get; }
+
+        IGameObserver Observer { get; }
+
+        void StartGame();
+
         void AssignCharacter(Character character, Alignment alignment);
         void YouAreDead();
 

@@ -1,6 +1,6 @@
-﻿namespace Clocktower
+﻿namespace Clocktower.Storyteller
 {
-    partial class HumanAgentForm
+    partial class StorytellerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,64 +29,64 @@
         private void InitializeComponent()
         {
             outputText = new RichTextBox();
-            choicesComboBox = new ComboBox();
             chooseButton = new Button();
+            choicesComboBox = new ComboBox();
             autoCheckbox = new CheckBox();
             SuspendLayout();
             // 
             // outputText
             // 
             outputText.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            outputText.Location = new Point(14, 12);
+            outputText.Location = new Point(12, 12);
             outputText.Name = "outputText";
-            outputText.Size = new Size(446, 351);
+            outputText.Size = new Size(776, 391);
             outputText.TabIndex = 0;
             outputText.Text = "";
+            // 
+            // chooseButton
+            // 
+            chooseButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chooseButton.Enabled = false;
+            chooseButton.Location = new Point(306, 415);
+            chooseButton.Name = "chooseButton";
+            chooseButton.Size = new Size(75, 23);
+            chooseButton.TabIndex = 4;
+            chooseButton.Text = "Choose";
+            chooseButton.UseVisualStyleBackColor = true;
+            chooseButton.Click += chooseButton_Click;
             // 
             // choicesComboBox
             // 
             choicesComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             choicesComboBox.Enabled = false;
             choicesComboBox.FormattingEnabled = true;
-            choicesComboBox.Location = new Point(18, 373);
+            choicesComboBox.Location = new Point(12, 415);
             choicesComboBox.Name = "choicesComboBox";
             choicesComboBox.Size = new Size(288, 23);
-            choicesComboBox.TabIndex = 1;
-            // 
-            // chooseButton
-            // 
-            chooseButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            chooseButton.Enabled = false;
-            chooseButton.Location = new Point(312, 373);
-            chooseButton.Name = "chooseButton";
-            chooseButton.Size = new Size(75, 23);
-            chooseButton.TabIndex = 2;
-            chooseButton.Text = "Choose";
-            chooseButton.UseVisualStyleBackColor = true;
-            chooseButton.Click += chooseButton_Click;
+            choicesComboBox.TabIndex = 3;
             // 
             // autoCheckbox
             // 
             autoCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             autoCheckbox.AutoSize = true;
-            autoCheckbox.Location = new Point(408, 375);
+            autoCheckbox.Location = new Point(736, 418);
             autoCheckbox.Name = "autoCheckbox";
             autoCheckbox.Size = new Size(52, 19);
-            autoCheckbox.TabIndex = 3;
+            autoCheckbox.TabIndex = 5;
             autoCheckbox.Text = "Auto";
             autoCheckbox.UseVisualStyleBackColor = true;
             // 
-            // HumanAgentForm
+            // StorytellerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(472, 413);
+            ClientSize = new Size(800, 450);
             Controls.Add(autoCheckbox);
             Controls.Add(chooseButton);
             Controls.Add(choicesComboBox);
             Controls.Add(outputText);
-            Name = "HumanAgentForm";
-            Text = "HumanAgentForm";
+            Name = "StorytellerForm";
+            Text = "Storyteller";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -94,8 +94,8 @@
         #endregion
 
         private RichTextBox outputText;
-        private ComboBox choicesComboBox;
         private Button chooseButton;
+        private ComboBox choicesComboBox;
         private CheckBox autoCheckbox;
     }
 }

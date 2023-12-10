@@ -8,7 +8,7 @@ namespace Clocktower.Game
     /// </summary>
     public class Player
     {
-        public string Name { get; }
+        public string Name => Agent.PlayerName;
         public IAgent Agent { get; }
 
         public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight) && !Tokens.Contains(Token.KilledByDemon);
@@ -47,9 +47,8 @@ namespace Clocktower.Game
 
         public bool CanBeKilledByDemon => !((Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.Contains(Token.ProtectedByMonk));
 
-        public Player(string name, IAgent agent, Character character, Alignment alignment)
+        public Player(IAgent agent, Character character, Alignment alignment)
         {
-            Name = name;
             Agent = agent;
             Character = character;
             Alignment = alignment;

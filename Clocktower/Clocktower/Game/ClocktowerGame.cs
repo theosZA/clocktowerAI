@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
 using Clocktower.Observer;
+using Clocktower.Storyteller;
 
 namespace Clocktower.Game
 {
@@ -43,38 +44,14 @@ namespace Clocktower.Game
                 Character.Imp
             };
 
-            var storytellerForm = new StorytellerForm(random);
-            storyteller = new HumanStoryteller(storytellerForm);
+            var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgie", "Harry" };
+            var agents = CreateAgents(playerNames, random);
 
-            var playerNames = new[] { "Alison", "Bart", "Casandra", "Donald", "Emma", "Franklin", "Georgina", "Harry" };
+            storyteller = CreateStoryteller(random);
+            observers = CreateObserverCollection(agents, storyteller);
+            grimoire = CreateGrimoire(agents);
 
-            var playerForms = playerNames.ToDictionary(name => name, name => new HumanAgentForm(name, random));
-            observers = new ObserverCollection(playerForms.Select(form => form.Value.Observer).Append(storytellerForm.Observer));
-
-            // For now we assign hardcoded characters.
-            var charactersAlignments = new[]
-            {
-                (Character.Imp, Alignment.Evil),
-                (Character.Monk, Alignment.Good),
-                (Character.Undertaker, Alignment.Good),
-                (Character.Librarian, Alignment.Good),
-                (Character.Slayer, Alignment.Good),
-                (Character.Investigator, Alignment.Good),
-                (Character.Soldier, Alignment.Good),
-                (Character.Scarlet_Woman, Alignment.Evil)
-            };
-
-            var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
-
-            grimoire = new Grimoire(players);
-
-            storytellerForm.Show();
-            foreach (var form in playerForms)
-            {
-                form.Value.Show();
-            }
-
-            grimoire.AssignCharacters(storyteller);
+            StartGame(agents);
         }
 
         public Alignment? GetWinner()
@@ -260,10 +237,60 @@ namespace Clocktower.Game
             }
         }
 
+        private static IStoryteller CreateStoryteller(Random random)
+        {
+            // Human storyteller.
+            return new StorytellerForm(random);
+        }
+
+        private static IReadOnlyCollection<IAgent> CreateAgents(IEnumerable<string> playerNames, Random random)
+        {
+            // Human players.
+            return playerNames.Select(name => (IAgent)new HumanAgentForm(name, random))
+                              .ToList();
+        }
+
+        private static ObserverCollection CreateObserverCollection(IEnumerable<IAgent> agents, IStoryteller storyteller)
+        {
+            return new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
+        }
+
+        private static Grimoire CreateGrimoire(IEnumerable<IAgent> agents)
+        {
+            // For now we assign hardcoded characters.
+            var charactersAlignments = new[]
+            {
+                (Character.Imp, Alignment.Evil),
+                (Character.Monk, Alignment.Good),
+                (Character.Undertaker, Alignment.Good),
+                (Character.Librarian, Alignment.Good),
+                (Character.Slayer, Alignment.Good),
+                (Character.Investigator, Alignment.Good),
+                (Character.Soldier, Alignment.Good),
+                (Character.Scarlet_Woman, Alignment.Evil)
+            };
+
+            var players = agents.Select((agent, i) => new Player(agent, charactersAlignments[i].Item1, charactersAlignments[i].Item2))
+                                .ToList();
+
+            return new Grimoire(players);
+        }
+
+        private void StartGame(IEnumerable<IAgent> agents)
+        {
+            storyteller.Start();
+            foreach (var agent in agents)
+            {
+                agent.StartGame();
+            }
+
+            grimoire.AssignCharacters(storyteller);
+        }
+
         private readonly List<Character> scriptCharacters;
-        private readonly Grimoire grimoire;
         private readonly IStoryteller storyteller;
         private readonly ObserverCollection observers;
+        private readonly Grimoire grimoire;
         private readonly Random random = new();
 
         private int dayNumber = 0;

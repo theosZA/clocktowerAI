@@ -1,4 +1,4 @@
-﻿using Clocktower.Agent;
+﻿using Clocktower.Storyteller;
 
 namespace Clocktower.Game
 {

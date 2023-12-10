@@ -1,5 +1,5 @@
-﻿using Clocktower.Agent;
-using Clocktower.Game;
+﻿using Clocktower.Game;
+using Clocktower.Storyteller;
 
 namespace Clocktower.Events
 {

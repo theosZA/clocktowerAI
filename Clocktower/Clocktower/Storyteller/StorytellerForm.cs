@@ -2,9 +2,9 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 
-namespace Clocktower
+namespace Clocktower.Storyteller
 {
-    public partial class StorytellerForm : Form
+    public partial class StorytellerForm : Form, IStoryteller
     {
         public IGameObserver Observer { get; private set; }
 
@@ -24,8 +24,11 @@ namespace Clocktower
             {
                 StorytellerView = true
             };
+        }
 
-            AutoAct = false; // for testing
+        public void Start()
+        {
+            Show();
         }
 
         public async Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates)

@@ -1,6 +1,6 @@
-﻿using Clocktower.Agent;
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Storyteller;
 using System.Diagnostics.Eventing.Reader;
 
 namespace Clocktower.Events
