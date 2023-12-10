@@ -27,13 +27,13 @@ namespace Clocktower.Events
             }
         }
 
-        public async Task<CharacterForTwoPlayersOption> GetPings(Player investigator)
+        private async Task<CharacterForTwoPlayersOption> GetPings(Player investigator)
         {
             var options = GetOptions(investigator).ToList();
             return (CharacterForTwoPlayersOption)await storyteller.GetInvestigatorPings(investigator, options);
         }
 
-        public IEnumerable<IOption> GetOptions(Player investigator)
+        private IEnumerable<IOption> GetOptions(Player investigator)
         {
             var minionCharacters = scriptCharacters.Where(character => 2000 <= (int)character && (int)character < 3000);
             // Exclude the investigator from their own ping.

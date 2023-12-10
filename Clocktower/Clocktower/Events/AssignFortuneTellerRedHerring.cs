@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             // Ensure that there is at least one real Fortune Teller.
             // We currently have a limitation that multiple Fortune Tellers share the same red herring (possibly an issue for the Philosopher).
-            if (!grimoire.Players.Any(player => player.Character == Character.Fortune_Teller && !player.Tokens.Contains(Token.IsTheDrunk)))
+            if (!grimoire.Players.Any(player => player.RealCharacter == Character.Fortune_Teller))  // This currently doesn't handle a Philosopher-Fortune Teller
             {
                 return;
             }

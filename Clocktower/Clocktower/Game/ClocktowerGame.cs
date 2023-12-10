@@ -120,7 +120,7 @@ namespace Clocktower.Game
             {
                 // Philosopher...
                 new MinionInformation(storyteller, grimoire),
-                new DemonInformation(storyteller, grimoire),
+                new DemonInformation(storyteller, grimoire, scriptCharacters, random),
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new NotifyGodfather(storyteller, grimoire),
                 new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random),

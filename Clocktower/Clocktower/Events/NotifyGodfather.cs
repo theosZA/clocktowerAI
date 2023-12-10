@@ -16,7 +16,7 @@ namespace Clocktower.Events
             foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather))
             {
                 var outsiders = grimoire.Players.Where(player => player.CharacterType == CharacterType.Outsider)
-                                                .Select(player => player.Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk : player.Character)
+                                                .Select(player => player.RealCharacter)
                                                 .OrderBy(character => character.ToString())
                                                 .ToList();
                 godfather.Agent.NotifyGodfather(outsiders);

@@ -10,6 +10,7 @@ namespace Clocktower.Storyteller
 
         void Start();
 
+        Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates);

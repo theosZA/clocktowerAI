@@ -31,6 +31,13 @@ namespace Clocktower.Storyteller
             Show();
         }
 
+        public async Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions)
+        {
+            outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the demon, %p...\n", demon, StorytellerView);
+
+            return await PopulateOptions(demonBluffOptions);
+        }
+
         public async Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates)
         {
             outputText.AppendFormattedText("The %c has star-passed. Choose a minion to become the new %c...\n", Character.Imp, Character.Imp);
@@ -219,9 +226,9 @@ namespace Clocktower.Storyteller
 
         public void AssignCharacter(Player player)
         {
-            if (player.Tokens.Contains(Token.IsTheDrunk))
+            if (player.Character != player.RealCharacter)
             {
-                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, Character.Drunk);
+                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, player.RealCharacter);
             }
             else
             {

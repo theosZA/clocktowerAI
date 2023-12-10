@@ -27,13 +27,13 @@ namespace Clocktower.Events
             }
         }
 
-        public async Task<CharacterForTwoPlayersOption> GetPings(Player librarian)
+        private async Task<CharacterForTwoPlayersOption> GetPings(Player librarian)
         {
             var options = GetOptions(librarian).ToList();
             return (CharacterForTwoPlayersOption)await storyteller.GetLibrarianPings(librarian, options);
         }
 
-        public IEnumerable<IOption> GetOptions(Player librarian)
+        private IEnumerable<IOption> GetOptions(Player librarian)
         {
             // Exclude the librarian from their own ping.
             var players = grimoire.Players.Where(player => player != librarian);
@@ -53,7 +53,7 @@ namespace Clocktower.Events
                    where playerA.CharacterType == CharacterType.Outsider
                    from playerB in players
                    where playerA != playerB
-                   select (IOption)new CharacterForTwoPlayersOption(playerA.Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk : playerA.Character, playerA, playerB);
+                   select (IOption)new CharacterForTwoPlayersOption(playerA.RealCharacter, playerA, playerB);
         }
 
         private readonly IStoryteller storyteller;

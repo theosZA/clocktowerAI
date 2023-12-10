@@ -196,6 +196,10 @@ namespace Clocktower.Agent
             if (AutoAct)
             {
                 var autoChosenOption = AutoChooseOption(options);
+                if (autoChosenOption is SlayerShotOption)
+                {
+                    usedSlayerAbility = true;
+                }
                 outputText.AppendBoldText($">> {autoChosenOption.Name}\n", Color.Green);
                 return Task.FromResult(autoChosenOption);
             }
@@ -234,10 +238,10 @@ namespace Clocktower.Agent
 
             // For now, just pick an option at random.
             // Exclude dead players and ourself from our choices.
-            // Also exclude Slayer-shot options unless we are the slayer.
+            // Also exclude Slayer-shot options unless we are the Slayer who hasn't user the ability yet.
             var autoOptions = options.Where(option => option is not PassOption)
                                      .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != PlayerName))
-                                     .Where(option => option is not SlayerShotOption || character == Character.Slayer)
+                                     .Where(option => option is not SlayerShotOption || (character == Character.Slayer && !usedSlayerAbility))
                                      .ToList();
             if (autoOptions.Count > 0)
             {
@@ -287,6 +291,7 @@ namespace Clocktower.Agent
 
         private Character? character;
         private bool alive = true;
+        private bool usedSlayerAbility = false;
 
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;

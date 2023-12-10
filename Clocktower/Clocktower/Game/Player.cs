@@ -26,11 +26,18 @@ namespace Clocktower.Game
         /// </summary>
         public Alignment Alignment { get; private set; }
 
+        /// <summary>
+        /// The player's real character. The player may believe differently, e.g. if they're a Drunk or Lunatic.
+        /// </summary>
+        public Character RealCharacter => Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk : Character;
+        /// <summary>
+        /// The player's real character type. The player may believe differently, e.g. if they're a Drunk or Lunatic.
+        /// </summary>
         public CharacterType CharacterType
         {
-            get => (int)Character switch
+            get => (int)RealCharacter switch
             {
-                < 1000 => Tokens.Contains(Token.IsTheDrunk) ? CharacterType.Outsider : CharacterType.Townsfolk,
+                < 1000 => CharacterType.Townsfolk,
                 < 2000 => CharacterType.Outsider,
                 < 3000 => CharacterType.Minion,
                 _ => CharacterType.Demon
