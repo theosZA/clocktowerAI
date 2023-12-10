@@ -29,6 +29,11 @@ namespace Clocktower.Options
             return ((NumberOption)option).Number;
         }
 
+        public static Direction GetDirection(this IOption option)
+        {
+            return ((DirectionOption)option).Direction;
+        }
+
         public static (Player playerA, Player playerB) GetTwoPlayers(this IOption option)
         {
             var twoPlayersOption = (TwoPlayersOption)option;

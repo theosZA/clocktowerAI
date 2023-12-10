@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -14,8 +13,8 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var drunkCandidates = grimoire.Players.Where(player => player.CharacterType == CharacterType.Townsfolk).ToOptions();
-            var drunk = (await storyteller.GetDrunk(drunkCandidates)).GetPlayer();
+            var drunkCandidates = grimoire.Players.Where(player => player.CharacterType == CharacterType.Townsfolk);
+            var drunk = await storyteller.GetDrunk(drunkCandidates);
             drunk.Tokens.Add(Token.IsTheDrunk);
         }
 

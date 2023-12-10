@@ -34,7 +34,7 @@ namespace Clocktower.Events
             {
                 return possibleCharacters.First();
             }
-            return (await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, possibleCharacters.ToOptions())).GetCharacter();
+            return await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, possibleCharacters);
         }
 
         private IReadOnlyCollection<Character> GetPossibleCharacters(Player undertaker, Player executedPlayer)

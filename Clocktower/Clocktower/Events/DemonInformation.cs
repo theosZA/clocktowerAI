@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -19,16 +18,11 @@ namespace Clocktower.Events
             var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion).ToList();
             foreach (var demon in grimoire.Players.Where(player => player.CharacterType == CharacterType.Demon))
             {
-                var bluffs = (await GetDemonBluffs(demon)).ToList();
+                var bluffs = (await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList())).ToList();
                 bluffs.Shuffle(random);
                 demon.Agent.DemonInformation(minions, bluffs);
                 storyteller.DemonInformation(demon, minions, bluffs);
             }
-        }
-
-        private async Task<IEnumerable<Character>> GetDemonBluffs(Player demon)
-        {
-            return (await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList().ToThreeCharactersOptions())).GetThreeCharacters();
         }
 
         private IEnumerable<Character> GetAvailableBluffs()

@@ -1,6 +1,6 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Observer;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -40,26 +40,13 @@ namespace Clocktower.Events
 
             foreach (var player in players)
             {
-                var nominee = await RequestNominationFromPlayer(player);
+                var nominee = await player.Agent.GetNomination(grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated));
                 if (nominee != null)
                 {
                     return (player, nominee);
                 }
             }
             return null;
-        }
-
-        private async Task<Player?> RequestNominationFromPlayer(Player player)
-        {
-            return (await player.Agent.GetNomination(GetNominationOptions(player))).GetPlayerOptional();
-        }
-
-        private IReadOnlyCollection<IOption> GetNominationOptions(Player player)
-        {
-            return grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated)
-                                   .ToOptions()
-                                   .Prepend(new PassOption())
-                                   .ToList();
         }
 
         private async Task HandleNomination(Player nominator, Player nominee)
@@ -92,14 +79,11 @@ namespace Clocktower.Events
         {
             int voteCount = 0;
 
-            var voteOptions = nominee.ToVoteOptions();
-
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {
                 if (player.Alive || player.HasGhostVote)
                 {
-                    var choice = await player.Agent.GetVote(voteOptions);
-                    bool votedToExecute = choice is VoteOption;
+                    bool votedToExecute = await player.Agent.GetVote(nominee);
                     observers.AnnounceVote(player, nominee, votedToExecute);
                     if (votedToExecute)
                     {

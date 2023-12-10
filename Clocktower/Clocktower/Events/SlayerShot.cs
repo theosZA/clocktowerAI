@@ -1,6 +1,6 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Observer;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -57,19 +57,6 @@ namespace Clocktower.Events
             return player.Alive && !player.Tokens.Contains(Token.AlreadyClaimedSlayer);
         }
 
-        private IReadOnlyCollection<IOption> GetSlayerShotOptions(Player purportedSlayer)
-        {
-            if (purportedSlayer.Tokens.Contains(Token.AlreadyClaimedSlayer))
-            {
-                return Array.Empty<IOption>();
-            }
-
-            // While a Slayer can theoretically target any player, there is no benefit to targeting themselves or any dead player,
-            // so they are excluded as possible targets.
-            return grimoire.Players.Where(player => player.Alive && player != purportedSlayer)
-                                   .ToSlayerShotOptions(bluff: purportedSlayer.Character != Character.Slayer);
-        }
-
         private async Task ShootTarget(Player purportedSlayer, Player target)
         {
             purportedSlayer.Tokens.Add(Token.AlreadyClaimedSlayer);
@@ -88,15 +75,17 @@ namespace Clocktower.Events
 
         private async Task<Player?> GetTarget(Player purportedSlayer)
         {
-            var options = GetSlayerShotOptions(purportedSlayer).Prepend(new PassOption()).ToList();
-            return (await purportedSlayer.Agent.PromptSlayerShot(options)).GetSlayerTargetOptional();
+            // While a Slayer can theoretically target any player, there is no benefit to targeting themselves or any dead player,
+            // so they are excluded as possible targets.
+            var targets = grimoire.Players.Where(player => player.Alive && player != purportedSlayer);
+            return await purportedSlayer.Agent.PromptSlayerShot(targets);
         }
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)
         {
             if (target.Character == Character.Tinker)
             {   // The Tinker can die at any time, so doesn't even need a real Slayer to shoot them.
-                return await storyteller.ShouldKillWithSlayer(purportedSlayer, target, OptionsBuilder.YesOrNo) is YesOption;
+                return await storyteller.ShouldKillWithSlayer(purportedSlayer, target);
             }
             if (purportedSlayer.Character != Character.Slayer)
             {
@@ -112,7 +101,7 @@ namespace Clocktower.Events
             }
             if (target.CharacterType != CharacterType.Demon)
             {   // Target isn't a demon, but can register as a demon. Need storyteller's choice.
-                return await storyteller.ShouldKillWithSlayer(purportedSlayer, target, OptionsBuilder.YesOrNo) is YesOption;
+                return await storyteller.ShouldKillWithSlayer(purportedSlayer, target);
             }
             return true;
         }

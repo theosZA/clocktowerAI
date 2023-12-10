@@ -1,6 +1,5 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -24,7 +23,7 @@ namespace Clocktower.Events
         {
             foreach (var tinker in grimoire.GetLivingPlayers(Character.Tinker).Where(player => !player.DrunkOrPoisoned))
             {
-                if (await storyteller.ShouldKillTinker(tinker, OptionsBuilder.YesOrNo) is YesOption)
+                if (await storyteller.ShouldKillTinker(tinker))
                 {
                     var kills = new Kills(storyteller, grimoire);
                     if (duringDay)

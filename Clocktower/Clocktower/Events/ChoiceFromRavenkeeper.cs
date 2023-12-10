@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -17,7 +17,7 @@ namespace Clocktower.Events
         {
             foreach (var ravenkeeper in grimoire.Players.Where(player => player.Character == Character.Ravenkeeper && player.Tokens.Contains(Token.KilledByDemon)))
             {
-                var target = (await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players.ToOptions())).GetPlayer();
+                var target = await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players);
                 var character = await GetTargetCharacter(ravenkeeper, target);
                 storyteller.ChoiceFromRavenkeeper(ravenkeeper, target, character);
                 ravenkeeper.Agent.NotifyRavenkeeper(target, character);
@@ -58,7 +58,7 @@ namespace Clocktower.Events
                 return characters.First();
             }
 
-            return (await storyteller.GetCharacterForRavenkeeper(ravenkeeper, target, characters.ToOptions())).GetCharacter();
+            return await storyteller.GetCharacterForRavenkeeper(ravenkeeper, target, characters);
         }
 
         private readonly IStoryteller storyteller;

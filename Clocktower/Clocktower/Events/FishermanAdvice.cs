@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -21,7 +21,7 @@ namespace Clocktower.Events
         {
             foreach (var fisherman in GetPlayersWhoCanAskForFishermanAdvice())
             {
-                if (await fisherman.Agent.PromptFishermanAdvice(OptionsBuilder.YesOrNo) is YesOption)
+                if (await fisherman.Agent.PromptFishermanAdvice())
                 {
                     fisherman.Tokens.Add(Token.UsedOncePerGameAbility);
                     var advice = await storyteller.GetFishermanAdvice(fisherman);

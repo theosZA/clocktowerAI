@@ -1,6 +1,6 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
+using Clocktower.Agent;
 
 namespace Clocktower.Events
 {
@@ -17,8 +17,7 @@ namespace Clocktower.Events
             var imps = grimoire.GetLivingPlayers(Character.Imp).ToList();   // Fix the imp(s) first, so that minions who receive a star-pass don't get to kill.
             foreach (var imp in imps)
             {
-                var options = grimoire.Players.ToOptions();
-                var target = (await imp.Agent.RequestChoiceFromImp(options)).GetPlayer();
+                var target = await imp.Agent.RequestChoiceFromImp(grimoire.Players);
 
                 storyteller.ChoiceFromImp(imp, target);
                 if (!imp.DrunkOrPoisoned && target.Alive && target.CanBeKilledByDemon)
@@ -67,7 +66,7 @@ namespace Clocktower.Events
                     return aliveMinions[0];
 
                 default:
-                    return (await storyteller.GetNewImp(aliveMinions.ToOptions())).GetPlayer();
+                    return await storyteller.GetNewImp(aliveMinions);
             }
         }
 

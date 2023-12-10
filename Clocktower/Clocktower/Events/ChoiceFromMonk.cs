@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,8 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var monk in grimoire.Players.Where(player => player.Character == Character.Monk))
             {
-                var options = grimoire.Players.Where(player => player != monk).ToOptions();
-                var target = (await monk.Agent.RequestChoiceFromMonk(options)).GetPlayer();
+                var target = await monk.Agent.RequestChoiceFromMonk(grimoire.Players.Where(player => player != monk));
                 storyteller.ChoiceFromMonk(monk, target);
                 if (!monk.DrunkOrPoisoned)
                 {

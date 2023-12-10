@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var fortuneTeller in grimoire.Players.Where(player => player.Character == Character.Fortune_Teller))
             {
-                var (targetA, targetB) = (await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players.ToTwoPlayersOptions())).GetTwoPlayers();
+                var (targetA, targetB) = await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players);
                 bool reading = await GetReading(fortuneTeller, targetA, targetB);
                 fortuneTeller.Agent.NotifyFortuneTeller(targetA, targetB, reading);
             }
@@ -41,7 +41,7 @@ namespace Clocktower.Events
 
         private async Task<bool> GetReadingFromStoryteller(Player fortuneTeller, Player targetA, Player targetB)
         {
-            return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;
+            return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB);
         }
 
         private readonly IStoryteller storyteller;

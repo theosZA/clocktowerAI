@@ -19,7 +19,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
-        Task<IOption> GetFortuneTellerReading(Player empath, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
+        Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
         Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
         Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions);
         Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions);
@@ -36,7 +36,7 @@ namespace Clocktower.Storyteller
         void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character);
         void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character);
         void NotifySteward(Player steward, Player goodPlayer);
-        void NotifyShugenja(Player shugenja, bool clockwise);
+        void NotifyShugenja(Player shugenja, Direction direction);
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
 

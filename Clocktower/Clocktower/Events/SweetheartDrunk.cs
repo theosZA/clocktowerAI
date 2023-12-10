@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -18,8 +17,7 @@ namespace Clocktower.Events
             if (grimoire.Players.Any(player => !player.Alive && player.Character == Character.Sweetheart) &&
                 !grimoire.Players.Any(player => player.Tokens.Contains(Token.SweetheartDrunk)))
             {
-                var options = grimoire.Players.ToOptions();     // Technically all players (including dead players or the demon) can become Sweetheart-drunk.
-                (await storyteller.GetSweetheartDrunk(options)).GetPlayer().Tokens.Add(Token.SweetheartDrunk);
+                (await storyteller.GetSweetheartDrunk(grimoire.Players)).Tokens.Add(Token.SweetheartDrunk);
             }
         }
 

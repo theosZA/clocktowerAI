@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,9 +15,7 @@ namespace Clocktower.Events
         {
             foreach (var steward in grimoire.GetLivingPlayers(Character.Steward))
             {
-                var options = grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))
-                                              .ToOptions();
-                var stewardTarget = (await storyteller.GetStewardPing(steward, options)).GetPlayer();
+                var stewardTarget = (await storyteller.GetStewardPing(steward, grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))));
                 steward.Agent.NotifySteward(stewardTarget);
                 storyteller.NotifySteward(steward, stewardTarget);
             }

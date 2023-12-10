@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -21,9 +20,8 @@ namespace Clocktower.Events
                 return;
             }
 
-            var redHerringOptions = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon).ToOptions();
-            var redHerring = (await storyteller.GetFortuneTellerRedHerring(redHerringOptions)).GetPlayer();
-            redHerring.Tokens.Add(Token.FortuneTellerRedHerring);
+            var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
+            (await storyteller.GetFortuneTellerRedHerring(redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring);
         }
 
         private readonly IStoryteller storyteller;

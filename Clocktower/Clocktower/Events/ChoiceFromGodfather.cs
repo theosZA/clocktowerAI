@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather).Where(player => player.Tokens.Contains(Token.GodfatherKillsTonight)))
             {
-                var target = (await godfather.Agent.RequestChoiceFromGodfather(grimoire.Players.ToOptions())).GetPlayer();
+                var target = await godfather.Agent.RequestChoiceFromGodfather(grimoire.Players);
                 storyteller.ChoiceFromGodfather(godfather, target);
 
                 godfather.Tokens.Remove(Token.GodfatherKillsTonight);

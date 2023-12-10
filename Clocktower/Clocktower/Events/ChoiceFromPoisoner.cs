@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var poisoner in grimoire.GetLivingPlayers(Character.Poisoner))
             {
-                var target = (await poisoner.Agent.RequestChoiceFromPoisoner(grimoire.Players.ToOptions())).GetPlayer();
+                var target = await poisoner.Agent.RequestChoiceFromPoisoner(grimoire.Players);
                 storyteller.ChoiceFromPoisoner(poisoner, target);
                 if (!poisoner.DrunkOrPoisoned)
                 {

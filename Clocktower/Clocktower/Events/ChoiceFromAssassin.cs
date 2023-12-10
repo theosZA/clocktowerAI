@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,11 +16,7 @@ namespace Clocktower.Events
         {
             foreach (var assassin in grimoire.GetLivingPlayers(Character.Assassin).Where(player => !player.Tokens.Contains(Token.UsedOncePerGameAbility)))
             {
-                var options = grimoire.Players.ToOptions()
-                                              .Prepend(new PassOption())
-                                              .ToList();
-
-                var target = (await assassin.Agent.RequestChoiceFromAssassin(options)).GetPlayerOptional();
+                var target = await assassin.Agent.RequestChoiceFromAssassin(grimoire.Players);
                 storyteller.ChoiceFromAssassin(assassin, target);
 
                 if (target != null)

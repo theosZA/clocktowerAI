@@ -63,8 +63,8 @@ namespace Clocktower.Options
 
         private static readonly IReadOnlyCollection<IOption> directionOptions = new IOption[]
         {
-            new ClockwiseOption(),
-            new CounterclockwiseOption()
+            new DirectionOption(Direction.Clockwise),
+            new DirectionOption(Direction.Counterclockwise)
         };
     }
 }

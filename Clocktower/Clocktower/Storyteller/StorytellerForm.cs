@@ -266,9 +266,9 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p learns that %p is a good player.\n", steward, goodPlayer, StorytellerView);
         }
 
-        public void NotifyShugenja(Player shugenja, bool clockwise)
+        public void NotifyShugenja(Player shugenja, Direction direction)
         {
-            outputText.AppendFormattedText("%p learns that the nearest %a to them is in the %b direction.\n", shugenja, Alignment.Evil, clockwise ? "clockwise" : "counter-clockwise", StorytellerView);
+            outputText.AppendFormattedText("%p learns that the nearest %a to them is in the %b direction.\n", shugenja, Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise", StorytellerView);
         }
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)

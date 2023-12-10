@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -16,18 +15,17 @@ namespace Clocktower.Events
         {
             foreach (var shugenja in grimoire.GetLivingPlayers(Character.Shugenja))
             {
-                var clockwise = await GetDirection(shugenja);
-
-                shugenja.Agent.NotifyShugenja(clockwise);
-                storyteller.NotifyShugenja(shugenja, clockwise);
+                var direction = await GetDirection(shugenja);
+                shugenja.Agent.NotifyShugenja(direction);
+                storyteller.NotifyShugenja(shugenja, direction);
             }
         }
 
-        private async Task<bool> GetDirection(Player shugenja)
+        private async Task<Direction> GetDirection(Player shugenja)
         {
             if (shugenja.DrunkOrPoisoned)
             {
-                return await GetDirectionFromStoryteller(shugenja);
+                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
             }
 
             IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
@@ -44,24 +42,19 @@ namespace Clocktower.Events
 
             if (minEvilStepsClockwise <= maxEvilStepsCounterclockwise && maxEvilStepsCounterclockwise < maxEvilStepsClockwise)
             {   // If we count the Recluse as evil, then this would be clockwise (or equal) instead of counter-clockwise.
-                return await GetDirectionFromStoryteller(shugenja);
+                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
             }
             if (minEvilStepsCounterclockwise <= maxEvilStepsClockwise && maxEvilStepsClockwise < maxEvilStepsCounterclockwise)
             {   // If we count the Recluse as evil, then this would be counter-clockwise (or equal) instead of clockwise.
-                return await GetDirectionFromStoryteller(shugenja);
+                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
             }
             // Even if we count the Recluse as evil, it woun't change anything. Proceed to default handling.
 
             if (maxEvilStepsClockwise == maxEvilStepsCounterclockwise)
             {
-                return await GetDirectionFromStoryteller(shugenja);
+                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
             }
-            return maxEvilStepsClockwise < maxEvilStepsCounterclockwise;
-        }
-
-        private async Task<bool> GetDirectionFromStoryteller(Player shugenja)
-        {
-            return await storyteller.GetShugenjaDirection(shugenja, grimoire, OptionsBuilder.DirectionOptions) is ClockwiseOption;
+            return maxEvilStepsClockwise < maxEvilStepsCounterclockwise ? Direction.Clockwise : Direction.Counterclockwise;
         }
 
         private readonly IStoryteller storyteller;

@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -17,25 +17,12 @@ namespace Clocktower.Events
         {
             foreach (var philosopher in grimoire.GetLivingPlayers(Character.Philosopher))
             {
-                var character = await GetChoice(philosopher);
+                var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => (int)character < 2000 && character != Character.Philosopher));
                 if (character != null)
                 {
                     ApplyPhilosopherChoice(philosopher, character.Value);
                 }
             }   
-        }
-
-        private async Task<Character?> GetChoice(Player philosopher)
-        {
-            return (await philosopher.Agent.RequestChoiceFromPhilosopher(GetOptions().ToList())).GetCharacterOptional();
-        }
-
-        private IEnumerable<IOption> GetOptions()
-        {
-            // Only good characters are allowed. We'll also exclude Philosopher, because that only makes sense with weird abilities like the Barista's.
-            return scriptCharacters.Where(character => (int)character < 2000 && character != Character.Philosopher)
-                                   .ToOptions()
-                                   .Prepend(new PassOption());
         }
 
         private void ApplyPhilosopherChoice(Player philosopher, Character character)
