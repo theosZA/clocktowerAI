@@ -32,8 +32,7 @@ namespace Clocktower.Events
                 return possibleEmpathNumbers[0];
             }
 
-            var choice = await storyteller.GetEmpathNumber(empath, neighbourA, neighbourB, possibleEmpathNumbers.ToOptions());
-            return ((NumberOption)choice).Number;
+            return (await storyteller.GetEmpathNumber(empath, neighbourA, neighbourB, possibleEmpathNumbers.ToOptions())).GetNumber();
         }
 
         private static IEnumerable<int> GetPossibleEmpathNumbers(Player empath, Player neighbourA, Player neighbourB)

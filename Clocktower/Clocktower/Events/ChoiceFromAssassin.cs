@@ -20,8 +20,7 @@ namespace Clocktower.Events
                                               .Prepend(new PassOption())
                                               .ToList();
 
-                var choice = await assassin.Agent.RequestChoiceFromAssassin(options);
-                var target = choice is PlayerOption playerOption ? playerOption.Player : null;
+                var target = (await assassin.Agent.RequestChoiceFromAssassin(options)).GetPlayerOptional();
                 storyteller.ChoiceFromAssassin(assassin, target);
 
                 if (target != null)

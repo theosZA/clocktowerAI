@@ -17,8 +17,7 @@ namespace Clocktower.Events
             foreach (var monk in grimoire.Players.Where(player => player.Character == Character.Monk))
             {
                 var options = grimoire.Players.Where(player => player != monk).ToOptions();
-                var choice = (PlayerOption)await monk.Agent.RequestChoiceFromMonk(options);
-                var target = choice.Player;
+                var target = (await monk.Agent.RequestChoiceFromMonk(options)).GetPlayer();
                 storyteller.ChoiceFromMonk(monk, target);
                 if (!monk.DrunkOrPoisoned)
                 {

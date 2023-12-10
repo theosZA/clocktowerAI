@@ -89,12 +89,7 @@ namespace Clocktower.Events
         private async Task<Player?> GetTarget(Player purportedSlayer)
         {
             var options = GetSlayerShotOptions(purportedSlayer).Prepend(new PassOption()).ToList();
-            var choice = await purportedSlayer.Agent.PromptSlayerShot(options);
-            if (choice is SlayerShotOption slayerShot)
-            {
-                return slayerShot.Target;
-            }
-            return null;
+            return (await purportedSlayer.Agent.PromptSlayerShot(options)).GetSlayerTargetOptional();
         }
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)

@@ -51,12 +51,7 @@ namespace Clocktower.Events
 
         private async Task<Player?> RequestNominationFromPlayer(Player player)
         {
-            var choice = await player.Agent.GetNomination(GetNominationOptions(player));
-            if (choice is PlayerOption playerOption)
-            {
-                return playerOption.Player;
-            }
-            return null;
+            return (await player.Agent.GetNomination(GetNominationOptions(player))).GetPlayerOptional();
         }
 
         private IReadOnlyCollection<IOption> GetNominationOptions(Player player)

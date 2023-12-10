@@ -19,8 +19,7 @@ namespace Clocktower.Events
                 !grimoire.Players.Any(player => player.Tokens.Contains(Token.SweetheartDrunk)))
             {
                 var options = grimoire.Players.ToOptions();     // Technically all players (including dead players or the demon) can become Sweetheart-drunk.
-                var choice = (PlayerOption)await storyteller.GetSweetheartDrunk(options);
-                choice.Player.Tokens.Add(Token.SweetheartDrunk);
+                (await storyteller.GetSweetheartDrunk(options)).GetPlayer().Tokens.Add(Token.SweetheartDrunk);
             }
         }
 

@@ -18,8 +18,7 @@ namespace Clocktower.Events
             foreach (var imp in imps)
             {
                 var options = grimoire.Players.ToOptions();
-                var choice = (PlayerOption)await imp.Agent.RequestChoiceFromImp(options);
-                var target = choice.Player;
+                var target = (await imp.Agent.RequestChoiceFromImp(options)).GetPlayer();
 
                 storyteller.ChoiceFromImp(imp, target);
                 if (!imp.DrunkOrPoisoned && target.Alive && target.CanBeKilledByDemon)
@@ -68,8 +67,7 @@ namespace Clocktower.Events
                     return aliveMinions[0];
 
                 default:
-                    var choice = (PlayerOption)await storyteller.GetNewImp(aliveMinions.ToOptions());
-                    return choice.Player;
+                    return (await storyteller.GetNewImp(aliveMinions.ToOptions())).GetPlayer();
             }
         }
 

@@ -16,9 +16,9 @@ namespace Clocktower.Events
         {
             foreach (var fortuneTeller in grimoire.Players.Where(player => player.Character == Character.Fortune_Teller))
             {
-                var targets = (TwoPlayersOption)await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players.ToTwoPlayersOptions());
-                bool reading = await GetReading(fortuneTeller, targets.PlayerA, targets.PlayerB);
-                fortuneTeller.Agent.NotifyFortuneTeller(targets.PlayerA, targets.PlayerB, reading);
+                var (targetA, targetB) = (await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players.ToTwoPlayersOptions())).GetTwoPlayers();
+                bool reading = await GetReading(fortuneTeller, targetA, targetB);
+                fortuneTeller.Agent.NotifyFortuneTeller(targetA, targetB, reading);
             }
         }
 

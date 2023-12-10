@@ -27,8 +27,7 @@ namespace Clocktower.Events
 
         private async Task<Character?> GetChoice(Player philosopher)
         {
-            var choice = await philosopher.Agent.RequestChoiceFromPhilosopher(GetOptions().ToList());
-            return choice is CharacterOption characterOption ? characterOption.Character : null;
+            return (await philosopher.Agent.RequestChoiceFromPhilosopher(GetOptions().ToList())).GetCharacterOptional();
         }
 
         private IEnumerable<IOption> GetOptions()

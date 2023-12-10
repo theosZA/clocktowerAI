@@ -19,17 +19,16 @@ namespace Clocktower.Events
             var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion).ToList();
             foreach (var demon in grimoire.Players.Where(player => player.CharacterType == CharacterType.Demon))
             {
-                var choice = await GetDemonBluffs(demon);
-                var bluffs = new List<Character> { choice.CharacterA, choice.CharacterB, choice.CharacterC };
+                var bluffs = (await GetDemonBluffs(demon)).ToList();
                 bluffs.Shuffle(random);
                 demon.Agent.DemonInformation(minions, bluffs);
                 storyteller.DemonInformation(demon, minions, bluffs);
             }
         }
 
-        private async Task<ThreeCharactersOption> GetDemonBluffs(Player demon)
+        private async Task<IEnumerable<Character>> GetDemonBluffs(Player demon)
         {
-            return (ThreeCharactersOption)await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList().ToThreeCharactersOptions());
+            return (await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList().ToThreeCharactersOptions())).GetThreeCharacters();
         }
 
         private IEnumerable<Character> GetAvailableBluffs()

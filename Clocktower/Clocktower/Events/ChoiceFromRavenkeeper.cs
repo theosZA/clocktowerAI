@@ -17,8 +17,7 @@ namespace Clocktower.Events
         {
             foreach (var ravenkeeper in grimoire.Players.Where(player => player.Character == Character.Ravenkeeper && player.Tokens.Contains(Token.KilledByDemon)))
             {
-                var choice = (PlayerOption)await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players.ToOptions());
-                var target = choice.Player;
+                var target = (await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players.ToOptions())).GetPlayer();
                 var character = await GetTargetCharacter(ravenkeeper, target);
                 storyteller.ChoiceFromRavenkeeper(ravenkeeper, target, character);
                 ravenkeeper.Agent.NotifyRavenkeeper(target, character);
@@ -59,8 +58,7 @@ namespace Clocktower.Events
                 return characters.First();
             }
 
-            var choice = (CharacterOption)(await storyteller.GetCharacterForRavenkeeper(ravenkeeper, target, characters.ToOptions()));
-            return choice.Character;
+            return (await storyteller.GetCharacterForRavenkeeper(ravenkeeper, target, characters.ToOptions())).GetCharacter();
         }
 
         private readonly IStoryteller storyteller;

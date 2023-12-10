@@ -15,7 +15,7 @@ namespace Clocktower.Events
         public async Task RunEvent()
         {
             var drunkCandidates = grimoire.Players.Where(player => player.CharacterType == CharacterType.Townsfolk).ToOptions();
-            var drunk = ((PlayerOption)await storyteller.GetDrunk(drunkCandidates)).Player;
+            var drunk = (await storyteller.GetDrunk(drunkCandidates)).GetPlayer();
             drunk.Tokens.Add(Token.IsTheDrunk);
         }
 
