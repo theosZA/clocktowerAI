@@ -46,6 +46,7 @@ namespace Clocktower.Storyteller
         void ChoiceFromGodfather(Player godfather, Player target);
         void ChoiceFromMonk(Player monk, Player target);
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
+        void ChoiceFromPhilosopher(Player philosopher, Player? philosopherDrunkedPlayer, Character newCharacterAbility);
 
         void ScarletWomanTrigger(Player demon, Player scarletWoman);
     }

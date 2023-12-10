@@ -118,7 +118,7 @@ namespace Clocktower.Game
         {
             await RunEventSequence(new IGameEvent[]
             {
-                // Philosopher...
+                new ChoiceFromPhilosopher(storyteller, grimoire, scriptCharacters),
                 new MinionInformation(storyteller, grimoire),
                 new DemonInformation(storyteller, grimoire, scriptCharacters, random),
                 new ChoiceFromPoisoner(storyteller, grimoire),
@@ -144,7 +144,7 @@ namespace Clocktower.Game
 
             await RunEventSequence(new IGameEvent[]
             {
-                // Philosopher...
+                new ChoiceFromPhilosopher(storyteller, grimoire, scriptCharacters),
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new ChoiceFromMonk(storyteller, grimoire),
                 // Scarlet Woman - this is their theoretical place in the night order, but they actually become the demon immediately
@@ -268,9 +268,9 @@ namespace Clocktower.Game
                 (Character.Monk, Alignment.Good),
                 (Character.Undertaker, Alignment.Good),
                 (Character.Soldier, Alignment.Good),
-                (Character.Slayer, Alignment.Good),
-                (Character.Fisherman, Alignment.Good),
+                (Character.Philosopher, Alignment.Good),
                 (Character.Recluse, Alignment.Good),
+                (Character.Empath, Alignment.Good),
                 (Character.Scarlet_Woman, Alignment.Evil)
             };
 
@@ -299,6 +299,6 @@ namespace Clocktower.Game
 
         private int dayNumber = 0;
 
-        private bool addDrunkToGame = true;
+        private bool addDrunkToGame = false;
     }
 }

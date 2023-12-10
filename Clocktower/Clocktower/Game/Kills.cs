@@ -36,14 +36,14 @@ namespace Clocktower.Game
 
         private void HandleDayDeath(Player player)
         {
-            grimoire.RemoveTokensForCharacter(player.Character);
+            grimoire.RemoveTokensForCharacter(player.RealCharacter);
             ProcessDayTriggersForOtherCharacters(player);
             ProcessTriggersForOtherCharacters(player);
         }
 
         private void HandleNightDeath(Player player)
         {
-            grimoire.RemoveTokensForCharacter(player.Character);
+            grimoire.RemoveTokensForCharacter(player.RealCharacter);
             ProcessTriggersForOtherCharacters(player);
         }
 

@@ -139,6 +139,16 @@ namespace Clocktower.Agent
             }
         }
 
+        public void GainCharacterAbility(Character character)
+        {
+            outputText.AppendFormattedText("You now have the ability of the %c.\n", character);
+
+            originalCharacter = this.character;
+            this.character = character;
+
+            SetTitleText();
+        }
+
         public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
@@ -160,6 +170,12 @@ namespace Clocktower.Agent
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Godfather);
+            return await PopulateOptions(options);
+        }
+
+        public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a character whose ability you wish to acquire...\n", Character.Philosopher);
             return await PopulateOptions(options);
         }
 
@@ -276,7 +292,12 @@ namespace Clocktower.Agent
             Text = PlayerName;
             if (character != null)
             {
-                Text += $" ({TextUtilities.CharacterToText(character.Value)})";
+                Text += " (";
+                if (originalCharacter != null)
+                {
+                    Text += $"{TextUtilities.CharacterToText(originalCharacter.Value)}-";
+                }
+                Text += $"{TextUtilities.CharacterToText(character.Value)})";
             }
             if (!alive)
             {
@@ -304,6 +325,7 @@ namespace Clocktower.Agent
 
         private readonly Random random;
 
+        private Character? originalCharacter;
         private Character? character;
         private bool alive = true;
         private bool usedSlayerAbility = false;

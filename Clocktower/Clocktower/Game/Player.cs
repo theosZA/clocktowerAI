@@ -29,7 +29,9 @@ namespace Clocktower.Game
         /// <summary>
         /// The player's real character. The player may believe differently, e.g. if they're a Drunk or Lunatic.
         /// </summary>
-        public Character RealCharacter => Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk : Character;
+        public Character RealCharacter => Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk
+                                        : Tokens.Contains(Token.IsThePhilosopher) ? Character.Philosopher
+                                        : Character;
         /// <summary>
         /// The player's real character type. The player may believe differently, e.g. if they're a Drunk or Lunatic.
         /// </summary>
@@ -44,7 +46,12 @@ namespace Clocktower.Game
             };
         }
 
-        public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || token == Token.SweetheartDrunk || token == Token.PoisonedByPoisoner).Any();
+        public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || 
+                                                    token == Token.SweetheartDrunk || 
+                                                    token == Token.PhilosopherDrunk || 
+                                                    token == Token.PoisonedByPoisoner ||
+                                                    token == Token.IsTheBadPhilosopher)
+                                             .Any();
 
         public List<Token> Tokens { get; } = new();
 
@@ -65,6 +72,17 @@ namespace Clocktower.Game
         {
             Character = newCharacter;
             Agent.AssignCharacter(Character, Alignment);
+        }
+
+        public void GainCharacterAbility(Character newCharacter)
+        {
+            if (Character == Character.Philosopher)
+            {
+                Tokens.Add(Token.IsThePhilosopher);
+            }
+
+            Character = newCharacter;
+            Agent.GainCharacterAbility(newCharacter);
         }
 
         public void Kill()

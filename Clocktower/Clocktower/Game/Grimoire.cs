@@ -28,7 +28,7 @@ namespace Clocktower.Game
         public void ChangeCharacter(Player player, Character newCharacter)
         {
             player.Tokens.Remove(Token.UsedOncePerGameAbility);
-            RemoveTokensForCharacter(player.Character);
+            RemoveTokensForCharacter(player.RealCharacter);
             player.ChangeCharacter(newCharacter);
         }
 
@@ -43,6 +43,10 @@ namespace Clocktower.Game
 
                 case Character.Monk:
                     RemoveToken(Token.ProtectedByMonk);
+                    break;
+
+                case Character.Philosopher:
+                    RemoveToken(Token.PhilosopherDrunk);
                     break;
 
                 case Character.Sweetheart:

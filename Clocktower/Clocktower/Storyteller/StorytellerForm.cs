@@ -69,10 +69,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetInvestigatorPings(Player investigator, IReadOnlyCollection<IOption> investigatorPingCandidates)
         {
             outputText.AppendFormattedText("Choose two players who %p will see as a minion, and the character they will see them as.", investigator, StorytellerView);
-            if (investigator.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(investigator);
             var possibleMinions = new HashSet<Player>(investigatorPingCandidates.Select(option => ((CharacterForTwoPlayersOption)option).PlayerA));
             foreach (var misregister in possibleMinions.Where(player => player.CanRegisterAsMinion && player.CharacterType != CharacterType.Minion))
             {
@@ -86,10 +83,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates)
         {
             outputText.AppendFormattedText("Choose two players who %p will see as an outsider, and the character they will see them as.", librarian, StorytellerView);
-            if (librarian.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(librarian);
             outputText.AppendText("\n");
 
             return await PopulateOptions(librarianPingCandidates);
@@ -98,10 +92,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates)
         {
             outputText.AppendFormattedText("Choose one player who %p will see as a good player.", steward, StorytellerView);
-            if (steward.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(steward);
             outputText.AppendText("\n");
 
             return await PopulateOptions(stewardPingCandidates);
@@ -110,17 +101,16 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions)
         {
             outputText.AppendFormattedText("Choose what number to show to %p. Their living neighbours are %p and %p.", empath, neighbourA, neighbourB, StorytellerView);
-            if (empath.DrunkOrPoisoned)
+            if (!OutputDrunkDisclaimer(empath))
             {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
-            else if (neighbourA.Alignment != Alignment.Evil && neighbourA.CanRegisterAsEvil)
-            {
-                outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourA, Alignment.Evil, StorytellerView);
-            }
-            else if (neighbourB.Alignment != Alignment.Evil && neighbourB.CanRegisterAsEvil)
-            {
-                outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourB, Alignment.Evil, StorytellerView);
+                if (neighbourA.Alignment != Alignment.Evil && neighbourA.CanRegisterAsEvil)
+                {
+                    outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourA, Alignment.Evil, StorytellerView);
+                }
+                else if (neighbourB.Alignment != Alignment.Evil && neighbourB.CanRegisterAsEvil)
+                {
+                    outputText.AppendFormattedText(" Remember that %p could register as %a.", neighbourB, Alignment.Evil, StorytellerView);
+                }
             }
             outputText.AppendText("\n");
 
@@ -130,17 +120,16 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> readingOptions)
         {
             outputText.AppendFormattedText("Choose whether to say 'Yes' or 'No' to %p to indicate whether they've seen a Demon between %p and %p.", fortuneTeller, targetA, targetB, StorytellerView);
-            if (fortuneTeller.DrunkOrPoisoned)
+            if (!OutputDrunkDisclaimer(fortuneTeller))
             {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
-            else if (targetA.CharacterType != CharacterType.Demon && targetA.CanRegisterAsDemon)
-            {
-                outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetA, Alignment.Evil, StorytellerView);
-            }
-            else if (targetB.CharacterType != CharacterType.Demon && targetB.CanRegisterAsDemon)
-            {
-                outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetB, Alignment.Evil, StorytellerView);
+                if (targetA.CharacterType != CharacterType.Demon && targetA.CanRegisterAsDemon)
+                {
+                    outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetA, Alignment.Evil, StorytellerView);
+                }
+                else if (targetB.CharacterType != CharacterType.Demon && targetB.CanRegisterAsDemon)
+                {
+                    outputText.AppendFormattedText(" Remember that %p could register as a demon.", targetB, Alignment.Evil, StorytellerView);
+                }
             }
             outputText.AppendText("\n");
 
@@ -150,10 +139,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions)
         {
             outputText.AppendFormattedText("Choose whether to indicate 'Clockwise' or 'Counter-clockwise' to %p to indicate the direction to the nearest evil player.", shugenja, StorytellerView);
-            if (shugenja.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(shugenja);
 
             IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
             IReadOnlyCollection<Player> allPlayersCounterclockwise = allPlayersClockwise.Reverse().ToList();
@@ -191,10 +177,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions)
         {
             outputText.AppendFormattedText("%p has died and has chosen to learn the character of %p. Choose a character for them to learn.", ravenkeeper, target, StorytellerView);
-            if (ravenkeeper.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(ravenkeeper);
             outputText.AppendText("\n");
 
             return await PopulateOptions(ravenkeeperOptions);
@@ -203,10 +186,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions)
         {
             outputText.AppendFormattedText("%p was executed yesterday. Choose a character for %p to learn.", executedPlayer, undertaker, StorytellerView);
-            if (undertaker.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(undertaker);
             outputText.AppendText("\n");
 
             return await PopulateOptions(undertakerOptions);
@@ -227,10 +207,7 @@ namespace Clocktower.Storyteller
         public async Task<string> GetFishermanAdvice(Player fisherman)
         {
             outputText.AppendFormattedText("%p would like their %c advice.", fisherman, Character.Fisherman, StorytellerView);
-            if (fisherman.DrunkOrPoisoned)
-            {
-                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
-            }
+            OutputDrunkDisclaimer(fisherman);
             outputText.AppendText("\n");
             return await GetTextResponse();
         }
@@ -341,6 +318,24 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p chooses %p and learns that they are the %c.\n", ravenkeeper, target, character, StorytellerView);
         }
 
+        public void ChoiceFromPhilosopher(Player philosopher, Player? philosopherDrunkedPlayer, Character newCharacterAbility)
+        {
+            if (philosopher.Tokens.Contains(Token.IsTheBadPhilosopher))
+            {
+                outputText.AppendFormattedText("%p has chosen to gain the ability of the %c. Since they were drunk or poisoned at the time, they didn't really gain the ability but will continue to be treated like a drunk version of that character.\n",
+                                               philosopher, newCharacterAbility, StorytellerView);
+            }
+            else
+            {
+                outputText.AppendFormattedText("%p has chosen to gain the ability of the %c.", philosopher, newCharacterAbility, StorytellerView);
+                if (philosopherDrunkedPlayer != null)
+                {
+                    outputText.AppendFormattedText(" Since %p is the %c, they are now drunked by the %c.", philosopherDrunkedPlayer, philosopherDrunkedPlayer.RealCharacter, Character.Philosopher, StorytellerView);
+                }
+                outputText.AppendText("\n");
+            }
+        }
+
         public void ScarletWomanTrigger(Player demon, Player scarletWoman)
         {
             outputText.AppendFormattedText("%p has died and so %p becomes the new %c.\n", demon, scarletWoman, Character.Imp, StorytellerView);
@@ -404,6 +399,21 @@ namespace Clocktower.Storyteller
             OnText += onTextHandler;
 
             return taskCompletionSource.Task;
+        }
+
+        private bool OutputDrunkDisclaimer(Player player)
+        {
+            if (player.Tokens.Contains(Token.IsTheBadPhilosopher))
+            {
+                outputText.AppendBoldText($" They were drunk or poisoned when they used their {TextUtilities.CharacterToText(Character.Philosopher)} ability, so they are not really the {TextUtilities.CharacterToText(player.Character)}. Therefore this should generally be bad information.", Color.Purple);
+                return true;
+            }
+            else if (player.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+                return true;
+            }
+            return false;
         }
 
         private void chooseButton_Click(object sender, EventArgs e)

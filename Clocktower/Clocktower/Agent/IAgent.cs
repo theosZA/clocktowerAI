@@ -30,12 +30,14 @@ namespace Clocktower.Agent
         void NotifyUndertaker(Player executedPlayer, Character character);
 
         void ResponseForFisherman(string advice);
+        void GainCharacterAbility(Character character);
 
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options);
 
+        Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
