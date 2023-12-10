@@ -1,12 +1,14 @@
 ﻿using Clocktower.Agent;
-using Clocktower.Events;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 
-namespace Clocktower.Game
+namespace Clocktower.Events
 {
-    internal class Nominations
+    internal class Nominations : IGameEvent
     {
+        public Player? PlayerToBeExecuted { get; private set; }
+
         public Nominations(IStoryteller storyteller, Grimoire grimoire, ObserverCollection observers, Random random)
         {
             this.storyteller = storyteller;
@@ -15,14 +17,13 @@ namespace Clocktower.Game
             this.random = random;
         }
 
-        public async Task RunNominations()
+        public async Task RunEvent()
         {
             while (true)
             {
                 var nomination = await RequestNomination();
                 if (!nomination.HasValue)
                 {   // No more nominations.
-                    await EndDay();
                     return;
                 }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
@@ -31,11 +32,6 @@ namespace Clocktower.Game
 
         private async Task<(Player nominator, Player nominee)?> RequestNomination()
         {
-            var nominationOptions = grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated)
-                                                    .Select(player => (IOption)new PlayerOption(player))
-                                                    .Prepend(new PassOption())
-                                                    .ToList();
-
             // Only alive players who haven't yet nominated can nominate.
             var players = grimoire.Players.Where(player => player.Alive)
                                           .Except(playersWhoHaveAlreadyNominated)
@@ -44,13 +40,31 @@ namespace Clocktower.Game
 
             foreach (var player in players)
             {
-                var choice = await player.Agent.GetNomination(nominationOptions);
-                if (choice is PlayerOption playerOption)
+                var nominee = await RequestNominationFromPlayer(player);
+                if (nominee != null)
                 {
-                    return (player, playerOption.Player);
+                    return (player, nominee);
                 }
             }
             return null;
+        }
+
+        private async Task<Player?> RequestNominationFromPlayer(Player player)
+        {
+            var choice = await player.Agent.GetNomination(GetNominationOptions(player));
+            if (choice is PlayerOption playerOption)
+            {
+                return playerOption.Player;
+            }
+            return null;
+        }
+
+        private IReadOnlyCollection<IOption> GetNominationOptions(Player player)
+        {
+            return grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated)
+                                   .Select(player => (IOption)new PlayerOption(player))
+                                   .Prepend(new PassOption())
+                                   .ToList();
         }
 
         private async Task HandleNomination(Player nominator, Player nominee)
@@ -70,11 +84,11 @@ namespace Clocktower.Game
 
             if (tiesCurrent)
             {
-                playerOnTheBlock = null;
+                PlayerToBeExecuted = null;
             }
             else if (beatsCurrent)
             {
-                playerOnTheBlock = nominee;
+                PlayerToBeExecuted = nominee;
                 highestVoteCount = voteCount;
             }
         }
@@ -110,30 +124,11 @@ namespace Clocktower.Game
             return voteCount;
         }
 
-        private async Task EndDay()
-        {
-            if (playerOnTheBlock == null)
-            {
-                await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
-                observers.DayEndsWithNoExecution();
-                return;
-            }
-
-            bool playerDies = playerOnTheBlock.Alive;
-            observers.PlayerIsExecuted(playerOnTheBlock, playerDies);
-            if (playerDies)
-            {
-                new Kills(storyteller, grimoire).Execute(playerOnTheBlock);
-            }
-            await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
-        }
-
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
         private readonly ObserverCollection observers;
         private readonly Random random;
 
-        private Player? playerOnTheBlock;
         private int? highestVoteCount;
 
         private List<Player> playersWhoHaveAlreadyNominated = new();

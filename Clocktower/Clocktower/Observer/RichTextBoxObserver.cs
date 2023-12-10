@@ -114,6 +114,19 @@ namespace Clocktower.Observer
             }
         }
 
+        public void AnnounceSlayerShot(Player slayer, Player target, bool success)
+        {
+            outputText.AppendFormattedText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target, StorytellerView);
+            if (success)
+            {
+                outputText.AppendFormattedText("%p dies.\n", target, StorytellerView);
+            }
+            else
+            {
+                outputText.AppendText("Nothing happens.\n");
+            }
+        }
+
         private readonly RichTextBox outputText;
     }
 }

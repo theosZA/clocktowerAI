@@ -16,7 +16,7 @@ namespace Clocktower.Events
         }
 
         /// <summary>
-        /// While the Tinker can die at any time, to save from checking in with out storyteller so frequently, we should only check
+        /// While the Tinker can die at any time, to save from checking in with our storyteller so frequently, we should only check
         /// at the Tinker's spot in the night order, the start of the day (after night deaths have been announced), before nominations,
         /// and after nominations before ending the day.
         /// </summary>

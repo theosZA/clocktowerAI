@@ -21,5 +21,7 @@ namespace Clocktower.Observer
         void AnnounceNomination(Player nominator, Player nominee);
         void AnnounceVote(Player voter, Player nominee, bool votedToExecute);
         void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
+
+        void AnnounceSlayerShot(Player slayer, Player target, bool success);
     }
 }

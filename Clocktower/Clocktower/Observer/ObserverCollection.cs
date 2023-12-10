@@ -17,6 +17,14 @@ namespace Clocktower.Observer
             }
         }
 
+        public void AnnounceSlayerShot(Player slayer, Player target, bool success)
+        {
+            foreach (var observer in observers)
+            {
+                observer.AnnounceSlayerShot(slayer, target, success);
+            }
+        }
+
         public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             foreach (var observer in observers)

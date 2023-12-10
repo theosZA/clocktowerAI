@@ -179,6 +179,12 @@ namespace Clocktower
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            outputText.AppendFormattedText("%p is claiming %c and targetting %p. Should %p die?\n", slayer, Character.Slayer, target, target, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Tokens.Contains(Token.IsTheDrunk))

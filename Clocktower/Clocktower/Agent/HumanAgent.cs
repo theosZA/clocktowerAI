@@ -110,6 +110,11 @@ namespace Clocktower.Agent
             return await form.RequestChoiceFromRavenkeeper(options);
         }
 
+        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
+        {
+            return await form.PromptSlayerShot(options);
+        }
+
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
             return await form.GetNomination(options);

@@ -65,6 +65,11 @@ namespace Clocktower.Agent
             return await form.ShouldKillTinker(tinker, yesOrNo);
         }
 
+        public async Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            return await form.ShouldKillWithSlayer(slayer, target, yesOrNo);
+        }
+
         public void AssignCharacter(Player player)
         {
             form.AssignCharacter(player);

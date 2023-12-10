@@ -16,6 +16,7 @@ namespace Clocktower.Agent
         Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions);
         Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions);
         Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo);
+        Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo);
 
         void AssignCharacter(Player player);
 

@@ -55,13 +55,13 @@ namespace Clocktower.Game
             var charactersAlignments = new[]
             {
                 (Character.Imp, Alignment.Evil),
-                (Character.Sweetheart, Alignment.Good),
+                (Character.Monk, Alignment.Good),
                 (Character.Undertaker, Alignment.Good),
                 (Character.Librarian, Alignment.Good),
-                (Character.Tinker, Alignment.Good),
+                (Character.Slayer, Alignment.Good),
                 (Character.Investigator, Alignment.Good),
-                (Character.Empath, Alignment.Good),
-                (Character.Godfather, Alignment.Evil)
+                (Character.Soldier, Alignment.Good),
+                (Character.Scarlet_Woman, Alignment.Evil)
             };
 
             var players = playerNames.Select((name, i) => new Player(name, new HumanAgent(playerForms[name]), charactersAlignments[i].Item1, charactersAlignments[i].Item2)).ToList();
@@ -139,7 +139,7 @@ namespace Clocktower.Game
 
         private async Task RunFirstNight()
         {
-            await RunNightEvents(new IGameEvent[]
+            await RunEventSequence(new IGameEvent[]
             {
                 // Philosopher...
                 new MinionInformation(storyteller, grimoire),
@@ -162,9 +162,10 @@ namespace Clocktower.Game
             {
                 player.Tokens.Remove(Token.PoisonedByPoisoner);
                 player.Tokens.Remove(Token.ProtectedByMonk);
+                player.Tokens.Remove(Token.AlreadyClaimedSlayer);   // We allow players to claim Slayer once each day to allow for Philosopher into Slayer.
             }
 
-            await RunNightEvents(new IGameEvent[]
+            await RunEventSequence(new IGameEvent[]
             {
                 // Philosopher...
                 new ChoiceFromPoisoner(storyteller, grimoire),
@@ -188,32 +189,57 @@ namespace Clocktower.Game
             }
         }
 
-        private async Task RunNightEvents(IEnumerable<IGameEvent> nightEvents)
-        {
-            foreach (var nightEvent in nightEvents)
-            {
-                await nightEvent.RunEvent();
-                if (Finished)
-                {
-                    return;
-                }
-            }
-        }
-
         private async Task RunDay()
         {
             if (dayNumber > 1)
             {
                 AnnounceNightKills();
             }
-            await new TinkerOption(storyteller, grimoire, observers, duringDay: true).RunEvent();
+
+            var nominations = new Nominations(storyteller, grimoire, observers, random);
+
+            await RunEventSequence(new IGameEvent[]
+            {
+                new TinkerOption(storyteller, grimoire, observers, duringDay: true),
+                new SlayerShot(storyteller, grimoire, observers, random),
+                // TBD Conversations during the day. Add the following options in once we support conversations (otherwise they're duplicated without need).
+                // --private conversations--
+                // Slayer
+                // --public conversations--
+                // Tinker
+                // Slayer
+                nominations,
+                new SlayerShot(storyteller, grimoire, observers, random) { Nominations = nominations },
+                new TinkerOption(storyteller, grimoire, observers, duringDay: true)
+            });
 
             if (!Finished)
             {
-                // TBD Conversations during the day.
-                // await new TinkerOption(storyteller, grimoire, duringDay: true).RunEvent(); - add back when there are conversations first, otherwise this is a duplicate check
+                if (nominations.PlayerToBeExecuted == null)
+                {
+                    observers.DayEndsWithNoExecution();
+                }
+                else
+                {
+                    bool playerDies = nominations.PlayerToBeExecuted.Alive;
+                    observers.PlayerIsExecuted(nominations.PlayerToBeExecuted, playerDies);
+                    if (playerDies)
+                    {
+                        new Kills(storyteller, grimoire).Execute(nominations.PlayerToBeExecuted);
+                    }
+                }
+            }
+        }
 
-                await new Nominations(storyteller, grimoire, observers, random).RunNominations();
+        private async Task RunEventSequence(IEnumerable<IGameEvent> events)
+        {
+            foreach (var gameEvent in events)
+            {
+                await gameEvent.RunEvent();
+                if (Finished)
+                {
+                    return;
+                }
             }
         }
 
@@ -242,6 +268,6 @@ namespace Clocktower.Game
 
         private int dayNumber = 0;
 
-        private bool addDrunkToGame = false;
+        private bool addDrunkToGame = true;
     }
 }

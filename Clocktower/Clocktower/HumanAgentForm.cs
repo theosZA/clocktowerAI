@@ -164,6 +164,13 @@ namespace Clocktower
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("Do you wish to claim %c and shoot a target player?\n", Character.Slayer);
+            return await PopulateOptions(options);
+
+        }
+
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendText("Please nominate a player or pass...\n");
@@ -220,8 +227,10 @@ namespace Clocktower
 
             // For now, just pick an option at random.
             // Exclude dead players and ourself from our choices.
+            // Also exclude Slayer-shot options unless we are the slayer.
             var autoOptions = options.Where(option => option is not PassOption)
                                      .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != playerName))
+                                     .Where(option => option is not SlayerShotOption || character == Character.Slayer)
                                      .ToList();
             if (autoOptions.Count > 0)
             {

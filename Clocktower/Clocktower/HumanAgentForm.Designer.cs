@@ -67,6 +67,7 @@
             // 
             // autoCheckbox
             // 
+            autoCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             autoCheckbox.AutoSize = true;
             autoCheckbox.Location = new Point(408, 375);
             autoCheckbox.Name = "autoCheckbox";
