@@ -224,6 +224,17 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<string> GetFishermanAdvice(Player fisherman)
+        {
+            outputText.AppendFormattedText("%p would like their %c advice.", fisherman, Character.Fisherman, StorytellerView);
+            if (fisherman.DrunkOrPoisoned)
+            {
+                outputText.AppendBoldText(" They are drunk or poisoned so this should generally be bad information.", Color.Purple);
+            }
+            outputText.AppendText("\n");
+            return await GetTextResponse();
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Character != player.RealCharacter)
@@ -377,6 +388,24 @@ namespace Clocktower.Storyteller
             return taskCompletionSource.Task;
         }
 
+        private Task<string> GetTextResponse()
+        {
+            submitButton.Enabled = true;
+            responseTextBox.Enabled = true;
+
+            var taskCompletionSource = new TaskCompletionSource<string>();
+
+            void onTextHandler(string text)
+            {
+                taskCompletionSource.SetResult(text);
+                OnText -= onTextHandler;
+            }
+
+            OnText += onTextHandler;
+
+            return taskCompletionSource.Task;
+        }
+
         private void chooseButton_Click(object sender, EventArgs e)
         {
             var option = options?.FirstOrDefault(option => option.Name == (string)choicesComboBox.SelectedItem);
@@ -395,11 +424,31 @@ namespace Clocktower.Storyteller
             OnChoice?.Invoke(option);
         }
 
+        private void submitButton_Click(object sender, EventArgs e)
+        {
+            var text = responseTextBox.Text;
+            if (string.IsNullOrEmpty(text)) 
+            {   // No response provided.
+                return;
+            }
+
+            submitButton.Enabled = false;
+            responseTextBox.Enabled = false;
+            responseTextBox.Text = null;
+
+            outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
+
+            OnText?.Invoke(text);
+        }
+
         private readonly Random random;
 
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;
         private IReadOnlyCollection<IOption>? options;
+
+        public delegate void TextEventHandler(string text);
+        private event TextEventHandler? OnText;
 
         private const bool StorytellerView = true;
     }

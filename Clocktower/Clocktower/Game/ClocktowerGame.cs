@@ -178,15 +178,19 @@ namespace Clocktower.Game
             await RunEventSequence(new IGameEvent[]
             {
                 new TinkerOption(storyteller, grimoire, observers, duringDay: true),
+                new FishermanAdvice(storyteller, grimoire),
                 new SlayerShot(storyteller, grimoire, observers, random),
                 // TBD Conversations during the day. Add the following options in once we support conversations (otherwise they're duplicated without need).
                 // --private conversations--
+                // Fisherman
                 // Slayer
                 // --public conversations--
                 // Tinker
+                // Fisherman
                 // Slayer
                 nominations,
                 new SlayerShot(storyteller, grimoire, observers, random) { Nominations = nominations },
+                new FishermanAdvice(storyteller, grimoire) { Nominations = nominations },
                 new TinkerOption(storyteller, grimoire, observers, duringDay: true)
             });
 
@@ -265,7 +269,7 @@ namespace Clocktower.Game
                 (Character.Undertaker, Alignment.Good),
                 (Character.Soldier, Alignment.Good),
                 (Character.Slayer, Alignment.Good),
-                (Character.Investigator, Alignment.Good),
+                (Character.Fisherman, Alignment.Good),
                 (Character.Recluse, Alignment.Good),
                 (Character.Scarlet_Woman, Alignment.Evil)
             };
@@ -295,6 +299,6 @@ namespace Clocktower.Game
 
         private int dayNumber = 0;
 
-        private bool addDrunkToGame = false;
+        private bool addDrunkToGame = true;
     }
 }

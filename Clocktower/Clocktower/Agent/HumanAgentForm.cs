@@ -129,6 +129,16 @@ namespace Clocktower.Agent
             outputText.AppendFormattedText("You learn that %p is the %c.\n", executedPlayer, character);
         }
 
+        public void ResponseForFisherman(string advice)
+        {
+            outputText.AppendBoldText("Storyteller: ", Color.Purple);
+            outputText.AppendText(advice);
+            if (!advice.EndsWith("\n"))
+            {
+                outputText.AppendText("\n");
+            }
+        }
+
         public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
@@ -175,7 +185,12 @@ namespace Clocktower.Agent
         {
             outputText.AppendFormattedText("Do you wish to claim %c and shoot a target player?\n", Character.Slayer);
             return await PopulateOptions(options);
+        }
 
+        public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("Do you wish to go to the Storyteller for your %c advice?\n", Character.Fisherman);
+            return await PopulateOptions(options);
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)

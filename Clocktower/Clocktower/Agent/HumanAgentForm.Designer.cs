@@ -39,6 +39,7 @@
             outputText.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             outputText.Location = new Point(14, 12);
             outputText.Name = "outputText";
+            outputText.ReadOnly = true;
             outputText.Size = new Size(446, 351);
             outputText.TabIndex = 0;
             outputText.Text = "";

@@ -29,6 +29,8 @@ namespace Clocktower.Agent
         void NotifyRavenkeeper(Player target, Character character);
         void NotifyUndertaker(Player executedPlayer, Character character);
 
+        void ResponseForFisherman(string advice);
+
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options);
@@ -38,6 +40,7 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
         Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options);
+        Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options);
 
         Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options);

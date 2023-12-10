@@ -25,6 +25,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions);
         Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo);
+        Task<string> GetFishermanAdvice(Player fisherman);
 
         void AssignCharacter(Player player);
 
