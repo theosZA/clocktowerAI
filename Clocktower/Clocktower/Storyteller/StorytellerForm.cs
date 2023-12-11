@@ -276,6 +276,21 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText($"%p learns that %b of their living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", empath, evilCount, neighbourA, neighbourB, StorytellerView);
         }
 
+        public void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading)
+        {
+            outputText.AppendFormattedText("%p learns that ", fortuneTeller, StorytellerView);
+            if (reading)
+            {
+                outputText.AppendBoldText("Yes");
+                outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB);
+            }
+            else
+            {
+                outputText.AppendBoldText("No");
+                outputText.AppendFormattedText($", neither of %p or %p is the demon.\n", targetA, targetB);
+            }
+        }
+
         public void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter)
         {
             outputText.AppendFormattedText($"%p learns that the recently executed %p is the %c.\n", undertaker, executedPlayer, executedCharacter, StorytellerView);
@@ -345,19 +360,9 @@ namespace Clocktower.Storyteller
         {
             if (AutoAct)
             {
-                // If Pass is an option, pick it 75% of the time.
-                var passOption = options.FirstOrDefault(option => option is PassOption);
-                if (passOption != null && random.Next(4) < 3)
-                {
-                    return Task.FromResult(passOption);
-                }
-
-                // For now, just pick an option at random.
-                // Exclude dead players from our choices.
-                var autoOptions = options.Where(option => option is not PassOption)
-                                         .Where(option => option is not PlayerOption playerOption || playerOption.Player.Alive)
-                                         .ToList();
-                return Task.FromResult(autoOptions.RandomPick(random));
+                var autoChosenOption = AutoChooseOption(options);
+                outputText.AppendBoldText($">> {autoChosenOption.Name}\n", Color.Green);
+                return Task.FromResult(autoChosenOption);
             }
 
             this.options = options;
@@ -381,6 +386,23 @@ namespace Clocktower.Storyteller
             OnChoice += onChoiceHandler;
 
             return taskCompletionSource.Task;
+        }
+
+        private IOption AutoChooseOption(IReadOnlyCollection<IOption> options)
+        {
+            // If Pass is an option, pick it 75% of the time.
+            var passOption = options.FirstOrDefault(option => option is PassOption);
+            if (passOption != null && random.Next(4) < 3)
+            {
+                return passOption;
+            }
+
+            // For now, just pick an option at random.
+            // Exclude dead players from our choices.
+            var autoOptions = options.Where(option => option is not PassOption)
+                                     .Where(option => option is not PlayerOption playerOption || playerOption.Player.Alive)
+                                     .ToList();
+            return autoOptions.RandomPick(random);
         }
 
         private Task<string> GetTextResponse()
