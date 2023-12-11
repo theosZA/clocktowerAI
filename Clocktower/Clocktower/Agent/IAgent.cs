@@ -46,5 +46,9 @@ namespace Clocktower.Agent
 
         Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options);
+
+        Task<string> GetProsecution(Player nominee);
+        Task<string> GetDefence(Player nominator);
+        Task<string> GetReasonForSelfNomination();
     }
 }

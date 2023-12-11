@@ -127,6 +127,15 @@ namespace Clocktower.Observer
             }
         }
 
+        public void PublicStatement(Player player, string statement)
+        {
+            outputText.AppendFormattedText("%p: %n", player, statement, StorytellerView);
+            if (!statement.EndsWith("\n"))
+            {
+                outputText.AppendText("\n");
+            }
+        }
+
         private readonly RichTextBox outputText;
     }
 }

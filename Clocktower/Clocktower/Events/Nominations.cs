@@ -55,6 +55,27 @@ namespace Clocktower.Events
             playersWhoHaveAlreadyBeenNominated.Add(nominee);
 
             observers.AnnounceNomination(nominator, nominee);
+            if (nominator == nominee)
+            {
+                var statement = await nominator.Agent.GetReasonForSelfNomination();
+                if (!string.IsNullOrEmpty(statement))
+                {
+                    observers.PublicStatement(nominator, statement);
+                }
+            }
+            else
+            {
+                var prosecution = await nominator.Agent.GetProsecution(nominee);
+                if (!string.IsNullOrEmpty(prosecution))
+                {
+                    observers.PublicStatement(nominator, prosecution);
+                }
+                var defence = await nominee.Agent.GetDefence(nominator);
+                if (!string.IsNullOrEmpty(defence))
+                {
+                    observers.PublicStatement(nominee, defence);
+                }
+            }
 
             int voteCount = await RunVote(nominee);
 

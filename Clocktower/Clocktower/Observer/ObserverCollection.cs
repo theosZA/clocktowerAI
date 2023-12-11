@@ -105,6 +105,14 @@ namespace Clocktower.Observer
             }
         }
 
+        public void PublicStatement(Player player, string statement)
+        {
+            foreach (var observer in observers)
+            {
+                observer.PublicStatement(player, statement);
+            }
+        }
+
         private readonly List<IGameObserver> observers;
     }
 }

@@ -149,6 +149,7 @@ namespace Clocktower.Agent
             SetTitleText();
         }
 
+
         public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
@@ -222,6 +223,36 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<string> GetProsecution(Player nominee)
+        {
+            outputText.AppendFormattedText("You have nominated %p. Present the case to have them executed. (Leave empty to say nothing.)\n", nominee);
+            if (AutoAct)
+            {
+                return $"I believe {nominee.Name} is evil and should be executed.";
+            }
+            return await GetSpeech();
+        }
+
+        public async Task<string> GetDefence(Player nominator)
+        {
+            outputText.AppendFormattedText("You have been nominated by %p. Present the case for your defence. (Leave empty to say nothing.)\n", nominator);
+            if (AutoAct)
+            {
+                return "I'm not evil. Please believe me.";
+            }
+            return await GetSpeech();
+        }
+
+        public async Task<string> GetReasonForSelfNomination()
+        {
+            outputText.AppendText("You have nominated yourself. You may present your reason now. (Leave empty to say nothing.)\n");
+            if (AutoAct)
+            {
+                return "There are reasons for me to be executed now. Trust me.";
+            }
+            return await GetSpeech();
+        }
+
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
         {
             if (AutoAct)
@@ -287,6 +318,24 @@ namespace Clocktower.Agent
             return options.ToList().RandomPick(random);
         }
 
+        private Task<string> GetSpeech()
+        {
+            submitButton.Enabled = true;
+            responseTextBox.Enabled = true;
+
+            var taskCompletionSource = new TaskCompletionSource<string>();
+
+            void onTextHandler(string text)
+            {
+                taskCompletionSource.SetResult(text);
+                OnText -= onTextHandler;
+            }
+
+            OnText += onTextHandler;
+
+            return taskCompletionSource.Task;
+        }
+
         private void SetTitleText()
         {
             Text = PlayerName;
@@ -323,6 +372,23 @@ namespace Clocktower.Agent
             OnChoice?.Invoke(option);
         }
 
+        private void submitButton_Click(object sender, EventArgs e)
+        {
+            var text = responseTextBox.Text;
+            if (string.IsNullOrEmpty(text))
+            {   // No response provided.
+                return;
+            }
+
+            submitButton.Enabled = false;
+            responseTextBox.Enabled = false;
+            responseTextBox.Text = null;
+
+            outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
+
+            OnText?.Invoke(text);
+        }
+
         private readonly Random random;
 
         private Character? originalCharacter;
@@ -333,5 +399,8 @@ namespace Clocktower.Agent
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;
         private IReadOnlyCollection<IOption>? options;
+
+        public delegate void TextEventHandler(string text);
+        private event TextEventHandler? OnText;
     }
 }
