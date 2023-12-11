@@ -223,34 +223,34 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<string> GetMorningPublicStatement()
+        {
+            outputText.AppendText("Before the group breaks off for private conversations, do you wish to say anything publicly. (Leave empty to say nothing.)\n");
+            return await GetSpeech(autoActText: string.Empty);
+        }
+
+        public async Task<string> GetEveningPublicStatement()
+        {
+            outputText.AppendText("Before nominations are opened, do you wish to say anything publicly. (Leave empty to say nothing.)\n");
+            return await GetSpeech(autoActText: string.Empty);
+        }
+
         public async Task<string> GetProsecution(Player nominee)
         {
             outputText.AppendFormattedText("You have nominated %p. Present the case to have them executed. (Leave empty to say nothing.)\n", nominee);
-            if (AutoAct)
-            {
-                return $"I believe {nominee.Name} is evil and should be executed.";
-            }
-            return await GetSpeech();
+            return await GetSpeech(autoActText: $"I believe {nominee.Name} is evil and should be executed.");
         }
 
         public async Task<string> GetDefence(Player nominator)
         {
             outputText.AppendFormattedText("You have been nominated by %p. Present the case for your defence. (Leave empty to say nothing.)\n", nominator);
-            if (AutoAct)
-            {
-                return "I'm not evil. Please believe me.";
-            }
-            return await GetSpeech();
+            return await GetSpeech(autoActText: "I'm not evil. Please believe me.");
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
             outputText.AppendText("You have nominated yourself. You may present your reason now. (Leave empty to say nothing.)\n");
-            if (AutoAct)
-            {
-                return "There are reasons for me to be executed now. Trust me.";
-            }
-            return await GetSpeech();
+            return await GetSpeech(autoActText: "There are reasons for me to be executed now. Trust me.");
         }
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
@@ -318,6 +318,24 @@ namespace Clocktower.Agent
             return options.ToList().RandomPick(random);
         }
 
+        private async Task<string> GetSpeech(string autoActText)
+        {
+            if (AutoAct)
+            {
+                if (string.IsNullOrEmpty(autoActText))
+                {
+                    outputText.AppendBoldText($">> ...\n", Color.Green);
+                }
+                else
+                {
+                    outputText.AppendBoldText($">> \"{autoActText}\"\n", Color.Green);
+                }
+                return autoActText;
+            }
+
+            return await GetSpeech();
+        }
+
         private Task<string> GetSpeech()
         {
             submitButton.Enabled = true;
@@ -375,16 +393,19 @@ namespace Clocktower.Agent
         private void submitButton_Click(object sender, EventArgs e)
         {
             var text = responseTextBox.Text;
-            if (string.IsNullOrEmpty(text))
-            {   // No response provided.
-                return;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                text = string.Empty;
+                outputText.AppendBoldText($">> ...\n", Color.Green);
+            }
+            else
+            {
+                outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
             }
 
             submitButton.Enabled = false;
             responseTextBox.Enabled = false;
             responseTextBox.Text = null;
-
-            outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
 
             OnText?.Invoke(text);
         }

@@ -145,6 +145,7 @@ namespace Clocktower.Game
             await RunEventSequence(new IGameEvent[]
             {
                 new TinkerOption(storyteller, grimoire, observers, duringDay: true),
+                new PublicStatements(grimoire, observers, random, morning: true),
                 new FishermanAdvice(storyteller, grimoire),
                 new SlayerShot(storyteller, grimoire, observers, random),
                 // TBD Conversations during the day. Add the following options in once we support conversations (otherwise they're duplicated without need).
@@ -153,6 +154,7 @@ namespace Clocktower.Game
                 // Slayer
                 // --public conversations--
                 // Tinker
+                new PublicStatements(grimoire, observers, random, morning: false),
                 // Fisherman
                 // Slayer
                 nominations,
