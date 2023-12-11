@@ -45,9 +45,9 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromRavenkeeper(players.ToOptions())).GetPlayer();
         }
 
-        public static async Task<Player?> PromptSlayerShot(this IAgent agent, IEnumerable<Player> players)
+        public static async Task<Player?> PromptSlayerShot(this IAgent agent, IEnumerable<Player> players, bool bluff)
         {
-            return (await agent.PromptSlayerShot(players.ToOptions().Prepend(new PassOption()).ToList())).GetSlayerTargetOptional();
+            return (await agent.PromptSlayerShot(players.ToSlayerShotOptions(bluff).Prepend(new PassOption()).ToList())).GetSlayerTargetOptional();
         }
 
         public static async Task<bool> PromptFishermanAdvice(this IAgent agent)

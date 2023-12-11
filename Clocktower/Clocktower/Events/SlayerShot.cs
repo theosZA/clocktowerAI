@@ -78,7 +78,7 @@ namespace Clocktower.Events
             // While a Slayer can theoretically target any player, there is no benefit to targeting themselves or any dead player,
             // so they are excluded as possible targets.
             var targets = grimoire.Players.Where(player => player.Alive && player != purportedSlayer);
-            return await purportedSlayer.Agent.PromptSlayerShot(targets);
+            return await purportedSlayer.Agent.PromptSlayerShot(targets, purportedSlayer.Character != Character.Slayer);
         }
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)
