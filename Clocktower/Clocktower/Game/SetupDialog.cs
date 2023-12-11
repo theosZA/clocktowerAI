@@ -232,6 +232,47 @@ namespace Clocktower.Game
             UpdateCounters();
         }
 
+        private void RandomizeBag(object sender, EventArgs e)
+        {
+            // Clean out current bag.
+            foreach (var checkbox in checkboxes)
+            {
+                checkbox.Value.Checked = false;
+            }
+
+            // Demon.
+            var demon = demonsCheckboxes.RandomPick(random);
+            demon.Checked = true;
+
+            // Minions.
+            var minions = minionsCheckboxes.RandomPickN(GetRequiredMinions(), random);
+            foreach (var minion in minions)
+            {
+                minion.Checked = true;
+            }
+
+            // Outsiders.
+            var outsiderCountOptions = GetRequiredOutsiders().ToList();
+            bool maximizeOutsiders = random.Next(10) > 0;
+            int outsiderCount = maximizeOutsiders ? outsiderCountOptions.Max() : outsiderCountOptions.Min();
+            var outsiders = outsidersCheckboxes.RandomPickN(outsiderCount, random);
+            foreach (var outsider in outsiders)
+            {
+                outsider.Checked = true;
+            }
+
+            // Townsfolk.
+            var townsfolkCountOptions = GetRequiredTownsfolk().ToList();
+            int townsfolkCount = maximizeOutsiders ? townsfolkCountOptions.Min() : townsfolkCountOptions.Max();
+            var townsfolk = townsfolkCheckboxes.RandomPickN(townsfolkCount, random);
+            foreach (var townsfolkCheckbox in townsfolk)
+            {
+                townsfolkCheckbox.Checked = true;
+            }
+
+            UpdateCounters();
+        }
+
         private void StartGame(object sender, EventArgs e)
         {
             var bag = checkboxes.Where(kvp => kvp.Value.Checked)

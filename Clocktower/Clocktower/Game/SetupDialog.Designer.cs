@@ -55,6 +55,7 @@
             randomizeButton.TabIndex = 1;
             randomizeButton.Text = "Randomize";
             randomizeButton.UseVisualStyleBackColor = true;
+            randomizeButton.Click += RandomizeBag;
             // 
             // playerCountUpDown
             // 

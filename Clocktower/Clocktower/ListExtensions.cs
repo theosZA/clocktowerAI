@@ -15,5 +15,21 @@
         {
             return list[random.Next(list.Count)];
         }
+
+        public static IEnumerable<T> RandomPickN<T>(this IList<T> list, int count, Random random)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (random.Next(list.Count - i) < count)
+                {
+                    yield return list[i];
+                    count--;
+                    if (count == 0)
+                    {
+                        yield break;
+                    }
+                }
+            }
+        }
     }
 }
