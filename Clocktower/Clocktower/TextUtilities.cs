@@ -17,7 +17,7 @@ namespace Clocktower
 
         public static Color CharacterToColor(Character character)
         {
-            return (int)character < 2000 ? Color.Blue : Color.Red;
+            return AlignmentToColor(character.Alignment());
         }
 
         public static string CharacterToText(Character character)

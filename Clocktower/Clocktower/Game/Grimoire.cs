@@ -12,7 +12,7 @@ namespace Clocktower.Game
 
         public Grimoire(IEnumerable<IAgent> agents, Character[] characters)
         {
-            players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: (int)characters[i] < 2000 ? Alignment.Good : Alignment.Evil))
+            players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: characters[i].Alignment()))
                             .ToList();
         }
 

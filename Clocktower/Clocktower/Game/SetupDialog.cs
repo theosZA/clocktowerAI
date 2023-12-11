@@ -97,17 +97,17 @@ namespace Clocktower.Game
 
         private void AddCharacter(Character character)
         {
-            switch ((int)character)
+            switch (character.CharacterType())
             {
-                case < 1000:
+                case CharacterType.Townsfolk:
                     AddCharacter(character, townsfolkCheckboxes, charactersPanel.Controls, 0);
                     break;
 
-                case < 2000:
+                case CharacterType.Outsider:
                     AddCharacter(character, outsidersCheckboxes, charactersPanel.Controls, 1);
                     break;
 
-                case < 3000:
+                case CharacterType.Minion:
                     AddCharacter(character, minionsCheckboxes, charactersPanel.Controls, 2);
                     break;
 

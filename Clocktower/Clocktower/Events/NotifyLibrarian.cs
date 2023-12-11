@@ -40,7 +40,7 @@ namespace Clocktower.Events
 
             if (librarian.DrunkOrPoisoned)
             {   // Drunk or poisoned. They can see any two players as any outsider.
-                var outsiders = scriptCharacters.Where(character => 1000 <= (int)character && (int)character < 2000);
+                var outsiders = scriptCharacters.OfCharacterType(CharacterType.Outsider);
                 return from outsider in outsiders
                        from playerA in players
                        from playerB in players

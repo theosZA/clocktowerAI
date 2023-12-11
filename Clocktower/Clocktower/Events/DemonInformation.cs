@@ -27,8 +27,7 @@ namespace Clocktower.Events
 
         private IEnumerable<Character> GetAvailableBluffs()
         {
-            return from character in scriptCharacters
-                   where (int)character < 2000  // good character 
+            return from character in scriptCharacters.OfAlignment(Alignment.Good)
                    where !grimoire.Players.Any(player => player.RealCharacter == character)
                    orderby TextUtilities.CharacterToText(character)
                    select character;

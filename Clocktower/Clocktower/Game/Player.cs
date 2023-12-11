@@ -35,16 +35,7 @@ namespace Clocktower.Game
         /// <summary>
         /// The player's real character type. The player may believe differently, e.g. if they're a Drunk or Lunatic.
         /// </summary>
-        public CharacterType CharacterType
-        {
-            get => (int)RealCharacter switch
-            {
-                < 1000 => CharacterType.Townsfolk,
-                < 2000 => CharacterType.Outsider,
-                < 3000 => CharacterType.Minion,
-                _ => CharacterType.Demon
-            };
-        }
+        public CharacterType CharacterType => RealCharacter.CharacterType();
 
         public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || 
                                                     token == Token.SweetheartDrunk || 

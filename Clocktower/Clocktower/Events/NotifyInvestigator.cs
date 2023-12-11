@@ -35,7 +35,7 @@ namespace Clocktower.Events
 
         private IEnumerable<IOption> GetOptions(Player investigator)
         {
-            var minionCharacters = scriptCharacters.Where(character => 2000 <= (int)character && (int)character < 3000);
+            var minionCharacters = scriptCharacters.OfCharacterType(CharacterType.Minion);
             // Exclude the investigator from their own ping.
             var players = grimoire.Players.Where(player => player != investigator).ToList();
 

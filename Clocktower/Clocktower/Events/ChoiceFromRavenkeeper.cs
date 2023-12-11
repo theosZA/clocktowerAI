@@ -35,14 +35,14 @@ namespace Clocktower.Events
 
             if (target.CanRegisterAsDemon && target.CharacterType != CharacterType.Demon)
             {
-                foreach (var demon in scriptCharacters.Where(character => (int)character >= 3000))
+                foreach (var demon in scriptCharacters.OfCharacterType(CharacterType.Demon))
                 {
                     characters.Add(demon);
                 }
             }
             if (target.CanRegisterAsMinion && target.CharacterType != CharacterType.Minion)
             {
-                foreach (var minion in scriptCharacters.Where(character => 2000 <= (int)character && (int)character < 3000))
+                foreach (var minion in scriptCharacters.OfCharacterType(CharacterType.Minion))
                 {
                     characters.Add(minion);
                 }
