@@ -1,4 +1,5 @@
 using Clocktower.Game;
+using System.Diagnostics;
 
 namespace Clocktower
 {
@@ -13,7 +14,14 @@ namespace Clocktower
         {
             try
             {
-                var clocktowerGame = new ClocktowerGame();
+                var setupDialog = new SetupDialog(random);
+                var result = setupDialog.ShowDialog();
+                if (result != DialogResult.OK) 
+                {
+                    return;
+                }
+
+                var clocktowerGame = new ClocktowerGame(setupDialog, random);
                 while (!clocktowerGame.Finished)
                 {
                     await clocktowerGame.RunNightAndDay();
@@ -23,8 +31,10 @@ namespace Clocktower
             catch (Exception exception)
             {
                 statusLabel.Text = exception.Message;
-                Console.WriteLine(exception.ToString());
+                Debug.WriteLine(exception.ToString());
             }
         }
+
+        private Random random = new();
     }
 }

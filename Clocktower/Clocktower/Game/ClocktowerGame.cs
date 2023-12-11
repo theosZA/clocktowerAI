@@ -12,44 +12,17 @@ namespace Clocktower.Game
     {
         public bool Finished => GetWinner().HasValue;
 
-        public ClocktowerGame()
+        public ClocktowerGame(IGameSetup setup, Random random)
         {
-            // "A Simple Matter"
-            scriptCharacters = new List<Character>
-            {   // Townsfolk
-                Character.Steward,
-                Character.Investigator,
-                Character.Librarian,
-                Character.Shugenja,
-                Character.Empath,
-                Character.Fortune_Teller,
-                Character.Undertaker,
-                Character.Monk,
-                Character.Fisherman,
-                Character.Slayer,
-                Character.Philosopher,
-                Character.Soldier,
-                Character.Ravenkeeper,
-                // Outsiders
-                Character.Tinker,
-                Character.Sweetheart,
-                Character.Recluse,
-                Character.Drunk,
-                // Minions
-                Character.Godfather,
-                Character.Poisoner,
-                Character.Assassin,
-                Character.Scarlet_Woman,
-                // Demons
-                Character.Imp
-            };
+            this.setup = setup;
+            this.random = random;
 
-            var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgina", "Harry" };
+            var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgina", "Harry", "Ingrid", "Julian", "Katie", "Leonard", "Maddie", "Norm", "Olivia" }.Take(setup.PlayerCount);
             var agents = CreateAgents(playerNames, random);
 
             storyteller = CreateStoryteller(random);
             observers = CreateObserverCollection(agents, storyteller);
-            grimoire = CreateGrimoire(agents);
+            grimoire = CreateGrimoire(agents, setup.Characters);
 
             StartGame(agents);
         }
@@ -86,7 +59,7 @@ namespace Clocktower.Game
         {
             if (dayNumber == 0)
             {
-                await Setup();
+                await RunEventSequence(setup.BuildAdditionalSetupEvents(storyteller, grimoire));
             }
 
             ++dayNumber;
@@ -105,26 +78,18 @@ namespace Clocktower.Game
             await RunDay();
         }
 
-        private async Task Setup()
-        {
-            if (addDrunkToGame)
-            {
-                await new AssignDrunk(storyteller, grimoire).RunEvent();
-            }
-            await new AssignFortuneTellerRedHerring(storyteller, grimoire).RunEvent();
-        }
-
         private async Task RunFirstNight()
         {
             await RunEventSequence(new IGameEvent[]
             {
-                new ChoiceFromPhilosopher(storyteller, grimoire, scriptCharacters),
+                new AssignFortuneTellerRedHerring(storyteller, grimoire),
+                new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script),
                 new MinionInformation(storyteller, grimoire),
-                new DemonInformation(storyteller, grimoire, scriptCharacters, random),
+                new DemonInformation(storyteller, grimoire, setup.Script, random),
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new NotifyGodfather(storyteller, grimoire),
-                new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random),
-                new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random),
+                new NotifyLibrarian(storyteller, grimoire, setup.Script, random),
+                new NotifyInvestigator(storyteller, grimoire, setup.Script, random),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
                 new NotifySteward(storyteller, grimoire),
@@ -144,7 +109,7 @@ namespace Clocktower.Game
 
             await RunEventSequence(new IGameEvent[]
             {
-                new ChoiceFromPhilosopher(storyteller, grimoire, scriptCharacters),
+                new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script),
                 new ChoiceFromPoisoner(storyteller, grimoire),
                 new ChoiceFromMonk(storyteller, grimoire),
                 // Scarlet Woman - this is their theoretical place in the night order, but they actually become the demon immediately
@@ -153,11 +118,11 @@ namespace Clocktower.Game
                 new ChoiceFromGodfather(storyteller, grimoire),
                 new SweetheartDrunk(storyteller, grimoire),
                 new TinkerOption(storyteller, grimoire, observers, duringDay: false),
-                new NotifyPhilosopherStartKnowing(storyteller, grimoire, scriptCharacters, random),
-                new ChoiceFromRavenkeeper(storyteller, grimoire, scriptCharacters),
+                new NotifyPhilosopherStartKnowing(storyteller, grimoire, setup.Script, random),
+                new ChoiceFromRavenkeeper(storyteller, grimoire, setup.Script),
                 new NotifyEmpath(storyteller, grimoire),
                 new ChoiceFromFortuneTeller(storyteller, grimoire),
-                new NotifyUndertaker(storyteller, grimoire, scriptCharacters)
+                new NotifyUndertaker(storyteller, grimoire, setup.Script)
             });
 
             // Clear expired tokens.
@@ -261,24 +226,9 @@ namespace Clocktower.Game
             return new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
         }
 
-        private static Grimoire CreateGrimoire(IEnumerable<IAgent> agents)
+        private static Grimoire CreateGrimoire(IEnumerable<IAgent> agents, Character[] characters)
         {
-            // For now we assign hardcoded characters.
-            var charactersAlignments = new[]
-            {
-                (Character.Imp, Alignment.Evil),
-                (Character.Monk, Alignment.Good),
-                (Character.Undertaker, Alignment.Good),
-                (Character.Soldier, Alignment.Good),
-                (Character.Philosopher, Alignment.Good),
-                (Character.Recluse, Alignment.Good),
-                (Character.Empath, Alignment.Good),
-                (Character.Scarlet_Woman, Alignment.Evil)
-            };
-
-            var players = agents.Select((agent, i) => new Player(agent, charactersAlignments[i].Item1, charactersAlignments[i].Item2))
-                                .ToList();
-
+            var players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: (int)characters[i] < 2000 ? Alignment.Good : Alignment.Evil));
             return new Grimoire(players);
         }
 
@@ -293,14 +243,13 @@ namespace Clocktower.Game
             grimoire.AssignCharacters(storyteller);
         }
 
-        private readonly List<Character> scriptCharacters;
+        private readonly IGameSetup setup;
+        private readonly Random random;
+
         private readonly IStoryteller storyteller;
         private readonly ObserverCollection observers;
         private readonly Grimoire grimoire;
-        private readonly Random random = new();
-
+    
         private int dayNumber = 0;
-
-        private bool addDrunkToGame = false;
     }
 }
