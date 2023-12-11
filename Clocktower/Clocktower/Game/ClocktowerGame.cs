@@ -18,11 +18,11 @@ namespace Clocktower.Game
             this.random = random;
 
             var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgina", "Harry", "Ingrid", "Julian", "Katie", "Leonard", "Maddie", "Norm", "Olivia" }.Take(setup.PlayerCount);
-            var agents = CreateAgents(playerNames, random);
+            var agents = playerNames.Select(name => (IAgent)new HumanAgentForm(name, random)).ToList();
 
-            storyteller = CreateStoryteller(random);
-            observers = CreateObserverCollection(agents, storyteller);
-            grimoire = CreateGrimoire(agents, setup.Characters);
+            storyteller = new StorytellerForm(random);
+            observers = new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
+            grimoire = new Grimoire(agents, setup.Characters);
 
             StartGame(agents);
         }
@@ -135,15 +135,11 @@ namespace Clocktower.Game
 
         private async Task RunDay()
         {
-            if (dayNumber > 1)
-            {
-                AnnounceNightKills();
-            }
-
             var nominations = new Nominations(storyteller, grimoire, observers, random);
 
             await RunEventSequence(new IGameEvent[]
             {
+                new AnnounceNightKills(grimoire, observers, dayNumber),
                 new TinkerOption(storyteller, grimoire, observers, duringDay: true),
                 new PublicStatements(grimoire, observers, random, morning: true),
                 new FishermanAdvice(storyteller, grimoire),
@@ -191,47 +187,6 @@ namespace Clocktower.Game
                     return;
                 }
             }
-        }
-
-        private void AnnounceNightKills()
-        {
-            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon)).ToList();
-            if (newlyDeadPlayers.Count == 0)
-            {
-                observers.NoOneDiedAtNight();
-                return;
-            }
-            foreach (var newlyDeadPlayer in newlyDeadPlayers)
-            {
-                observers.PlayerDiedAtNight(newlyDeadPlayer);
-                newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
-                newlyDeadPlayer.Tokens.Remove(Token.KilledByDemon);
-                newlyDeadPlayer.Kill();
-            }
-        }
-
-        private static IStoryteller CreateStoryteller(Random random)
-        {
-            // Human storyteller.
-            return new StorytellerForm(random);
-        }
-
-        private static IReadOnlyCollection<IAgent> CreateAgents(IEnumerable<string> playerNames, Random random)
-        {
-            // Human players.
-            return playerNames.Select(name => (IAgent)new HumanAgentForm(name, random))
-                              .ToList();
-        }
-
-        private static ObserverCollection CreateObserverCollection(IEnumerable<IAgent> agents, IStoryteller storyteller)
-        {
-            return new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
-        }
-
-        private static Grimoire CreateGrimoire(IEnumerable<IAgent> agents, Character[] characters)
-        {
-            var players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: (int)characters[i] < 2000 ? Alignment.Good : Alignment.Evil));
-            return new Grimoire(players);
         }
 
         private void StartGame(IEnumerable<IAgent> agents)

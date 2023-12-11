@@ -1,5 +1,4 @@
-﻿using Clocktower.Events;
-using Clocktower.Options;
+﻿using Clocktower.Agent;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Game
@@ -11,9 +10,10 @@ namespace Clocktower.Game
     {
         public IReadOnlyCollection<Player> Players => players;
 
-        public Grimoire(IEnumerable<Player> players)
+        public Grimoire(IEnumerable<IAgent> agents, Character[] characters)
         {
-            this.players = players.ToList();
+            players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: (int)characters[i] < 2000 ? Alignment.Good : Alignment.Evil))
+                            .ToList();
         }
 
         public void AssignCharacters(IStoryteller storyteller)
