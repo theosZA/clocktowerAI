@@ -9,7 +9,7 @@ namespace Clocktower.Events
     {
         public Player? PlayerToBeExecuted { get; private set; }
 
-        public Nominations(IStoryteller storyteller, Grimoire grimoire, ObserverCollection observers, Random random)
+        public Nominations(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Random random)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
@@ -122,7 +122,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
         private readonly Random random;
 
         private int? highestVoteCount;

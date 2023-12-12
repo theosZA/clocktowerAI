@@ -5,7 +5,7 @@ namespace Clocktower.Events
 {
     internal class RollCall : IGameEvent
     {
-        public RollCall(Grimoire grimoire, ObserverCollection observers)
+        public RollCall(Grimoire grimoire, IGameObserver observers)
         {
             this.grimoire = grimoire;
             this.observers = observers;
@@ -32,6 +32,6 @@ namespace Clocktower.Events
         }
 
         private readonly Grimoire grimoire;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
     }
 }

@@ -6,7 +6,7 @@ namespace Clocktower.Events
 {
     internal class TinkerOption : IGameEvent
     {
-        public TinkerOption(IStoryteller storyteller, Grimoire grimoire, ObserverCollection observers, bool duringDay)
+        public TinkerOption(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, bool duringDay)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
@@ -41,7 +41,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
         private readonly bool duringDay;
     }
 }

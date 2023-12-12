@@ -5,7 +5,7 @@ namespace Clocktower.Events
 {
     internal class PublicStatements : IGameEvent
     {
-        public PublicStatements(Grimoire grimoire, ObserverCollection observers, Random random, bool morning)
+        public PublicStatements(Grimoire grimoire, IGameObserver observers, Random random, bool morning)
         {
             this.grimoire = grimoire;
             this.observers = observers;
@@ -29,7 +29,7 @@ namespace Clocktower.Events
         }
 
         private readonly Grimoire grimoire;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
         private readonly Random random;
         private readonly bool morning;
     }

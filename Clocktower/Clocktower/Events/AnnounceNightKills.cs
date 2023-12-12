@@ -5,7 +5,7 @@ namespace Clocktower.Events
 {
     internal class AnnounceNightKills : IGameEvent
     {
-        public AnnounceNightKills(Grimoire grimoire, ObserverCollection observers, int dayNumber)
+        public AnnounceNightKills(Grimoire grimoire, IGameObserver observers, int dayNumber)
         {
             this.grimoire = grimoire;
             this.observers = observers;
@@ -37,7 +37,7 @@ namespace Clocktower.Events
         }
 
         private readonly Grimoire grimoire;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
         private readonly int dayNumber;
     }
 }

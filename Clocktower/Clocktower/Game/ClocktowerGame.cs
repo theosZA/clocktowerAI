@@ -21,7 +21,7 @@ namespace Clocktower.Game
             var agents = playerNames.Select(name => (IAgent)new HumanAgentForm(name, setup.Script, random)).ToList();
 
             storyteller = new StorytellerForm(random);
-            observers = new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
+            observers = ProxyCollection<IGameObserver>.CreateProxy(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
             grimoire = new Grimoire(agents, setup.Characters);
 
             StartGame(agents);
@@ -205,7 +205,7 @@ namespace Clocktower.Game
         private readonly Random random;
 
         private readonly IStoryteller storyteller;
-        private readonly ObserverCollection observers;
+        private readonly IGameObserver observers;
         private readonly Grimoire grimoire;
     
         private int dayNumber = 0;
