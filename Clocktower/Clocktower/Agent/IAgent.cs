@@ -46,6 +46,7 @@ namespace Clocktower.Agent
 
         Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options);
+        Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options);
 
         Task<string> GetRollCallStatement();
         Task<string> GetMorningPublicStatement();
@@ -53,5 +54,11 @@ namespace Clocktower.Agent
         Task<string> GetProsecution(Player nominee);
         Task<string> GetDefence(Player nominator);
         Task<string> GetReasonForSelfNomination();
+
+        void StartPrivateChat(Player otherPlayer);
+        Task<string> GetPrivateChat(Player listener);
+        void PrivateChatMessage(Player speaker, string message);
+
+        void EndPrivateChat(Player otherPlayer);
     }
 }

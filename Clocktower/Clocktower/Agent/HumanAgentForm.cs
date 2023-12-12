@@ -1,6 +1,7 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
+using System.Windows.Forms;
 
 namespace Clocktower.Agent
 {
@@ -232,6 +233,20 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
+        {
+            var canPass = options.Any(option => option is PassOption);
+            if (canPass)
+            {
+                outputText.AppendText("Is there someone you wish to speak to privately as a priority? You can pass to wait to see if anyone wants to speak to you first.\n");
+            }
+            else
+            {
+                outputText.AppendText("Who will you go speak to privately.\n");
+            }
+            return await PopulateOptions(options);
+        }
+
         public async Task<string> GetRollCallStatement()
         {
             outputText.AppendText("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - leave empty to say nothing.)\n");
@@ -266,6 +281,34 @@ namespace Clocktower.Agent
         {
             outputText.AppendText("You have nominated yourself. You may present your reason now. (Leave empty to say nothing.)\n");
             return await GetSpeech(autoActText: "There are reasons for me to be executed now. Trust me.");
+        }
+
+        public void StartPrivateChat(Player otherPlayer)
+        {
+            outputText.AppendFormattedText("You have begun a private chat with %p.\n", otherPlayer);
+            firstMessageInChat = true;
+        }
+
+        public async Task<string> GetPrivateChat(Player listener)
+        {
+            outputText.AppendFormattedText("What will you say to %p? You may say nothing to end the conversation, unless they haven't spoken yet.\n", listener);
+            var speech = await GetSpeech(autoActText: firstMessageInChat && autoClaim.HasValue ? $"I am the {TextUtilities.CharacterToText(autoClaim.Value)}." : string.Empty);
+            if (!string.IsNullOrEmpty(speech))
+            {
+                firstMessageInChat = false;
+                outputText.AppendFormattedText($"%b: %n\n", PlayerName, speech);
+            }
+            return speech;
+        }
+
+        public void PrivateChatMessage(Player speaker, string message)
+        {
+            outputText.AppendFormattedText($"%p: %n\n", speaker, message);
+        }
+
+        public void EndPrivateChat(Player otherPlayer)
+        {
+            outputText.AppendFormattedText("The private chat with %p is over.\n", otherPlayer);
         }
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
@@ -430,6 +473,7 @@ namespace Clocktower.Agent
         private Character? autoClaim;
         private bool alive = true;
         private bool usedSlayerAbility = false;
+        private bool firstMessageInChat = true;
 
         public delegate void ChoiceEventHandler(IOption choice);
         private event ChoiceEventHandler? OnChoice;

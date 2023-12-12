@@ -31,6 +31,11 @@ namespace Clocktower.Storyteller
             Show();
         }
 
+        public void PrivateChatMessage(Player speaker, Player listener, string message)
+        {
+            outputText.AppendFormattedText($"%p to %p: %n\n", speaker, listener, message, StorytellerView);
+        }
+
         public async Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions)
         {
             outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the demon, %p...\n", demon, StorytellerView);

@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using System.Numerics;
 
 namespace Clocktower.Observer
 {
@@ -133,12 +132,6 @@ namespace Clocktower.Observer
             }
         }
 
-        public void StartRollCall(int playersAlive)
-        {
-            outputText.AppendFormattedText("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability\n",
-                                           playersAlive);
-        }
-
         public void PublicStatement(Player player, string statement)
         {
             outputText.AppendFormattedText("%p: %n", player, statement, StorytellerView);
@@ -146,6 +139,17 @@ namespace Clocktower.Observer
             {
                 outputText.AppendText("\n");
             }
+        }
+
+        public void PrivateChatStarts(Player playerA, Player playerB)
+        {
+            outputText.AppendFormattedText("%p goes for a private chat with %p.\n", playerA, playerB, StorytellerView);
+        }
+
+        public void StartRollCall(int playersAlive)
+        {
+            outputText.AppendFormattedText("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability\n",
+                                           playersAlive);
         }
 
         private readonly RichTextBox outputText;

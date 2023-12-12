@@ -64,5 +64,15 @@ namespace Clocktower.Agent
         {
             return await agent.GetVote(nominee.ToVoteOptions()) is VoteOption;
         }
+
+        public static async Task<Player?> OfferPrivateChatOptional(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.OfferPrivateChat(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
+        }
+
+        public static async Task<Player> OfferPrivateChatRequired(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.OfferPrivateChat(players.ToOptions().ToList())).GetPlayer();
+        }
     }
 }

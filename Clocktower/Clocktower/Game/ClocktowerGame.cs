@@ -146,6 +146,7 @@ namespace Clocktower.Game
                 new SlayerShot(storyteller, grimoire, observers, random),
                 // TBD Conversations during the day. Add the following options in once we support conversations (otherwise they're duplicated without need).
                 // --private conversations--
+                new PrivateChats(storyteller, grimoire, observers, random),
                 // Fisherman
                 // Slayer
                 // --public conversations--
