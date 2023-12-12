@@ -117,7 +117,7 @@
             Controls.Add(randomizeButton);
             Controls.Add(startButton);
             Name = "SetupDialog";
-            Text = "SetupDialog";
+            Text = "Set up new game";
             ((System.ComponentModel.ISupportInitialize)playerCountUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();

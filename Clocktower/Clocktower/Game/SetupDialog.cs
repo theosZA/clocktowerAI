@@ -26,7 +26,7 @@ namespace Clocktower.Game
         /// </summary>
         public IEnumerable<IGameEvent> BuildAdditionalSetupEvents(IStoryteller storyteller, Grimoire grimoire)
         {
-            if (CharacterChecked(Character.Drunk))
+            if (IsCharacterSelected(Character.Drunk))
             {
                 yield return new AssignDrunk(storyteller, grimoire);
             }
@@ -71,160 +71,47 @@ namespace Clocktower.Game
             };
 
             // Populate grid with script characters.
-
-            charactersPanel.Controls.Add(new Label { Text = "Townsfolk" }, 0, 0);
-            charactersPanel.Controls.Add(new Label { Text = "Outsiders" }, 1, 0);
-            charactersPanel.Controls.Add(new Label { Text = "Minions" }, 2, 0);
-            charactersPanel.Controls.Add(new Label { Text = "Demon" }, 3, 0);
-
-            charactersPanel.Controls.Add(townsfolkCounter, 0, 1);
-            charactersPanel.Controls.Add(outsidersCounter, 1, 1);
-            charactersPanel.Controls.Add(minionsCounter, 2, 1);
-            charactersPanel.Controls.Add(demonsCounter, 3, 1);
-
-            foreach (var character in Script)
+            for (int column = 0; column < characterTypes.Length; column++)
             {
-                AddCharacter(character);
-            }
-            if (demonsCheckboxes.Count == 1)
-            {
-                demonsCheckboxes[0].Checked = true;
-                demonsCheckboxes[0].Enabled = false;
+                var characterType = characterTypes[column];
+                var setup = new SetupForCharacterType(characterType, Script.OfCharacterType(characterType), IsCharacterSelected, UpdateCounters);
+                setupForCharacterType.Add(characterType, setup);
+
+                charactersPanel.Controls.Add(setup.Heading, column, 0);
+                charactersPanel.Controls.Add(setup.Counter, column, 1);
+                foreach (var characterControl in setup.CharacterControls.Select((control, i) => (control, i)))
+                {
+                    charactersPanel.Controls.Add(characterControl.control, column, characterControl.i + 2);
+                }
             }
 
             UpdateCounters();
         }
 
-        private void AddCharacter(Character character)
+        private bool IsCharacterSelected(Character character)
         {
-            switch (character.CharacterType())
-            {
-                case CharacterType.Townsfolk:
-                    AddCharacter(character, townsfolkCheckboxes, charactersPanel.Controls, 0);
-                    break;
-
-                case CharacterType.Outsider:
-                    AddCharacter(character, outsidersCheckboxes, charactersPanel.Controls, 1);
-                    break;
-
-                case CharacterType.Minion:
-                    AddCharacter(character, minionsCheckboxes, charactersPanel.Controls, 2);
-                    break;
-
-                default:
-                    AddCharacter(character, demonsCheckboxes, charactersPanel.Controls, 3);
-                    break;
-            }
-        }
-
-        private void AddCharacter(Character character, IList<CheckBox> checkboxesForCharacterType, TableLayoutControlCollection tableControls, int column)
-        {
-            var checkbox = new CheckBox
-            {
-                Text = TextUtilities.CharacterToText(character),
-                Dock = DockStyle.Fill
-            };
-            checkbox.CheckedChanged += UpdateCounters;
-
-            checkboxes.Add(character, checkbox);
-            checkboxesForCharacterType.Add(checkbox);
-            tableControls.Add(checkbox, column, checkboxesForCharacterType.Count + 1);
+            return setupForCharacterType.Any(setup => setup.Value.SelectedCharacters.Contains(character));
         }
 
         private void UpdateCounters()
         {
-            int townsfolkCount = townsfolkCheckboxes.Sum(checkbox => checkbox.Checked ? 1 : 0);
-            int outsiderCount = outsidersCheckboxes.Sum(checkbox => checkbox.Checked ? 1 : 0);
-            int minionsCount = minionsCheckboxes.Sum(checkbox => checkbox.Checked ? 1 : 0);
-            int demonsCount = demonsCheckboxes.Sum(checkbox => checkbox.Checked ? 1 : 0);
-
-            UpdateCounter(townsfolkCounter, townsfolkCount, GetRequiredTownsfolk());
-            UpdateCounter(outsidersCounter, outsiderCount, GetRequiredOutsiders());
-            UpdateCounter(minionsCounter, minionsCount, new[] { GetRequiredMinions() });
-            UpdateCounter(demonsCounter, demonsCount, new[] { 1 });
-
-            startButton.Enabled = (GetRequiredTownsfolk().Contains(townsfolkCount) &&
-                                   GetRequiredOutsiders().Contains(outsiderCount) &&
-                                   GetRequiredMinions() == minionsCount &&
-                                   1 == demonsCount &&
-                                   GetRequiredTotal() == townsfolkCount + outsiderCount + minionsCount + demonsCount);
-        }
-
-        private static void UpdateCounter(Control control, int selectedCount, IEnumerable<int> requiredCount)
-        {
-            control.Text = $"{selectedCount} of {string.Join('/', requiredCount)}";
-        }
-
-        private int GetRequiredMinions()
-        {
-            return PlayerCount switch
+            foreach (var setup in setupForCharacterType)
             {
-                <= 9 => 1,
-                <= 12 => 2,
-                _ => 3
-            };
-        }
-
-        private IEnumerable<int> GetRequiredOutsiders()
-        {
-            int baseOutsiders = PlayerCount switch
-            {
-                7 => 0,
-                8 => 1,
-                9 => 2,
-                10 => 0,
-                11 => 1,
-                12 => 2,
-                13 => 0,
-                14 => 1,
-                _ => 2
-            };
-
-            if (CharacterChecked(Character.Godfather))
-            {
-                if (baseOutsiders > 0)
-                {
-                    yield return baseOutsiders - 1;
-                }
-                yield return baseOutsiders + 1;
+                setup.Value.UpdateCounter(PlayerCount);
             }
-            else
-            {
-                yield return baseOutsiders;
-            }
-        }
 
-        private IEnumerable<int> GetRequiredTownsfolk()
-        {
-            int demonCount = 1;
-            int minionCount = GetRequiredMinions();
-
-            foreach (int outsiderCount in GetRequiredOutsiders())
-            {
-                int townsfolkCount = PlayerCount - (outsiderCount + minionCount + demonCount);
-
-                if (CharacterChecked(Character.Drunk))
-                {
-                    ++townsfolkCount;
-                }
-
-                yield return townsfolkCount;
-            }
+            startButton.Enabled = setupForCharacterType.All(setup => setup.Value.IsCountOkay(PlayerCount))
+                               && GetRequiredTotal() == setupForCharacterType.Sum(setup => setup.Value.SelectedCount);
         }
 
         private int GetRequiredTotal()
         {
             int requiredPlayers = PlayerCount;
-            if (CharacterChecked(Character.Drunk))
+            if (IsCharacterSelected(Character.Drunk))
             {
                 ++requiredPlayers;
             }
             return requiredPlayers;
-        }
-
-        private bool CharacterChecked(Character character)
-        {
-            return checkboxes.TryGetValue(character, out var checkbox) && checkbox.Checked;
         }
 
         private void UpdateCounters(object? sender, EventArgs e)
@@ -234,51 +121,24 @@ namespace Clocktower.Game
 
         private void RandomizeBag(object sender, EventArgs e)
         {
-            // Clean out current bag.
-            foreach (var checkbox in checkboxes)
-            {
-                checkbox.Value.Checked = false;
-            }
-
-            // Demon.
-            var demon = demonsCheckboxes.RandomPick(random);
-            demon.Checked = true;
-
-            // Minions.
-            var minions = minionsCheckboxes.RandomPickN(GetRequiredMinions(), random);
-            foreach (var minion in minions)
-            {
-                minion.Checked = true;
-            }
-
-            // Outsiders.
-            var outsiderCountOptions = GetRequiredOutsiders().ToList();
+            // Maximize the outsider count 90% of the time.
             bool maximizeOutsiders = random.Next(10) > 0;
-            int outsiderCount = maximizeOutsiders ? outsiderCountOptions.Max() : outsiderCountOptions.Min();
-            var outsiders = outsidersCheckboxes.RandomPickN(outsiderCount, random);
-            foreach (var outsider in outsiders)
-            {
-                outsider.Checked = true;
-            }
+            bool maximizeTownsfolk = !maximizeOutsiders;
 
-            // Townsfolk.
-            var townsfolkCountOptions = GetRequiredTownsfolk().ToList();
-            int townsfolkCount = maximizeOutsiders ? townsfolkCountOptions.Min() : townsfolkCountOptions.Max();
-            var townsfolk = townsfolkCheckboxes.RandomPickN(townsfolkCount, random);
-            foreach (var townsfolkCheckbox in townsfolk)
-            {
-                townsfolkCheckbox.Checked = true;
-            }
+            // We need to randomize the characters in this specific order to ensure the counts are correct.
+            setupForCharacterType[CharacterType.Demon].RandomizeSelection(PlayerCount, maximizeCount: true, random);
+            setupForCharacterType[CharacterType.Minion].RandomizeSelection(PlayerCount, maximizeCount: true, random);
+            setupForCharacterType[CharacterType.Outsider].RandomizeSelection(PlayerCount, maximizeOutsiders, random);
+            setupForCharacterType[CharacterType.Townsfolk].RandomizeSelection(PlayerCount, maximizeTownsfolk, random);
 
             UpdateCounters();
         }
 
         private void StartGame(object sender, EventArgs e)
         {
-            var bag = checkboxes.Where(kvp => kvp.Value.Checked)
-                                .Select(kvp => kvp.Key)
-                                .Where(character => character != Character.Drunk)
-                                .ToList();
+            var bag = setupForCharacterType.SelectMany(setup => setup.Value.SelectedCharacters)
+                                           .Where(character => character != Character.Drunk)
+                                           .ToList();
             bag.Shuffle(random);
             Characters = bag.ToArray();
 
@@ -287,16 +147,8 @@ namespace Clocktower.Game
 
         private readonly Random random;
 
-        private readonly Control townsfolkCounter = new Label();
-        private readonly Control outsidersCounter = new Label();
-        private readonly Control minionsCounter = new Label();
-        private readonly Control demonsCounter = new Label();
+        private readonly CharacterType[] characterTypes = new[] { CharacterType.Townsfolk, CharacterType.Outsider, CharacterType.Minion, CharacterType.Demon };
 
-        private readonly List<CheckBox> townsfolkCheckboxes = new();
-        private readonly List<CheckBox> outsidersCheckboxes = new();
-        private readonly List<CheckBox> minionsCheckboxes = new();
-        private readonly List<CheckBox> demonsCheckboxes = new();
-
-        private readonly Dictionary<Character, CheckBox> checkboxes = new();
+        private readonly Dictionary<CharacterType, SetupForCharacterType> setupForCharacterType = new();
     }
 }
