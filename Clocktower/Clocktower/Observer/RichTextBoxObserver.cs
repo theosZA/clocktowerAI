@@ -75,9 +75,14 @@ namespace Clocktower.Observer
             outputText.AppendText("There is no execution and the day ends.\n");
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee)
+        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)
         {
-            outputText.AppendFormattedText("%p nominates %p.\n", nominator, nominee, StorytellerView);
+            outputText.AppendFormattedText("%p nominates %p.", nominator, nominee, StorytellerView);
+            if (votesToTie.HasValue)
+            {
+                outputText.AppendFormattedText(" %b votes to tie,", votesToTie.Value);
+            }
+            outputText.AppendFormattedText(" %b votes to put them on the block.\n", votesToPutOnBlock);
         }
 
         public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)

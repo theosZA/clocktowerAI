@@ -54,7 +54,9 @@ namespace Clocktower.Events
             playersWhoHaveAlreadyNominated.Add(nominator);
             playersWhoHaveAlreadyBeenNominated.Add(nominee);
 
-            observers.AnnounceNomination(nominator, nominee);
+            (int? votesToTie, int votesToPutOnBlock) = GetVotesRequired();
+
+            observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
             if (nominator == nominee)
             {
                 var statement = await nominator.Agent.GetReasonForSelfNomination();
@@ -78,10 +80,8 @@ namespace Clocktower.Events
             }
 
             int voteCount = await RunVote(nominee);
-
-            int minVotesRequired = (grimoire.Players.Count(player => player.Alive) + 1) / 2;
-            bool beatsCurrent = voteCount >= minVotesRequired && (!highestVoteCount.HasValue || voteCount > highestVoteCount.Value);
-            bool tiesCurrent = highestVoteCount.HasValue && voteCount == highestVoteCount.Value;
+            bool beatsCurrent = voteCount >= votesToPutOnBlock;
+            bool tiesCurrent = votesToTie.HasValue && voteCount == votesToTie.Value;
 
             observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
 
@@ -94,6 +94,20 @@ namespace Clocktower.Events
                 PlayerToBeExecuted = nominee;
                 highestVoteCount = voteCount;
             }
+        }
+
+        private (int? votesToTie, int votesToPutOnBlock) GetVotesRequired()
+        {
+            if (highestVoteCount.HasValue)
+            {
+                if (PlayerToBeExecuted == null)
+                {
+                    return (null, highestVoteCount.Value + 1);
+                }
+                return (highestVoteCount.Value, highestVoteCount.Value + 1);
+            }
+            int minVotesRequired = (grimoire.Players.Count(player => player.Alive) + 1) / 2;
+            return (null, minVotesRequired);
         }
 
         private async Task<int> RunVote(Player nominee)
