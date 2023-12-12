@@ -15,10 +15,15 @@ namespace Clocktower.Events
         {
             foreach (var steward in grimoire.GetLivingPlayers(Character.Steward))
             {
-                var stewardTarget = (await storyteller.GetStewardPing(steward, grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))));
-                steward.Agent.NotifySteward(stewardTarget);
-                storyteller.NotifySteward(steward, stewardTarget);
+                await RunEvent(steward);
             }
+        }
+
+        public async Task RunEvent(Player steward)
+        {
+            var stewardTarget = (await storyteller.GetStewardPing(steward, grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))));
+            steward.Agent.NotifySteward(stewardTarget);
+            storyteller.NotifySteward(steward, stewardTarget);
         }
 
         private readonly IStoryteller storyteller;

@@ -15,10 +15,15 @@ namespace Clocktower.Events
         {
             foreach (var shugenja in grimoire.GetLivingPlayers(Character.Shugenja))
             {
-                var direction = await GetDirection(shugenja);
-                shugenja.Agent.NotifyShugenja(direction);
-                storyteller.NotifyShugenja(shugenja, direction);
+                await RunEvent(shugenja);
             }
+        }
+
+        public async Task RunEvent(Player shugenja)
+        {
+            var direction = await GetDirection(shugenja);
+            shugenja.Agent.NotifyShugenja(direction);
+            storyteller.NotifyShugenja(shugenja, direction);
         }
 
         private async Task<Direction> GetDirection(Player shugenja)

@@ -18,10 +18,23 @@ namespace Clocktower.Events
             // Check if we have a Philosopher who just turned tonight.
             foreach (var philosopher in grimoire.Players.Where(player => player.Alive && IsNewPhilosopher(player)))
             {
-                var gameEvent = GetStartKnowingEvent(philosopher.Character);
-                if (gameEvent != null)
+                switch (philosopher.Character)
                 {
-                    await gameEvent.RunEvent();
+                    case Character.Steward:
+                        await new NotifySteward(storyteller, grimoire).RunEvent(philosopher);
+                        break;
+
+                    case Character.Investigator:
+                        await new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
+                        break;
+
+                    case Character.Librarian:
+                        await new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
+                        break;
+
+                    case Character.Shugenja:
+                        await new NotifyShugenja(storyteller, grimoire).RunEvent(philosopher);
+                        break;
                 }
             }
         }
@@ -30,18 +43,6 @@ namespace Clocktower.Events
         {
             return (player.Tokens.Contains(Token.IsThePhilosopher) || player.Tokens.Contains(Token.IsTheBadPhilosopher))
                 && player.Tokens.Contains(Token.PhilosopherUsedAbilityTonight);
-        }
-
-        private IGameEvent? GetStartKnowingEvent(Character character)
-        {
-            return character switch
-            {
-                Character.Steward => new NotifySteward(storyteller, grimoire),
-                Character.Investigator => new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random),
-                Character.Librarian => new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random),
-                Character.Shugenja => new NotifyShugenja(storyteller, grimoire),
-                _ => null,
-            };
         }
 
         private readonly IStoryteller storyteller;

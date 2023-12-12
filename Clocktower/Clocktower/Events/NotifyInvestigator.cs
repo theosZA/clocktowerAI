@@ -18,13 +18,18 @@ namespace Clocktower.Events
         {
             foreach (var investigator in grimoire.GetLivingPlayers(Character.Investigator))
             {
-                var pings = await GetPings(investigator);
-                var players = new List<Player> { pings.PlayerA, pings.PlayerB };
-                players.Shuffle(random);
-
-                investigator.Agent.NotifyInvestigator(players[0], players[1], pings.Character);
-                storyteller.NotifyInvestigator(investigator, players[0], players[1], pings.Character);
+                await RunEvent(investigator);
             }
+        }
+
+        public async Task RunEvent(Player investigator)
+        {
+            var pings = await GetPings(investigator);
+            var players = new List<Player> { pings.PlayerA, pings.PlayerB };
+            players.Shuffle(random);
+
+            investigator.Agent.NotifyInvestigator(players[0], players[1], pings.Character);
+            storyteller.NotifyInvestigator(investigator, players[0], players[1], pings.Character);
         }
 
         private async Task<CharacterForTwoPlayersOption> GetPings(Player investigator)
