@@ -25,5 +25,6 @@ namespace Clocktower.Observer
         void AnnounceSlayerShot(Player slayer, Player target, bool success);
 
         void PublicStatement(Player player, string statement);
+        void StartRollCall(int playersAlive);
     }
 }

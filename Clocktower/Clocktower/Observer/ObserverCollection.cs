@@ -105,6 +105,14 @@ namespace Clocktower.Observer
             }
         }
 
+        public void StartRollCall(int playersAlive)
+        {
+            foreach (var observer in observers)
+            {
+                observer.StartRollCall(playersAlive);
+            }
+        }
+
         public void PublicStatement(Player player, string statement)
         {
             foreach (var observer in observers)

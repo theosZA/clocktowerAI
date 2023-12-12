@@ -18,7 +18,7 @@ namespace Clocktower.Game
             this.random = random;
 
             var playerNames = new[] { "Alison", "Bernard", "Christie", "David", "Eleanor", "Franklin", "Georgina", "Harry", "Ingrid", "Julian", "Katie", "Leonard", "Maddie", "Norm", "Olivia" }.Take(setup.PlayerCount);
-            var agents = playerNames.Select(name => (IAgent)new HumanAgentForm(name, random)).ToList();
+            var agents = playerNames.Select(name => (IAgent)new HumanAgentForm(name, setup.Script, random)).ToList();
 
             storyteller = new StorytellerForm(random);
             observers = new ObserverCollection(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
@@ -150,6 +150,7 @@ namespace Clocktower.Game
                 // Slayer
                 // --public conversations--
                 // Tinker
+                new RollCall(grimoire, observers),
                 new PublicStatements(grimoire, observers, random, morning: false),
                 // Fisherman
                 // Slayer

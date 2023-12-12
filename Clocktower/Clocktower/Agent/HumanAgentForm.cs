@@ -16,10 +16,11 @@ namespace Clocktower.Agent
             set => autoCheckbox.Checked = value;
         }
 
-        public HumanAgentForm(string playerName, Random random)
+        public HumanAgentForm(string playerName, IReadOnlyCollection<Character> script, Random random)
         {
             InitializeComponent();
 
+            this.script = script;
             this.random = random;
 
             PlayerName = playerName;
@@ -42,6 +43,12 @@ namespace Clocktower.Agent
             SetTitleText();
 
             outputText.AppendFormattedText("You are the %c.\n", character);
+
+            autoClaim = character;
+            if (autoClaim.Value.Alignment() == Alignment.Evil)
+            {
+                autoClaim = script.OfAlignment(Alignment.Good).ToList().RandomPick(random);
+            }
         }
 
         public void YouAreDead()
@@ -68,6 +75,8 @@ namespace Clocktower.Agent
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             outputText.AppendFormattedText($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.\n", minions, notInPlayCharacters);
+
+            autoClaim = notInPlayCharacters.ToList().RandomPick(random);
         }
 
         public void NotifyGodfather(IReadOnlyCollection<Character> outsiders)
@@ -223,15 +232,21 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<string> GetRollCallStatement()
+        {
+            outputText.AppendText("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - leave empty to say nothing.)\n");
+            return await GetSpeech(autoActText: autoClaim.HasValue ? $"I am the { TextUtilities.CharacterToText(autoClaim.Value)}.": string.Empty);
+        }
+
         public async Task<string> GetMorningPublicStatement()
         {
-            outputText.AppendText("Before the group breaks off for private conversations, do you wish to say anything publicly. (Leave empty to say nothing.)\n");
+            outputText.AppendText("Before the group breaks off for private conversations, do you wish to say anything publicly? (Leave empty to say nothing.)\n");
             return await GetSpeech(autoActText: string.Empty);
         }
 
         public async Task<string> GetEveningPublicStatement()
         {
-            outputText.AppendText("Before nominations are opened, do you wish to say anything publicly. (Leave empty to say nothing.)\n");
+            outputText.AppendText("Before nominations are opened, do you wish to say anything publicly? (Leave empty to say nothing.)\n");
             return await GetSpeech(autoActText: string.Empty);
         }
 
@@ -322,14 +337,7 @@ namespace Clocktower.Agent
         {
             if (AutoAct)
             {
-                if (string.IsNullOrEmpty(autoActText))
-                {
-                    outputText.AppendBoldText($">> ...\n", Color.Green);
-                }
-                else
-                {
-                    outputText.AppendBoldText($">> \"{autoActText}\"\n", Color.Green);
-                }
+                WriteSpeechToOutput(autoActText);
                 return autoActText;
             }
 
@@ -352,6 +360,18 @@ namespace Clocktower.Agent
             OnText += onTextHandler;
 
             return taskCompletionSource.Task;
+        }
+
+        private void WriteSpeechToOutput(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                outputText.AppendBoldText($">> ...\n", Color.Green);
+            }
+            else
+            {
+                outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
+            }
         }
 
         private void SetTitleText()
@@ -393,15 +413,7 @@ namespace Clocktower.Agent
         private void submitButton_Click(object sender, EventArgs e)
         {
             var text = responseTextBox.Text;
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                text = string.Empty;
-                outputText.AppendBoldText($">> ...\n", Color.Green);
-            }
-            else
-            {
-                outputText.AppendBoldText($">> \"{text}\"\n", Color.Green);
-            }
+            WriteSpeechToOutput(text);
 
             submitButton.Enabled = false;
             responseTextBox.Enabled = false;
@@ -410,10 +422,12 @@ namespace Clocktower.Agent
             OnText?.Invoke(text);
         }
 
+        private readonly IReadOnlyCollection<Character> script;
         private readonly Random random;
 
         private Character? originalCharacter;
         private Character? character;
+        private Character? autoClaim;
         private bool alive = true;
         private bool usedSlayerAbility = false;
 
