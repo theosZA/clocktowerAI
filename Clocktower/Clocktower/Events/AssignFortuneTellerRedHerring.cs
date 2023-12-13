@@ -14,13 +14,14 @@ namespace Clocktower.Events
         public async Task RunEvent()
         {
             // Ensure that there is a real Fortune Teller.
-            if (!grimoire.Players.Any(player => player.RealCharacter == Character.Fortune_Teller))
+            var fortuneTeller = grimoire.Players.FirstOrDefault(player => player.RealCharacter == Character.Fortune_Teller);
+            if (fortuneTeller == null)
             {
                 return;
             }
 
             var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
-            (await storyteller.GetFortuneTellerRedHerring(redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring);
+            (await storyteller.GetFortuneTellerRedHerring(fortuneTeller, redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring);
         }
 
         private readonly IStoryteller storyteller;

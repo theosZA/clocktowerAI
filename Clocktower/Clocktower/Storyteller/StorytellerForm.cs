@@ -64,9 +64,9 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(drunkCandidates);
         }
 
-        public async Task<IOption> GetFortuneTellerRedHerring(IReadOnlyCollection<IOption> redHerringCandidates)
+        public async Task<IOption> GetFortuneTellerRedHerring(Player fortuneTeller, IReadOnlyCollection<IOption> redHerringCandidates)
         {
-            outputText.AppendFormattedText("Choose one player to be the red herring (to register as the Demon) for the %c...\n", Character.Fortune_Teller);
+            outputText.AppendFormattedText("Choose one player to be the red herring (to register as the Demon) for %p...\n", fortuneTeller, StorytellerView);
 
             return await PopulateOptions(redHerringCandidates);
         }

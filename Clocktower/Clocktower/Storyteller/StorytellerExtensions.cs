@@ -25,9 +25,9 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetSweetheartDrunk(drunkCandidates.ToOptions())).GetPlayer();
         }
 
-        public static async Task<Player> GetFortuneTellerRedHerring(this IStoryteller storyteller, IEnumerable<Player> redHerringCandidates)
+        public static async Task<Player> GetFortuneTellerRedHerring(this IStoryteller storyteller, Player fortuneTeller, IEnumerable<Player> redHerringCandidates)
         {
-            return (await storyteller.GetFortuneTellerRedHerring(redHerringCandidates.ToOptions())).GetPlayer();
+            return (await storyteller.GetFortuneTellerRedHerring(fortuneTeller, redHerringCandidates.ToOptions())).GetPlayer();
         }
 
         public static async Task<Player> GetStewardPing(this IStoryteller storyteller, Player steward, IEnumerable<Player> stewardPingCandidates)

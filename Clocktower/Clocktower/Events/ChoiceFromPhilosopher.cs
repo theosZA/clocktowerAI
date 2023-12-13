@@ -54,7 +54,7 @@ namespace Clocktower.Events
             if (character == Character.Fortune_Teller)
             {
                 var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
-                (await storyteller.GetFortuneTellerRedHerring(redHerringCandidates)).Tokens.Add(Token.PhilosopherFortuneTellerRedHerring);
+                (await storyteller.GetFortuneTellerRedHerring(philosopher, redHerringCandidates)).Tokens.Add(Token.PhilosopherFortuneTellerRedHerring);
             }
         }
 
