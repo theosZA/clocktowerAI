@@ -33,6 +33,7 @@ namespace Clocktower.Events
                 {
                     playersNotChattingYet.Remove(currentPlayer);
                     playersNotChattingYet.Remove(target);
+                    playersToGetPriorityOption.Remove(target);
                     playersChatting.Add((currentPlayer, target));
                     observers.PrivateChatStarts(currentPlayer, target);
                 }
