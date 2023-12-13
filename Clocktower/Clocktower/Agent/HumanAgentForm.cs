@@ -358,10 +358,11 @@ namespace Clocktower.Agent
 
             // For now, just pick an option at random.
             // Exclude dead players and ourself from our choices.
-            // Also exclude Slayer-shot options unless we are the Slayer who hasn't user the ability yet.
+            // Also exclude Slayer-shot options unless we are the Slayer (or bluffing Slayer) who hasn't used their ability yet.
             var autoOptions = options.Where(option => option is not PassOption)
                                      .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != PlayerName))
-                                     .Where(option => option is not SlayerShotOption || (character == Character.Slayer && !usedSlayerAbility))
+                                     .Where(option => option is not VoteOption voteOption || (voteOption.Nominee.Alive && voteOption.Nominee.Name != PlayerName))
+                                     .Where(option => option is not SlayerShotOption || ((character == Character.Slayer || autoClaim == Character.Slayer) && !usedSlayerAbility))
                                      .ToList();
             if (autoOptions.Count > 0)
             {
