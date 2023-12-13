@@ -8,6 +8,28 @@ namespace Clocktower.Game
     /// </summary>
     public class Grimoire
     {
+        public bool Finished => Winner.HasValue;
+
+        public Alignment? Winner
+        {
+            get
+            {
+                // The game is over if there are no living demons...
+                if (!players.Any(player => player.Alive && player.CharacterType == CharacterType.Demon))
+                {
+                    return Alignment.Good;
+                }
+
+                // ...or there are fewer than 3 players alive.
+                if (players.Count(player => player.Alive) < 3)
+                {
+                    return Alignment.Evil;
+                }
+
+                return null;
+            }
+        }
+
         public IReadOnlyCollection<Player> Players => players;
 
         public Grimoire(IEnumerable<IAgent> agents, Character[] characters)
