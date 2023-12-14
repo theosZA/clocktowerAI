@@ -26,28 +26,41 @@ namespace Clocktower.Events
 
         public IEnumerable<IGameEvent> BuildDayEvents(int dayNumber)
         {
+            int alivePlayersLeft = grimoire.Players.Count(player => player.Alive);
+
             var nominations = new Nominations(storyteller, grimoire, observers, random);
 
             yield return new StartDay(observers, dayNumber);
             yield return new AnnounceNightKills(grimoire, observers, dayNumber);
             yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
-            yield return new PublicStatements(grimoire, observers, random, morning: true);
-            yield return new FishermanAdvice(storyteller, grimoire);
-            yield return new SlayerShot(storyteller, grimoire, observers, random);
-            // TBD Conversations during the day. Add the following options in once we support conversations (otherwise they're duplicated without need).
-            // --private conversations--
-            yield return new PrivateChats(storyteller, grimoire, observers, random);
-            // Fisherman
-            // Slayer
-            // --public conversations--
-            // Tinker
+
+            if (alivePlayersLeft > 4)   // if 4 or less alive, then we'll be having a roll call instead
+            {
+                yield return new PublicStatements(grimoire, observers, random, morning: true);
+                yield return new FishermanAdvice(storyteller, grimoire);
+                yield return new SlayerShot(storyteller, grimoire, observers, random);
+            }
+
+            for (int i = 0; i < HowManyPrivateChats(alivePlayersLeft); i++)
+            {
+                yield return new PrivateChats(storyteller, grimoire, observers, random);
+            }
+            if (HowManyPrivateChats(alivePlayersLeft) != 0)
+            {
+                yield return new FishermanAdvice(storyteller, grimoire);
+                yield return new SlayerShot(storyteller, grimoire, observers, random);
+                yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
+            }
+
             yield return new RollCall(grimoire, observers);
             yield return new PublicStatements(grimoire, observers, random, morning: false);
-            // Fisherman
-            // Slayer
+            yield return new FishermanAdvice(storyteller, grimoire);
+            yield return new SlayerShot(storyteller, grimoire, observers, random);
+            yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
+
             yield return nominations;
-            yield return new SlayerShot(storyteller, grimoire, observers, random) { Nominations = nominations };
             yield return new FishermanAdvice(storyteller, grimoire) { Nominations = nominations };
+            yield return new SlayerShot(storyteller, grimoire, observers, random) { Nominations = nominations };
             yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
             yield return new EndDay(storyteller, grimoire, observers, nominations);
         }
@@ -88,6 +101,20 @@ namespace Clocktower.Events
             yield return new ChoiceFromFortuneTeller(storyteller, grimoire);
             yield return new NotifyUndertaker(storyteller, grimoire, setup.Script);
             yield return new EndNight(grimoire);
+        }
+
+        private static int HowManyPrivateChats(int alivePlayersCount)
+        {
+            return alivePlayersCount switch
+            {
+                <= 4 => 0,
+                <= 5 => 1,
+                <= 7 => 2,
+                <= 9 => 3,
+                <= 11 => 4,
+                <= 13 => 5,
+                _ => 6
+            };
         }
 
         private readonly IStoryteller storyteller;
