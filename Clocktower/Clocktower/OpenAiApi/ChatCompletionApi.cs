@@ -5,18 +5,25 @@ using System.Text.Json;
 
 namespace Clocktower.OpenAiApi
 {
-    internal static class ChatCompletionApi
+    internal class ChatCompletionApi
     {
         static ChatCompletionApi()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("OPENAI_APIKEY", EnvironmentVariableTarget.User));
         }
 
-        public static async Task<string> RequestChatCompletion(IEnumerable<(Role role, string message)> messages)
+        public ChatCompletionApi(ITokenCounter tokenCounter)
+        {
+            this.tokenCounter = tokenCounter;
+        }
+
+        public async Task<string> RequestChatCompletion(IEnumerable<(Role role, string message)> messages)
         {
             using var response = await httpClient.PostAsJsonAsync("chat/completions", BuildChatCompletionRequest(messages), jsonSerializerOptions);
             response.EnsureSuccessStatusCode();
             var chatResponse = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>() ?? throw new Exception("No chat completion received from Open API");
+            var usage = chatResponse.Usage;
+            tokenCounter.NewTokenUsage(usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens);
             return chatResponse.Choices.First().Message.Content;
         }
 
@@ -38,7 +45,9 @@ namespace Clocktower.OpenAiApi
             };
         }
 
-        private static readonly HttpClient httpClient = new(new LoggingHandler(new HttpClientHandler()))
+        private readonly ITokenCounter tokenCounter;
+
+        private static readonly HttpClient httpClient = new(new LoggingHandler(new StreamWriter($"ChatCompletions-{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}.log"), new HttpClientHandler()))
         {
             BaseAddress = new Uri("https://api.openai.com/v1/")
         };

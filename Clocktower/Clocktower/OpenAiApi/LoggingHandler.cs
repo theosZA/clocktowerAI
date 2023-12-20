@@ -1,34 +1,36 @@
-﻿using System.Diagnostics;
-
-namespace Clocktower.OpenAiApi
+﻿namespace Clocktower.OpenAiApi
 {
     public class LoggingHandler : DelegatingHandler
     {
-        public LoggingHandler(HttpMessageHandler innerHandler)
+        public LoggingHandler(TextWriter stream, HttpMessageHandler innerHandler)
         : base(innerHandler)
-        {}
+        {
+            this.stream = stream;
+        }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            Debug.WriteLine("Request:");
-            Debug.WriteLine(request.ToString());
+            stream.WriteLine("Request:");
+            stream.WriteLine(request.ToString());
             if (request.Content != null)
             {
-                Debug.WriteLine(await request.Content.ReadAsStringAsync());
+                stream.WriteLine(await request.Content.ReadAsStringAsync(cancellationToken));
             }
-            Debug.WriteLine(string.Empty);
+            stream.WriteLine(string.Empty);
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            Debug.WriteLine("Response:");
-            Debug.WriteLine(response.ToString());
+            stream.WriteLine("Response:");
+            stream.WriteLine(response.ToString());
             if (response.Content != null)
             {
-                Debug.WriteLine(await response.Content.ReadAsStringAsync());
+                stream.WriteLine(await response.Content.ReadAsStringAsync(cancellationToken));
             }
-            Debug.WriteLine(string.Empty);
+            stream.WriteLine(string.Empty);
 
             return response;
         }
+
+        private readonly TextWriter stream;
     }
 }

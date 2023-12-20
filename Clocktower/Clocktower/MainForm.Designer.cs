@@ -33,14 +33,13 @@
             newToolStripMenuItem = new ToolStripMenuItem();
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
-            testToolStripMenuItem = new ToolStripMenuItem();
             mainMenu.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // mainMenu
             // 
-            mainMenu.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, testToolStripMenuItem });
+            mainMenu.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
             mainMenu.Location = new Point(0, 0);
             mainMenu.Name = "mainMenu";
             mainMenu.Size = new Size(800, 24);
@@ -57,7 +56,7 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(98, 22);
+            newToolStripMenuItem.Size = new Size(180, 22);
             newToolStripMenuItem.Text = "&New";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
@@ -73,13 +72,6 @@
             // 
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(0, 17);
-            // 
-            // testToolStripMenuItem
-            // 
-            testToolStripMenuItem.Name = "testToolStripMenuItem";
-            testToolStripMenuItem.Size = new Size(39, 20);
-            testToolStripMenuItem.Text = "&Test";
-            testToolStripMenuItem.Click += testToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -106,6 +98,5 @@
         private ToolStripMenuItem newToolStripMenuItem;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
-        private ToolStripMenuItem testToolStripMenuItem;
     }
 }

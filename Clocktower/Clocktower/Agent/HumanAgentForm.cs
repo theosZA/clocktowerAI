@@ -1,7 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
-using System.Windows.Forms;
 
 namespace Clocktower.Agent
 {
@@ -29,7 +28,7 @@ namespace Clocktower.Agent
 
             Observer = new RichTextBoxObserver(outputText);
 
-            AutoAct = true; // for testing
+            // AutoAct = true; // for testing
         }
 
         public void StartGame()

@@ -148,7 +148,7 @@ namespace Clocktower.Observer
 
         public void StartRollCall(int playersAlive)
         {
-            outputText.AppendFormattedText("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability\n",
+            outputText.AppendFormattedText("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability.\n",
                                            playersAlive);
         }
 
