@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            var newlyDeadPlayers = grimoire.Players.Where(player => player.Tokens.Contains(Token.DiedAtNight) || player.Tokens.Contains(Token.KilledByDemon)).ToList();
+            var newlyDeadPlayers = grimoire.Players.WithToken(Token.DiedAtNight).ToList();
             if (newlyDeadPlayers.Count == 0)
             {
                 if (dayNumber > 1)  // No need to announce that there were no deaths on the first day.
@@ -28,7 +28,6 @@ namespace Clocktower.Events
                 {
                     observers.PlayerDiedAtNight(newlyDeadPlayer);
                     newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
-                    newlyDeadPlayer.Tokens.Remove(Token.KilledByDemon);
                     newlyDeadPlayer.Kill();
                 }
             }

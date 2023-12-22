@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather).Where(player => player.Tokens.Contains(Token.GodfatherKillsTonight)))
+            foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather).WithToken(Token.GodfatherKillsTonight))
             {
                 var target = await godfather.Agent.RequestChoiceFromGodfather(grimoire.Players);
                 storyteller.ChoiceFromGodfather(godfather, target);

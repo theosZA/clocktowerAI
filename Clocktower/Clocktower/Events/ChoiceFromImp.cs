@@ -28,7 +28,7 @@ namespace Clocktower.Events
                     }
                     else
                     {
-                        new Kills(storyteller, grimoire).DemonKill(target);
+                        new Kills(storyteller, grimoire).NightKill(target);
                     }
                 }
             }
@@ -39,7 +39,7 @@ namespace Clocktower.Events
             // We need to check if a Scarlet Woman will become the new Imp. If so, that will already be handled.
             bool scarletWomanCatchesStarPass = grimoire.Players.Count(player => player.Alive) >= 5 && grimoire.Players.Any(player => player.Character == Character.Scarlet_Woman && !player.DrunkOrPoisoned);
 
-            new Kills(storyteller, grimoire).DemonKill(dyingImp);
+            new Kills(storyteller, grimoire).NightKill(dyingImp);
             if (scarletWomanCatchesStarPass)
             {
                 return;

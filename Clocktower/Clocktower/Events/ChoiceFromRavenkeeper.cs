@@ -15,7 +15,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var ravenkeeper in grimoire.Players.Where(player => player.Character == Character.Ravenkeeper && player.Tokens.Contains(Token.KilledByDemon)))
+            foreach (var ravenkeeper in grimoire.Players.WithCharacter(Character.Ravenkeeper).WithToken(Token.DiedAtNight))
             {
                 var target = await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players);
                 var character = await GetTargetCharacter(ravenkeeper, target);

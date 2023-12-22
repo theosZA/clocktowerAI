@@ -28,12 +28,6 @@ namespace Clocktower.Game
             player.Tokens.Add(Token.DiedAtNight);
         }
 
-        public void DemonKill(Player player)
-        {
-            HandleNightDeath(player);
-            player.Tokens.Add(Token.KilledByDemon);
-        }
-
         private void HandleDayDeath(Player player)
         {
             grimoire.RemoveTokensForCharacter(player.RealCharacter);

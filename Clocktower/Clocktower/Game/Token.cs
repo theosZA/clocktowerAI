@@ -2,7 +2,6 @@
 {
     public enum Token
     {
-        KilledByDemon,
         DiedAtNight,
         IsTheDrunk,
         IsThePhilosopher,
