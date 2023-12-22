@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
+using System.ComponentModel.Design;
 using System.Text;
 
 namespace Clocktower.OpenAiApi
@@ -83,7 +84,7 @@ namespace Clocktower.OpenAiApi
                 return passOption;
             }
 
-            return options.FirstOrDefault(option => MatchesOption(choiceAsText, option)) ?? throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
+            return GetMatchingOption(options, choiceAsText) ?? throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
         }
 
         private static string CleanResponse(string? textFromAi)
@@ -118,23 +119,40 @@ namespace Clocktower.OpenAiApi
             return text;
         }
 
-        private static bool MatchesOption(string textFromAi, IOption option)
+        private static IOption? GetMatchingOption(IReadOnlyCollection<IOption> options, string choiceAsText)
+        {
+            return options.FirstOrDefault(option => MatchesOption(choiceAsText, option)) ?? options.FirstOrDefault(option => MatchesOptionRelaxed(choiceAsText, option));
+        }
+
+        private static bool MatchesOption(string choiceAsText, IOption option)
         {
             return option switch
             {
-                PassOption _ => textFromAi.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase),
-                VoteOption _ => textFromAi.StartsWith("execute", StringComparison.InvariantCultureIgnoreCase),
-                SlayerShotOption slayerShotOption => textFromAi.StartsWith(slayerShotOption.Target.Name, StringComparison.InvariantCultureIgnoreCase),
-                TwoPlayersOption twoPlayersOption => MatchesTwoPlayers(textFromAi, twoPlayersOption.PlayerA.Name, twoPlayersOption.PlayerB.Name),
-                _ => textFromAi.StartsWith(option.Name, StringComparison.InvariantCultureIgnoreCase),
+                PassOption _ => choiceAsText.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase),
+                VoteOption _ => choiceAsText.StartsWith("execute", StringComparison.InvariantCultureIgnoreCase),
+                SlayerShotOption slayerShotOption => choiceAsText.StartsWith(slayerShotOption.Target.Name, StringComparison.InvariantCultureIgnoreCase),
+                TwoPlayersOption twoPlayersOption => MatchesTwoPlayers(choiceAsText, twoPlayersOption.PlayerA.Name, twoPlayersOption.PlayerB.Name),
+                _ => choiceAsText.StartsWith(option.Name, StringComparison.InvariantCultureIgnoreCase),
             };
         }
 
-        private static bool MatchesTwoPlayers(string textFromAi, string player1, string player2)
+        private static bool MatchesOptionRelaxed(string choiceAsText, IOption option)
         {
-            int splitIndex = textFromAi.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
-            return string.Equals(textFromAi[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
-                && string.Equals(textFromAi[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
+            return option switch
+            {
+                PassOption _ => choiceAsText.Contains("pass", StringComparison.InvariantCultureIgnoreCase),
+                VoteOption _ => choiceAsText.Contains("execute", StringComparison.InvariantCultureIgnoreCase),
+                SlayerShotOption slayerShotOption => choiceAsText.Contains(slayerShotOption.Target.Name, StringComparison.InvariantCultureIgnoreCase),
+                TwoPlayersOption twoPlayersOption => choiceAsText.Contains(twoPlayersOption.PlayerA.Name) && choiceAsText.Contains(twoPlayersOption.PlayerB.Name),
+                _ => choiceAsText.Contains(option.Name, StringComparison.InvariantCultureIgnoreCase),
+            };
+        }
+
+        private static bool MatchesTwoPlayers(string choiceAsText, string player1, string player2)
+        {
+            int splitIndex = choiceAsText.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
+            return string.Equals(choiceAsText[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
+                && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
         }
 
         private PhaseMessages Phase => phases.Last();
