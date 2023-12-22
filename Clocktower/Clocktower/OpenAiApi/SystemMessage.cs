@@ -8,21 +8,22 @@ namespace Clocktower.OpenAiApi
     {
         public static string GetSystemMessage(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script)
         {
-            return $"We are going to play a game of 'Blood on the Clocktower'. This is a social deduction game set in the town of Ravenswood Bluff where the players are divided into good Townsfolk and Outsiders and evil Minions and Demons. " +
-            "The evil players know who is on which side and they win when there are only two players left alive, one of which is their Demon. The good players don't know who is on which side and must use their abilities and social skills " +
-            "to determine who the evil players are. The good players win if the Demon dies, usually by executing them. The game is split into two phases: a day phase and a night phase.\r\n" +
-            "During the day, you talk. You will each have a secret identity, a unique character from the script. Generally, the good players share whatever they know and attempt to find out who is who. Most good players will be telling the truth, " +
-            "but some have an incentive to lie. If you are evil, you should definitely be lying (except in private conversations with your fellow evil players)! It is best to pick a good character to pretend to be, spreading as much false " +
-            "information as possible. At the end of each day there will be a chance to nominate players for execution. Only one player may be executed each day, and the good team usually wants to execute a player each day since executing the " +
-            "Demon is how they win. Each player only gets one nomination each day, and the same player can't be nominated more than once in a day. However each day, you may vote for as few or as many players as you wish, and whoever has the " +
-            "most votes is executed. This player needs a vote tally of at least 50% of the living players or no execution occurs. On a tie, neither player is executed.\r\n" +
-            "During the night, some players will get a chance to secretly use their ability or gain some type of information. This includes the Demon who can kill one player every night after the first. Most of you will die. " +
-            "This is a good thing! In Ravenswood Bluff, death is not the end. Some players may even want to die, as they gain information when they do. If you are dead, you still participate in the game, you may still talk, and you still win or lose " +
-            "when your team wins or loses.If you die, you are still a major part of the game. You still talk, and you still close your eyes during the night time. Most importantly, you still win or lose with your team. " +
-            "In fact, the game is usually decided by the votes and opinions of the dead players. When you die, you lose your character ability, you may no longer nominate, and you have only one vote for the rest of the game, so use it wisely.\r\n" +
-            "There is a lot of information in this game. However, some of it might be wrong. If you are drunk or poisoned, you have no ability, but I will pretend that you do. I am allowed to lie to you — any information that you get may be incorrect, " +
-            "but you will not know if you are drunk or poisoned. For example, if you are the Drunk, you will draw a different character token out of the bag and only I know that you are actually the Drunk. Or, if the Poisoner poisons you, you may " +
-            "still wake at night to use your ability, but it won’t work.\r\n" +
+            return $"We are going to play a game of 'Blood on the Clocktower'. This is a social deduction game where the players are divided into good Townsfolk and Outsiders and evil Minions and Demons. " +
+            "The evil players know who is on which side and they win when there are only two players left alive, one of which is their Demon. " +
+            "The good players don't know who is on which side and must use their character abilities and social skills to determine who the evil players are. The good players win if the Demon dies, usually by executing them. " +
+            "The game is split into two phases: a day phase and a night phase.\r\n" +
+            "During the day, you talk. You will each have a secret identity, a unique character from the script. Generally, the good players share whatever they know and attempt to find out who is who. " +
+            "Most good players will be telling the truth, but some have an incentive to lie. If you are evil, you should definitely be lying (except in private conversations with your fellow evil players)! " +
+            "It is best to pick a good character to pretend to be, spreading as much false information as possible. " +
+            "At the end of each day there will be a chance to nominate players for execution. Only one player may be executed each day, and the good team usually wants to execute a player each day since executing the Demon is how they win. " +
+            "Each player only gets one nomination each day, and the same player can't be nominated more than once in a day. However, each day you may vote for as few or as many players as you wish, and whoever has the most votes is executed. " +
+            "This player needs a vote tally of at least 50% of the living players or no execution occurs. On a tie, neither player is executed.\r\n" +
+            "During the night, some players will get a chance to secretly use their ability or gain some type of information. This includes the Demon who can kill one player every night after the first. " +
+            "Most of you will die - but death is not the end. Some players may even want to die, as they gain information when they do. If you are dead, you still participate in the game, you may still talk, " +
+            "and you still win or lose with your team. In fact, the game is usually decided by the votes and opinions of the dead players. " +
+            "When you die, you lose your character ability, you may no longer nominate, and you have only one vote for the rest of the game, so use it wisely.\r\n" +
+            "There is a lot of information in this game. However, some of it might be wrong. If you are drunk or poisoned, you have no ability, but I will pretend that you do: " +
+            "your ability won't work and any information you get from your ability may be incorrect.\r\n" +
             "This game will use a script called 'A Simple Matter' which includes the following characters:\r\n" +
             ScriptToText(script) +
             SetupToText(playersNames.Count) +
