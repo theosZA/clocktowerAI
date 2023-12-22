@@ -11,9 +11,11 @@
 
         public IReadOnlyCollection<(Role role, string message)> Messages => messages;
 
-        public PhaseMessages(ChatCompletionApi chatCompletionApi, Phase phase, int dayNumber)
+        public PhaseMessages(ChatCompletionApi chatCompletionApi, Phase phase, int dayNumber, IChatLogger chatLogger)
         {
             this.chatCompletionApi = chatCompletionApi;
+            this.chatLogger = chatLogger;
+
             Phase = phase;
             DayNumber = dayNumber;
             Add(Role.User, PhaseText);
@@ -22,6 +24,7 @@
         public void AddSystemMessage(string message)
         {
             messages.Insert(0, (Role.System, message));
+            chatLogger.Log(Role.System, message);
         }
 
         public void Add(string message)
@@ -59,13 +62,15 @@
                 summaryResponse = summaryResponse.Insert(0, $"{PhaseText}: ");
             }
             messages.Clear();
-            Add(Role.Assistant, summaryResponse);
+            messages.Add((Role.Assistant, summaryResponse));
+            chatLogger.LogSummary(Phase, DayNumber, summaryResponse);
             summarized = true;
         }
 
         private void Add(Role role, string message)
         {
             messages.Add((role, message));
+            chatLogger.Log(role, message);
         }
 
         private static async Task SummarizeIfNeeded(IReadOnlyCollection<PhaseMessages> phases)
@@ -91,6 +96,8 @@
         };
 
         private readonly ChatCompletionApi chatCompletionApi;
+        private readonly IChatLogger chatLogger;
+
         private readonly List<(Role role, string message)> messages = new();
         private bool summarized = false;
     }

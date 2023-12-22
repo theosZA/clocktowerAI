@@ -12,12 +12,13 @@ namespace Clocktower.OpenAiApi
     {
         public IEnumerable<(Role role, string message)> Messages => phases.SelectMany(phase => phase.Messages);
 
-        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, ITokenCounter tokenCounter)
+        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, IChatLogger chatLogger, ITokenCounter tokenCounter)
         {
             this.playerName = playerName;
             chatCompletionApi = new(tokenCounter);
+            this.chatLogger = chatLogger;
 
-            var phase = new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Setup, 0);
+            var phase = new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Setup, 0, chatLogger);
             phase.AddSystemMessage(SystemMessage.GetSystemMessage(playerName, playersNames, script));
 
             phases.Add(phase);
@@ -25,12 +26,12 @@ namespace Clocktower.OpenAiApi
 
         public void Night(int nightNumber)
         {
-            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Night, nightNumber));
+            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Night, nightNumber, chatLogger));
         }
 
         public void Day(int dayNumber)
         {
-            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Day, dayNumber));
+            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Day, dayNumber, chatLogger));
         }
 
         public void AddMessage(string message)
@@ -141,6 +142,7 @@ namespace Clocktower.OpenAiApi
         private readonly string playerName;
 
         private readonly ChatCompletionApi chatCompletionApi;
+        private readonly IChatLogger chatLogger;
 
         private readonly List<PhaseMessages> phases = new();
     }

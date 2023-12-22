@@ -21,8 +21,8 @@ namespace Clocktower.Agent
         public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, ITokenCounter tokenCounter)
         {
             PlayerName = playerName;
-
-            clocktowerChatAi = new(playerName, playersNames, script, tokenCounter);
+            
+            clocktowerChatAi = new(playerName, playersNames, script, new FileChatLogger($"{playerName}-{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}.log"), tokenCounter);
             chatAiObserver = new(clocktowerChatAi);
 
             this.onStart = onStart;

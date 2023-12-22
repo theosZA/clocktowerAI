@@ -1,6 +1,6 @@
 ﻿namespace Clocktower.OpenAiApi
 {
-    internal enum Phase
+    public enum Phase
     {
         Setup,
         Night,

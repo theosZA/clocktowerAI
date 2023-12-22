@@ -1,6 +1,6 @@
 ﻿namespace Clocktower.OpenAiApi
 {
-    internal enum Role
+    public enum Role
     {
         System,
         User,
