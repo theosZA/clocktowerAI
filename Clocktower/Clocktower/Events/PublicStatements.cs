@@ -18,7 +18,7 @@ namespace Clocktower.Events
             // Give everyone, in random order, a chance to make a public statement.
             var players = grimoire.Players.ToList();
             players.Shuffle(random);
-            foreach (var player in grimoire.Players)
+            foreach (var player in players)
             {
                 var statement = morning ? await player.Agent.GetMorningPublicStatement() : await player.Agent.GetEveningPublicStatement();
                 if (!string.IsNullOrEmpty(statement))
