@@ -15,9 +15,15 @@ namespace Clocktower.Agent
         {
             InitializeComponent();
 
-            robot = new(playerName, playerNames, script, onStart: Show, tokenCounter: this);
-            UpdateWithLatest();
-            refreshTimer.Enabled = true;
+            var chatLoggers = new IChatLogger[]
+            {
+                new RichTextChatLogger(chatTextBox, summaryTextBox),
+                new FileChatLogger($"{playerName}-{DateTime.UtcNow:yyyyMMddTHHmmss}.log")
+            };
+
+            robot = new(playerName, playerNames, script, onStart: Show, onCharacterChange: SetTitle, ProxyCollection<IChatLogger>.CreateProxy(chatLoggers), tokenCounter: this);
+
+            SetTitle();
         }
 
         public void NewTokenUsage(int promptTokens, int completionTokens, int totalTokens)
@@ -29,9 +35,8 @@ namespace Clocktower.Agent
             usageStatusLabel.Text = $"Usage: {this.totalTokens} = {this.promptTokens} + {this.completionTokens}, Latest: {totalTokens} = {promptTokens} + {completionTokens}";
         }
 
-        private void UpdateWithLatest()
+        private void SetTitle()
         {
-            // Form title.
             Text = PlayerName;
             if (robot.Character != null)
             {
@@ -46,28 +51,6 @@ namespace Clocktower.Agent
             {
                 Text += " GHOST";
             }
-
-            // Text display.
-            summaryTextBox.Text = string.Empty;
-            foreach ((Role role, string message) in robot.Messages)
-            {
-                summaryTextBox.AppendText(message, role switch
-                {
-                    Role.System => Color.Purple,
-                    Role.User => Color.Blue,
-                    Role.Assistant => Color.Green,
-                    _ => Color.Black,
-                });
-                if (!message.EndsWith('\n'))
-                {
-                    summaryTextBox.AppendText("\n");
-                }
-            }
-        }
-
-        private void refreshTimer_Tick(object sender, EventArgs e)
-        {
-            UpdateWithLatest();
         }
 
         private readonly RobotAgent robot;

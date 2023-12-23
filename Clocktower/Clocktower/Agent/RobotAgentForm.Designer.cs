@@ -28,28 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            summaryTextBox = new RichTextBox();
-            refreshTimer = new System.Windows.Forms.Timer(components);
+            chatTextBox = new RichTextBox();
             usageStatusStrip = new StatusStrip();
             usageStatusLabel = new ToolStripStatusLabel();
+            summaryTextBox = new RichTextBox();
             usageStatusStrip.SuspendLayout();
             SuspendLayout();
             // 
-            // summaryTextBox
+            // chatTextBox
             // 
-            summaryTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            summaryTextBox.Location = new Point(12, 13);
-            summaryTextBox.Name = "summaryTextBox";
-            summaryTextBox.ReadOnly = true;
-            summaryTextBox.Size = new Size(448, 588);
-            summaryTextBox.TabIndex = 0;
-            summaryTextBox.Text = "";
-            // 
-            // refreshTimer
-            // 
-            refreshTimer.Interval = 5000;
-            refreshTimer.Tick += refreshTimer_Tick;
+            chatTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            chatTextBox.Location = new Point(12, 13);
+            chatTextBox.Name = "chatTextBox";
+            chatTextBox.ReadOnly = true;
+            chatTextBox.Size = new Size(448, 455);
+            chatTextBox.TabIndex = 0;
+            chatTextBox.Text = "";
             // 
             // usageStatusStrip
             // 
@@ -66,13 +60,24 @@
             usageStatusLabel.Size = new Size(180, 17);
             usageStatusLabel.Text = "Usage: 0 = 0 + 0, Latest: 0 = 0 + 0";
             // 
+            // summaryTextBox
+            // 
+            summaryTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            summaryTextBox.Location = new Point(12, 474);
+            summaryTextBox.Name = "summaryTextBox";
+            summaryTextBox.ReadOnly = true;
+            summaryTextBox.Size = new Size(448, 126);
+            summaryTextBox.TabIndex = 2;
+            summaryTextBox.Text = "";
+            // 
             // RobotAgentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(472, 636);
-            Controls.Add(usageStatusStrip);
             Controls.Add(summaryTextBox);
+            Controls.Add(usageStatusStrip);
+            Controls.Add(chatTextBox);
             Name = "RobotAgentForm";
             Text = "RobotAgentForm";
             usageStatusStrip.ResumeLayout(false);
@@ -83,9 +88,9 @@
 
         #endregion
 
-        private RichTextBox summaryTextBox;
-        private System.Windows.Forms.Timer refreshTimer;
+        private RichTextBox chatTextBox;
         private StatusStrip usageStatusStrip;
         private ToolStripStatusLabel usageStatusLabel;
+        private RichTextBox summaryTextBox;
     }
 }

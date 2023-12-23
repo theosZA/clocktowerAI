@@ -18,14 +18,15 @@ namespace Clocktower.Agent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, ITokenCounter tokenCounter)
+        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onCharacterChange, IChatLogger chatLogger, ITokenCounter tokenCounter)
         {
             PlayerName = playerName;
             
-            clocktowerChatAi = new(playerName, playersNames, script, new FileChatLogger($"{playerName}-{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}.log"), tokenCounter);
+            clocktowerChatAi = new(playerName, playersNames, script, chatLogger, tokenCounter);
             chatAiObserver = new(clocktowerChatAi);
 
             this.onStart = onStart;
+            this.onCharacterChange = onCharacterChange;
         }
 
         public void AssignCharacter(Character character, Alignment alignment)
@@ -33,6 +34,8 @@ namespace Clocktower.Agent
             Character = character;
 
             clocktowerChatAi.AddFormattedMessage("You are the %c. You are %a.", character, alignment);
+
+            onCharacterChange();
         }
 
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -49,6 +52,8 @@ namespace Clocktower.Agent
         {
             OriginalCharacter = Character;
             Character = character;
+            
+            onCharacterChange();
         }
 
         public async Task<string> GetDefence(Player nominator)
@@ -274,5 +279,6 @@ namespace Clocktower.Agent
         private readonly ClocktowerChatAi clocktowerChatAi;
         private readonly ChatAiObserver chatAiObserver;
         private readonly Action onStart;
+        private readonly Action onCharacterChange;
     }
 }

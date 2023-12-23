@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Clocktower.Observer
+namespace Clocktower
 {
     internal class ProxyCollection<T> : DispatchProxy where T : class
     {
@@ -16,7 +16,7 @@ namespace Clocktower.Observer
 
         protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
-            foreach (var item in items ?? Array.Empty<T>()) 
+            foreach (var item in items ?? Array.Empty<T>())
             {
                 targetMethod?.Invoke(item, args);
             }
