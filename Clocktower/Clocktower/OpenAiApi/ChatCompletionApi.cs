@@ -31,7 +31,7 @@ namespace Clocktower.OpenAiApi
         {
             return new ChatCompletionRequest
             {
-                Model = "gpt-3.5-turbo",
+                Model = "gpt-3.5-turbo-1106",
                 Messages = messages.Select(pair => BuildChatMessage(pair.role, pair.message)).ToList()
             };
         }
