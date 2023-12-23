@@ -2,7 +2,6 @@
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Storyteller;
-using System.Windows.Forms;
 
 namespace Clocktower.Events
 {

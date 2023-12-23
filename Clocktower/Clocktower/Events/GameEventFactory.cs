@@ -26,6 +26,7 @@ namespace Clocktower.Events
 
         public IEnumerable<IGameEvent> BuildDayEvents(int dayNumber)
         {
+            int playerCount = setup.PlayerCount;
             int alivePlayersLeft = grimoire.Players.Count(player => player.Alive);
 
             var nominations = new Nominations(storyteller, grimoire, observers, random);
@@ -41,11 +42,11 @@ namespace Clocktower.Events
                 yield return new SlayerShot(storyteller, grimoire, observers, random);
             }
 
-            for (int i = 0; i < HowManyPrivateChats(alivePlayersLeft); i++)
+            for (int i = 0; i < HowManyPrivateChats(dayNumber, playerCount, alivePlayersLeft); i++)
             {
                 yield return new PrivateChats(storyteller, grimoire, observers, random);
             }
-            if (HowManyPrivateChats(alivePlayersLeft) != 0)
+            if (HowManyPrivateChats(dayNumber, playerCount, alivePlayersLeft) != 0)
             {
                 yield return new FishermanAdvice(storyteller, grimoire);
                 yield return new SlayerShot(storyteller, grimoire, observers, random);
@@ -103,18 +104,24 @@ namespace Clocktower.Events
             yield return new EndNight(grimoire);
         }
 
-        private static int HowManyPrivateChats(int alivePlayersCount)
+        private static int HowManyPrivateChats(int dayNumber, int playerCount, int alivePlayersLeft)
         {
-            return alivePlayersCount switch
+            if (alivePlayersLeft <= 4)
             {
-                <= 4 => 0,
-                <= 5 => 1,
+                return 0;
+            }
+
+            int firstDayPrivateChats = playerCount switch
+            {
                 <= 7 => 2,
                 <= 9 => 3,
                 <= 11 => 4,
                 <= 13 => 5,
                 _ => 6
             };
+            // Reduce the number of chats by 1 per day to a minimum of 1.
+            int currentDayPrivateChats = firstDayPrivateChats - (dayNumber - 1);
+            return currentDayPrivateChats < 1 ? 1 : currentDayPrivateChats;
         }
 
         private readonly IStoryteller storyteller;
