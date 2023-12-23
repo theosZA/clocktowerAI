@@ -5,6 +5,8 @@ namespace Clocktower.Events
 {
     internal class PublicStatements : IGameEvent
     {
+        public int StatementsCount { get; private set; } = 0;
+
         public PublicStatements(Grimoire grimoire, IGameObserver observers, Random random, bool morning)
         {
             this.grimoire = grimoire;
@@ -24,6 +26,7 @@ namespace Clocktower.Events
                 if (!string.IsNullOrEmpty(statement))
                 {
                     observers.PublicStatement(player, statement);
+                    StatementsCount++;
                 }
             }
         }

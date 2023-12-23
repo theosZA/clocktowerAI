@@ -30,6 +30,7 @@ namespace Clocktower.Events
             int alivePlayersLeft = grimoire.Players.Count(player => player.Alive);
 
             var nominations = new Nominations(storyteller, grimoire, observers, random);
+            var eveningPublicStatements = new PublicStatements(grimoire, observers, random, morning: false);
 
             yield return new StartDay(observers, dayNumber);
             yield return new AnnounceNightKills(grimoire, observers, dayNumber);
@@ -54,10 +55,10 @@ namespace Clocktower.Events
             }
 
             yield return new RollCall(grimoire, observers);
-            yield return new PublicStatements(grimoire, observers, random, morning: false);
-            yield return new FishermanAdvice(storyteller, grimoire);
-            yield return new SlayerShot(storyteller, grimoire, observers, random);
-            yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
+            yield return eveningPublicStatements;
+            yield return new ConditionalEvent(new FishermanAdvice(storyteller, grimoire), () => eveningPublicStatements.StatementsCount > 0);
+            yield return new ConditionalEvent(new SlayerShot(storyteller, grimoire, observers, random), () => eveningPublicStatements.StatementsCount > 0);
+            yield return new ConditionalEvent(new TinkerOption(storyteller, grimoire, observers, duringDay: true), () => eveningPublicStatements.StatementsCount > 0);
 
             yield return nominations;
             yield return new FishermanAdvice(storyteller, grimoire) { Nominations = nominations };
