@@ -74,14 +74,25 @@ namespace Clocktower.OpenAiApi
         public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
             // Note that the prompt should be specific on how to choose from the options available.
-            // The text should match the option name exactly (except for "pass").
 
             var choiceAsText = (await Request(prompt, objects)).Trim();
 
             if (string.IsNullOrEmpty(choiceAsText))
             {
-                var passOption = options.FirstOrDefault(option => option is PassOption) ?? throw new Exception($"{playerName} chose to pass but there is no Pass option");
-                return passOption;
+                return options.FirstOrDefault(option => option is PassOption) ?? await RetryRequestChoice(options);
+            }
+
+            return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
+        }
+
+        private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)
+        {
+            string prompt = "That is not a valid option. Please choice one of the following options: " + string.Join(", ", options.Select(option => option.Name));
+            var choiceAsText = (await Request(prompt)).Trim();
+
+            if (string.IsNullOrEmpty(choiceAsText))
+            {
+                return options.FirstOrDefault(option => option is PassOption) ?? throw new Exception($"{playerName} chose to pass but there is no Pass option");
             }
 
             return GetMatchingOption(options, choiceAsText) ?? throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
