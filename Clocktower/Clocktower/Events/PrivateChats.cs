@@ -53,47 +53,8 @@ namespace Clocktower.Events
                 observers.PrivateChatStarts(currentPlayer, target);
             }
 
-            // Start the chats.
-            Dictionary<(Player, Player), List<(Player, string)>> chatLogs = new();
-            foreach (var (playerA, playerB) in playersChatting)
-            {
-                playerA.Agent.StartPrivateChat(playerB);
-                playerB.Agent.StartPrivateChat(playerA);
-                chatLogs.Add((playerA, playerB), new List<(Player, string)>());
-            }
-
-            // Now run the chats in parallel. Each chat ends when both players have spoken 4 times, or when one player declines to say anything.
-            for (int i = 0; i < 8; i++)
-            {
-                var todaysChats = new List<(Player, Player)>(playersChatting);
-                foreach (var (playerA, playerB) in todaysChats)
-                {
-                    var speaker = (i % 2 == 0) ? playerA : playerB;
-                    var listener = (i % 2 == 0) ? playerB : playerA;
-                    var message = await speaker.Agent.GetPrivateChat(listener);
-                    if (string.IsNullOrEmpty(message))
-                    {
-                        if (i > 0)
-                        {
-                            playersChatting.Remove((playerA, playerB));
-                            playerA.Agent.EndPrivateChat(playerB);
-                            playerB.Agent.EndPrivateChat(playerA);
-                        }
-                    }
-                    else
-                    {
-                        listener.Agent.PrivateChatMessage(speaker, message);
-                        chatLogs[(playerA, playerB)].Add((speaker, message));
-                    }
-                }
-            }
-
-            // Stop any remaining chats.
-            foreach (var (playerA, playerB) in playersChatting)
-            {
-                playerA.Agent.EndPrivateChat(playerB);
-                playerB.Agent.EndPrivateChat(playerA);
-            }
+            // Now run the chats in parallel.
+            var chatLogs = await RunChats(playersChatting);
 
             // Provide the full chat logs for the Storyteller.
             foreach (var chat in chatLogs)
@@ -105,6 +66,52 @@ namespace Clocktower.Events
                     storyteller.PrivateChatMessage(speaker, listener, message);
                 }
             }
+        }
+
+        private static async Task<IDictionary<(Player playerA, Player playerB), IEnumerable<(Player speaker, string message)>>> RunChats(IReadOnlyCollection<(Player playerA, Player playerB)> chats)
+        {
+            var tasks = chats.Select(chat => RunChat(chat.playerA, chat.playerB));
+            var results = await Task.WhenAll(tasks);
+
+            var chatLogs = new Dictionary<(Player playerA, Player playerB), IEnumerable<(Player speaker, string message)>>();
+            for (int i = 0; i < results.Length; i++)
+            {
+                chatLogs.Add(chats.Skip(i).First(), results[i]);
+            }
+            return chatLogs;
+        }
+
+        private static async Task<IEnumerable<(Player speaker, string message)>> RunChat(Player playerA, Player playerB)
+        {
+            var chatLog = new List<(Player speaker, string message)>();
+
+            playerA.Agent.StartPrivateChat(playerB);
+            playerB.Agent.StartPrivateChat(playerA);
+            
+            // A maximum of 4 messages each, 8 in total.
+            for (int i = 0; i < 8; i++)
+            {
+                var speaker = (i % 2 == 0) ? playerA : playerB;
+                var listener = (i % 2 == 0) ? playerB : playerA;
+                var message = await speaker.Agent.GetPrivateChat(listener);
+                if (string.IsNullOrEmpty(message))
+                {
+                    if (i > 0)
+                    {   // End chat early if one player says nothing. (Exception for the very first message, to allow the second player a chance to say something.)
+                        break;
+                    }
+                }
+                else
+                {
+                    listener.Agent.PrivateChatMessage(speaker, message);
+                    chatLog.Add((speaker, message));
+                }
+            }
+
+            playerA.Agent.EndPrivateChat(playerB);
+            playerB.Agent.EndPrivateChat(playerA);
+
+            return chatLog;
         }
 
         private readonly IStoryteller storyteller;
