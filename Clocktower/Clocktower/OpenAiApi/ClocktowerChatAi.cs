@@ -1,62 +1,62 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
-using System.ComponentModel.Design;
 using System.Text;
 
 namespace Clocktower.OpenAiApi
 {
     /// <summary>
-    /// Keeps track of the progress of the game using all night info and summaries generated for each day,
-    /// plus everything that has happened in the current day.
+    /// For sending chat to and receiving responses from an Open AI Chat API within the context of a Clocktower game.
+    /// Allows you to send chat to the AI with AddMessage() or AddFormattedMessage(), and request chat responses with Request(), RequestDialogue() and RequestChoice().
     /// </summary>
     internal class ClocktowerChatAi
     {
-        public IEnumerable<(Role role, string message)> Messages => phases.SelectMany(phase => phase.Messages);
-
-        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, IChatLogger chatLogger, ITokenCounter tokenCounter)
+        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script, IChatLogger chatLogger, ITokenCounter tokenCounter)
         {
             this.playerName = playerName;
-            chatCompletionApi = new(tokenCounter);
-            this.chatLogger = chatLogger;
-
-            var phase = new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Setup, 0, chatLogger);
-            phase.AddSystemMessage(SystemMessage.GetSystemMessage(playerName, playersNames, script));
-
-            phases.Add(phase);
+            gameChat = new GameChat(playerName, playerNames, script, new ChatCompletionApi(tokenCounter), chatLogger);
         }
 
         public void Night(int nightNumber)
         {
-            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Night, nightNumber, chatLogger));
+            gameChat.NewPhase(Phase.Night, nightNumber);
         }
 
         public void Day(int dayNumber)
         {
-            phases.Add(new PhaseMessages(chatCompletionApi, OpenAiApi.Phase.Day, dayNumber, chatLogger));
+            gameChat.NewPhase(Phase.Day, dayNumber);
         }
 
         public void AddMessage(string message)
         {
-            Phase.Add(message);
+            gameChat.AddMessage(message);
         }
 
+        /// <summary>
+        /// Adds a message to the current chat with formatting using format specifier '%'.
+        /// </summary>
+        /// <param name="message">
+        /// Writes the given text to the chat, only substituting variables as 
+        /// %n: normal, %b: bold,
+        /// %p: formatted as a player, %P: formatted as a player list,
+        /// %c: formatted as a character, %C: formatted as a character list.
+        /// %a: formatted as an alignment
+        /// </param>
+        /// <param name="objects">
+        /// Objects to substitute into the output text. For %p the object must be a Player, for %P the object must be an IEnumerable<Player>, for %c the object must be a Character, and for %C the object must be an IEnumerable<Character>.
+        /// </param>
         public void AddFormattedMessage(string message, params object[] objects)
         {
-            var sb = new StringBuilder();
-            sb.AppendFormattedText(message, objects);
-            Phase.Add(sb.ToString());
+            gameChat.AddMessage(FormatText(message, objects));
         }
 
         public async Task<string> Request(string? prompt = null, params object[] objects)
         {
-            if (!string.IsNullOrEmpty(prompt))
+            if (string.IsNullOrEmpty(prompt))
             {
-                var sb = new StringBuilder();
-                sb.AppendFormattedText(prompt, objects);
-                prompt = sb.ToString();
+                return await gameChat.Request(prompt: null);
             }
 
-            return await Phase.Request(prompt, phases.SkipLast(1).ToList());
+            return await gameChat.Request(FormatText(prompt, objects));
         }
 
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
@@ -166,13 +166,14 @@ namespace Clocktower.OpenAiApi
                 && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private PhaseMessages Phase => phases.Last();
+        private static string FormatText(string text, params object[] objects)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText(text, objects);
+            return sb.ToString();
+        }
 
         private readonly string playerName;
-
-        private readonly ChatCompletionApi chatCompletionApi;
-        private readonly IChatLogger chatLogger;
-
-        private readonly List<PhaseMessages> phases = new();
+        private readonly GameChat gameChat;
     }
 }

@@ -8,9 +8,9 @@ namespace Clocktower
         /// <summary>
         /// Writes to the given StringBuilder with formatting using format specifier '%'.
         /// </summary>
-        /// <param name="box">The RichTextBox to write the text to.</param>
+        /// <param name="sb">The StringBulder to add the text to.</param>
         /// <param name="text">
-        /// Writes the given text to the output textbox, only substituting variables as 
+        /// Writes the given text to the StringBuilder, only substituting variables as 
         /// %n: normal, %b: bold,
         /// %p: formatted as a player, %P: formatted as a player list,
         /// %c: formatted as a character, %C: formatted as a character list.

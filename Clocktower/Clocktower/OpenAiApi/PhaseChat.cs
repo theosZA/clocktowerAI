@@ -2,16 +2,18 @@
 {
     /// <summary>
     /// All the messages that a player has seen or sent in a particular phase (day or night).
-    /// The messages for an entire day should be summarized once the day concludes.
+    /// The messages for an entire day will be summarized once the day concludes.
     /// </summary>
-    internal class PhaseMessages
+    internal class PhaseChat
     {
         public Phase Phase { get; private set; }
         public int DayNumber { get; private set; }
 
-        public IReadOnlyCollection<(Role role, string message)> Messages => messages;
+        public bool Summarized => summary != null;
+        public IReadOnlyCollection<(Role role, string message)> Messages => summary == null ? messages
+                                                                                            : new[] { (Role.Assistant, summary) };
 
-        public PhaseMessages(ChatCompletionApi chatCompletionApi, Phase phase, int dayNumber, IChatLogger chatLogger)
+        public PhaseChat(ChatCompletionApi chatCompletionApi, Phase phase, int dayNumber, IChatLogger chatLogger)
         {
             this.chatCompletionApi = chatCompletionApi;
             this.chatLogger = chatLogger;
@@ -27,15 +29,13 @@
             chatLogger.Log(Role.System, message);
         }
 
-        public void Add(string message)
+        public void AddUserMessage(string message)
         {
             Add(Role.User, message);
         }
 
-        public async Task<string> Request(string? prompt, IReadOnlyCollection<PhaseMessages> previousPhases)
+        public async Task<string> Request(string? prompt, IReadOnlyCollection<PhaseChat> previousPhases)
         {
-            await SummarizeIfNeeded(previousPhases);
-
             if (!string.IsNullOrEmpty(prompt))
             {
                 Add(Role.User, prompt);
@@ -49,9 +49,9 @@
         }
 
         /// <summary>
-        /// Replaces the current messages for this object with a summarized version.
+        /// Creates a summarized version of the chat for this phase.
         /// </summary>
-        public async Task Summarize(IEnumerable<PhaseMessages> previousPhases)
+        public async Task Summarize(IEnumerable<PhaseChat> previousPhases)
         {
             var messagesToSend = previousPhases.SelectMany(phase => phase.Messages)
                                                .Concat(messages)
@@ -62,29 +62,14 @@
                 summaryResponse = summaryResponse.Insert(0, $"{PhaseText}: ");
             }
             messages.Clear();
-            messages.Add((Role.Assistant, summaryResponse));
+            summary = summaryResponse;
             chatLogger.LogSummary(Phase, DayNumber, summaryResponse);
-            summarized = true;
         }
 
         private void Add(Role role, string message)
         {
             messages.Add((role, message));
             chatLogger.Log(role, message);
-        }
-
-        private static async Task SummarizeIfNeeded(IReadOnlyCollection<PhaseMessages> phases)
-        {
-            var previousPhases = new List<PhaseMessages>();
-            foreach (var phase in phases)
-            {
-                // Summarize day phases that haven't already been summarized.
-                if (phase.Phase == Phase.Day && !phase.summarized)
-                {
-                    await phase.Summarize(previousPhases);
-                }
-                previousPhases.Add(phase);
-            }
         }
 
         private string PhaseText => Phase switch
@@ -99,6 +84,6 @@
         private readonly IChatLogger chatLogger;
 
         private readonly List<(Role role, string message)> messages = new();
-        private bool summarized = false;
+        private string? summary;
     }
 }

@@ -14,8 +14,6 @@ namespace Clocktower.Agent
 
         public bool Alive { get; private set; } = true;
 
-        public IEnumerable<(Role role, string message)> Messages => clocktowerChatAi.Messages;
-
         public IGameObserver Observer => chatAiObserver;
 
         public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onCharacterChange, IChatLogger chatLogger, ITokenCounter tokenCounter)
