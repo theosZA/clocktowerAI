@@ -28,7 +28,9 @@ namespace Clocktower.Events
             {
                 var currentPlayer = playersToGetPriorityOption[0];
                 playersToGetPriorityOption.RemoveAt(0);
-                var target = await currentPlayer.Agent.OfferPrivateChatOptional(playersNotChattingYet.Except(new[] { currentPlayer }));
+                var candidates = playersNotChattingYet.Except(new[] { currentPlayer });
+                var target = playersNotChattingYet.Count == 2 ? candidates.FirstOrDefault()
+                                                              : await currentPlayer.Agent.OfferPrivateChatOptional(candidates);
                 if (target != null)
                 {
                     playersNotChattingYet.Remove(currentPlayer);
@@ -45,7 +47,8 @@ namespace Clocktower.Events
             {
                 var currentPlayer = playersNotChattingYet[0];
                 playersNotChattingYet.RemoveAt(0);
-                var target = await currentPlayer.Agent.OfferPrivateChatRequired(playersNotChattingYet);
+                var target = playersNotChattingYet.Count == 1 ? playersNotChattingYet[0]
+                                                              : await currentPlayer.Agent.OfferPrivateChatRequired(playersNotChattingYet);
                 playersNotChattingYet.Remove(target);
                 playersChatting.Add((currentPlayer, target));
                 observers.PrivateChatStarts(currentPlayer, target);
