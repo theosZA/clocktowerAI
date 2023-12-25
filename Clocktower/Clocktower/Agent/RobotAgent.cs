@@ -16,7 +16,7 @@ namespace Clocktower.Agent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onCharacterChange, IChatLogger chatLogger, ITokenCounter tokenCounter)
+        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange, IChatLogger chatLogger, ITokenCounter tokenCounter)
         {
             PlayerName = playerName;
             
@@ -24,7 +24,7 @@ namespace Clocktower.Agent
             chatAiObserver = new(clocktowerChatAi);
 
             this.onStart = onStart;
-            this.onCharacterChange = onCharacterChange;
+            this.onStatusChange = onStatusChange;
         }
 
         public void AssignCharacter(Character character, Alignment alignment)
@@ -33,7 +33,7 @@ namespace Clocktower.Agent
 
             clocktowerChatAi.AddFormattedMessage("You are the %c. You are %a.", character, alignment);
 
-            onCharacterChange();
+            onStatusChange();
         }
 
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -51,7 +51,7 @@ namespace Clocktower.Agent
             OriginalCharacter = Character;
             Character = character;
             
-            onCharacterChange();
+            onStatusChange();
         }
 
         public async Task<string> GetDefence(Player nominator)
@@ -272,11 +272,13 @@ namespace Clocktower.Agent
             Alive = false;
 
             clocktowerChatAi.AddFormattedMessage("You are dead and are now a ghost. You may only vote one more time.");
+
+            onStatusChange();
         }
 
         private readonly ClocktowerChatAi clocktowerChatAi;
         private readonly ChatAiObserver chatAiObserver;
         private readonly Action onStart;
-        private readonly Action onCharacterChange;
+        private readonly Action onStatusChange;
     }
 }

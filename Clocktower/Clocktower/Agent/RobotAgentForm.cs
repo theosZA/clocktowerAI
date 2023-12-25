@@ -21,7 +21,7 @@ namespace Clocktower.Agent
                 new FileChatLogger($"{playerName}-{DateTime.UtcNow:yyyyMMddTHHmmss}.log")
             };
 
-            robot = new(playerName, playerNames, script, onStart: Show, onCharacterChange: SetTitle, ProxyCollection<IChatLogger>.CreateProxy(chatLoggers), tokenCounter: this);
+            robot = new(playerName, playerNames, script, onStart: Show, onStatusChange: SetTitle, ProxyCollection<IChatLogger>.CreateProxy(chatLoggers), tokenCounter: this);
 
             SetTitle();
         }
