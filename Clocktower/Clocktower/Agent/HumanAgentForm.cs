@@ -27,8 +27,6 @@ namespace Clocktower.Agent
             Text = playerName;
 
             Observer = new RichTextBoxObserver(outputText);
-
-            // AutoAct = true; // for testing
         }
 
         public void StartGame()
