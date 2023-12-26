@@ -49,22 +49,13 @@ namespace Clocktower.OpenAiApi
             gameChat.AddMessage(FormatText(message, objects));
         }
 
-        public async Task<string> Request(string? prompt = null, params object[] objects)
-        {
-            if (string.IsNullOrEmpty(prompt))
-            {
-                return await gameChat.Request(prompt: null);
-            }
-
-            return await gameChat.Request(FormatText(prompt, objects));
-        }
-
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
         {
             var dialogue = CleanResponse(await Request(prompt, objects));
 
             if (dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase))
             {
+                gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
                 return string.Empty;
             }
 
@@ -82,7 +73,23 @@ namespace Clocktower.OpenAiApi
                 return options.FirstOrDefault(option => option is PassOption) ?? await RetryRequestChoice(options);
             }
 
-            return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
+            var choice = GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
+            if (choice is AlwaysPassOption || (choice is PassOption && !options.Any(option => option is VoteOption)))
+            {   // Trim passes from our chat log.
+                gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
+            }
+
+            return choice;
+        }
+
+        private async Task<string> Request(string? prompt = null, params object[] objects)
+        {
+            if (string.IsNullOrEmpty(prompt))
+            {
+                return await gameChat.Request(prompt: null);
+            }
+
+            return await gameChat.Request(FormatText(prompt, objects));
         }
 
         private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)

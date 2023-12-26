@@ -56,17 +56,17 @@ namespace Clocktower.Agent
 
         public async Task<string> GetDefence(Player nominator)
         {
-            return await clocktowerChatAi.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Say PASS to say nothing.)", nominator);
+            return await clocktowerChatAi.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with PASS if you don't wish to say anything.)", nominator);
         }
 
         public async Task<string> GetEveningPublicStatement()
         {
-            return await clocktowerChatAi.RequestDialogue("Before nominations are opened, do you wish to say anything publicly? (Say PASS to say nothing.)");
+            return await clocktowerChatAi.RequestDialogue("Before nominations are opened, do you wish to say anything publicly? (Respond with PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            return await clocktowerChatAi.RequestDialogue("Before the group breaks off for private conversations, do you wish to say anything publicly? (Say PASS to say nothing.)");
+            return await clocktowerChatAi.RequestDialogue("Before the group breaks off for private conversations, do you wish to say anything publicly? (Respond with PASS if you don't wish to say anything.)");
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
@@ -83,12 +83,12 @@ namespace Clocktower.Agent
 
         public async Task<string> GetProsecution(Player nominee)
         {
-            return await clocktowerChatAi.RequestDialogue("You have nominated %p. Present the case to have them executed. (Say PASS to say nothing.)", nominee);
+            return await clocktowerChatAi.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with PASS if you don't wish to say anything.)", nominee);
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
-            return await clocktowerChatAi.RequestDialogue("You have nominated yourself. You may present your reason now. (Say PASS to say nothing.)");
+            return await clocktowerChatAi.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetRollCallStatement()

@@ -35,6 +35,16 @@ namespace Clocktower.OpenAiApi
             return await CurrentPhase.Request(prompt, phases.SkipLast(1).ToList());
         }
 
+        /// <summary>
+        /// Removes the last few messages from the list of messages. Useful when you don't want unneeded messages cluttering up the chat log.
+        /// Only applies to the current phase.
+        /// </summary>
+        /// <param name="messageCount">The number of messages to remove.</param>
+        public void Trim(int messageCount)
+        {
+            CurrentPhase.Trim(messageCount);
+        }
+
         private async Task SummarizeIfNeeded()
         {
             // Check all phase chats except the current one.

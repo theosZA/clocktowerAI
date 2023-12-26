@@ -49,19 +49,27 @@
         }
 
         /// <summary>
+        /// Removes the last few messages from the list of messages. Useful when you don't want unneeded messages cluttering up the chat log.
+        /// </summary>
+        /// <param name="messageCount">The number of messages to remove.</param>
+        public void Trim(int messageCount)
+        {
+            messages.RemoveRange(messages.Count - messageCount, messageCount);
+        }
+
+        /// <summary>
         /// Creates a summarized version of the chat for this phase.
         /// </summary>
         public async Task Summarize(IEnumerable<PhaseChat> previousPhases)
         {
             var messagesToSend = previousPhases.SelectMany(phase => phase.Messages)
                                                .Concat(messages)
-                                               .Append((Role.User, $"Provide a detailed summary of what happened and what you learned in {PhaseText.ToLowerInvariant()}."));
+                                               .Append((Role.User, $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {PhaseText.ToLowerInvariant()}. There's no need to provide any concluding remarks - just the detailed points are enough."));
             var summaryResponse = await chatCompletionApi.RequestChatCompletion(messagesToSend);
             if (!summaryResponse.StartsWith(PhaseText))
             {
                 summaryResponse = summaryResponse.Insert(0, $"{PhaseText}: ");
             }
-            messages.Clear();
             summary = summaryResponse;
             chatLogger.LogSummary(Phase, DayNumber, summaryResponse);
         }
