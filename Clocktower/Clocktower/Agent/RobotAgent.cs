@@ -61,12 +61,12 @@ namespace Clocktower.Agent
 
         public async Task<string> GetEveningPublicStatement()
         {
-            return await clocktowerChatAi.RequestDialogue("Before nominations are opened, do you wish to say anything publicly? (Respond with PASS if you don't wish to say anything.)");
+            return await clocktowerChatAi.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            return await clocktowerChatAi.RequestDialogue("Before the group breaks off for private conversations, do you wish to say anything publicly? (Respond with PASS if you don't wish to say anything.)");
+            return await clocktowerChatAi.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with PASS if you don't wish to say anything.)");
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
