@@ -48,9 +48,14 @@ namespace Clocktower.Options
             yield return threeCharactersOption.CharacterC;
         }
 
-        public static Player? GetSlayerTargetOptional(this IOption option)
+        public static (Player? target, bool alwaysPass) GetSlayerTargetOptional(this IOption option)
         {
-            return option is SlayerShotOption slayerShotOption ? slayerShotOption.Target : null;
+            return option switch
+            {
+                SlayerShotOption slayerShotOption => (slayerShotOption.Target, false),
+                AlwaysPassOption _ => (null, true),
+                _ => (null, false)
+            };
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Clocktower.Events
 
         private static bool CanPlayerClaimSlayer(Player player)
         {
-            return player.Alive && !player.Tokens.Contains(Token.AlreadyClaimedSlayer);
+            return player.Alive && !player.Tokens.Contains(Token.AlreadyClaimedSlayer) && !player.Tokens.Contains(Token.NeverBluffingSlayer);
         }
 
         private async Task ShootTarget(Player purportedSlayer, Player target)
@@ -78,7 +78,12 @@ namespace Clocktower.Events
             // While a Slayer can theoretically target any player, there is no benefit to targeting themselves or any dead player,
             // so they are excluded as possible targets.
             var targets = grimoire.Players.Where(player => player.Alive && player != purportedSlayer);
-            return await purportedSlayer.Agent.PromptSlayerShot(targets, purportedSlayer.Character != Character.Slayer);
+            (Player? target, bool alwaysPass) = await purportedSlayer.Agent.PromptSlayerShot(targets, purportedSlayer.Character != Character.Slayer);
+            if (alwaysPass)
+            {
+                purportedSlayer.Tokens.Add(Token.NeverBluffingSlayer);
+            }
+            return target;
         }
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)

@@ -1,6 +1,4 @@
-﻿using Clocktower.Game;
-
-namespace Clocktower.Options
+﻿namespace Clocktower.Options
 {
     internal class PassOption : IOption
     {

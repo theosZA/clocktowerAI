@@ -45,9 +45,15 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromRavenkeeper(players.ToOptions())).GetPlayer();
         }
 
-        public static async Task<Player?> PromptSlayerShot(this IAgent agent, IEnumerable<Player> players, bool bluff)
+        public static async Task<(Player? target, bool alwaysPass)> PromptSlayerShot(this IAgent agent, IEnumerable<Player> players, bool bluff)
         {
-            return (await agent.PromptSlayerShot(players.ToSlayerShotOptions(bluff).Prepend(new PassOption()).ToList())).GetSlayerTargetOptional();
+            var options = players.ToSlayerShotOptions(bluff).ToList();
+            options.Insert(0, new PassOption());
+            if (bluff)
+            {
+                options.Insert(0, new AlwaysPassOption());
+            }
+            return (await agent.PromptSlayerShot(options)).GetSlayerTargetOptional();
         }
 
         public static async Task<bool> PromptFishermanAdvice(this IAgent agent)
