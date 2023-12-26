@@ -64,7 +64,9 @@
         {
             var messagesToSend = previousPhases.SelectMany(phase => phase.Messages)
                                                .Concat(messages)
-                                               .Append((Role.User, $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {PhaseText.ToLowerInvariant()}. There's no need to provide any concluding remarks - just the detailed points are enough."));
+                                               .Append((Role.User, $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {PhaseText.ToLowerInvariant()}. " +
+                                                                    "There should be a point for each private chat that you had; a point for the discussion around each nomination; " +
+                                                                    "as well as points for any general public discussion or abilities publicly used. There's no need to provide any concluding remarks - just the detailed points are enough."));
             var summaryResponse = await chatCompletionApi.RequestChatCompletion(messagesToSend);
             if (!summaryResponse.StartsWith(PhaseText))
             {
