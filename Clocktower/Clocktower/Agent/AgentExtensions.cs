@@ -66,9 +66,9 @@ namespace Clocktower.Agent
             return (await agent.GetNomination(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
         }
 
-        public static async Task<bool> GetVote(this IAgent agent, Player nominee)
+        public static async Task<bool> GetVote(this IAgent agent, Player nominee, bool ghostVote)
         {
-            return await agent.GetVote(nominee.ToVoteOptions()) is VoteOption;
+            return await agent.GetVote(nominee.ToVoteOptions(), ghostVote) is VoteOption;
         }
 
         public static async Task<Player?> OfferPrivateChatOptional(this IAgent agent, IEnumerable<Player> players)

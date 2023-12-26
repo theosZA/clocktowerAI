@@ -96,10 +96,11 @@ namespace Clocktower.Agent
             return await clocktowerChatAi.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - say PASS to say nothing.)");
         }
 
-        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
             var voteOption = (VoteOption)(options.First(option => option is VoteOption));
-            return await clocktowerChatAi.RequestChoice(options, "If you wish, you may vote for executing %p. Say EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee);
+            return await clocktowerChatAi.RequestChoice(options, "If you wish, you may vote for executing %p. %nSay EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
+                                                        ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.)" : string.Empty);
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)

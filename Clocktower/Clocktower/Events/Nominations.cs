@@ -118,7 +118,7 @@ namespace Clocktower.Events
             {
                 if (player.Alive || player.HasGhostVote)
                 {
-                    bool votedToExecute = await player.Agent.GetVote(nominee);
+                    bool votedToExecute = await player.Agent.GetVote(nominee, ghostVote: !player.Alive);
                     observers.AnnounceVote(player, nominee, votedToExecute);
                     if (votedToExecute)
                     {

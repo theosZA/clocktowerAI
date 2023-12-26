@@ -223,10 +223,15 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
-        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
             var voteOption = (VoteOption)(options.First(option => option is VoteOption));
-            outputText.AppendFormattedText("If you wish, you may vote for executing %p or pass...\n", voteOption.Nominee);
+            outputText.AppendFormattedText("If you wish, you may vote for executing %p or pass.", voteOption.Nominee);
+            if (ghostVote)
+            {
+                outputText.AppendText(" (Note that because you are dead, you only have one vote remaining for the rest of the game.)");
+            }
+            outputText.AppendText("\n");
             return await PopulateOptions(options);
         }
 
