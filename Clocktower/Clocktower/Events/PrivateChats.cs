@@ -41,11 +41,10 @@ namespace Clocktower.Events
             }
 
             // Regular chats: Make everyone who isn't chatting yet, in random order, choose someone to talk to.
-            playersNotChattingYet.Shuffle(random);
             while (playersNotChattingYet.Count > 1)
             {
-                var currentPlayer = playersNotChattingYet[0];
-                playersNotChattingYet.RemoveAt(0);
+                var currentPlayer = playersNotChattingYet.RandomPick(random);
+                playersNotChattingYet.Remove(currentPlayer);
                 var target = playersNotChattingYet.Count == 1 ? playersNotChattingYet[0]
                                                               : await currentPlayer.Agent.OfferPrivateChatRequired(playersNotChattingYet);
                 playersNotChattingYet.Remove(target);
