@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Clocktower.OpenAiApi.Model
+namespace OpenAi.ChatCompletionApi.Model
 {
-    public class ChatChoice
+    internal class ChatChoice
     {
         /// <summary>
         /// The reason the model stopped generating tokens. This will be stop if the model hit a natural stop point or a provided stop sequence,

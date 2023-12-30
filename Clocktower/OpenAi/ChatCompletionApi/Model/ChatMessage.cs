@@ -1,6 +1,6 @@
-﻿namespace Clocktower.OpenAiApi.Model
+﻿namespace OpenAi.ChatCompletionApi.Model
 {
-    public class ChatMessage
+    internal class ChatMessage
     {
         public string Role { get; set; } = "user";
 

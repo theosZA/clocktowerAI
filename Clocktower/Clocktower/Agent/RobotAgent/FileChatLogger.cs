@@ -1,4 +1,6 @@
-﻿namespace Clocktower.OpenAiApi
+﻿using OpenAi;
+
+namespace Clocktower.Agent.RobotAgent
 {
     public class FileChatLogger : IChatLogger
     {
@@ -7,15 +9,15 @@
             streamWriter = new StreamWriter(fileName);
         }
 
-        public void Log(Role role, string message)
+        public void Log(string subChatName, Role role, string message)
         {
             streamWriter.WriteLine($"[{role}] {message}");
             streamWriter.Flush();
         }
 
-        public void LogSummary(Phase phase, int dayNumber, string summary)
+        public void LogSummary(string subChatName, string summary)
         {
-            streamWriter.WriteLine($"[Summary of {phase} {dayNumber}] {summary}");
+            streamWriter.WriteLine($"[Summary of {subChatName}] {summary}");
             streamWriter.Flush();
         }
 

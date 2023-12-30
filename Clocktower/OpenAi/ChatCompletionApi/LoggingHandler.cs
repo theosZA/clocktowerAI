@@ -1,6 +1,6 @@
-﻿namespace Clocktower.OpenAiApi
+﻿namespace OpenAi.ChatCompletionApi
 {
-    public class LoggingHandler : DelegatingHandler
+    internal class LoggingHandler : DelegatingHandler
     {
         public LoggingHandler(TextWriter stream, HttpMessageHandler innerHandler)
         : base(innerHandler)

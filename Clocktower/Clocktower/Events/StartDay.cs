@@ -10,11 +10,9 @@ namespace Clocktower.Events
             this.dayNumber = dayNumber;
         }
 
-        public Task RunEvent()
+        public async Task RunEvent()
         {
-            observers.Day(dayNumber);
-
-            return Task.CompletedTask;
+            await observers.Day(dayNumber);
         }
 
         private readonly IGameObserver observers;

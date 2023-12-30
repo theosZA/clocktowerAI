@@ -1,9 +1,9 @@
 ﻿using Clocktower.Game;
 using Clocktower.Observer;
-using Clocktower.OpenAiApi;
 using Clocktower.Options;
+using OpenAi;
 
-namespace Clocktower.Agent
+namespace Clocktower.Agent.RobotAgent
 {
     internal class RobotAgent : IAgent
     {
@@ -16,10 +16,10 @@ namespace Clocktower.Agent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange, IChatLogger chatLogger, ITokenCounter tokenCounter)
+        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange, IChatLogger? chatLogger, ITokenCounter? tokenCounter)
         {
             PlayerName = playerName;
-            
+
             clocktowerChatAi = new(playerName, playersNames, script, chatLogger, tokenCounter);
             chatAiObserver = new(clocktowerChatAi);
 
@@ -50,7 +50,7 @@ namespace Clocktower.Agent
         {
             OriginalCharacter = Character;
             Character = character;
-            
+
             onStatusChange();
         }
 
@@ -98,7 +98,7 @@ namespace Clocktower.Agent
 
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
-            var voteOption = (VoteOption)(options.First(option => option is VoteOption));
+            var voteOption = (VoteOption)options.First(option => option is VoteOption);
             return await clocktowerChatAi.RequestChoice(options, "If you wish, you may vote for executing %p. %nSay EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
                                                         ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.)" : string.Empty);
         }

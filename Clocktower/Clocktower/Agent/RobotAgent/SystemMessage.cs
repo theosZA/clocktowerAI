@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Text;
 
-namespace Clocktower.OpenAiApi
+namespace Clocktower.Agent.RobotAgent
 {
     internal static class SystemMessage
     {

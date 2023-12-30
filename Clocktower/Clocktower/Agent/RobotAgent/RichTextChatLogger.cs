@@ -1,4 +1,6 @@
-﻿namespace Clocktower.OpenAiApi
+﻿using OpenAi;
+
+namespace Clocktower.Agent.RobotAgent
 {
     public class RichTextChatLogger : IChatLogger
     {
@@ -8,7 +10,7 @@
             this.summaryTextBox = summaryTextBox;
         }
 
-        public void Log(Role role, string message)
+        public void Log(string subChatName, Role role, string message)
         {
             string messageToDisplay = message.Trim() + "\n";
 
@@ -28,9 +30,9 @@
             }
         }
 
-        public void LogSummary(Phase phase, int dayNumber, string summary)
+        public void LogSummary(string subChatName, string summary)
         {
-            summaryTextBox.AppendBoldText($"{phase} {dayNumber}\n");
+            summaryTextBox.AppendBoldText(subChatName + "\n");
             summaryTextBox.AppendText(summary.Trim() + "\n\n");
         }
 

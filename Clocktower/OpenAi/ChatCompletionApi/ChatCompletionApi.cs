@@ -1,11 +1,11 @@
-﻿using Clocktower.OpenAiApi.Model;
+﻿using OpenAi.ChatCompletionApi.Model;
 using Polly;
 using Polly.Retry;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Clocktower.OpenAiApi
+namespace OpenAi.ChatCompletionApi
 {
     internal class ChatCompletionApi
     {
@@ -14,18 +14,18 @@ namespace Clocktower.OpenAiApi
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("OPENAI_APIKEY", EnvironmentVariableTarget.User));
         }
 
-        public ChatCompletionApi(ITokenCounter tokenCounter)
+        public ChatCompletionApi(string model)
         {
-            this.tokenCounter = tokenCounter;
+            this.model = model;
         }
 
-        public async Task<string> RequestChatCompletion(IEnumerable<(Role role, string message)> messages)
+        public async Task<string> RequestChatCompletion(IEnumerable<(Role role, string message)> messages, ITokenCounter? tokenCounter)
         {
             var request = BuildChatCompletionRequest(messages);
             using var response = await RequestChatCompletion(request);
             var chatResponse = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>() ?? throw new Exception("No chat completion received from Open API");
             var usage = chatResponse.Usage;
-            tokenCounter.NewTokenUsage(usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens);
+            tokenCounter?.NewTokenUsage(usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens);
             return chatResponse.Choices.First().Message.Content;
         }
 
@@ -48,11 +48,11 @@ namespace Clocktower.OpenAiApi
             });
         }
 
-        private static ChatCompletionRequest BuildChatCompletionRequest(IEnumerable<(Role role, string message)> messages)
+        private ChatCompletionRequest BuildChatCompletionRequest(IEnumerable<(Role role, string message)> messages)
         {
             return new ChatCompletionRequest
             {
-                Model = "gpt-3.5-turbo-1106",
+                Model = model,
                 Messages = messages.Select(pair => BuildChatMessage(pair.role, pair.message)).ToList()
             };
         }
@@ -66,7 +66,7 @@ namespace Clocktower.OpenAiApi
             };
         }
 
-        private readonly ITokenCounter tokenCounter;
+        private readonly string model;
 
         private static readonly HttpClient httpClient = new(new LoggingHandler(new StreamWriter($"ChatCompletions-{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}.log"), new HttpClientHandler()))
         {

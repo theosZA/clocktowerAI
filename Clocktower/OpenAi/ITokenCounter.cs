@@ -1,6 +1,6 @@
-﻿namespace Clocktower.OpenAiApi
+﻿namespace OpenAi
 {
-    internal interface ITokenCounter
+    public interface ITokenCounter
     {
         void NewTokenUsage(int promptTokens, int completionTokens, int totalTokens);
     }

@@ -1,4 +1,4 @@
-﻿namespace Clocktower.OpenAiApi
+﻿namespace Clocktower.Agent.RobotAgent
 {
     public enum Phase
     {

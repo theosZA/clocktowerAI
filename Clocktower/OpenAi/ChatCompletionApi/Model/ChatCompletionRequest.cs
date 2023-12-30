@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Clocktower.OpenAiApi.Model
+namespace OpenAi.ChatCompletionApi.Model
 {
-    public class ChatCompletionRequest
+    internal class ChatCompletionRequest
     {
         /// <summary>
         /// ID of the model to use. See the model endpoint compatibility table (https://platform.openai.com/docs/models/model-endpoint-compatibility)

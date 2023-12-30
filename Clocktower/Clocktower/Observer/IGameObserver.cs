@@ -9,8 +9,8 @@ namespace Clocktower.Observer
     {
         void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers);
 
-        void Night(int nightNumber);
-        void Day(int dayNumber);
+        Task Night(int nightNumber);
+        Task Day(int dayNumber);
 
         void NoOneDiedAtNight();
         void PlayerDiedAtNight(Player newlyDeadPlayer);

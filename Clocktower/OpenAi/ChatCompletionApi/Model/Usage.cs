@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Clocktower.OpenAiApi.Model
+namespace OpenAi.ChatCompletionApi.Model
 {
-    public class Usage
+    internal class Usage
     {
         /// <summary>
         /// Number of tokens in the generated completion.

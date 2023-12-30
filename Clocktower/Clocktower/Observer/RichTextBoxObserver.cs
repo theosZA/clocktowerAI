@@ -28,14 +28,16 @@ namespace Clocktower.Observer
             }
         }
 
-        public void Night(int nightNumber)
+        public Task Night(int nightNumber)
         {
             outputText.AppendBoldText($"\nNight {nightNumber}\n\n");
+            return Task.CompletedTask;
         }
 
-        public void Day(int dayNumber)
+        public Task Day(int dayNumber)
         {
             outputText.AppendBoldText($"\nDay {dayNumber}\n\n");
+            return Task.CompletedTask;
         }
 
         public void NoOneDiedAtNight()

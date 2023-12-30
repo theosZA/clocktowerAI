@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Clocktower.OpenAiApi.Model
+namespace OpenAi.ChatCompletionApi.Model
 {
-    public class ChatCompletionResponse
+    internal class ChatCompletionResponse
     {
         /// <summary>
         /// A unique identifier for the chat completion.

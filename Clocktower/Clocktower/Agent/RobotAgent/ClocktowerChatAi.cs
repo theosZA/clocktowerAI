@@ -1,8 +1,9 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
+using OpenAi;
 using System.Text;
 
-namespace Clocktower.OpenAiApi
+namespace Clocktower.Agent.RobotAgent
 {
     /// <summary>
     /// For sending chat to and receiving responses from an Open AI Chat API within the context of a Clocktower game.
@@ -10,20 +11,20 @@ namespace Clocktower.OpenAiApi
     /// </summary>
     internal class ClocktowerChatAi
     {
-        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script, IChatLogger chatLogger, ITokenCounter tokenCounter)
+        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script, IChatLogger? chatLogger, ITokenCounter? tokenCounter)
         {
             this.playerName = playerName;
-            gameChat = new GameChat(playerName, playerNames, script, new ChatCompletionApi(tokenCounter), chatLogger);
+            gameChat = new GameChat(playerName, playerNames, script, chatLogger, tokenCounter);
         }
 
-        public void Night(int nightNumber)
+        public async Task Night(int nightNumber)
         {
-            gameChat.NewPhase(Phase.Night, nightNumber);
+            await gameChat.NewPhase(Phase.Night, nightNumber);
         }
 
-        public void Day(int dayNumber)
+        public async Task Day(int dayNumber)
         {
-            gameChat.NewPhase(Phase.Day, dayNumber);
+            await gameChat.NewPhase(Phase.Day, dayNumber);
         }
 
         public void AddMessage(string message)
@@ -74,7 +75,7 @@ namespace Clocktower.OpenAiApi
             }
 
             var choice = GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
-            if (choice is AlwaysPassOption || (choice is PassOption && !options.Any(option => option is VoteOption)))
+            if (choice is AlwaysPassOption || choice is PassOption && !options.Any(option => option is VoteOption))
             {   // Trim passes from our chat log.
                 gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
             }

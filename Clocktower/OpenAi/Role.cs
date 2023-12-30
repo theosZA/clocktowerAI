@@ -1,4 +1,4 @@
-﻿namespace Clocktower.OpenAiApi
+﻿namespace OpenAi
 {
     public enum Role
     {

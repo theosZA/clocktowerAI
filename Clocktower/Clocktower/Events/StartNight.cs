@@ -12,9 +12,9 @@ namespace Clocktower.Events
             this.nightNumber = nightNumber;
         }
 
-        public Task RunEvent()
+        public async Task RunEvent()
         {
-            observers.Night(nightNumber);
+            await observers.Night(nightNumber);
 
             // Clear expired tokens.
             foreach (var player in grimoire.Players)
@@ -23,8 +23,6 @@ namespace Clocktower.Events
                 player.Tokens.Remove(Token.ProtectedByMonk);
                 player.Tokens.Remove(Token.AlreadyClaimedSlayer);   // We allow players to claim Slayer once each day to allow for Philosopher into Slayer.
             }
-
-            return Task.CompletedTask;
         }
 
         private readonly Grimoire grimoire;

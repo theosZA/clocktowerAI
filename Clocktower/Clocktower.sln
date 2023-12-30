@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clocktower", "Clocktower\Clocktower.csproj", "{484BF1E1-0224-46D6-8B17-CC5C7744797C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clocktower", "Clocktower\Clocktower.csproj", "{484BF1E1-0224-46D6-8B17-CC5C7744797C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAi", "OpenAi\OpenAi.csproj", "{81662BBF-95E9-4D8C-9A94-06CB6D6CC07A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{484BF1E1-0224-46D6-8B17-CC5C7744797C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{484BF1E1-0224-46D6-8B17-CC5C7744797C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{484BF1E1-0224-46D6-8B17-CC5C7744797C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81662BBF-95E9-4D8C-9A94-06CB6D6CC07A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81662BBF-95E9-4D8C-9A94-06CB6D6CC07A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81662BBF-95E9-4D8C-9A94-06CB6D6CC07A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81662BBF-95E9-4D8C-9A94-06CB6D6CC07A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

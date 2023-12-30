@@ -1,6 +1,7 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.RobotAgent;
+using Clocktower.Game;
 using Clocktower.Observer;
-using Clocktower.OpenAiApi;
+using OpenAi;
 
 namespace Clocktower.Agent
 {
@@ -53,7 +54,7 @@ namespace Clocktower.Agent
             }
         }
 
-        private readonly RobotAgent robot;
+        private readonly RobotAgent.RobotAgent robot;
 
         private int promptTokens;
         private int completionTokens;

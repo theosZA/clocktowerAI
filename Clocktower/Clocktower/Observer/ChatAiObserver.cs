@@ -1,5 +1,5 @@
-﻿using Clocktower.Game;
-using Clocktower.OpenAiApi;
+﻿using Clocktower.Agent.RobotAgent;
+using Clocktower.Game;
 using System.Text;
 
 namespace Clocktower.Observer
@@ -23,14 +23,14 @@ namespace Clocktower.Observer
             }
         }
 
-        public void Night(int nightNumber)
+        public async Task Night(int nightNumber)
         {
-            clocktowerChat.Night(nightNumber);
+            await clocktowerChat.Night(nightNumber);
         }
 
-        public void Day(int dayNumber)
+        public async Task Day(int dayNumber)
         {
-            clocktowerChat.Day(dayNumber);
+            await clocktowerChat.Day(dayNumber);
         }
 
         public void NoOneDiedAtNight()

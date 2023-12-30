@@ -1,5 +1,4 @@
 using Clocktower.Game;
-using Clocktower.OpenAiApi;
 using System.Diagnostics;
 
 namespace Clocktower
