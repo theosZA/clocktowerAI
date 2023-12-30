@@ -50,6 +50,16 @@ namespace Clocktower.Agent.RobotAgent
             gameChat.AddMessage(FormatText(message, objects));
         }
 
+        public async Task<string> Request(string? prompt = null, params object[] objects)
+        {
+            if (string.IsNullOrEmpty(prompt))
+            {
+                return await gameChat.Request(prompt: null);
+            }
+
+            return await gameChat.Request(FormatText(prompt, objects));
+        }
+
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
         {
             var dialogue = CleanResponse(await Request(prompt, objects));
@@ -81,16 +91,6 @@ namespace Clocktower.Agent.RobotAgent
             }
 
             return choice;
-        }
-
-        private async Task<string> Request(string? prompt = null, params object[] objects)
-        {
-            if (string.IsNullOrEmpty(prompt))
-            {
-                return await gameChat.Request(prompt: null);
-            }
-
-            return await gameChat.Request(FormatText(prompt, objects));
         }
 
         private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)

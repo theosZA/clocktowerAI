@@ -35,6 +35,6 @@ namespace Clocktower
             }
         }
 
-        private Random random = new();
+        private readonly Random random = new();
     }
 }

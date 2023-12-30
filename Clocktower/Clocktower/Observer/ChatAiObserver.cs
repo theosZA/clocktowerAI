@@ -6,13 +6,15 @@ namespace Clocktower.Observer
 {
     internal class ChatAiObserver : IGameObserver
     {
-        public ChatAiObserver(ClocktowerChatAi clocktowerChat)
+        public ChatAiObserver(ClocktowerChatAi clocktowerChat, RobotAgent robotAgent)
         {
             this.clocktowerChat = clocktowerChat;
+            this.robotAgent = robotAgent;
         }
 
         public void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
         {
+            const bool forceStorytellerView = true;
             if (winner == Alignment.Good)
             {
                 clocktowerChat.AddFormattedMessage("\nThe GOOD team has won!\nWinning with the good team are: %P.\nLosing with the evil team are: %P.", winners, losers, forceStorytellerView);
@@ -30,6 +32,11 @@ namespace Clocktower.Observer
 
         public async Task Day(int dayNumber)
         {
+            if (dayNumber == 1)
+            {
+                await robotAgent.PromptForBluff();
+            }
+
             await clocktowerChat.Day(dayNumber);
         }
 
@@ -148,7 +155,6 @@ namespace Clocktower.Observer
         }
 
         private readonly ClocktowerChatAi clocktowerChat;
-
-        private const bool forceStorytellerView = true;
+        private readonly RobotAgent robotAgent;
     }
 }
