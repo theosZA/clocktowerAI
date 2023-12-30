@@ -40,6 +40,11 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
+        public void LivingPlayerCount(int numberOfLivingPlayers)
+        {
+            outputText.AppendText($"There are {numberOfLivingPlayers} players still alive.\n");
+        }
+
         public void NoOneDiedAtNight()
         {
             outputText.AppendText("No one died in the night.\n");

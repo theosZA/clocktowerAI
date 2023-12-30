@@ -40,6 +40,11 @@ namespace Clocktower.Observer
             await clocktowerChat.Day(dayNumber);
         }
 
+        public void LivingPlayerCount(int numberOfLivingPlayers)
+        {
+            clocktowerChat.AddMessage($"There are {numberOfLivingPlayers} players still alive.");
+        }
+
         public void NoOneDiedAtNight()
         {
             clocktowerChat.AddMessage("No one died in the night.");
