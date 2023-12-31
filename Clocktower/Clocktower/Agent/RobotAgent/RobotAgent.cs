@@ -126,13 +126,11 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (reading)
             {
-                clocktowerChat.AddFormattedMessage("Yes");
-                clocktowerChat.AddFormattedMessage($", one of %p or %p is the demon.", targetA, targetB);
+                clocktowerChat.AddFormattedMessage("Yes, one of %p or %p is the demon.", targetA, targetB);
             }
             else
             {
-                clocktowerChat.AddFormattedMessage("No");
-                clocktowerChat.AddFormattedMessage($", neither of %p or %p is the demon.", targetA, targetB);
+                clocktowerChat.AddFormattedMessage("No, neither of %p or %p is the demon.", targetA, targetB);
             }
         }
 
