@@ -7,6 +7,22 @@ namespace Clocktower.Agent.RobotAgent
 {
     internal class RobotAgent : IAgent
     {
+        /// <summary>
+        /// Event is triggered whenever a new message is added to the chat. Note that this will include all
+        /// messages (though not summaries) even if the actual prompts to the AI don't include all the messages.
+        /// </summary>
+        public event ChatMessageHandler? OnChatMessage;
+
+        /// <summary>
+        /// Event is triggered whenever the AI summarizes the previous day.
+        /// </summary>
+        public event DaySummaryHandler? OnDaySummary;
+
+        /// <summary>
+        /// Event is triggered whenever tokens are used, i.e. whenever a request is made to the AI.
+        /// </summary>
+        public event TokenCountHandler? OnTokenCount;
+
         public string PlayerName { get; private set; }
 
         public Character? Character { get; private set; }
@@ -16,11 +32,15 @@ namespace Clocktower.Agent.RobotAgent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange, IChatLogger? chatLogger, ITokenCounter? tokenCounter)
+        public RobotAgent(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
         {
             PlayerName = playerName;
 
-            clocktowerChat = new(playerName, playersNames, script, chatLogger, tokenCounter);
+            clocktowerChat = new(playerName, playersNames, script);
+            clocktowerChat.OnChatMessage += InternalOnChatMessage;
+            clocktowerChat.OnDaySummary += InternalOnDaySummary;
+            clocktowerChat.OnTokenCount += InternalOnTokenCount;
+
             chatAiObserver = new(clocktowerChat, this);
 
             this.onStart = onStart;
@@ -323,6 +343,21 @@ namespace Clocktower.Agent.RobotAgent
                 clocktowerChat.AddMessage("Regardless of whether you bluff or not, remember that as a good player, you will want to be honest about your character and your information towards the end of the game (when there are only " +
                                           "3 or 4 players left alive).");
             }
+        }
+
+        private void InternalOnChatMessage(Role role, string message)
+        {
+            OnChatMessage?.Invoke(role, message);
+        }
+
+        private void InternalOnDaySummary(int dayNumber, string summary)
+        {
+            OnDaySummary?.Invoke(dayNumber, summary);
+        }
+
+        private void InternalOnTokenCount(int promptTokens, int completionTokens, int totalTokens)
+        {
+            OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
         private readonly ClocktowerChatAi clocktowerChat;

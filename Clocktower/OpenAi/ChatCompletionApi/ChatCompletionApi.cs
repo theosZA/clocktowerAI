@@ -19,14 +19,13 @@ namespace OpenAi.ChatCompletionApi
             this.model = model;
         }
 
-        public async Task<string> RequestChatCompletion(IEnumerable<(Role role, string message)> messages, ITokenCounter? tokenCounter)
+        public async Task<(string response, int promptTokens, int completionTokens, int totalTokens)> RequestChatCompletion(IEnumerable<(Role role, string message)> messages)
         {
             var request = BuildChatCompletionRequest(messages);
             using var response = await RequestChatCompletion(request);
             var chatResponse = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>() ?? throw new Exception("No chat completion received from Open API");
             var usage = chatResponse.Usage;
-            tokenCounter?.NewTokenUsage(usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens);
-            return chatResponse.Choices.First().Message.Content;
+            return (chatResponse.Choices.First().Message.Content, usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens);
         }
 
         private static async Task<HttpResponseMessage> RequestChatCompletion(ChatCompletionRequest request)

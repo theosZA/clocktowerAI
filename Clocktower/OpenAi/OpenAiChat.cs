@@ -7,33 +7,10 @@ namespace OpenAi
     /// </summary>
     public class OpenAiChat : IChat
     {
-        public IChatLogger? Logger
-        {
-            get => logger;
-
-            set
-            {
-                logger = value;
-                foreach (var subChat in subChats)
-                {
-                    subChat.Logger = value;
-                }
-            }
-        }
-
-        public ITokenCounter? TokenCounter
-        {
-            get => tokenCounter;
-
-            set
-            {
-                tokenCounter = value;
-                foreach (var subChat in subChats)
-                {
-                    subChat.TokenCounter = value;
-                }
-            }
-        }
+        public event IChat.ChatMessageAddedHandler? OnChatMessageAdded;
+        public event IChat.ChatMessagesRemovedHandler? OnChatMessagesRemoved;
+        public event IChat.SubChatSummarizedHandler? OnSubChatSummarized;
+        public event IChat.AssistantRequestHandler? OnAssistantRequest;
 
         public string SystemMessage
         {
@@ -67,11 +44,12 @@ namespace OpenAi
         {
             await subChats.Last().Summarize(subChats.SkipLast(1));
 
-            subChats.Add(new SubChat(chatCompletionApi, name, summarizePrompt)
-            {
-                Logger = logger,
-                TokenCounter = tokenCounter
-            });
+            var subChat = new SubChat(chatCompletionApi, name, summarizePrompt);
+            subChat.OnChatMessageAdded += InternalChatMessageAddedHandler;
+            subChat.OnChatMessagesRemoved += InternalChatMessagesRemovedHandler;
+            subChat.OnSubChatSummarized += InternalSubChatSummarizedHandler;
+            subChat.OnAssistantRequest += InternalAssistantRequestHandler;
+            subChats.Add(subChat);
         }
 
         public void TrimMessages(int count)
@@ -79,8 +57,27 @@ namespace OpenAi
             subChats.Last().TrimMessages(count);
         }
 
-        private IChatLogger? logger;
-        private ITokenCounter? tokenCounter;
+        private void InternalChatMessageAddedHandler(string subChatName, Role role, string message)
+        {
+            OnChatMessageAdded?.Invoke(subChatName, role, message);
+        }
+
+        private void InternalChatMessagesRemovedHandler(string subChatName, int startIndex, int count)
+        {
+            OnChatMessagesRemoved?.Invoke(subChatName, startIndex, count);
+        }
+
+        private void InternalSubChatSummarizedHandler(string subChatName, string summary)
+        {
+            OnSubChatSummarized?.Invoke(subChatName, summary);
+        }
+
+        private void InternalAssistantRequestHandler(string subChatName, bool isSummaryRequest, IReadOnlyCollection<(Role role, string message)> messages,
+                                                     string response, int promptTokens, int completionTokens, int totalTokens)
+        {
+            OnAssistantRequest?.Invoke(subChatName, isSummaryRequest, messages, response, promptTokens, completionTokens, totalTokens);
+        }
+
         private readonly List<SubChat> subChats = new List<SubChat>();
         private readonly ChatCompletionApi.ChatCompletionApi chatCompletionApi;
     }

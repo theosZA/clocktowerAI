@@ -7,15 +7,32 @@
     /// </summary>
     public interface IChat
     {
+        delegate void ChatMessageAddedHandler(string subChatName, Role role, string message);
         /// <summary>
-        /// The logger to which all messages in the chat and all summaries made of sub-chats will be directed.
+        /// Event triggered when a new message is added to the chat. Messages are always added to the end of the specified sub-chat
+        /// except when the role is Role.System for which messages are added to the beginning of the sub-chat.
         /// </summary>
-        IChatLogger? Logger { get; set; }
+        event ChatMessageAddedHandler OnChatMessageAdded;
 
+        delegate void ChatMessagesRemovedHandler(string subChatName, int startIndex, int count);
         /// <summary>
-        /// The counter to which all updates on token usage will be directed.
+        /// Event triggered when one or message are removed from the chat.
         /// </summary>
-        ITokenCounter? TokenCounter { get; set; }
+        event ChatMessagesRemovedHandler OnChatMessagesRemoved;
+
+        delegate void SubChatSummarizedHandler(string subChatName, string summary);
+        /// <summary>
+        /// Event triggered when a sub-chat is summarized.
+        /// </summary>
+        event SubChatSummarizedHandler OnSubChatSummarized;
+
+        delegate void AssistantRequestHandler(string subChatName, bool isSummaryRequest, IReadOnlyCollection<(Role role, string message)> messages,
+                                              string response, int promptTokens, int completionTokens, int totalTokens);
+        /// <summary>
+        /// Event triggered when a response is received for an assistant request. Note that this will include behind-the-scenes requests to
+        /// summarize a sub-chat. These can be ignored if desired by looking at the isSummaryRequest delegate parameter.
+        /// </summary>
+        event AssistantRequestHandler OnAssistantRequest;
 
         /// <summary>
         /// The single system message that will be included at the start of each chat completion request. It is described by OpenAI as:

@@ -11,10 +11,29 @@ namespace Clocktower.Agent.RobotAgent
     /// </summary>
     internal class ClocktowerChatAi
     {
-        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script, IChatLogger? chatLogger, ITokenCounter? tokenCounter)
+        /// <summary>
+        /// Event is triggered whenever a new message is added to the chat. Note that this will include all
+        /// messages (though not summaries) even if the actual prompts to the AI don't include all the messages.
+        /// </summary>
+        public event ChatMessageHandler? OnChatMessage;
+
+        /// <summary>
+        /// Event is triggered whenever the AI summarizes the previous day.
+        /// </summary>
+        public event DaySummaryHandler? OnDaySummary;
+
+        /// <summary>
+        /// Event is triggered whenever tokens are used, i.e. whenever a request is made to the AI.
+        /// </summary>
+        public event TokenCountHandler? OnTokenCount;
+
+        public ClocktowerChatAi(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
         {
             this.playerName = playerName;
-            gameChat = new GameChat(playerName, playerNames, script, chatLogger, tokenCounter);
+            gameChat = new GameChat(playerName, playerNames, script);
+            gameChat.OnChatMessage += InternalOnChatMessage;
+            gameChat.OnDaySummary += InternalOnDaySummary;
+            gameChat.OnTokenCount += InternalOnTokenCount;
         }
 
         public async Task Night(int nightNumber)
@@ -181,6 +200,21 @@ namespace Clocktower.Agent.RobotAgent
             var sb = new StringBuilder();
             sb.AppendFormattedText(text, objects);
             return sb.ToString();
+        }
+
+        private void InternalOnChatMessage(Role role, string message)
+        {
+            OnChatMessage?.Invoke(role, message);
+        }
+
+        private void InternalOnDaySummary(int dayNumber, string summary)
+        {
+            OnDaySummary?.Invoke(dayNumber, summary);
+        }
+
+        private void InternalOnTokenCount(int promptTokens, int completionTokens, int totalTokens)
+        {
+            OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
         private readonly string playerName;

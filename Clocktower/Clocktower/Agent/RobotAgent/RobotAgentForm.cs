@@ -1,11 +1,10 @@
-﻿using Clocktower.Agent.RobotAgent;
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using Clocktower.Observer;
 using OpenAi;
 
 namespace Clocktower.Agent
 {
-    public partial class RobotAgentForm : Form, ITokenCounter
+    public partial class RobotAgentForm : Form
     {
         public string PlayerName => robot.PlayerName;
 
@@ -16,24 +15,12 @@ namespace Clocktower.Agent
         {
             InitializeComponent();
 
-            var chatLoggers = new IChatLogger[]
-            {
-                new RichTextChatLogger(chatTextBox, summaryTextBox),
-                new FileChatLogger($"{playerName}-{DateTime.UtcNow:yyyyMMddTHHmmss}.log")
-            };
-
-            robot = new(playerName, playerNames, script, onStart: Show, onStatusChange: SetTitle, ProxyCollection<IChatLogger>.CreateProxy(chatLoggers), tokenCounter: this);
+            robot = new(playerName, playerNames, script, onStart: Show, onStatusChange: SetTitle);
+            robot.OnChatMessage += OnChatMessage;
+            robot.OnDaySummary += OnDaySummary;
+            robot.OnTokenCount += OnTokenCount;
 
             SetTitle();
-        }
-
-        public void NewTokenUsage(int promptTokens, int completionTokens, int totalTokens)
-        {
-            this.promptTokens += promptTokens;
-            this.completionTokens += completionTokens;
-            this.totalTokens += totalTokens;
-
-            usageStatusLabel.Text = $"Usage: {this.totalTokens} = {this.promptTokens} + {this.completionTokens}, Latest: {totalTokens} = {promptTokens} + {completionTokens}";
         }
 
         private void SetTitle()
@@ -52,6 +39,41 @@ namespace Clocktower.Agent
             {
                 Text += " GHOST";
             }
+        }
+
+        private void OnChatMessage(Role role, string message)
+        {
+            string messageToDisplay = message.Trim() + "\n";
+
+            switch (role)
+            {
+                case Role.System:
+                    // We don't write the System message for display.
+                    break;
+
+                case Role.User:
+                    chatTextBox.AppendText(messageToDisplay);
+                    break;
+
+                case Role.Assistant:
+                    chatTextBox.AppendBoldText(messageToDisplay, Color.Green);
+                    break;
+            }
+        }
+
+        private void OnDaySummary(int dayNumber, string summary)
+        {
+            summaryTextBox.AppendBoldText($"Day {dayNumber}\n");
+            summaryTextBox.AppendText(summary.Trim() + "\n\n");
+        }
+
+        private void OnTokenCount(int promptTokens, int completionTokens, int totalTokens)
+        {
+            this.promptTokens += promptTokens;
+            this.completionTokens += completionTokens;
+            this.totalTokens += totalTokens;
+
+            usageStatusLabel.Text = $"Usage: {this.totalTokens} = {this.promptTokens} + {this.completionTokens}, Latest: {totalTokens} = {promptTokens} + {completionTokens}";
         }
 
         private readonly RobotAgent.RobotAgent robot;

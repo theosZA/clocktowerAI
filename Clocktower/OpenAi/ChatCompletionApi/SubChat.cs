@@ -2,15 +2,10 @@
 {
     internal class SubChat
     {
-        /// <summary>
-        /// The logger to which all messages in the chat and all summaries made of sub-chats will be directed.
-        /// </summary>
-        public IChatLogger? Logger { get; set; }
-
-        /// <summary>
-        /// The counter to which all updates on token usage will be directed.
-        /// </summary>
-        public ITokenCounter? TokenCounter { get; set; }
+        public event IChat.ChatMessageAddedHandler? OnChatMessageAdded;
+        public event IChat.ChatMessagesRemovedHandler? OnChatMessagesRemoved;
+        public event IChat.SubChatSummarizedHandler? OnSubChatSummarized;
+        public event IChat.AssistantRequestHandler? OnAssistantRequest;
 
         public IReadOnlyCollection<(Role role, string message)> Messages => summary == null ? messages
                                                                                             : new[] { (Role.Assistant, summary) };
@@ -32,14 +27,17 @@
             {   // All other messages go to the tail of the sub-chat.
                 messages.Add((role, message));
             }
-            Logger?.Log(subChatName, role, message);
+            OnChatMessageAdded?.Invoke(subChatName, role, message);
         }
 
         public async Task<string> GetAssistantResponse(IEnumerable<SubChat> previousSubChats)
         {
             var messagesToSend = previousSubChats.SelectMany(subChat => subChat.Messages)
-                                                 .Concat(messages);
-            var response = await chatCompletionApi.RequestChatCompletion(messagesToSend, TokenCounter);
+                                                 .Concat(messages)
+                                                 .ToList();
+            var (response, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion(messagesToSend);
+            OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: false, messagesToSend, response, promptTokens, completionTokens, totalTokens);
+
             AddMessage(Role.Assistant, response);
             return response;
         }
@@ -52,19 +50,24 @@
             }
             var messagesToSend = previousSubChats.SelectMany(subChat => subChat.Messages)
                                                  .Concat(messages)
-                                                 .Append((Role.User, summarizePrompt));
-            var summaryResponse = await chatCompletionApi.RequestChatCompletion(messagesToSend, TokenCounter);
+                                                 .Append((Role.User, summarizePrompt))
+                                                 .ToList();
+            var (summaryResponse, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion(messagesToSend);
+            OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: true, messagesToSend, summaryResponse, promptTokens, completionTokens, totalTokens);
+
             if (!summaryResponse.StartsWith(subChatName))
             {
                 summaryResponse = summaryResponse.Insert(0, $"{subChatName}: ");
             }
             summary = summaryResponse;
-            Logger?.LogSummary(subChatName, summaryResponse);
+            OnSubChatSummarized?.Invoke(subChatName, summary);
         }
 
         public void TrimMessages(int count)
         {
-            messages.RemoveRange(messages.Count - count, count);
+            int startIndex = messages.Count - count;
+            messages.RemoveRange(startIndex, count);
+            OnChatMessagesRemoved?.Invoke(subChatName, startIndex, count);
         }
 
         private readonly List<(Role role, string message)> messages = new();
