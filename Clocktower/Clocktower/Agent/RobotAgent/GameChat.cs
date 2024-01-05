@@ -1,6 +1,5 @@
 ﻿using Clocktower.Game;
 using OpenAi;
-using System.IO;
 
 namespace Clocktower.Agent.RobotAgent
 {
@@ -28,7 +27,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public GameChat(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
         {
-            logStream = new StreamWriter($"{playerName}-{DateTime.UtcNow:yyyyMMddTHHmmss}.log");
+            chatLogger = new ChatLogger(playerName);
 
             openAiChat.OnChatMessageAdded += OnChatMessageAdded;
             openAiChat.OnSubChatSummarized += OnSubChatSummarized;
@@ -73,16 +72,13 @@ namespace Clocktower.Agent.RobotAgent
 
         private void OnChatMessageAdded(string subChatName, Role role, string message)
         {
-            logStream.WriteLine($"[{role}] {message}");
-            logStream.Flush();
-
+            chatLogger.MessageAdded(role, message);
             OnChatMessage?.Invoke(role, message);
         }
 
         private void OnSubChatSummarized(string subChatName, string summary)
         {
-            logStream.WriteLine($"[Summary of {subChatName}] {summary}");
-            logStream.Flush();
+            chatLogger.SubChatSummarized(subChatName, summary);
 
             // The sub-chat name should by "Day NN".
             if (int.TryParse(subChatName[4..], out int dayNumber))
@@ -94,10 +90,11 @@ namespace Clocktower.Agent.RobotAgent
         private void OnAssistantRequest(string subChatName, bool isSummaryRequest, IReadOnlyCollection<(Role role, string message)> messages,
                                         string response, int promptTokens, int completionTokens, int totalTokens)
         {
+            chatLogger.AssistantRequest(messages, response, promptTokens, completionTokens);
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
-        private readonly OpenAiChat openAiChat = new OpenAiChat("gpt-3.5-turbo-1106");
-        private readonly TextWriter logStream;
+        private readonly OpenAiChat openAiChat = new("gpt-3.5-turbo-1106");
+        private readonly ChatLogger chatLogger;
     }
 }
