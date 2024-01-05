@@ -25,14 +25,14 @@ namespace Clocktower.Agent.RobotAgent
         /// </summary>
         public event TokenCountHandler? OnTokenCount;
 
-        public GameChat(string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
+        public GameChat(string model, string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
         {
-            chatLogger = new ChatLogger(playerName);
+            chatLogger = new(playerName);
 
+            openAiChat = new(model);
             openAiChat.OnChatMessageAdded += OnChatMessageAdded;
             openAiChat.OnSubChatSummarized += OnSubChatSummarized;
             openAiChat.OnAssistantRequest += OnAssistantRequest;
-
             openAiChat.SystemMessage = SystemMessage.GetSystemMessage(playerName, playerNames, script);
         }
 
@@ -94,7 +94,7 @@ namespace Clocktower.Agent.RobotAgent
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
-        private readonly OpenAiChat openAiChat = new("gpt-3.5-turbo-1106");
+        private readonly OpenAiChat openAiChat;
         private readonly ChatLogger chatLogger;
     }
 }

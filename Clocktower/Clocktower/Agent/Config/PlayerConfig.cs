@@ -10,5 +10,8 @@ namespace Clocktower.Agent.Config
         [ConfigurationProperty("type", IsRequired = true)]
         public string AgentType => this["type"] as string ?? string.Empty;
 
+        [ConfigurationProperty("model", IsRequired = false)]
+        public string Model => this["model"] as string ?? string.Empty;
+
     }
 }
