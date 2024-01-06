@@ -30,6 +30,7 @@
         {
             chatHistoryView = new DataGridView();
             sendButton = new Button();
+            modelsComboBox = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)chatHistoryView).BeginInit();
             SuspendLayout();
             // 
@@ -55,11 +56,21 @@
             sendButton.UseVisualStyleBackColor = true;
             sendButton.Click += sendButton_Click;
             // 
+            // modelsComboBox
+            // 
+            modelsComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            modelsComboBox.FormattingEnabled = true;
+            modelsComboBox.Location = new Point(603, 634);
+            modelsComboBox.Name = "modelsComboBox";
+            modelsComboBox.Size = new Size(185, 23);
+            modelsComboBox.TabIndex = 2;
+            // 
             // ChatForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 666);
+            Controls.Add(modelsComboBox);
             Controls.Add(sendButton);
             Controls.Add(chatHistoryView);
             Name = "ChatForm";
@@ -72,5 +83,6 @@
 
         private DataGridView chatHistoryView;
         private Button sendButton;
+        private ComboBox modelsComboBox;
     }
 }

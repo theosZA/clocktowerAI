@@ -14,6 +14,8 @@ namespace ChatApplication
             chatHistoryView.Columns[nameof(ChatMessage.Message)].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             chatHistoryView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             chatHistoryView.Columns[nameof(ChatMessage.Message)].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+
+            modelsComboBox.DataSource = models;
         }
 
         private void chatHistoryView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -40,17 +42,23 @@ namespace ChatApplication
             };
         }
 
+        private async Task GetAssistantResponse()
+        {
+            var model = modelsComboBox.SelectedValue as string ?? string.Empty;
+            IChat chat = new OpenAiChat(model, chatHistory.Select(chatMessage => (chatMessage.Role, chatMessage.Message)));
+            var response = await chat.GetAssistantResponse();
+            if (!string.IsNullOrEmpty(response))
+            {
+                chatHistory.Add(new() { Role = Role.Assistant, Message = response.ReplaceLineEndings() });
+            }
+        }
+
         private async void sendButton_Click(object sender, EventArgs e)
         {
             sendButton.Enabled = false;
             try
             {
-                IChat chat = new OpenAiChat("gpt-3.5-turbo-1106", chatHistory.Select(chatMessage => (chatMessage.Role, chatMessage.Message)));
-                var response = await chat.GetAssistantResponse();
-                if (!string.IsNullOrEmpty(response))
-                {
-                    chatHistory.Add(new() { Role = Role.Assistant, Message = response.ReplaceLineEndings() });
-                }
+                await GetAssistantResponse();
             }
             catch (Exception exception)
             {
@@ -63,5 +71,11 @@ namespace ChatApplication
         }
 
         private readonly BindingList<ChatMessage> chatHistory = new();
+
+        private readonly List<string> models = new()
+        {
+            "gpt-3.5-turbo-1106",
+            "gpt-4-1106-preview"
+        };
     }
 }
