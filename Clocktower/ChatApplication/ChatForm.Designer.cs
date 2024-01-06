@@ -50,6 +50,7 @@
             chatHistoryView.Size = new Size(779, 598);
             chatHistoryView.TabIndex = 0;
             chatHistoryView.RowPrePaint += chatHistoryView_RowPrePaint;
+            chatHistoryView.UserDeletedRow += chatHistoryView_UserDeletedRow;
             // 
             // sendButton
             // 

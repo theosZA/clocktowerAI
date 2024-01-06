@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using OpenAi;
 using System.ComponentModel;
-using System.Xml;
 
 namespace ChatApplication
 {
@@ -16,6 +15,7 @@ namespace ChatApplication
             chatHistoryView.Columns[nameof(ChatMessage.Message)].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             chatHistoryView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             chatHistoryView.Columns[nameof(ChatMessage.Message)].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            chatHistoryView.Columns[nameof(ChatMessage.Role)].ReadOnly = true;
 
             modelsComboBox.DataSource = models;
         }
@@ -74,7 +74,7 @@ namespace ChatApplication
         {
             var jsonContent = File.ReadAllText(fileName);
             var chatMessages = JsonConvert.DeserializeObject<List<ChatMessage>>(jsonContent) ?? new();
-            SetChatHistory(chatMessages);           
+            SetChatHistory(chatMessages);
         }
 
         private void ImportChatHistoryFromLogFile(string fileName)
@@ -88,8 +88,8 @@ namespace ChatApplication
 
             List<(List<ChatMessage> request, ChatMessage response)> log = new();
             bool inResponse = false;
-            foreach (var line in lines) 
-            { 
+            foreach (var line in lines)
+            {
                 if (line.StartsWith(">> Request"))
                 {
                     log.Add((new(), new()));
@@ -211,6 +211,18 @@ namespace ChatApplication
                 {
                     MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void chatHistoryView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            try
+            {
+                chatHistory.Remove((ChatMessage)e.Row.DataBoundItem);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
