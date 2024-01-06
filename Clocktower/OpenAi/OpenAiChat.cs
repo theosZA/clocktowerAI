@@ -30,6 +30,24 @@ namespace OpenAi
             subChats.Add(new SubChat(chatCompletionApi, string.Empty, summarizePrompt: null));
         }
 
+        /// <summary>
+        /// Constructor to provide an in-progress conversation with an Open AI Chat Completion assistant
+        /// where all chat has happened on the default sub-chat.
+        /// </summary>
+        /// <param name="model">The Open AI Chat Completion model to use. Refer to the GPT models listed at https://platform.openai.com/docs/models for possible values.</param>
+        /// <param name="messages">A list of messages (with the role whose message it is), all in the default sub-chat.</param>
+        public OpenAiChat(string model, IEnumerable<(Role role, string message)> messages)
+        {
+            chatCompletionApi = new ChatCompletionApi.ChatCompletionApi(model);
+
+            var subChat = new SubChat(chatCompletionApi, string.Empty, summarizePrompt: null);
+            foreach (var (role, message) in messages)
+            {
+                subChat.AddMessage(role, message);
+            }
+            subChats.Add(subChat);
+        }
+
         public void AddUserMessage(string message)
         {
             subChats.Last().AddMessage(Role.User, message);
