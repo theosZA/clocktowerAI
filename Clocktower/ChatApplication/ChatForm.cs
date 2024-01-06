@@ -214,6 +214,18 @@ namespace ChatApplication
             }
         }
 
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                chatHistory.Clear();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void chatHistoryView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
             try
