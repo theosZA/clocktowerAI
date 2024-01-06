@@ -35,6 +35,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            importFromLogToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)chatHistoryView).BeginInit();
             menuStrip.SuspendLayout();
             SuspendLayout();
@@ -81,7 +82,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem, importFromLogToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -99,6 +100,13 @@
             openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // importFromLogToolStripMenuItem
+            // 
+            importFromLogToolStripMenuItem.Name = "importFromLogToolStripMenuItem";
+            importFromLogToolStripMenuItem.Size = new Size(180, 22);
+            importFromLogToolStripMenuItem.Text = "&Import from log...";
+            importFromLogToolStripMenuItem.Click += importFromLogToolStripMenuItem_Click;
             // 
             // ChatForm
             // 
@@ -128,5 +136,6 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem importFromLogToolStripMenuItem;
     }
 }

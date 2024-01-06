@@ -55,6 +55,15 @@ namespace ChatApplication
             }
         }
 
+        private void SetChatHistory(IEnumerable<ChatMessage> chatMessages)
+        {
+            chatHistory.Clear();
+            foreach (var chatMessage in chatMessages)
+            {
+                chatHistory.Add(chatMessage);
+            }
+        }
+
         private void SaveChatHistoryToFile(string fileName)
         {
             var jsonContent = JsonConvert.SerializeObject(chatHistory, Newtonsoft.Json.Formatting.Indented);
@@ -65,10 +74,66 @@ namespace ChatApplication
         {
             var jsonContent = File.ReadAllText(fileName);
             var chatMessages = JsonConvert.DeserializeObject<List<ChatMessage>>(jsonContent) ?? new();
-            chatHistory.Clear();
-            foreach (var chatMessage in chatMessages)
+            SetChatHistory(chatMessages);           
+        }
+
+        private void ImportChatHistoryFromLogFile(string fileName)
+        {
+            // The log file format is:
+            // >> Request|Response NNN
+            // [Role] Message
+            // [Role] Message
+
+            var lines = File.ReadAllLines(fileName);
+
+            List<(List<ChatMessage> request, ChatMessage response)> log = new();
+            bool inResponse = false;
+            foreach (var line in lines) 
+            { 
+                if (line.StartsWith(">> Request"))
+                {
+                    log.Add((new(), new()));
+                    inResponse = false;
+                }
+                else if (line.StartsWith(">> Response"))
+                {
+                    inResponse = true;
+                }
+                else if (inResponse)
+                {
+                    var response = log.Last().response;
+                    if (line.StartsWith('['))
+                    {
+                        response.Role = (Role)Enum.Parse(typeof(Role), line.TextBetween('[', ']'));
+                        response.Message = line.TextAfter("] ");
+                    }
+                    else
+                    {
+                        response.Message += Environment.NewLine + line;
+                    }
+                }
+                else
+                {
+                    var request = log.Last().request;
+                    if (line.StartsWith('['))
+                    {
+                        request.Add(new()
+                        {
+                            Role = (Role)Enum.Parse(typeof(Role), line.TextBetween('[', ']')),
+                            Message = line.TextAfter("] ")
+                        });
+                    }
+                    else
+                    {
+                        request.Last().Message += Environment.NewLine + line;
+                    }
+                }
+            }
+
+            // For now we just take the last request-response pair.
             {
-                chatHistory.Add(chatMessage);
+                var (request, response) = log.Last();
+                SetChatHistory(request.Append(response));
             }
         }
 
@@ -98,11 +163,9 @@ namespace ChatApplication
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string fileName = saveFileDialog.FileName;
-
                 try
                 {
-                    SaveChatHistoryToFile(fileName);
+                    SaveChatHistoryToFile(saveFileDialog.FileName);
                 }
                 catch (Exception exception)
                 {
@@ -120,11 +183,29 @@ namespace ChatApplication
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string fileName = openFileDialog.FileName;
-
                 try
                 {
-                    LoadChatHistoryFromFile(fileName);
+                    LoadChatHistoryFromFile(openFileDialog.FileName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void importFromLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Log Files (*.log)|*.log|All Files (*.*)|*.*";
+            openFileDialog.Title = "Import Chat Log";
+            openFileDialog.DefaultExt = "log";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    ImportChatHistoryFromLogFile(openFileDialog.FileName);
                 }
                 catch (Exception exception)
                 {
