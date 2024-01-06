@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using OpenAi;
 using System.ComponentModel;
+using System.Xml;
 
 namespace ChatApplication
 {
@@ -53,6 +55,23 @@ namespace ChatApplication
             }
         }
 
+        private void SaveChatHistoryToFile(string fileName)
+        {
+            var jsonContent = JsonConvert.SerializeObject(chatHistory, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(fileName, jsonContent);
+        }
+
+        private void LoadChatHistoryFromFile(string fileName)
+        {
+            var jsonContent = File.ReadAllText(fileName);
+            var chatMessages = JsonConvert.DeserializeObject<List<ChatMessage>>(jsonContent) ?? new();
+            chatHistory.Clear();
+            foreach (var chatMessage in chatMessages)
+            {
+                chatHistory.Add(chatMessage);
+            }
+        }
+
         private async void sendButton_Click(object sender, EventArgs e)
         {
             sendButton.Enabled = false;
@@ -67,6 +86,50 @@ namespace ChatApplication
             finally
             {
                 sendButton.Enabled = true;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+            saveFileDialog.Title = "Save Chat History";
+            saveFileDialog.DefaultExt = "json";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = saveFileDialog.FileName;
+
+                try
+                {
+                    SaveChatHistoryToFile(fileName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+            openFileDialog.Title = "Load Chat History";
+            openFileDialog.DefaultExt = "json";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = openFileDialog.FileName;
+
+                try
+                {
+                    LoadChatHistoryFromFile(fileName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"An error occurred: {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
