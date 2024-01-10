@@ -26,45 +26,31 @@ namespace Clocktower.Events
 
         public IEnumerable<IGameEvent> BuildDayEvents(int dayNumber)
         {
-            int playerCount = setup.PlayerCount;
-            int alivePlayersLeft = grimoire.Players.Count(player => player.Alive);
-
-            var nominations = new Nominations(storyteller, grimoire, observers, random);
-            var eveningPublicStatements = new PublicStatements(grimoire, observers, random, morning: false);
-
             yield return new StartDay(observers, dayNumber);
             yield return new AnnounceNightKills(grimoire, observers, dayNumber);
             yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
 
-            if (alivePlayersLeft > 4)   // if 4 or less alive, then we'll be having a roll call instead
-            {
-                yield return new PublicStatements(grimoire, observers, random, morning: true);
-                yield return new FishermanAdvice(storyteller, grimoire);
-                yield return new SlayerShot(storyteller, grimoire, observers, random);
-            }
+            yield return new ConditionalEvent(new PublicStatements(grimoire, observers, random, morning: true), () => grimoire.Players.Count(player => player.Alive) > 4);
+            yield return new ConditionalEvent(new FishermanAdvice(storyteller, grimoire), () => grimoire.Players.Count(player => player.Alive) > 4);
+            yield return new ConditionalEvent(new SlayerShot(storyteller, grimoire, observers, random), () => grimoire.Players.Count(player => player.Alive) > 4);
 
-            for (int i = 0; i < HowManyPrivateChats(dayNumber, playerCount, alivePlayersLeft); i++)
-            {
-                yield return new PrivateChats(storyteller, grimoire, observers, random);
-            }
-            if (HowManyPrivateChats(dayNumber, playerCount, alivePlayersLeft) != 0)
-            {
-                yield return new FishermanAdvice(storyteller, grimoire);
-                yield return new SlayerShot(storyteller, grimoire, observers, random);
-                yield return new TinkerOption(storyteller, grimoire, observers, duringDay: true);
-            }
+            var privateChats = new RepeatedEvent(new PrivateChats(storyteller, grimoire, observers, random),
+                                                 i => i < HowManyPrivateChats(dayNumber, setup.PlayerCount, grimoire.Players.Count(player => player.Alive)));
+            yield return privateChats;
+            yield return new ConditionalEvent(new FishermanAdvice(storyteller, grimoire), () => privateChats.IterationsRun > 0);
+            yield return new ConditionalEvent(new SlayerShot(storyteller, grimoire, observers, random), () => privateChats.IterationsRun > 0);
+            yield return new ConditionalEvent(new TinkerOption(storyteller, grimoire, observers, duringDay: true), () => privateChats.IterationsRun > 0);
 
-            yield return new RollCall(grimoire, observers);
+            yield return new ConditionalEvent(new RollCall(grimoire, observers), () => grimoire.Players.Count(player => player.Alive) <= 4);
+            var eveningPublicStatements = new PublicStatements(grimoire, observers, random, morning: false);
             yield return eveningPublicStatements;
-            if (alivePlayersLeft == 3)
-            {
-                yield return new ConditionalEvent(new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true },
-                                                  () => eveningPublicStatements.StatementsCount > 0);
-            }
+            yield return new ConditionalEvent(new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true },
+                                              () => eveningPublicStatements.StatementsCount > 0 && grimoire.Players.Count(player => player.Alive) == 3);
             yield return new ConditionalEvent(new FishermanAdvice(storyteller, grimoire), () => eveningPublicStatements.StatementsCount > 0);
             yield return new ConditionalEvent(new SlayerShot(storyteller, grimoire, observers, random), () => eveningPublicStatements.StatementsCount > 0);
             yield return new ConditionalEvent(new TinkerOption(storyteller, grimoire, observers, duringDay: true), () => eveningPublicStatements.StatementsCount > 0);
 
+            var nominations = new Nominations(storyteller, grimoire, observers, random);
             yield return nominations;
             yield return new FishermanAdvice(storyteller, grimoire) { Nominations = nominations };
             yield return new SlayerShot(storyteller, grimoire, observers, random) { Nominations = nominations };

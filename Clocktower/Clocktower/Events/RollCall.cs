@@ -13,12 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            int playersAlive = grimoire.Players.Count(player => player.Alive);
-            if (playersAlive > 4)
-            {
-                return;
-            }
-            observers.StartRollCall(playersAlive);
+            observers.StartRollCall(grimoire.Players.Count(player => player.Alive));
 
             // Give everyone, in grimoire order, a chance to make a public statement about their character and information.
             foreach (var player in grimoire.Players)
