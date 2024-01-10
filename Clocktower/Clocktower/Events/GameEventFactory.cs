@@ -56,6 +56,11 @@ namespace Clocktower.Events
 
             yield return new RollCall(grimoire, observers);
             yield return eveningPublicStatements;
+            if (alivePlayersLeft == 3)
+            {
+                yield return new ConditionalEvent(new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true },
+                                                  () => eveningPublicStatements.StatementsCount > 0);
+            }
             yield return new ConditionalEvent(new FishermanAdvice(storyteller, grimoire), () => eveningPublicStatements.StatementsCount > 0);
             yield return new ConditionalEvent(new SlayerShot(storyteller, grimoire, observers, random), () => eveningPublicStatements.StatementsCount > 0);
             yield return new ConditionalEvent(new TinkerOption(storyteller, grimoire, observers, duringDay: true), () => eveningPublicStatements.StatementsCount > 0);

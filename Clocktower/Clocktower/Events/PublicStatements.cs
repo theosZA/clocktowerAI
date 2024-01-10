@@ -7,6 +7,8 @@ namespace Clocktower.Events
     {
         public int StatementsCount { get; private set; } = 0;
 
+        public bool OnlyAlivePlayers { get; set; } = false;
+
         public PublicStatements(Grimoire grimoire, IGameObserver observers, Random random, bool morning)
         {
             this.grimoire = grimoire;
@@ -18,7 +20,7 @@ namespace Clocktower.Events
         public async Task RunEvent()
         {
             // Give everyone, in random order, a chance to make a public statement.
-            var players = grimoire.Players.ToList();
+            var players = GetPlayersWhoCanMakePublicStatements();
             players.Shuffle(random);
             foreach (var player in players)
             {
@@ -29,6 +31,15 @@ namespace Clocktower.Events
                     StatementsCount++;
                 }
             }
+        }
+
+        public IList<Player> GetPlayersWhoCanMakePublicStatements()
+        {
+            if (OnlyAlivePlayers)
+            {
+                return grimoire.Players.Where(player => player.Alive).ToList();
+            }
+            return grimoire.Players.ToList();
         }
 
         private readonly Grimoire grimoire;
