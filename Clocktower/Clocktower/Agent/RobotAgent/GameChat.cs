@@ -44,6 +44,7 @@ namespace Clocktower.Agent.RobotAgent
                                                         "as well as points for any general public discussion or abilities publicly used. There's no need to provide any concluding remarks - just the detailed points are enough."
                                                      : null;
             await openAiChat.StartNewSubChat(phaseName, summarizePrompt);
+            openAiChat.AddUserMessage(phaseName);
         }
 
         public void AddMessage(string message)
