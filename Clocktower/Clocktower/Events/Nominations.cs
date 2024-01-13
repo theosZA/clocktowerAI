@@ -7,8 +7,6 @@ namespace Clocktower.Events
 {
     internal class Nominations : IGameEvent
     {
-        public Player? PlayerToBeExecuted { get; private set; }
-
         public Nominations(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Random random)
         {
             this.storyteller = storyteller;
@@ -87,11 +85,11 @@ namespace Clocktower.Events
 
             if (tiesCurrent)
             {
-                PlayerToBeExecuted = null;
+                grimoire.PlayerToBeExecuted = null;
             }
             else if (beatsCurrent)
             {
-                PlayerToBeExecuted = nominee;
+                grimoire.PlayerToBeExecuted = nominee;
                 highestVoteCount = voteCount;
             }
         }
@@ -100,7 +98,7 @@ namespace Clocktower.Events
         {
             if (highestVoteCount.HasValue)
             {
-                if (PlayerToBeExecuted == null)
+                if (grimoire.PlayerToBeExecuted == null)
                 {
                     return (null, highestVoteCount.Value + 1);
                 }
@@ -141,7 +139,7 @@ namespace Clocktower.Events
 
         private int? highestVoteCount;
 
-        private List<Player> playersWhoHaveAlreadyNominated = new();
-        private List<Player> playersWhoHaveAlreadyBeenNominated = new();
+        private readonly List<Player> playersWhoHaveAlreadyNominated = new();
+        private readonly List<Player> playersWhoHaveAlreadyBeenNominated = new();
     }
 }

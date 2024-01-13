@@ -6,28 +6,28 @@ namespace Clocktower.Events
 {
     internal class EndDay : IGameEvent
     {
-        public EndDay(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Nominations nominations)
+        public EndDay(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
             this.observers = observers;
-            this.nominations = nominations;
         }
 
         public Task RunEvent()
         {
-            if (nominations.PlayerToBeExecuted == null)
+            if (grimoire.PlayerToBeExecuted == null)
             {
                 observers.DayEndsWithNoExecution();
             }
             else
             {
-                bool playerDies = nominations.PlayerToBeExecuted.Alive;
-                observers.PlayerIsExecuted(nominations.PlayerToBeExecuted, playerDies);
+                bool playerDies = grimoire.PlayerToBeExecuted.Alive;
+                observers.PlayerIsExecuted(grimoire.PlayerToBeExecuted, playerDies);
                 if (playerDies)
                 {
-                    new Kills(storyteller, grimoire).Execute(nominations.PlayerToBeExecuted);
+                    new Kills(storyteller, grimoire).Execute(grimoire.PlayerToBeExecuted);
                 }
+                grimoire.PlayerToBeExecuted = null;
             }
 
             return Task.CompletedTask;
@@ -36,6 +36,5 @@ namespace Clocktower.Events
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
         private readonly IGameObserver observers;
-        private readonly Nominations nominations;
     }
 }

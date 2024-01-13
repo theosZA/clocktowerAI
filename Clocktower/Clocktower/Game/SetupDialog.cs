@@ -1,7 +1,4 @@
-﻿using Clocktower.Events;
-using Clocktower.Storyteller;
-
-namespace Clocktower.Game
+﻿namespace Clocktower.Game
 {
     public partial class SetupDialog : Form, IGameSetup
     {
@@ -19,18 +16,6 @@ namespace Clocktower.Game
         /// The characters assigned to each seat (0...n-1).
         /// </summary>
         public Character[] Characters { get; private set; }
-
-        /// <summary>
-        /// Additional events that have to be run to complete setup.
-        /// These are typically events that will require storyteller intervention, e.g. assigning the Drunk.
-        /// </summary>
-        public IEnumerable<IGameEvent> BuildAdditionalSetupEvents(IStoryteller storyteller, Grimoire grimoire)
-        {
-            if (IsCharacterSelected(Character.Drunk))
-            {
-                yield return new AssignDrunk(storyteller, grimoire);
-            }
-        }
 
         public SetupDialog(Random random)
         {
@@ -88,7 +73,12 @@ namespace Clocktower.Game
             UpdateCounters();
         }
 
-        private bool IsCharacterSelected(Character character)
+        /// <summary>
+        /// Checks if the given character is to be included in the game even if that character hasn't been assigned to a seat yet.
+        /// </summary>
+        /// <param name="character">Character to check if it is to be included in the game.</param>
+        /// <returns>True if the given character is to be included in the game.</returns>
+        public bool IsCharacterSelected(Character character)
         {
             return setupForCharacterType.Any(setup => setup.Value.SelectedCharacters.Contains(character));
         }

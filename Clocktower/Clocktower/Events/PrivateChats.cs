@@ -7,15 +7,37 @@ namespace Clocktower.Events
 {
     internal class PrivateChats : IGameEvent
     {
-        public PrivateChats(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Random random)
+        public PrivateChats(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Random random, int dayNumber, int playerCount)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
             this.observers = observers;
             this.random = random;
+            this.dayNumber = dayNumber;
+            this.playerCount = playerCount;
         }
 
         public async Task RunEvent()
+        {
+            for (int i = 0; i < HowManyPrivateChats(dayNumber, playerCount, grimoire.Players.Count(player => player.Alive)); i++)
+            {
+                var playersChatting = await GetPairsOfChattingPlayers();
+                var chatLogs = await RunChats(playersChatting);
+
+                // Provide the full chat logs for the Storyteller.
+                foreach (var chat in chatLogs)
+                {
+                    var (playerA, playerB) = chat.Key;
+                    foreach (var (speaker, message) in chat.Value)
+                    {
+                        var listener = speaker == playerA ? playerB : playerA;
+                        storyteller.PrivateChatMessage(speaker, listener, message);
+                    }
+                }
+            }
+        }
+
+        private async Task<IReadOnlyCollection<(Player, Player)>> GetPairsOfChattingPlayers()
         {
             List<Player> playersNotChattingYet = grimoire.Players.ToList();
             List<(Player, Player)> playersChatting = new();
@@ -52,19 +74,7 @@ namespace Clocktower.Events
                 observers.PrivateChatStarts(currentPlayer, target);
             }
 
-            // Now run the chats in parallel.
-            var chatLogs = await RunChats(playersChatting);
-
-            // Provide the full chat logs for the Storyteller.
-            foreach (var chat in chatLogs)
-            {
-                var (playerA, playerB) = chat.Key;
-                foreach (var (speaker, message) in chat.Value)
-                {
-                    var listener = speaker == playerA ? playerB : playerA;
-                    storyteller.PrivateChatMessage(speaker, listener, message);
-                }
-            }
+            return playersChatting;
         }
 
         private static async Task<IDictionary<(Player playerA, Player playerB), IEnumerable<(Player speaker, string message)>>> RunChats(IReadOnlyCollection<(Player playerA, Player playerB)> chats)
@@ -113,9 +123,31 @@ namespace Clocktower.Events
             return chatLog;
         }
 
+        private static int HowManyPrivateChats(int dayNumber, int playerCount, int alivePlayersLeft)
+        {
+            if (alivePlayersLeft <= 4)
+            {
+                return 0;
+            }
+
+            int firstDayPrivateChats = playerCount switch
+            {
+                <= 7 => 2,
+                <= 9 => 3,
+                <= 11 => 4,
+                <= 13 => 5,
+                _ => 6
+            };
+            // Reduce the number of chats by 1 per day to a minimum of 1.
+            int currentDayPrivateChats = firstDayPrivateChats - (dayNumber - 1);
+            return currentDayPrivateChats < 1 ? 1 : currentDayPrivateChats;
+        }
+
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
         private readonly IGameObserver observers;
         private readonly Random random;
+        private readonly int dayNumber;
+        private readonly int playerCount;
     }
 }

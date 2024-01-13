@@ -32,15 +32,18 @@ namespace Clocktower.Events
 
         private IEnumerable<Player> GetPlayersWhoCanAskForFishermanAdvice()
         {
-            if (Nominations != null)
-            {   // We only allow the player about to be executed to get their Fisherman advice here.
-                if (Nominations.PlayerToBeExecuted != null && CanPlayerAskForFishermanAdvice(Nominations.PlayerToBeExecuted))
-                {
-                    return new[] { Nominations.PlayerToBeExecuted };
-                }
-                return Array.Empty<Player>();
+            if (grimoire.PlayerToBeExecuted == null)
+            {
+                return grimoire.Players.Where(CanPlayerAskForFishermanAdvice).ToList();
             }
-            return grimoire.Players.Where(CanPlayerAskForFishermanAdvice).ToList();
+
+            // Ending day with a player about to be executed. Only they are allowed to still ask for Fisherman advice here.
+            if (CanPlayerAskForFishermanAdvice(grimoire.PlayerToBeExecuted))
+            {
+                return new List<Player> { grimoire.PlayerToBeExecuted };
+            }
+
+            return new List<Player>();
         }
 
         private static bool CanPlayerAskForFishermanAdvice(Player player)

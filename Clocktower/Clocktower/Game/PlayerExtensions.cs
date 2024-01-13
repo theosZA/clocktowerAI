@@ -2,6 +2,11 @@
 {
     public static class PlayerExtensions
     {
+        public static int Alive(this IEnumerable<Player> players)
+        {
+            return players.Count(player => player.Alive);
+        }
+
         public static IEnumerable<Player> WithCharacter(this IEnumerable<Player> players, Character character) 
         {
             return players.Where(player => player.Character == character);

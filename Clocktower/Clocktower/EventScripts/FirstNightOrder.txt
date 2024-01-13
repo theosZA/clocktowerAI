@@ -1,0 +1,16 @@
+﻿if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
+  AssignDrunk
+StartNight
+FortuneTellerRedHerring
+Philosopher
+MinionInformation
+DemonInformation
+Poisoner
+GodfatherInformation
+Librarian
+Investigator
+Empath
+FortuneTeller
+Steward
+Shugenja
+EndNight

@@ -1,0 +1,16 @@
+﻿StartNight
+Philosopher
+Poisoner
+Monk
+// Scarlet Woman - this is their theoretical place in the night order, but they actually become the demon immediately
+Imp
+Assassin
+Godfather
+Sweetheart
+Tinker
+PhilosopherInformation // If the Philosopher chooses a "start knowing" character, this is when they will learn that information
+Ravenkeeper
+Empath
+FortuneTeller
+Undertaker
+EndNight

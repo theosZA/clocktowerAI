@@ -1,7 +1,4 @@
-﻿using Clocktower.Events;
-using Clocktower.Storyteller;
-
-namespace Clocktower.Game
+﻿namespace Clocktower.Game
 {
     public interface IGameSetup
     {
@@ -21,9 +18,10 @@ namespace Clocktower.Game
         Character[] Characters { get; }
 
         /// <summary>
-        /// Additional events that have to be run to complete setup.
-        /// These are typically events that will require storyteller intervention, e.g. assigning the Drunk.
+        /// Checks if the given character is to be included in the game even if that character hasn't been assigned to a seat yet.
         /// </summary>
-        IEnumerable<IGameEvent> BuildAdditionalSetupEvents(IStoryteller storyteller, Grimoire grimoire);
+        /// <param name="character">Character to check if it is to be included in the game.</param>
+        /// <returns>True if the given character is to be included in the game.</returns>
+        bool IsCharacterSelected(Character character);
     }
 }

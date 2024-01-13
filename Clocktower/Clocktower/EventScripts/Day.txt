@@ -1,0 +1,37 @@
+﻿StartDay
+AnnounceNightKills
+Tinker
+if Grimoire.Players.Alive() <= 4:
+{
+  Fisherman
+  Slayer
+}
+if Grimoire.Players.Alive() > 4:
+{
+  MorningPublicStatements
+  Fisherman
+  Slayer
+  PrivateChats
+  Fisherman
+  Slayer
+  Tinker
+}
+if Grimoire.Players.Alive() <= 4:
+  RollCall
+EveningPublicStatements
+if Grimoire.Players.Alive() == 3:
+  FinalPublicStatements   // last chance public statements only for the living players
+
+Fisherman
+Slayer
+Tinker
+
+Nominations
+if Grimoire.PlayerToBeExecuted != null:
+{ // Only the player-to-be-executed can use their ability now.
+  Fisherman
+  Slayer
+}
+Tinker
+
+EndDay

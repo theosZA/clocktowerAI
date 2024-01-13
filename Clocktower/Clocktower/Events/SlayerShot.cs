@@ -41,15 +41,18 @@ namespace Clocktower.Events
 
         private List<Player> GetPlayersWhoCanStillClaimSlayer()
         {
-            if (Nominations != null)
-            {   // We only allow the player about to be executed to still claim Slayer here.
-                if (Nominations.PlayerToBeExecuted != null && CanPlayerClaimSlayer(Nominations.PlayerToBeExecuted))
-                {
-                    return new List<Player> { Nominations.PlayerToBeExecuted };
-                }
-                return new List<Player>();
+            if (grimoire.PlayerToBeExecuted == null)
+            {
+                return grimoire.Players.Where(CanPlayerClaimSlayer).ToList();
             }
-            return grimoire.Players.Where(CanPlayerClaimSlayer).ToList();
+
+            // Ending day with a player about to be executed. Only they are allowed to still claim Slayer here.
+            if (CanPlayerClaimSlayer(grimoire.PlayerToBeExecuted))
+            {
+                return new List<Player> { grimoire.PlayerToBeExecuted };
+            }
+
+            return new List<Player>();
         }
 
         private static bool CanPlayerClaimSlayer(Player player)

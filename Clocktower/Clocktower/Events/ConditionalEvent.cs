@@ -5,7 +5,7 @@
     /// </summary>
     internal class ConditionalEvent : IGameEvent
     {
-        public ConditionalEvent(IGameEvent wrappedEvent, Func<bool> condition)
+        public ConditionalEvent(IGameEvent wrappedEvent, Func<Task<bool>> condition)
         {
             this.wrappedEvent = wrappedEvent;
             this.condition = condition;
@@ -13,13 +13,13 @@
 
         public async Task RunEvent()
         {
-            if (condition())
+            if (await condition())
             {
                 await wrappedEvent.RunEvent();
             }
         }
 
         private readonly IGameEvent wrappedEvent;
-        private readonly Func<bool> condition;
+        private readonly Func<Task<bool>> condition;
     }
 }

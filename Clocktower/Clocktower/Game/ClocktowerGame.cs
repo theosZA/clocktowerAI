@@ -39,9 +39,9 @@ namespace Clocktower.Game
         public async Task RunNightAndDay()
         {
             ++dayNumber;
-            
-            await gameEventFactory.BuildNightEvents(dayNumber).RunEvents(grimoire);
-            await gameEventFactory.BuildDayEvents(dayNumber).RunEvents(grimoire);
+
+            await gameEventFactory.BuildNightEvents(dayNumber).RunEvent();
+            await gameEventFactory.BuildDayEvents(dayNumber).RunEvent();
         }
 
         private void StartGame(IEnumerable<IAgent> agents)
