@@ -81,6 +81,12 @@ namespace Clocktower.Observer
             clocktowerChat.AddMessage("There is no execution and the day ends.");
         }
 
+        public async Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock)
+        {
+            clocktowerChat.AddMessage($"Nominations for who will be executed are now open. There are {numberOfLivingPlayers} players currently still alive, so we'll require {votesToPutOnBlock} votes to put a nominee on the block.");
+            await robotAgent.PromptForOverview();
+        }
+
         public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)
         {
             var sb = new StringBuilder();

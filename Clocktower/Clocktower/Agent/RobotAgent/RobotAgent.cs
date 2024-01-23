@@ -345,6 +345,25 @@ namespace Clocktower.Agent.RobotAgent
             }
         }
 
+        public async Task PromptForOverview()
+        {
+            if (Character == null)
+            {
+                return;
+            }
+            if (Character.Value.Alignment() == Alignment.Evil)
+            {
+                await clocktowerChat.Request("Please provide a list of all players in the game, and for each player list whether they're alive or dead, and the character or characters that you think they're most likely to be (and in brackets how confident " +
+                                             "you are of this opinion). For example: * Zeke - Alive - Slayer (almost certain) or Soldier (unlikely)");
+            }
+            else // Alignment is Good
+            {
+                await clocktowerChat.Request("Please provide a list of all players in the game, and for each player list whether they're alive or dead, whether you believe they're good or evil (and in brackets how confident you are of this opinion), " +
+                                             "and the character or characters that you think they're most likely to be (and in brackets how confident you are of this opinion). " +
+                                             "For example: * Zeke - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely)");
+            }
+        }
+
         private void InternalOnChatMessage(Role role, string message)
         {
             OnChatMessage?.Invoke(role, message);

@@ -81,6 +81,12 @@ namespace Clocktower.Observer
             outputText.AppendText("There is no execution and the day ends.\n");
         }
 
+        public Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock)
+        {
+            outputText.AppendFormattedText("\nNominations for who will be executed are now open. There are %b players currently still alive, so we'll require %b votes to put a nominee on the block.\n", numberOfLivingPlayers, votesToPutOnBlock);
+            return Task.CompletedTask;
+        }
+
         public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)
         {
             outputText.AppendFormattedText("%p nominates %p.", nominator, nominee, StorytellerView);

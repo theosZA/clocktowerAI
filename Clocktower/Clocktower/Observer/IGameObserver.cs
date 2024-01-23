@@ -19,6 +19,7 @@ namespace Clocktower.Observer
         void PlayerIsExecuted(Player executedPlayer, bool playerDies);
         void DayEndsWithNoExecution();
 
+        Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock);
         void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock);
         void AnnounceVote(Player voter, Player nominee, bool votedToExecute);
         void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);

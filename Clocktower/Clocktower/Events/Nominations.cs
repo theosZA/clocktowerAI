@@ -17,6 +17,8 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
+            await observers.StartNominations(grimoire.Players.Alive(), GetVotesRequired().votesToPutOnBlock);
+
             while (true)
             {
                 var nomination = await RequestNomination();
