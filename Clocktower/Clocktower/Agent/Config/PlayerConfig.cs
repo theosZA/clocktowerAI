@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using Clocktower.Game;
+using System.Configuration;
 
 namespace Clocktower.Agent.Config
 {
@@ -13,5 +14,10 @@ namespace Clocktower.Agent.Config
         [ConfigurationProperty("model", IsRequired = false)]
         public string Model => this["model"] as string ?? string.Empty;
 
+        [ConfigurationProperty("alignment", IsRequired = false)]
+        public Alignment? Alignment => this["alignment"] as Alignment?;
+
+        [ConfigurationProperty("character", IsRequired = false)]
+        public Character? Character => this["character"] as Character?;
     }
 }

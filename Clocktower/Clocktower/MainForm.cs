@@ -1,4 +1,6 @@
+using Clocktower.Agent.Config;
 using Clocktower.Game;
+using System.Configuration;
 using System.Diagnostics;
 
 namespace Clocktower
@@ -14,7 +16,12 @@ namespace Clocktower
         {
             try
             {
-                var setupDialog = new SetupDialog(random);
+                var playerConfigsSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
+                var playerConfigs = playerConfigsSection.Players.PlayerConfigs.ToList();
+                var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
+                var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
+
+                var setupDialog = new SetupDialog(random, forcedAlignments, forcedCharacters);
                 var result = setupDialog.ShowDialog();
                 if (result != DialogResult.OK)
                 {

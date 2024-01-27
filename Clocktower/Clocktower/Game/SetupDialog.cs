@@ -17,11 +17,13 @@
         /// </summary>
         public Character[] Characters { get; private set; }
 
-        public SetupDialog(Random random)
+        public SetupDialog(Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
         {
             InitializeComponent();
 
             this.random = random;
+            this.forcedAlignments = forcedAlignments;
+            this.forcedCharacters = forcedCharacters;
 
             Characters = Array.Empty<Character>();
 
@@ -67,6 +69,15 @@
                 foreach (var characterControl in setup.CharacterControls.Select((control, i) => (control, i)))
                 {
                     charactersPanel.Controls.Add(characterControl.control, column, characterControl.i + 2);
+                }
+            }
+
+            // Toggle forced characters.
+            foreach (var character in forcedCharacters)
+            {
+                if (character.HasValue)
+                {
+                    setupForCharacterType[character.Value.CharacterType()].ForceCheck(character.Value);
                 }
             }
 
@@ -116,10 +127,11 @@
             bool maximizeTownsfolk = !maximizeOutsiders;
 
             // We need to randomize the characters in this specific order to ensure the counts are correct.
-            setupForCharacterType[CharacterType.Demon].RandomizeSelection(PlayerCount, maximizeCount: true, random);
-            setupForCharacterType[CharacterType.Minion].RandomizeSelection(PlayerCount, maximizeCount: true, random);
-            setupForCharacterType[CharacterType.Outsider].RandomizeSelection(PlayerCount, maximizeOutsiders, random);
-            setupForCharacterType[CharacterType.Townsfolk].RandomizeSelection(PlayerCount, maximizeTownsfolk, random);
+            var forcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character.Value).ToList();
+            setupForCharacterType[CharacterType.Demon].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
+            setupForCharacterType[CharacterType.Minion].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
+            setupForCharacterType[CharacterType.Outsider].RandomizeSelection(PlayerCount, maximizeOutsiders, random, forcedCharacters);
+            setupForCharacterType[CharacterType.Townsfolk].RandomizeSelection(PlayerCount, maximizeTownsfolk, random, forcedCharacters);
 
             UpdateCounters();
         }
@@ -129,13 +141,50 @@
             var bag = setupForCharacterType.SelectMany(setup => setup.Value.SelectedCharacters)
                                            .Where(character => character != Character.Drunk)
                                            .ToList();
-            bag.Shuffle(random);
-            Characters = bag.ToArray();
+            var characters = new Character?[bag.Count];
+
+            // Assign fixed characters first.
+            for (int i = 0; i < characters.Length; ++i)
+            {
+                var character = forcedCharacters.Skip(i).FirstOrDefault();
+                if (character.HasValue && bag.Contains(character.Value))
+                {
+                    bag.Remove(character.Value);
+                    characters[i] = character;
+                }
+            }
+
+            // Assign fixed alignments next.
+            var charactersByAlignment = bag.Select(character => (character.Alignment(), character))
+                                           .GroupBy(k => k.Item1)
+                                           .ToDictionary(group => group.Key, group => group.Select(pair => pair.character).ToList());
+            for (int i = 0; i < characters.Length; ++i)
+            {
+                if (!characters[i].HasValue)
+                {
+                    var alignment = forcedAlignments.Skip(i).FirstOrDefault();
+                    if (alignment.HasValue)
+                    {
+                        var possibleCharacters = charactersByAlignment[alignment.Value];
+                        var character = possibleCharacters.RandomPick(random);
+                        possibleCharacters.Remove(character);
+                        characters[i] = character;
+                    }
+                }
+            }
+
+            // Assign the remaining characters randomly.
+            var remainingCharacters = charactersByAlignment.SelectMany(pair => pair.Value).ToList();
+            remainingCharacters.Shuffle(random);
+            var remainingCharactersQueue = new Queue<Character>(remainingCharacters);
+            Characters = characters.Select(character => character ?? remainingCharactersQueue.Dequeue()).ToArray();
 
             DialogResult = DialogResult.OK;
         }
 
         private readonly Random random;
+        private readonly IReadOnlyCollection<Alignment?> forcedAlignments;
+        private readonly IReadOnlyCollection<Character?> forcedCharacters;
 
         private readonly CharacterType[] characterTypes = new[] { CharacterType.Townsfolk, CharacterType.Outsider, CharacterType.Minion, CharacterType.Demon };
 

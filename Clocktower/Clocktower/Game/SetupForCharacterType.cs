@@ -55,17 +55,34 @@ namespace Clocktower.Game
             return GetRequiredCount(playerCount).Contains(SelectedCount);
         }
 
-        public void RandomizeSelection(int playerCount, bool maximizeCount, Random random)
+        public void RandomizeSelection(int playerCount, bool maximizeCount, Random random, IEnumerable<Character> requiredCharacters)
         {
             foreach (var checkbox in checkBoxes)
             {
                 checkbox.Value.Checked = false;
             }
 
+            foreach (var requiredCharacter in requiredCharacters)
+            {
+                ForceCheck(requiredCharacter);
+            }
+
             int selectedCount = maximizeCount ? GetRequiredCount(playerCount).Max() : GetRequiredCount(playerCount).Min();
-            foreach (var checkbox in checkBoxes.Select(kvp => kvp.Value).ToList().RandomPickN(selectedCount, random))
+            foreach (var checkbox in checkBoxes.Select(kvp => kvp.Value)
+                                               .Where(checkBox => !checkBox.Checked)
+                                               .ToList()
+                                               .RandomPickN(selectedCount - SelectedCount, random))
             {
                 checkbox.Checked = true;
+            }
+        }
+
+        public void ForceCheck(Character character)
+        {
+            if (checkBoxes.TryGetValue(character, out var checkBox))
+            {
+                checkBox.Checked = true;
+                checkBox.Enabled = false;
             }
         }
 
