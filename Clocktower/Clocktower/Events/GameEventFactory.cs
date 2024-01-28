@@ -29,11 +29,10 @@ namespace Clocktower.Events
                 case "MinionInformation":           return new MinionInformation(storyteller, grimoire);
 
                 // Storyteller announcements / game progression
-                case "StartDay":                    return new StartDay(observers, dayNumber);
+                case "StartDay":                    return new StartDay(grimoire, observers, dayNumber);
                 case "EndDay":                      return new EndDay(storyteller, grimoire, observers);
                 case "StartNight":                  return new StartNight(grimoire, observers, dayNumber);
                 case "EndNight":                    return new EndNight(grimoire);
-                case "AnnounceNightKills":          return new AnnounceNightKills(grimoire, observers, dayNumber);
 
                 // Day activities
                 case "Nominations":                 return new Nominations(storyteller, grimoire, observers, random);

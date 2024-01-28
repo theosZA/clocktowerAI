@@ -1,5 +1,4 @@
 ﻿StartDay
-AnnounceNightKills
 Tinker
 if Grimoire.Players.Alive() <= 4:
 {
