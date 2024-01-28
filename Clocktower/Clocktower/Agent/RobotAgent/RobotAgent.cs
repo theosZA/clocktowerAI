@@ -174,6 +174,11 @@ namespace Clocktower.Agent.RobotAgent
             clocktowerChat.AddFormattedMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
         }
 
+        public void NotifyLibrarianNoOutsiders()
+        {
+            clocktowerChat.AddFormattedMessage("You learn that there are no outsiders in play.");
+        }
+
         public void NotifyRavenkeeper(Player target, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", target, character);

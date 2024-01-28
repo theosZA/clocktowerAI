@@ -24,18 +24,20 @@ namespace Clocktower.Events
 
         public async Task RunEvent(Player librarian)
         {
-            var pings = await GetPings(librarian);
+            var options = GetOptions(librarian).ToList();
+            if (options.Count == 0)
+            {   // No outsiders.
+                librarian.Agent.NotifyLibrarianNoOutsiders();
+                storyteller.NotifyLibrarianNoOutsiders(librarian);
+                return;
+            }
+
+            var pings = (CharacterForTwoPlayersOption)await storyteller.GetLibrarianPings(librarian, options);
             var players = new List<Player> { pings.PlayerA, pings.PlayerB };
             players.Shuffle(random);
 
             librarian.Agent.NotifyLibrarian(players[0], players[1], pings.Character);
             storyteller.NotifyLibrarian(librarian, players[0], players[1], pings.Character);
-        }
-
-        private async Task<CharacterForTwoPlayersOption> GetPings(Player librarian)
-        {
-            var options = GetOptions(librarian).ToList();
-            return (CharacterForTwoPlayersOption)await storyteller.GetLibrarianPings(librarian, options);
         }
 
         private IEnumerable<IOption> GetOptions(Player librarian)

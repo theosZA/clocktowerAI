@@ -1,4 +1,5 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.RobotAgent;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 
@@ -100,6 +101,11 @@ namespace Clocktower.Agent
         public void NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
+        }
+
+        public void NotifyLibrarianNoOutsiders()
+        {
+            outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
         }
 
         public void NotifyInvestigator(Player playerA, Player playerB, Character character)

@@ -13,6 +13,10 @@
 
         public static T RandomPick<T>(this IList<T> list, Random random)
         {
+            if (list.Count == 0)
+            {
+                throw new ArgumentException("Can't pick from an empty list", nameof(list));
+            }
             return list[random.Next(list.Count)];
         }
 

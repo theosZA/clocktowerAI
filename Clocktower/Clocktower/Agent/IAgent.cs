@@ -20,6 +20,7 @@ namespace Clocktower.Agent
 
         void NotifyGodfather(IReadOnlyCollection<Character> outsiders);
         void NotifyLibrarian(Player playerA, Player playerB, Character character);
+        void NotifyLibrarianNoOutsiders();
         void NotifyInvestigator(Player playerA, Player playerB, Character character);
         void NotifySteward(Player goodPlayer);
         void NotifyShugenja(Direction direction);

@@ -261,6 +261,11 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", librarian, playerA, playerB, character, StorytellerView);
         }
 
+        public void NotifyLibrarianNoOutsiders(Player librarian)
+        {
+            outputText.AppendFormattedText("%p learns that there are no outsiders in play.\n", librarian);
+        }
+
         public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
         {
             outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", investigator, playerA, playerB, character, StorytellerView);

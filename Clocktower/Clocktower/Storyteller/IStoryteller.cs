@@ -36,6 +36,7 @@ namespace Clocktower.Storyteller
 
         void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders);
         void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character);
+        void NotifyLibrarianNoOutsiders(Player librarian);
         void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character);
         void NotifySteward(Player steward, Player goodPlayer);
         void NotifyShugenja(Player shugenja, Direction direction);
