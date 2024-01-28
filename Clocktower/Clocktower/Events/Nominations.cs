@@ -21,6 +21,14 @@ namespace Clocktower.Events
 
             while (true)
             {
+                // Is it even possible to change the player on the block?
+                var (votesToTie, votesToPutOnBlock) = GetVotesRequired();
+                int votesAvailable = grimoire.Players.Count(player => player.Alive || player.HasGhostVote);
+                if (votesAvailable < votesToPutOnBlock && (!votesToTie.HasValue || votesAvailable < votesToTie.Value))
+                {   // Not enough votes available to change the player on the block. End nominations.
+                    return;
+                }
+
                 var nomination = await RequestNomination();
                 if (!nomination.HasValue)
                 {   // No more nominations.
