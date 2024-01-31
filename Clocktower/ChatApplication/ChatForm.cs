@@ -79,62 +79,8 @@ namespace ChatApplication
 
         private void ImportChatHistoryFromLogFile(string fileName)
         {
-            // The log file format is:
-            // >> Request|Response NNN
-            // [Role] Message
-            // [Role] Message
-
-            var lines = File.ReadAllLines(fileName);
-
-            List<(List<ChatMessage> request, ChatMessage response)> log = new();
-            bool inResponse = false;
-            foreach (var line in lines)
-            {
-                if (line.StartsWith(">> Request"))
-                {
-                    log.Add((new(), new()));
-                    inResponse = false;
-                }
-                else if (line.StartsWith(">> Response"))
-                {
-                    inResponse = true;
-                }
-                else if (inResponse)
-                {
-                    var response = log.Last().response;
-                    if (line.StartsWith('['))
-                    {
-                        response.Role = (Role)Enum.Parse(typeof(Role), line.TextBetween('[', ']'));
-                        response.Message = line.TextAfter("] ");
-                    }
-                    else
-                    {
-                        response.Message += Environment.NewLine + line;
-                    }
-                }
-                else
-                {
-                    var request = log.Last().request;
-                    if (line.StartsWith('['))
-                    {
-                        request.Add(new()
-                        {
-                            Role = (Role)Enum.Parse(typeof(Role), line.TextBetween('[', ']')),
-                            Message = line.TextAfter("] ")
-                        });
-                    }
-                    else
-                    {
-                        request.Last().Message += Environment.NewLine + line;
-                    }
-                }
-            }
-
-            // For now we just take the last request-response pair.
-            {
-                var (request, response) = log.Last();
-                SetChatHistory(request.Append(response));
-            }
+            var logFile = new LogFile(fileName);
+            SetChatHistory(logFile.BuildChatHistoryFromLatest());
         }
 
         private async void sendButton_Click(object sender, EventArgs e)
