@@ -35,22 +35,32 @@ namespace ChatApplication
 
             if (line.StartsWith(">> Request"))
             {
-                log.Add((new(), new()));
-                currentList = log[^1].request;
+                currentList = StartNewRequest();
             }
             else if (line.StartsWith(">> Response"))
             {
-                if (log.Count == 0)
-                {
-                    log.Add((new(), new()));
-                }
-                currentList = log[^1].response;
+                currentList = StartNewResponse();
             }
-            else if (currentList != null) 
+            else
             {
+                currentList ??= StartNewRequest();  // To support simple handmade files, if we haven't start a request or response yet, we will consider this the first request.
                 AddLineToCurrentList(currentList, line);
             }
-            // Else this is a line that doesn't belong to a request or a response, so we ignore it.
+        }
+
+        private IList<ChatMessage> StartNewRequest()
+        {
+            log.Add((new(), new()));
+            return log[^1].request;
+        }
+
+        private IList<ChatMessage> StartNewResponse()
+        {
+            if (log.Count == 0)
+            {
+                log.Add((new(), new()));
+            }
+            return log[^1].response;
         }
 
         private static void AddLineToCurrentList(IList<ChatMessage> current, string line)
