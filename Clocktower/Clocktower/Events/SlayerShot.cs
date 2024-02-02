@@ -62,14 +62,15 @@ namespace Clocktower.Events
 
         private async Task ShootTarget(Player purportedSlayer, Player target)
         {
+            bool success = await DoesKillTarget(purportedSlayer, target);
+
+            observers.AnnounceSlayerShot(purportedSlayer, target, success);
             purportedSlayer.Tokens.Add(Token.AlreadyClaimedSlayer);
             if (purportedSlayer.Character == Character.Slayer)
             {
                 purportedSlayer.Tokens.Add(Token.UsedOncePerGameAbility);
             }
 
-            bool success = await DoesKillTarget(purportedSlayer, target);
-            observers.AnnounceSlayerShot(purportedSlayer, target, success);
             if (success)
             {
                 new Kills(storyteller, grimoire).DayKill(target);
@@ -91,11 +92,15 @@ namespace Clocktower.Events
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)
         {
-            if (target.Character == Character.Tinker)
+            if (target.Character == Character.Tinker && !target.DrunkOrPoisoned)
             {   // The Tinker can die at any time, so doesn't even need a real Slayer to shoot them.
                 return await storyteller.ShouldKillWithSlayer(purportedSlayer, target);
             }
             if (purportedSlayer.Character != Character.Slayer)
+            {
+                return false;
+            }
+            if (purportedSlayer.Tokens.Contains(Token.UsedOncePerGameAbility))
             {
                 return false;
             }
