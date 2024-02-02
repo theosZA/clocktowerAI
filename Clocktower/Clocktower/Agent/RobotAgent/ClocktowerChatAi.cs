@@ -83,10 +83,21 @@ namespace Clocktower.Agent.RobotAgent
         {
             var dialogue = CleanResponse(await Request(prompt, objects));
 
-            if (dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase))
+            if (dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
+                dialogue.EndsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
+                dialogue.EndsWith("pass.", StringComparison.InvariantCultureIgnoreCase) ||
+                dialogue.EndsWith("(pass)", StringComparison.InvariantCultureIgnoreCase))
             {
                 gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
                 return string.Empty;
+            }
+
+            // GPT-4 likes to add an explanation before and after the actual dialogue.
+            // The actual dialogue is between quotes. Check for this pattern.
+            var quotedDialogue = dialogue.TextBetween("\n\"", "\"\n");
+            if (!string.IsNullOrEmpty(quotedDialogue))
+            {
+                return quotedDialogue;
             }
 
             return dialogue;
