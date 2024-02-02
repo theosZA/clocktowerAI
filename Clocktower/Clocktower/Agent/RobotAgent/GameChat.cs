@@ -41,7 +41,11 @@ namespace Clocktower.Agent.RobotAgent
             var phaseName = phase == Phase.Setup ? "Set-up" : $"{phase} {dayNumber}";
             var summarizePrompt = phase == Phase.Day ? $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {phaseName.ToLowerInvariant()}. " +
                                                         "There should be a point for each private chat that you had; a point for the discussion around each nomination; " +
-                                                        "as well as points for any general public discussion or abilities publicly used. There's no need to provide any concluding remarks - just the detailed points are enough."
+                                                        "as well as points for any general public discussion or abilities publicly used. " +
+                                                        "Conclude with a list of all players in the game, and for each player list whether they're alive or dead, " +
+                                                        "whether you believe they're good or evil (and in brackets how confident you are of this opinion), " +
+                                                        "and the character or characters that you think they're most likely to be (and in brackets how confident you are of this opinion). " +
+                                                        "For example: * Zeke - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely)."
                                                      : null;
             await openAiChat.StartNewSubChat(phaseName, summarizePrompt);
             openAiChat.AddUserMessage(phaseName);
