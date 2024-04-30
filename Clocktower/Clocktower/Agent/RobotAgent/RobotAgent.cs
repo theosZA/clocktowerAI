@@ -297,7 +297,8 @@ namespace Clocktower.Agent.RobotAgent
         {
             Alive = false;
 
-            clocktowerChat.AddFormattedMessage("You are dead and are now a ghost. You may only vote one more time.");
+            clocktowerChat.AddFormattedMessage("You are dead and are now a ghost. While dead, you still participate in the game, you may still talk, and you still win or lose with your team. In fact, the game is usually decided by the votes " +
+                                               "and opinions of the dead players. You no longer have your character ability, you may no longer nominate, and you have only one vote for the rest of the game, so use it wisely.");
 
             onStatusChange();
         }
