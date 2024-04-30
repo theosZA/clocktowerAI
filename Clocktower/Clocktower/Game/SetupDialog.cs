@@ -127,7 +127,7 @@
             bool maximizeTownsfolk = !maximizeOutsiders;
 
             // We need to randomize the characters in this specific order to ensure the counts are correct.
-            var forcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character.Value).ToList();
+            var forcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character!.Value).ToList();
             setupForCharacterType[CharacterType.Demon].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
             setupForCharacterType[CharacterType.Minion].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
             setupForCharacterType[CharacterType.Outsider].RandomizeSelection(PlayerCount, maximizeOutsiders, random, forcedCharacters);

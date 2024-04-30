@@ -1,3 +1,4 @@
+using ChatApplication.Config;
 using Newtonsoft.Json;
 using OpenAi;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ namespace ChatApplication
             chatHistoryView.Columns[nameof(ChatMessage.Message)].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             chatHistoryView.Columns[nameof(ChatMessage.Role)].ReadOnly = true;
 
-            modelsComboBox.DataSource = models;
+            modelsComboBox.DataSource = ModelConfigSection.ModelDescriptions.ToList();
         }
 
         private void chatHistoryView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -46,7 +47,11 @@ namespace ChatApplication
 
         private async Task GetAssistantResponse()
         {
-            var model = modelsComboBox.SelectedValue as string ?? string.Empty;
+            var model = ModelConfigSection.GetModelName(modelsComboBox.SelectedValue as string ?? string.Empty);
+            if (model == null)
+            {
+                return;
+            }
             IChat chat = new OpenAiChat(model, chatHistory.Select(chatMessage => (chatMessage.Role, chatMessage.Message)));
             var response = await chat.GetAssistantResponse();
             if (!string.IsNullOrEmpty(response))
@@ -185,11 +190,5 @@ namespace ChatApplication
         }
 
         private readonly BindingList<ChatMessage> chatHistory = new();
-
-        private readonly List<string> models = new()
-        {
-            "gpt-3.5-turbo-0125",
-            "gpt-4-0125-preview"
-        };
     }
 }
