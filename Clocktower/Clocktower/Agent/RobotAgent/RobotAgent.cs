@@ -121,7 +121,7 @@ namespace Clocktower.Agent.RobotAgent
         {
             var voteOption = (VoteOption)options.First(option => option is VoteOption);
             return await clocktowerChat.RequestChoice(options, "If you wish, you may vote for executing %p. %nSay EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
-                                                        ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.)" : string.Empty);
+                                                        ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
         }
 
         public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
