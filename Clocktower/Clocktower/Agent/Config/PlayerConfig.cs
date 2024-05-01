@@ -14,6 +14,9 @@ namespace Clocktower.Agent.Config
         [ConfigurationProperty("model", IsRequired = false)]
         public string Model => this["model"] as string ?? string.Empty;
 
+        [ConfigurationProperty("personality", IsRequired = false)]
+        public string Personality => this["personality"] as string ?? string.Empty;
+
         [ConfigurationProperty("alignment", IsRequired = false)]
         public Alignment? Alignment => this["alignment"] as Alignment?;
 

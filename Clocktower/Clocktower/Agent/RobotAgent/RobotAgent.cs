@@ -32,11 +32,11 @@ namespace Clocktower.Agent.RobotAgent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string model, string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
+        public RobotAgent(string model, string playerName, string personality, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
         {
             PlayerName = playerName;
 
-            clocktowerChat = new(model, playerName, playersNames, script);
+            clocktowerChat = new(model, playerName, personality, playersNames, script);
             clocktowerChat.OnChatMessage += InternalOnChatMessage;
             clocktowerChat.OnDaySummary += InternalOnDaySummary;
             clocktowerChat.OnTokenCount += InternalOnTokenCount;

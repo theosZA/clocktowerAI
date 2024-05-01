@@ -6,7 +6,7 @@ namespace Clocktower.Agent.RobotAgent
 {
     internal static class SystemMessage
     {
-        public static string GetSystemMessage(string playerName, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script)
+        public static string GetSystemMessage(string playerName, string personality, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script)
         {
             return $"We are going to play a game of 'Blood on the Clocktower'. This is a social deduction game where the players are divided into good Townsfolk and Outsiders and evil Minions and Demons. " +
             "The evil players know who is on which side and they win when there are only two players left alive, one of which is their Demon. " +
@@ -28,7 +28,7 @@ namespace Clocktower.Agent.RobotAgent
             ScriptToText(script) +
             SetupToText(playersNames.Count) +
             PlayersToText(playersNames) +
-            $"You are {playerName}, a player in the game.\r\n";
+            $"You are {playerName}, a player in the game. {personality}\r\n";
         }
 
         private static string ScriptToText(IReadOnlyCollection<Character> script)

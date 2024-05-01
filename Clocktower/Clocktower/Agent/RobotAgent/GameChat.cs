@@ -25,7 +25,7 @@ namespace Clocktower.Agent.RobotAgent
         /// </summary>
         public event TokenCountHandler? OnTokenCount;
 
-        public GameChat(string model, string playerName, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
+        public GameChat(string model, string playerName, string personality, IReadOnlyCollection<string> playerNames, IReadOnlyCollection<Character> script)
         {
             chatLogger = new(playerName);
 
@@ -33,7 +33,7 @@ namespace Clocktower.Agent.RobotAgent
             openAiChat.OnChatMessageAdded += OnChatMessageAdded;
             openAiChat.OnSubChatSummarized += OnSubChatSummarized;
             openAiChat.OnAssistantRequest += OnAssistantRequest;
-            openAiChat.SystemMessage = SystemMessage.GetSystemMessage(playerName, playerNames, script);
+            openAiChat.SystemMessage = SystemMessage.GetSystemMessage(playerName, personality, playerNames, script);
         }
 
         public async Task NewPhase(Phase phase, int dayNumber)
