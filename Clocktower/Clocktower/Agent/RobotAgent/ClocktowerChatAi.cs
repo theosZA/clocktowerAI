@@ -92,13 +92,16 @@ namespace Clocktower.Agent.RobotAgent
                 return string.Empty;
             }
 
-            // GPT-4 likes to add an explanation before and after the actual dialogue.
-            // The actual dialogue is between quotes. Check for this pattern.
-            var quotedDialogue = dialogue.TextBetween("\n\"", "\"\n");
-            if (!string.IsNullOrEmpty(quotedDialogue))
+            // Sometimes the AI likes to add an explanation before and after the actual dialogue.
+            // In some cases the actual dialogue is between quotes.
+            var quotedDialogue = dialogue.TextBetween('"', '"');
+            if (!string.IsNullOrEmpty(quotedDialogue) && quotedDialogue.ContainsWhitespace())
             {
                 return quotedDialogue;
             }
+            // In other cases the actual dialogue is preceeded by their own name, sometimes emphasized.
+            dialogue = dialogue.TextAfter($"{playerName}: ")
+                               .TextAfter($"**{playerName}**: ");
 
             return dialogue;
         }
