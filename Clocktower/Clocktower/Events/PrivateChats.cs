@@ -102,7 +102,7 @@ namespace Clocktower.Events
             {
                 var speaker = (i % 2 == 0) ? playerA : playerB;
                 var listener = (i % 2 == 0) ? playerB : playerA;
-                var message = await speaker.Agent.GetPrivateChat(listener);
+                var (message, endChat) = await speaker.Agent.GetPrivateChat(listener);
                 if (string.IsNullOrEmpty(message))
                 {
                     if (i > 0)
@@ -114,6 +114,10 @@ namespace Clocktower.Events
                 {
                     listener.Agent.PrivateChatMessage(speaker, message);
                     chatLog.Add((speaker, message));
+                }
+                if (endChat)
+                {   // End chat if the speaking player has indicated that they wish to end the chat.
+                    break;
                 }
             }
 

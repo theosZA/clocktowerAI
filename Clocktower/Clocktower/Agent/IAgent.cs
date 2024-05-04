@@ -57,7 +57,7 @@ namespace Clocktower.Agent
         Task<string> GetReasonForSelfNomination();
 
         void StartPrivateChat(Player otherPlayer);
-        Task<string> GetPrivateChat(Player listener);
+        Task<(string message, bool endChat)> GetPrivateChat(Player listener);
         void PrivateChatMessage(Player speaker, string message);
 
         void EndPrivateChat(Player otherPlayer);

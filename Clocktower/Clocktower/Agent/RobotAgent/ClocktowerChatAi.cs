@@ -79,14 +79,19 @@ namespace Clocktower.Agent.RobotAgent
             return await gameChat.Request(FormatText(prompt, objects));
         }
 
+        public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
+        {
+            var dialogue = await RequestDialogue(prompt, objects);
+            var endChat = (dialogue.EndsWith("goodbye", StringComparison.InvariantCultureIgnoreCase) ||
+                           dialogue.EndsWith("goodbye.", StringComparison.InvariantCultureIgnoreCase) ||
+                           dialogue.EndsWith("goodbye!", StringComparison.InvariantCultureIgnoreCase));
+            return (dialogue, endChat);
+        }
+
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
         {
             var dialogue = CleanResponse(await Request(prompt, objects));
-
-            if (dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
-                dialogue.EndsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
-                dialogue.EndsWith("pass.", StringComparison.InvariantCultureIgnoreCase) ||
-                dialogue.EndsWith("(pass)", StringComparison.InvariantCultureIgnoreCase))
+            if (IsPass(dialogue))
             {
                 gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
                 return string.Empty;
@@ -147,11 +152,6 @@ namespace Clocktower.Agent.RobotAgent
             }
 
             var text = textFromAi.Trim();
-            if (text.EndsWith('.'))
-            {
-                text = text[..^1].TrimEnd();
-            }
-
             if (string.IsNullOrEmpty(text))
             {
                 return string.Empty;
@@ -169,6 +169,15 @@ namespace Clocktower.Agent.RobotAgent
             }
 
             return text;
+        }
+
+        private static bool IsPass(string dialogue)
+        {
+            return dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
+                   dialogue.EndsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
+                   dialogue.EndsWith("pass.", StringComparison.InvariantCultureIgnoreCase) ||
+                   dialogue.EndsWith("(pass)", StringComparison.InvariantCultureIgnoreCase) ||
+                   dialogue.StartsWith("goodbye", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static IOption? GetMatchingOption(IReadOnlyCollection<IOption> options, string choiceAsText)

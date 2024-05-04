@@ -297,7 +297,7 @@ namespace Clocktower.Agent
             firstMessageInChat = true;
         }
 
-        public async Task<string> GetPrivateChat(Player listener)
+        public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
             outputText.AppendFormattedText("What will you say to %p? You may say nothing to end the conversation, unless they haven't spoken yet.\n", listener);
             var speech = await GetSpeech(autoActText: firstMessageInChat && autoClaim.HasValue ? $"I am the {TextUtilities.CharacterToText(autoClaim.Value)}." : string.Empty);
@@ -306,7 +306,7 @@ namespace Clocktower.Agent
                 firstMessageInChat = false;
                 outputText.AppendFormattedText($"%b: %n\n", PlayerName, speech);
             }
-            return speech;
+            return (speech, false);
         }
 
         public void PrivateChatMessage(Player speaker, string message)

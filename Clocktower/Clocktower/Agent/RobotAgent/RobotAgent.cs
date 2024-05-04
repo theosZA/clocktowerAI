@@ -97,9 +97,9 @@ namespace Clocktower.Agent.RobotAgent
                                                                .Select(option => ((PlayerOption)option).Player));
         }
 
-        public async Task<string> GetPrivateChat(Player listener)
+        public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            return await clocktowerChat.RequestDialogue("What will you say to %p? You may say PASS if there's nothing more to say and you're happy to end the conversation (unless they haven't spoken yet).", listener);
+            return await clocktowerChat.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can respond with PASS or \"Goodbye\".", listener);
         }
 
         public async Task<string> GetProsecution(Player nominee)
