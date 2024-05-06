@@ -26,36 +26,7 @@
             this.forcedCharacters = forcedCharacters;
 
             Characters = Array.Empty<Character>();
-
-            // "A Simple Matter"
-            Script = new List<Character>
-            {   // Townsfolk
-                Character.Steward,
-                Character.Investigator,
-                Character.Librarian,
-                Character.Shugenja,
-                Character.Empath,
-                Character.Fortune_Teller,
-                Character.Undertaker,
-                Character.Monk,
-                Character.Fisherman,
-                Character.Slayer,
-                Character.Philosopher,
-                Character.Soldier,
-                Character.Ravenkeeper,
-                // Outsiders
-                Character.Tinker,
-                Character.Sweetheart,
-                Character.Recluse,
-                Character.Drunk,
-                // Minions
-                Character.Godfather,
-                Character.Poisoner,
-                Character.Assassin,
-                Character.Scarlet_Woman,
-                // Demons
-                Character.Imp
-            };
+            Script = ClocktowerScriptReader.ReadScriptFromFile("Scripts\\A Simple Matter.json").ToList();
 
             // Populate grid with script characters.
             for (int column = 0; column < characterTypes.Length; column++)
