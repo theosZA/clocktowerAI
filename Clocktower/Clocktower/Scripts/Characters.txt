@@ -1,0 +1,29 @@
+﻿// Townsfolk
+Steward: You start knowing 1 good player.
+Investigator: You start knowing that 1 of 2 players is a particular Minion.
+Librarian: You start knowing that 1 of 2 players is a particular Outsider. (Or that zero are in play)
+Shugenja: You start knowing if your closest evil player is clockwise or anti-clockwise. If equidistant, this info is arbitrary.
+Empath: Each night, you learn how many of your 2 alive neighbors are evil.
+Fortune Teller: Each night, choose 2 players: you learn if either is a Demon. There is 1 good player that registers falsely to you.
+Undertaker: Each night (except the first night), you learn a character that died by execution today.
+Monk: Each night (except the first night), choose a player (not yourself): they are safe from the Demon tonight.
+Fisherman: Once per game, during the day, visit the Storyteller for some advice to help your team win.
+Slayer: Once per game, during the day, publicly choose a player: if they are the Demon, they die.
+Philosopher: Once per game, at night, choose a good character: gain that ability. If this character is in play, they are drunk.
+Soldier: You are safe from the Demon.
+Ravenkeeper: If you die at night, you are woken to choose a player: you learn their character.
+
+// Outsiders
+Tinker: You might die at any time.
+Sweetheart: When you die, 1 player is drunk from now on.
+Recluse: You might register as evil and as a Minion or Demon, even if dead.
+Drunk: You do now know you are the Drunk. You think you are a Townsfolk, but your ability malfunctions.
+
+// Minions
+Godfather: You start knowing which Outsiders are in-play. If 1 died today, choose a player tonight: they die. [-1 or +1 Outsider]
+Poisoner: Each night, choose a player: their ability malfunctions tonight and tomorrow day.
+Assassin: Once per game, at night (except the first night), choose a player: they die, even if for some reason they could not.
+Scarlet Woman: If there are 5 or more players alive and the Demon dies, you become the Demon.
+
+// Demons
+Imp: Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.

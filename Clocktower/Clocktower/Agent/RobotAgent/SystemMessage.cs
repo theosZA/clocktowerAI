@@ -1,6 +1,7 @@
 ﻿using Clocktower.Game;
 using System.ComponentModel;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Clocktower.Agent.RobotAgent
 {
@@ -33,68 +34,44 @@ namespace Clocktower.Agent.RobotAgent
 
         private static string ScriptToText(IReadOnlyCollection<Character> script)
         {
+            var characterDescriptions = ReadCharacterDescriptionsFromFile("Scripts\\Characters.txt");
+
             var sb = new StringBuilder();
 
             sb.AppendLine("Townsfolk (good):");
             foreach (var townsfolk in script.Where(character => character.CharacterType() == CharacterType.Townsfolk))
             {
-                sb.AppendLine(CharacterToText(townsfolk));
+                sb.AppendLine(CharacterToText(townsfolk, characterDescriptions));
             }
 
             sb.AppendLine("Outsider (good):");
             foreach (var outsider in script.Where(character => character.CharacterType() == CharacterType.Outsider))
             {
-                sb.AppendLine(CharacterToText(outsider));
+                sb.AppendLine(CharacterToText(outsider, characterDescriptions));
             }
 
             sb.AppendLine("Minion (evil):");
             foreach (var minion in script.Where(character => character.CharacterType() == CharacterType.Minion))
             {
-                sb.AppendLine(CharacterToText(minion));
+                sb.AppendLine(CharacterToText(minion, characterDescriptions));
             }
 
             sb.AppendLine("Demon (evil):");
             foreach (var demon in script.Where(character => character.CharacterType() == CharacterType.Demon))
             {
-                sb.AppendLine(CharacterToText(demon));
+                sb.AppendLine(CharacterToText(demon, characterDescriptions));
             }
-
 
             return sb.ToString();
         }
 
-        private static string CharacterToText(Character character)
+        private static string CharacterToText(Character character, IDictionary<Character, string> characterDescriptions)
         {
-            return $"- {TextUtilities.CharacterToText(character)}: " + character switch
+            if (!characterDescriptions.TryGetValue(character, out var description))
             {
-                Character.Steward => "You start knowing 1 good player.",
-                Character.Investigator => "You start knowing that 1 of 2 players is a particular Minion.",
-                Character.Librarian => "You start knowing that 1 of 2 players is a particular Outsider. (Or that zero are in play)",
-                Character.Shugenja => "You start knowing if your closest evil player is clockwise or anti-clockwise. If equidistant, this info is arbitrary.",
-                Character.Empath => "Each night, you learn how many of your 2 alive neighbors are evil.",
-                Character.Fortune_Teller => "Each night, choose 2 players: you learn if either is a Demon. There is 1 good player that registers falsely to you.",
-                Character.Undertaker => "Each night (except the first night), you learn a character that died by execution today.",
-                Character.Monk => "Each night (except the first night), choose a player (not yourself): they are safe from the Demon tonight.",
-                Character.Fisherman => "Once per game, during the day, visit the Storyteller for some advice to help your team win.",
-                Character.Slayer => "Once per game, during the day, publicly choose a player: if they are the Demon, they die.",
-                Character.Philosopher => "Once per game, at night, choose a good character: gain that ability. If this character is in play, they are drunk.",
-                Character.Soldier => "You are safe from the Demon.",
-                Character.Ravenkeeper => "If you die at night, you are woken to choose a player: you learn their character.",
-
-                Character.Tinker => "You might die at any time.",
-                Character.Sweetheart => "When you die, 1 player is drunk from now on.",
-                Character.Recluse => "You might register as evil and as a Minion or Demon, even if dead.",
-                Character.Drunk => "You do now know you are the Drunk. You think you are a Townsfolk, but your ability malfunctions.",
-
-                Character.Godfather => "You start knowing which Outsiders are in-play. If 1 died today, choose a player tonight: they die. [-1 or +1 Outsider]",
-                Character.Poisoner => "Each night, choose a player: their ability malfunctions tonight and tomorrow day.",
-                Character.Assassin => "Once per game, at night (except the first night), choose a player: they die, even if for some reason they could not.",
-                Character.Scarlet_Woman => "If there are 5 or more players alive and the Demon dies, you become the Demon.",
-
-                Character.Imp => "Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.",
-
-                _ => throw new InvalidEnumArgumentException(nameof(character))
-            };
+                throw new InvalidEnumArgumentException(nameof(character));
+            }
+            return $"- {TextUtilities.CharacterToText(character)}: {description}";
         }
 
         private static string SetupToText(int playerCount)
@@ -132,5 +109,32 @@ namespace Clocktower.Agent.RobotAgent
 
             return sb.ToString();
         }
+
+        private static IDictionary<Character, string> ReadCharacterDescriptionsFromFile(string fileName)
+        {
+            var characterDescriptions = new Dictionary<Character, string>();
+            string[] lines = File.ReadAllLines(fileName);
+            foreach (string line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("//"))
+                {
+                    Match match = descriptionRegex.Match(line);
+                    if (match.Success)
+                    {
+                        string characterName = match.Groups[1].Value.Trim().Replace(" ", "_");
+                        string description = match.Groups[2].Value.Trim();
+
+                        if (!Enum.TryParse(characterName, ignoreCase: true, out Character character))
+                        {
+                            throw new Exception($"Unknown character {characterName} in descriptions file \"{fileName}\"");
+                        }
+                        characterDescriptions[character] = description;
+                    }
+                }
+            }
+            return characterDescriptions;
+        }
+
+        private static readonly Regex descriptionRegex = new(@"^([\w\s]+):(.+)$");
     }
 }
