@@ -5,28 +5,30 @@
         public LoggingHandler(TextWriter stream, HttpMessageHandler innerHandler)
         : base(innerHandler)
         {
-            this.stream = stream;
+            this.stream = TextWriter.Synchronized(stream);
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            stream.WriteLine("Request:");
-            stream.WriteLine(request.ToString());
+            await stream.WriteLineAsync("Request:".AsMemory(), cancellationToken);
+            await stream.WriteLineAsync(request.ToString().AsMemory(), cancellationToken);
             if (request.Content != null)
             {
-                stream.WriteLine(await request.Content.ReadAsStringAsync(cancellationToken));
+                var requestContent = await request.Content.ReadAsStringAsync(cancellationToken);
+                await stream.WriteLineAsync(requestContent.AsMemory(), cancellationToken);
             }
-            stream.WriteLine(string.Empty);
+            await stream.WriteLineAsync(string.Empty.AsMemory(), cancellationToken);
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            stream.WriteLine("Response:");
-            stream.WriteLine(response.ToString());
+            await stream.WriteLineAsync("Response:".AsMemory(), cancellationToken);
+            await stream.WriteLineAsync(response.ToString().AsMemory(), cancellationToken);
             if (response.Content != null)
             {
-                stream.WriteLine(await response.Content.ReadAsStringAsync(cancellationToken));
+                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                await stream.WriteLineAsync(responseContent.AsMemory(), cancellationToken);
             }
-            stream.WriteLine(string.Empty);
+            await stream.WriteLineAsync(string.Empty.AsMemory(), cancellationToken);
 
             return response;
         }
