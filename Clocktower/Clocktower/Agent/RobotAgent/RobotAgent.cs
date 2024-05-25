@@ -99,22 +99,22 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            return await clocktowerChat.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can respond with PASS or \"Goodbye\".", listener);
+            return await clocktowerChat.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can respond with just the single word PASS or conclude your conversation with \"Goodbye\".", listener);
         }
 
         public async Task<string> GetProsecution(Player nominee)
         {
-            return await clocktowerChat.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with PASS if you don't wish to say anything.)", nominee);
+            return await clocktowerChat.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with just the single word PASS if you don't wish to say anything.)", nominee);
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
-            return await clocktowerChat.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetRollCallStatement()
         {
-            return await clocktowerChat.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - say PASS to say nothing.)");
+            return await clocktowerChat.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - respond with just the single word PASS to say nothing.)");
         }
 
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
