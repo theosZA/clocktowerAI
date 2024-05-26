@@ -25,19 +25,24 @@ namespace Clocktower.Events
         public async Task RunEvent(Player librarian)
         {
             var options = GetOptions(librarian).ToList();
-            if (options.Count == 0)
-            {   // No outsiders.
-                librarian.Agent.NotifyLibrarianNoOutsiders();
-                storyteller.NotifyLibrarianNoOutsiders(librarian);
-                return;
+            if (options.Count > 0)
+            {
+                var chosenOption = await storyteller.GetLibrarianPings(librarian, options);
+                if (chosenOption is CharacterForTwoPlayersOption pings)
+                {
+                    var players = new List<Player> { pings.PlayerA, pings.PlayerB };
+                    players.Shuffle(random);
+
+                    librarian.Agent.NotifyLibrarian(players[0], players[1], pings.Character);
+                    storyteller.NotifyLibrarian(librarian, players[0], players[1], pings.Character);
+
+                    return;
+                }
             }
 
-            var pings = (CharacterForTwoPlayersOption)await storyteller.GetLibrarianPings(librarian, options);
-            var players = new List<Player> { pings.PlayerA, pings.PlayerB };
-            players.Shuffle(random);
-
-            librarian.Agent.NotifyLibrarian(players[0], players[1], pings.Character);
-            storyteller.NotifyLibrarian(librarian, players[0], players[1], pings.Character);
+            // No outsiders, or a Drunk librarian saw no Outsiders.
+            librarian.Agent.NotifyLibrarianNoOutsiders();
+            storyteller.NotifyLibrarianNoOutsiders(librarian);
         }
 
         private IEnumerable<IOption> GetOptions(Player librarian)
@@ -46,13 +51,14 @@ namespace Clocktower.Events
             var players = grimoire.Players.Where(player => player != librarian);
 
             if (librarian.DrunkOrPoisoned)
-            {   // Drunk or poisoned. They can see any two players as any outsider.
+            {   // Drunk or poisoned. They can see any two players as any outsider or that there are no Outsiders
                 var outsiders = scriptCharacters.OfCharacterType(CharacterType.Outsider);
-                return from outsider in outsiders
-                       from playerA in players
-                       from playerB in players
-                       where playerA != playerB
-                       select (IOption)new CharacterForTwoPlayersOption(outsider, playerA, playerB);
+                var options = from outsider in outsiders
+                              from playerA in players
+                              from playerB in players
+                              where playerA != playerB
+                              select (IOption)new CharacterForTwoPlayersOption(outsider, playerA, playerB);
+                return options.Append(new NoOutsiders());
             }
 
             // Consider each real outsider as player A, and combine with all other players for player B.
