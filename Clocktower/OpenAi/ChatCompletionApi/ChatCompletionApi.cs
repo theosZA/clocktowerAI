@@ -79,7 +79,7 @@ namespace OpenAi.ChatCompletionApi
         private static readonly JsonSerializerOptions jsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition =System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull 
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull 
         };
     }
 }
