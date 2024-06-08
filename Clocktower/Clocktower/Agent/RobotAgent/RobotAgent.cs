@@ -99,7 +99,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            return await clocktowerChat.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can respond with just the single word PASS or conclude your conversation with \"Goodbye\".", listener);
+            return await clocktowerChat.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can conclude your conversation with \"Goodbye\".", listener);
         }
 
         public async Task<string> GetProsecution(Player nominee)
@@ -223,7 +223,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "Do you wish to go to the Storyteller for your %c advice? Respond with YES or NO only.", Game.Character.Fisherman);
+            return await clocktowerChat.RequestChoice(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later? Respond with YES or NO only.", Game.Character.Fisherman);
         }
 
         public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
