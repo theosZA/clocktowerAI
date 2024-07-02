@@ -85,6 +85,10 @@ namespace Clocktower.Observer
         {
             clocktowerChat.AddMessage($"Nominations for who will be executed are now open. There are {numberOfLivingPlayers} players currently still alive, so we'll require {votesToPutOnBlock} votes to put a nominee on the block.");
             await robotAgent.PromptForOverview();
+            if (numberOfLivingPlayers <= 4)
+            {   // Down to what may well be the final round of nominations, we want our AI to express who it thinks is the demon, and so encourage it to try sway the rest of town and hopefully vote that way if they still have a vote left.
+                await robotAgent.PromptForDemonGuess();
+            }
         }
 
         public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)

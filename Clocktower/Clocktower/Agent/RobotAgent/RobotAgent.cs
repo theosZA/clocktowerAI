@@ -77,17 +77,17 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> GetDefence(Player nominator)
         {
-            return await clocktowerChat.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with PASS if you don't wish to say anything.)", nominator);
+            return await clocktowerChat.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with just the single word PASS if you don't wish to say anything.)", nominator);
         }
 
         public async Task<string> GetEveningPublicStatement()
         {
-            return await clocktowerChat.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            return await clocktowerChat.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
@@ -367,6 +367,22 @@ namespace Clocktower.Agent.RobotAgent
                 await clocktowerChat.Request("Please provide a list of all players in the game, and for each player list whether they're alive or dead, whether you believe they're good or evil (and in brackets how confident you are of this opinion), " +
                                              "and the character or characters that you think they're most likely to be (and in brackets how confident you are of this opinion). " +
                                              "For example: * Zeke - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely)");
+            }
+        }
+
+        public async Task PromptForDemonGuess()
+        {
+            if (Character == null)
+            {
+                return;
+            }
+            if (Character.Value.Alignment() == Alignment.Evil)
+            {
+                await clocktowerChat.Request("This may be the last day for nominations. Which of the living players, other than the demon, do you think you can convince the good players is the actual demon?");
+            }
+            else // Alignment is Good
+            {
+                await clocktowerChat.Request("This may be the last day for nominations. Which of the living player do you thing is the demon, and why? How do you think you can convince the rest of your fellow good players to vote to execute them?");
             }
         }
 
