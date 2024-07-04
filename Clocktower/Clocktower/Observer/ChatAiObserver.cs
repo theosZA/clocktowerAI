@@ -91,15 +91,22 @@ namespace Clocktower.Observer
             }
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)
+        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText("%p nominates %p.", nominator, nominee);
-            if (votesToTie.HasValue)
+            sb.AppendFormattedText("%p nominates %p. ", nominator, nominee);
+            if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
             {
-                sb.AppendFormattedText(" %b votes to tie,", votesToTie.Value);
+                sb.AppendFormattedText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
             }
-            sb.AppendFormattedText(" %b votes to put them on the block.", votesToPutOnBlock);
+            else if (votesToTie.HasValue)
+            {
+                sb.AppendFormattedText("%b votes to tie.", votesToTie.Value);
+            }
+            else if (votesToPutOnBlock.HasValue)
+            {
+                sb.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
+            }
             clocktowerChat.AddMessage(sb.ToString());
         }
 

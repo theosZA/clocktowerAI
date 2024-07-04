@@ -17,15 +17,14 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            await observers.StartNominations(grimoire.Players.Alive(), GetVotesRequired().votesToPutOnBlock);
+            await StartNominations();
 
             while (true)
             {
                 // Is it even possible to change the player on the block?
                 var (votesToTie, votesToPutOnBlock) = GetVotesRequired();
-                int votesAvailable = grimoire.Players.Count(player => player.Alive || player.HasGhostVote);
-                if (votesAvailable < votesToPutOnBlock && (!votesToTie.HasValue || votesAvailable < votesToTie.Value))
-                {   // Not enough votes available to change the player on the block. End nominations.
+                if (!votesToTie.HasValue && !votesToPutOnBlock.HasValue)
+                {   // Not enough votes available to remove the player on the block or add a new player. End nominations.
                     return;
                 }
 
@@ -35,6 +34,15 @@ namespace Clocktower.Events
                     return;
                 }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
+            }
+        }
+
+        private async Task StartNominations()
+        {
+            var (_, votesToPutOnBlock) = GetVotesRequired();
+            if (votesToPutOnBlock.HasValue)
+            {
+                await observers.StartNominations(grimoire.Players.Alive(), votesToPutOnBlock.Value);
             }
         }
 
@@ -62,7 +70,7 @@ namespace Clocktower.Events
             playersWhoHaveAlreadyNominated.Add(nominator);
             playersWhoHaveAlreadyBeenNominated.Add(nominee);
 
-            (int? votesToTie, int votesToPutOnBlock) = GetVotesRequired();
+            (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
 
             observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
             if (nominator == nominee)
@@ -89,7 +97,7 @@ namespace Clocktower.Events
 
             int voteCount = await RunVote(nominee);
             bool beatsCurrent = voteCount >= votesToPutOnBlock;
-            bool tiesCurrent = votesToTie.HasValue && voteCount == votesToTie.Value;
+            bool tiesCurrent = voteCount == votesToTie;
 
             observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
 
@@ -104,7 +112,41 @@ namespace Clocktower.Events
             }
         }
 
-        private (int? votesToTie, int votesToPutOnBlock) GetVotesRequired()
+        private (int? votesToTie, int? votesToPutOnBlock) GetVotesRequired()
+        {
+            int? votesToTie = null;
+            int? votesToPutOnBlock = null;
+
+            // Has there already been someone put on the block this nomination phase?
+            if (highestVoteCount.HasValue)
+            {
+                votesToPutOnBlock = highestVoteCount.Value + 1;
+                // Is someone still on the block? If so, their vote total can be tied.
+                if (grimoire.PlayerToBeExecuted != null)
+                {
+                    votesToTie = highestVoteCount.Value;
+                }
+            }
+            else
+            {   // No one has previously been on the block, so voting threshold is determined by alive players.
+                votesToPutOnBlock = (grimoire.Players.Count(player => player.Alive) + 1) / 2;
+            }
+
+            // Ensure the required votes aren't exceeding the available votes.
+            int votesAvailable = grimoire.Players.Count(player => player.Alive || player.HasGhostVote);
+            if (votesAvailable < votesToTie)
+            {
+                votesToTie = null;
+            }
+            if (votesAvailable < votesToPutOnBlock)
+            {
+                votesToPutOnBlock = null;
+            }
+
+            return (votesToTie, votesToPutOnBlock);
+        }
+
+        private (int? votesToTie, int votesToPutOnBlock) GetVotesRequiredBase()
         {
             if (highestVoteCount.HasValue)
             {

@@ -87,14 +87,21 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int votesToPutOnBlock)
+        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             outputText.AppendFormattedText("%p nominates %p.", nominator, nominee, StorytellerView);
-            if (votesToTie.HasValue)
+            if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
             {
-                outputText.AppendFormattedText(" %b votes to tie,", votesToTie.Value);
+                outputText.AppendFormattedText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
             }
-            outputText.AppendFormattedText(" %b votes to put them on the block.\n", votesToPutOnBlock);
+            else if (votesToTie.HasValue)
+            {
+                outputText.AppendFormattedText("%b votes to tie.", votesToTie.Value);
+            }
+            else if (votesToPutOnBlock.HasValue)
+            {
+                outputText.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
+            }
         }
 
         public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
