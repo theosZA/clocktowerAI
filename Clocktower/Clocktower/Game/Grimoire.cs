@@ -14,6 +14,12 @@ namespace Clocktower.Game
         {
             get
             {
+                // First check if a winner has been determined by character ability.
+                if (winner.HasValue)
+                {
+                    return winner;
+                }
+
                 // The game is over if there are no living demons...
                 if (!players.Any(player => player.Alive && player.CharacterType == CharacterType.Demon))
                 {
@@ -38,6 +44,11 @@ namespace Clocktower.Game
         {
             players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: characters[i].Alignment()))
                             .ToList();
+        }
+
+        public void EndGame(Alignment winner)
+        {
+            this.winner = winner;
         }
 
         public void AssignCharacters(IStoryteller storyteller)
@@ -127,5 +138,6 @@ namespace Clocktower.Game
         }
 
         private readonly List<Player> players;
+        private Alignment? winner;
     }
 }

@@ -14,6 +14,11 @@ namespace Clocktower.Game
         {
             player.Tokens.Add(Token.Executed);
             DayKill(player);
+
+            if (player.Character == Character.Saint && !player.DrunkOrPoisoned)
+            {
+                grimoire.EndGame(player.Alignment == Alignment.Good ? Alignment.Evil : Alignment.Good);
+            }
         }
 
         public void DayKill(Player player)

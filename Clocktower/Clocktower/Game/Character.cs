@@ -20,6 +20,7 @@
         Sweetheart,
         Recluse,
         Drunk,
+        Saint,
 
         Godfather = 2000,
         Poisoner,
