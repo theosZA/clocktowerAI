@@ -40,6 +40,8 @@ namespace Clocktower.Game
 
         public Player? PlayerToBeExecuted { get; set; }
 
+        public bool PhaseShouldEndImmediately { get; set; }
+
         public Grimoire(IEnumerable<IAgent> agents, Character[] characters)
         {
             players = agents.Select((agent, i) => new Player(agent, characters[i], alignment: characters[i].Alignment()))

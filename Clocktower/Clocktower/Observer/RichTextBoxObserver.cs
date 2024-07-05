@@ -100,16 +100,17 @@ namespace Clocktower.Observer
             outputText.AppendFormattedText("%p nominates %p.", nominator, nominee, StorytellerView);
             if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
             {
-                outputText.AppendFormattedText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
+                outputText.AppendFormattedText(" %b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
             }
             else if (votesToTie.HasValue)
             {
-                outputText.AppendFormattedText("%b votes to tie.", votesToTie.Value);
+                outputText.AppendFormattedText(" %b votes to tie.", votesToTie.Value);
             }
             else if (votesToPutOnBlock.HasValue)
             {
-                outputText.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
+                outputText.AppendFormattedText(" %b votes to put them on the block.", votesToPutOnBlock.Value);
             }
+            outputText.AppendText("\n");
 
             return Task.CompletedTask;
         }

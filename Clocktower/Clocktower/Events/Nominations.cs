@@ -33,6 +33,10 @@ namespace Clocktower.Events
                 {   // No more nominations.
                     return;
                 }
+                if (await VirginCheck(nomination.Value.nominator, nomination.Value.nominee))
+                {   // Virgin execution occurred. No more nominations.
+                    return;
+                }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
             }
         }
@@ -182,6 +186,35 @@ namespace Clocktower.Events
             }
 
             return voteCount;
+        }
+
+        private async Task<bool> VirginCheck(Player nominator, Player nominee)
+        {
+            if (nominee.Character != Character.Virgin || !nominee.Alive || nominee.Tokens.Contains(Token.UsedOncePerGameAbility))
+            {
+                return false;
+            }
+
+            nominee.Tokens.Add(Token.UsedOncePerGameAbility);
+            
+            if (nominee.DrunkOrPoisoned || !nominator.CanRegisterAsTownsfolk)
+            {
+                return false;
+            }
+
+            if (nominator.CharacterType != CharacterType.Townsfolk)
+            {
+                // Storyteller must decide whether the nominator registers as a townsfolk and is executed.
+                // TBD when we add Spy
+            }
+
+            await observers.AnnounceNomination(nominator, nominee, votesToTie: null, votesToPutOnBlock: null);
+            var earlyEndDay = new EndDay(storyteller, grimoire, observers);
+            grimoire.PlayerToBeExecuted = nominator;
+            await earlyEndDay.RunEvent();
+            grimoire.PhaseShouldEndImmediately = true;
+
+            return true;
         }
 
         private readonly IStoryteller storyteller;

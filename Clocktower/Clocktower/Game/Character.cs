@@ -16,6 +16,7 @@
         Soldier,
         Ravenkeeper,
         Washerwoman,
+        Virgin,
 
         Tinker = 1000,
         Sweetheart,

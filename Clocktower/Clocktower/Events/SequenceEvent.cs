@@ -23,6 +23,12 @@ namespace Clocktower.Events
                 {
                     return;
                 }
+                // Early return if the phase is over.
+                if (grimoire.PhaseShouldEndImmediately)
+                {
+                    grimoire.PhaseShouldEndImmediately = false;
+                    return;
+                }
             }
         }
 
