@@ -13,25 +13,25 @@ namespace Clocktower.Agent
         Task StartGame();
 
         Task AssignCharacter(Character character, Alignment alignment);
-        void YouAreDead();
+        Task YouAreDead();
 
-        void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);
-        void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
+        Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);
+        Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
-        void NotifyGodfather(IReadOnlyCollection<Character> outsiders);
-        void NotifyLibrarian(Player playerA, Player playerB, Character character);
-        void NotifyLibrarianNoOutsiders();
-        void NotifyInvestigator(Player playerA, Player playerB, Character character);
-        void NotifySteward(Player goodPlayer);
-        void NotifyShugenja(Direction direction);
+        Task NotifyGodfather(IReadOnlyCollection<Character> outsiders);
+        Task NotifyLibrarian(Player playerA, Player playerB, Character character);
+        Task NotifyLibrarianNoOutsiders();
+        Task NotifyInvestigator(Player playerA, Player playerB, Character character);
+        Task NotifySteward(Player goodPlayer);
+        Task NotifyShugenja(Direction direction);
 
-        void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
-        void NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
-        void NotifyRavenkeeper(Player target, Character character);
-        void NotifyUndertaker(Player executedPlayer, Character character);
+        Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
+        Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
+        Task NotifyRavenkeeper(Player target, Character character);
+        Task NotifyUndertaker(Player executedPlayer, Character character);
 
-        void ResponseForFisherman(string advice);
-        void GainCharacterAbility(Character character);
+        Task ResponseForFisherman(string advice);
+        Task GainCharacterAbility(Character character);
 
         Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
@@ -56,10 +56,10 @@ namespace Clocktower.Agent
         Task<string> GetDefence(Player nominator);
         Task<string> GetReasonForSelfNomination();
 
-        void StartPrivateChat(Player otherPlayer);
+        Task StartPrivateChat(Player otherPlayer);
         Task<(string message, bool endChat)> GetPrivateChat(Player listener);
-        void PrivateChatMessage(Player speaker, string message);
+        Task PrivateChatMessage(Player speaker, string message);
 
-        void EndPrivateChat(Player otherPlayer);
+        Task EndPrivateChat(Player otherPlayer);
     }
 }

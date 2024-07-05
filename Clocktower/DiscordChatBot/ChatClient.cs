@@ -28,7 +28,7 @@ namespace DiscordChatBot
         {
             var guild = client.Guilds.FirstOrDefault(guild => guild.Name == GuildName) ?? throw new Exception($"Not a member of guild {GuildName}");
             var chat = new Chat(name);
-            chats.Add(name, chat);
+            chats.Add(chat);
             await chat.Create(guild);
             return chat;
         }
@@ -58,9 +58,10 @@ namespace DiscordChatBot
         {
             Debug.WriteLine($"Message: {message.Channel.Name} - {message.Author.GlobalName} - {message.Content}");
 
-            if (!message.Author.IsBot && chats.TryGetValue(message.Channel.Name, out var chat))
+            if (!message.Author.IsBot)
             {
-                chat.MessageReceived(message.Content);
+                var chat = chats.FirstOrDefault(chat => string.Equals(message.Channel.Name, chat.Name, StringComparison.InvariantCultureIgnoreCase));
+                chat?.MessageReceived(message.Content);
             }
 
             return Task.CompletedTask;
@@ -78,6 +79,6 @@ namespace DiscordChatBot
         private readonly DiscordSocketClient client = BuildClient();
         private readonly TaskCompletionSource readyTsc = new();
 
-        private readonly Dictionary<string, Chat> chats = new();
+        private readonly List<Chat> chats = new();
     }
 }

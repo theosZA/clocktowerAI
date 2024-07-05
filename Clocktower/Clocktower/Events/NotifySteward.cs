@@ -22,7 +22,7 @@ namespace Clocktower.Events
         public async Task RunEvent(Player steward)
         {
             var stewardTarget = (await storyteller.GetStewardPing(steward, grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))));
-            steward.Agent.NotifySteward(stewardTarget);
+            await steward.Agent.NotifySteward(stewardTarget);
             storyteller.NotifySteward(steward, stewardTarget);
         }
 

@@ -25,7 +25,7 @@ namespace Clocktower.Events
                 {
                     fisherman.Tokens.Add(Token.UsedOncePerGameAbility);
                     var advice = await storyteller.GetFishermanAdvice(fisherman);
-                    fisherman.Agent.ResponseForFisherman(advice);
+                    await fisherman.Agent.ResponseForFisherman(advice);
                 }
             }   
         }

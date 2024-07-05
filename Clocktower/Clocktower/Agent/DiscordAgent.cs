@@ -14,6 +14,7 @@ namespace Clocktower.Agent
         public DiscordAgent(ChatClient chatClient, string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
             this.chatClient = chatClient;
+            prompter = new(playerName);
             PlayerName = playerName;
             this.players = players;
             this.scriptName = scriptName;
@@ -25,6 +26,7 @@ namespace Clocktower.Agent
             var chat = await chatClient.CreateChat(PlayerName);
 
             observer.Start(chat);
+            prompter.SendMessageAndGetResponse = chat.SendMessageAndGetResponse;
 
             await chat.SendMessage($"Welcome {PlayerName} to a game of Blood on the Clocktower.");
             await chat.SendMessage(TextBuilder.ScriptToText(scriptName, script));
@@ -34,204 +36,253 @@ namespace Clocktower.Agent
 
         public async Task AssignCharacter(Character character, Alignment alignment)
         {
+            this.characterAbility = character;
             await observer.SendMessage("You are the %c. You are %a.", character, alignment);
         }
 
-        public void YouAreDead()
+        public async Task YouAreDead()
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You are dead and are now a ghost. You may only vote one more time.");
         }
 
-        public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
-            throw new NotImplementedException();
+            if (fellowMinions.Any())
+            {
+                await observer.SendMessage($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.", demon, fellowMinions);
+            }
+            else
+            {
+                await observer.SendMessage($"As a minion, you learn that %p is your demon.", demon);
+            }
         }
 
-        public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public async Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.", minions, notInPlayCharacters);
         }
 
-        public void NotifyGodfather(IReadOnlyCollection<Character> outsiders)
+        public async Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
         {
-            throw new NotImplementedException();
+            if (outsiders.Count == 0)
+            {
+                await observer.SendMessage("You learn that there are no outsiders in play.");
+            }
+            else
+            {
+                await observer.SendMessage("You learn that the following outsiders are in play: %C.", outsiders);
+            }
         }
 
-        public void NotifyLibrarian(Player playerA, Player playerB, Character character)
+        public async Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
         }
 
-        public void NotifyLibrarianNoOutsiders()
+        public async Task NotifyLibrarianNoOutsiders()
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that there are no outsiders in play.");
         }
 
-        public void NotifyInvestigator(Player playerA, Player playerB, Character character)
+        public async Task NotifyInvestigator(Player playerA, Player playerB, Character character)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
         }
 
-        public void NotifySteward(Player goodPlayer)
+        public async Task NotifySteward(Player goodPlayer)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that %p is a good player.", goodPlayer);
         }
 
-        public void NotifyShugenja(Direction direction)
+        public async Task NotifyShugenja(Direction direction)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");
         }
 
-        public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
+        public async Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
         }
 
-        public void NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
+        public async Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
-            throw new NotImplementedException();
+            if (reading)
+            {
+                await observer.SendMessage("Yes, one of %p or %p is the demon.", targetA, targetB);
+            }
+            else
+            {
+                await observer.SendMessage("No, neither of %p or %p is the demon.", targetA, targetB);
+            }
         }
 
-        public void NotifyRavenkeeper(Player target, Character character)
+        public async Task NotifyRavenkeeper(Player target, Character character)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that %p is the %c.", target, character);
         }
 
-        public void NotifyUndertaker(Player executedPlayer, Character character)
+        public async Task NotifyUndertaker(Player executedPlayer, Character character)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You learn that %p is the %c.", executedPlayer, character);
         }
 
-        public void ResponseForFisherman(string advice)
+        public async Task ResponseForFisherman(string advice)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("Storyteller: %n", advice.Trim());
         }
 
-        public void GainCharacterAbility(Character character)
+        public Task GainCharacterAbility(Character character)
         {
-            throw new NotImplementedException();
+            this.characterAbility = character;
+            return Task.CompletedTask;
         }
 
-        public Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", Character.Imp);
         }
 
-        public Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose a player to poison.", Character.Poisoner);
         }
 
-        public Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Character.Assassin);
         }
 
-        public Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", Character.Godfather);
         }
 
-        public Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Character.Philosopher);
         }
 
-        public Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose two players. Response with \"PLAYER1 and PLAYER2\"", Character.Fortune_Teller);
         }
 
-        public Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose a player to protect from the demon tonight.", Character.Monk);
         }
 
-        public Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "As the %c please choose a player whose character you wish to learn.", Character.Ravenkeeper);
         }
 
-        public Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (characterAbility == Character.Slayer)
+            {
+                return await prompter.RequestChoice(options, "Do you wish to claim %c and use your once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Character.Slayer);
+            }
+            else
+            {
+                return await prompter.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you don't want to use this bluff right now, or ALWAYS PASS if you never want to use this bluff.", Character.Slayer);
+            }
         }
 
-        public Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Character.Fisherman);
         }
 
-        public Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChoice(options, "You may nominate a player. Either provide the name of the player you wish to nominate or respond with PASS. The players you can nominate are: %P.",
+                                                options.Where(option => option is PlayerOption)
+                                                       .Select(option => ((PlayerOption)option).Player));
         }
 
-        public Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
+        public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
-            throw new NotImplementedException();
+            var voteOption = (VoteOption)options.First(option => option is VoteOption);
+            return await prompter.RequestChoice(options, "If you wish, you may vote for executing %p. %nRespond with EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
+                                                ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
         }
 
-        public Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            var canPass = options.Any(option => option is PassOption);
+            if (canPass)
+            {
+                return await prompter.RequestChoice(options, "Is there someone you wish to speak to privately as a priority? If you want to wait and first see if anyone wants to speak with you, respond with PASS. The players you can talk to are: %P.",
+                                                    options.Where(option => option is PlayerOption)
+                                                           .Select(option => ((PlayerOption)option).Player));
+            }
+            else
+            {
+                return await prompter.RequestChoice(options, "Who will you speak with privately? The players you can talk to are: %P.",
+                                                    options.Where(option => option is PlayerOption)
+                                                            .Select(option => ((PlayerOption)option).Player));
+            }
         }
 
-        public Task<string> GetRollCallStatement()
+        public async Task<string> GetRollCallStatement()
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - respond with just the single word PASS to say nothing.)");
         }
 
-        public Task<string> GetMorningPublicStatement()
+        public async Task<string> GetMorningPublicStatement()
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
-        public Task<string> GetEveningPublicStatement()
+        public async Task<string> GetEveningPublicStatement()
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
-        public Task<string> GetProsecution(Player nominee)
+        public async Task<string> GetProsecution(Player nominee)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with just the single word PASS if you don't wish to say anything.)", nominee);
         }
 
-        public Task<string> GetDefence(Player nominator)
+        public async Task<string> GetDefence(Player nominator)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with just the single word PASS if you don't wish to say anything.)", nominator);
         }
 
-        public Task<string> GetReasonForSelfNomination()
+        public async Task<string> GetReasonForSelfNomination()
         {
-            throw new NotImplementedException();
+            return await prompter.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
-        public void StartPrivateChat(Player otherPlayer)
+        public async Task StartPrivateChat(Player otherPlayer)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You have begun a private chat with %p.", otherPlayer);
         }
 
-        public Task<(string message, bool endChat)> GetPrivateChat(Player listener)
+        public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            throw new NotImplementedException();
+            return await prompter.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can conclude your conversation with \"Goodbye\".", listener);
+
         }
 
-        public void PrivateChatMessage(Player speaker, string message)
+        public async Task PrivateChatMessage(Player speaker, string message)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage($"%p: %n", speaker, message);
         }
 
-        public void EndPrivateChat(Player otherPlayer)
+        public async Task EndPrivateChat(Player otherPlayer)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("The private chat with %p is over.", otherPlayer);
         }
 
         private readonly ChatClient chatClient;
         private readonly DiscordChatObserver observer = new();
+        private readonly TextPlayerPrompter prompter;
 
-        private IReadOnlyCollection<string> players;
-        private string scriptName;
-        private IReadOnlyCollection<Character> script;
+        private readonly IReadOnlyCollection<string> players;
+        private readonly string scriptName;
+        private readonly IReadOnlyCollection<Character> script;
+        private Character? characterAbility;
     }
 }

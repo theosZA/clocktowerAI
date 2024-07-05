@@ -19,7 +19,7 @@ namespace Clocktower.Events
             {
                 var (neighbourA, neighbourB) = grimoire.GetLivingNeighbours(empath);
                 int evilCount = await GetEmpathNumber(empath, neighbourA, neighbourB);
-                empath.Agent.NotifyEmpath(neighbourA, neighbourB, evilCount);
+                await empath.Agent.NotifyEmpath(neighbourA, neighbourB, evilCount);
                 storyteller.NotifyEmpath(empath, neighbourA, neighbourB, evilCount);
             }
         }

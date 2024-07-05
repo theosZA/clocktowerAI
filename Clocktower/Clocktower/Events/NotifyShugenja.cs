@@ -22,7 +22,7 @@ namespace Clocktower.Events
         public async Task RunEvent(Player shugenja)
         {
             var direction = await GetDirection(shugenja);
-            shugenja.Agent.NotifyShugenja(direction);
+            await shugenja.Agent.NotifyShugenja(direction);
             storyteller.NotifyShugenja(shugenja, direction);
         }
 

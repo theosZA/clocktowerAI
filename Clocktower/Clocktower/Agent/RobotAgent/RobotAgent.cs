@@ -58,23 +58,27 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
-        public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             this.minions = minions;
             clocktowerChat.AddFormattedMessage($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.", minions, notInPlayCharacters);
+            return Task.CompletedTask;
         }
 
-        public void EndPrivateChat(Player otherPlayer)
+        public Task EndPrivateChat(Player otherPlayer)
         {
             clocktowerChat.AddFormattedMessage("The private chat with %p is over.", otherPlayer);
+            return Task.CompletedTask;
         }
 
-        public void GainCharacterAbility(Character character)
+        public Task GainCharacterAbility(Character character)
         {
             OriginalCharacter = Character;
             Character = character;
 
             onStatusChange();
+
+            return Task.CompletedTask;
         }
 
         public async Task<string> GetDefence(Player nominator)
@@ -95,8 +99,8 @@ namespace Clocktower.Agent.RobotAgent
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
             return await clocktowerChat.RequestChoice(options, "You may nominate a player. Either provide the name of the player (with no extra text) or respond with PASS. The players you can nominate are: %P.",
-                                                        options.Where(option => option is PlayerOption)
-                                                               .Select(option => ((PlayerOption)option).Player));
+                                                      options.Where(option => option is PlayerOption)
+                                                             .Select(option => ((PlayerOption)option).Player));
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -126,7 +130,7 @@ namespace Clocktower.Agent.RobotAgent
                                                         ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
         }
 
-        public void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
         {
             this.demon = demon;
             if (fellowMinions.Any())
@@ -137,14 +141,16 @@ namespace Clocktower.Agent.RobotAgent
             {
                 clocktowerChat.AddFormattedMessage($"As a minion, you learn that %p is your demon.", demon);
             }
+            return Task.CompletedTask;
         }
 
-        public void NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
+        public Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
             clocktowerChat.AddFormattedMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
+            return Task.CompletedTask;
         }
 
-        public void NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
+        public Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
             if (reading)
             {
@@ -154,51 +160,62 @@ namespace Clocktower.Agent.RobotAgent
             {
                 clocktowerChat.AddFormattedMessage("No, neither of %p or %p is the demon.", targetA, targetB);
             }
+            return Task.CompletedTask;
         }
 
-        public void NotifyGodfather(IReadOnlyCollection<Character> outsiders)
+        public Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
         {
             if (outsiders.Count == 0)
             {
                 clocktowerChat.AddFormattedMessage("You learn that there are no outsiders in play.");
-                return;
             }
-            clocktowerChat.AddFormattedMessage("You learn that the following outsiders are in play: %C.", outsiders);
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that the following outsiders are in play: %C.", outsiders);
+            }
+            return Task.CompletedTask;
         }
 
-        public void NotifyInvestigator(Player playerA, Player playerB, Character character)
+        public Task NotifyInvestigator(Player playerA, Player playerB, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            return Task.CompletedTask;
         }
 
-        public void NotifyLibrarian(Player playerA, Player playerB, Character character)
+        public Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            return Task.CompletedTask;
         }
 
-        public void NotifyLibrarianNoOutsiders()
+        public Task NotifyLibrarianNoOutsiders()
         {
             clocktowerChat.AddFormattedMessage("You learn that there are no outsiders in play.");
+            return Task.CompletedTask;
         }
 
-        public void NotifyRavenkeeper(Player target, Character character)
+        public Task NotifyRavenkeeper(Player target, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", target, character);
+            return Task.CompletedTask;
         }
 
-        public void NotifyShugenja(Direction direction)
+        public Task NotifyShugenja(Direction direction)
         {
             clocktowerChat.AddFormattedMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");
+            return Task.CompletedTask;
         }
 
-        public void NotifySteward(Player goodPlayer)
+        public Task NotifySteward(Player goodPlayer)
         {
             clocktowerChat.AddFormattedMessage("You learn that %p is a good player.", goodPlayer);
+            return Task.CompletedTask;
         }
 
-        public void NotifyUndertaker(Player executedPlayer, Character character)
+        public Task NotifyUndertaker(Player executedPlayer, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", executedPlayer, character);
+            return Task.CompletedTask;
         }
 
         public async Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
@@ -218,9 +235,10 @@ namespace Clocktower.Agent.RobotAgent
             }
         }
 
-        public void PrivateChatMessage(Player speaker, string message)
+        public Task PrivateChatMessage(Player speaker, string message)
         {
             clocktowerChat.AddFormattedMessage($"%p: %n", speaker, message);
+            return Task.CompletedTask;
         }
 
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
@@ -280,9 +298,10 @@ namespace Clocktower.Agent.RobotAgent
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);
         }
 
-        public void ResponseForFisherman(string advice)
+        public Task ResponseForFisherman(string advice)
         {
             clocktowerChat.AddFormattedMessage("Storyteller: %n", advice.Trim());
+            return Task.CompletedTask;
         }
 
         public Task StartGame()
@@ -291,12 +310,13 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
-        public void StartPrivateChat(Player otherPlayer)
+        public Task StartPrivateChat(Player otherPlayer)
         {
             clocktowerChat.AddFormattedMessage("You have begun a private chat with %p.", otherPlayer);
+            return Task.CompletedTask;
         }
 
-        public void YouAreDead()
+        public Task YouAreDead()
         {
             Alive = false;
 
@@ -304,6 +324,8 @@ namespace Clocktower.Agent.RobotAgent
                                                "and opinions of the dead players. You no longer have your character ability, you may no longer nominate, and you have only one vote for the rest of the game, so use it wisely.");
 
             onStatusChange();
+
+            return Task.CompletedTask;
         }
 
         public async Task PromptForBluff()

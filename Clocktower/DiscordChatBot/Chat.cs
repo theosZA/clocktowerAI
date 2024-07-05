@@ -8,15 +8,17 @@ namespace DiscordChatBot
     /// </summary>
     public class Chat
     {
+        public string Name { get; private init; }
+
         public Chat(string name)
         {
-            this.name = name;
+            Name = name;
         }
 
         public async Task Create(SocketGuild guild)
         {
-            channel = guild.TextChannels.FirstOrDefault(channel => string.Equals(channel.Name, name, StringComparison.InvariantCultureIgnoreCase));
-            channel ??= await guild.CreateTextChannelAsync(name);
+            channel = guild.TextChannels.FirstOrDefault(channel => string.Equals(channel.Name, Name, StringComparison.InvariantCultureIgnoreCase));
+            channel ??= await guild.CreateTextChannelAsync(Name);
         }
 
         public async Task SendMessage(string message)
@@ -50,7 +52,6 @@ namespace DiscordChatBot
             return lastReceivedMessage ?? string.Empty;
         }
 
-        private readonly string name;
         private ITextChannel? channel;
 
         private string? lastReceivedMessage;

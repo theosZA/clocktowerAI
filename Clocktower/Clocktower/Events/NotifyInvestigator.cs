@@ -28,7 +28,7 @@ namespace Clocktower.Events
             var players = new List<Player> { pings.PlayerA, pings.PlayerB };
             players.Shuffle(random);
 
-            investigator.Agent.NotifyInvestigator(players[0], players[1], pings.Character);
+            await investigator.Agent.NotifyInvestigator(players[0], players[1], pings.Character);
             storyteller.NotifyInvestigator(investigator, players[0], players[1], pings.Character);
         }
 

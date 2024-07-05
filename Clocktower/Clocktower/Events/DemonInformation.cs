@@ -20,7 +20,7 @@ namespace Clocktower.Events
             {
                 var bluffs = (await storyteller.GetDemonBluffs(demon, GetAvailableBluffs().ToList())).ToList();
                 bluffs.Shuffle(random);
-                demon.Agent.DemonInformation(minions, bluffs);
+                await demon.Agent.DemonInformation(minions, bluffs);
                 storyteller.DemonInformation(demon, minions, bluffs);
             }
         }

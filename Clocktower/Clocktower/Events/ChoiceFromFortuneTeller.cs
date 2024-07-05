@@ -18,7 +18,7 @@ namespace Clocktower.Events
             {
                 var (targetA, targetB) = await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players);
                 bool reading = await GetReading(fortuneTeller, targetA, targetB);
-                fortuneTeller.Agent.NotifyFortuneTeller(targetA, targetB, reading);
+                await fortuneTeller.Agent.NotifyFortuneTeller(targetA, targetB, reading);
                 storyteller.NotifyFortuneTeller(fortuneTeller, targetA, targetB, reading);
             }
         }

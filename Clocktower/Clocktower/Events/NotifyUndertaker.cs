@@ -21,7 +21,7 @@ namespace Clocktower.Events
                 if (executedPlayer != null)
                 {
                     var executedCharacter = await GetExecutedCharacter(undertaker, executedPlayer);
-                    undertaker.Agent.NotifyUndertaker(executedPlayer, executedCharacter);
+                    await undertaker.Agent.NotifyUndertaker(executedPlayer, executedCharacter);
                     storyteller.NotifyUndertaker(undertaker, executedPlayer, executedCharacter);
                 }
             }

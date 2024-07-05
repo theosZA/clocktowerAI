@@ -20,7 +20,7 @@ namespace Clocktower.Events
                 var target = await ravenkeeper.Agent.RequestChoiceFromRavenkeeper(grimoire.Players);
                 var character = await GetTargetCharacter(ravenkeeper, target);
                 storyteller.ChoiceFromRavenkeeper(ravenkeeper, target, character);
-                ravenkeeper.Agent.NotifyRavenkeeper(target, character);
+                await ravenkeeper.Agent.NotifyRavenkeeper(target, character);
             }
         }
 

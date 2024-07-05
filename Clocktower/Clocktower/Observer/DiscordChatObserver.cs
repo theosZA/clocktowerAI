@@ -20,6 +20,15 @@ namespace Clocktower.Observer
             }
         }
 
+        public async Task<string> SendMessageAndGetResponse(string text, params object[] objects)
+        {
+            if (chat == null)
+            {
+                return string.Empty;
+            }
+            return (await chat.SendMessageAndGetResponse(FormatText(text, objects))).Trim();
+        }
+
         public async Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             var sb = new StringBuilder();

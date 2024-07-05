@@ -33,7 +33,7 @@ namespace Clocktower.Events
                     var players = new List<Player> { pings.PlayerA, pings.PlayerB };
                     players.Shuffle(random);
 
-                    librarian.Agent.NotifyLibrarian(players[0], players[1], pings.Character);
+                    await librarian.Agent.NotifyLibrarian(players[0], players[1], pings.Character);
                     storyteller.NotifyLibrarian(librarian, players[0], players[1], pings.Character);
 
                     return;
@@ -41,7 +41,7 @@ namespace Clocktower.Events
             }
 
             // No outsiders, or a Drunk librarian saw no Outsiders.
-            librarian.Agent.NotifyLibrarianNoOutsiders();
+            await librarian.Agent.NotifyLibrarianNoOutsiders();
             storyteller.NotifyLibrarianNoOutsiders(librarian);
         }
 

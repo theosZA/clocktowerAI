@@ -133,7 +133,7 @@ namespace Clocktower.Agent.RobotAgent
 
         private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)
         {
-            string prompt = "That is not a valid option. Please choice one of the following options: " + string.Join(", ", options.Select(option => option.Name));
+            string prompt = "That is not a valid option. Please choose one of the following options: " + string.Join(", ", options.Select(option => option.Name));
             var choiceAsText = (await Request(prompt)).Trim();
 
             if (string.IsNullOrEmpty(choiceAsText))

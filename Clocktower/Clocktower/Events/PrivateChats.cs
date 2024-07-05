@@ -94,8 +94,8 @@ namespace Clocktower.Events
         {
             var chatLog = new List<(Player speaker, string message)>();
 
-            playerA.Agent.StartPrivateChat(playerB);
-            playerB.Agent.StartPrivateChat(playerA);
+            await playerA.Agent.StartPrivateChat(playerB);
+            await playerB.Agent.StartPrivateChat(playerA);
             
             // A maximum of 4 messages each, 8 in total.
             for (int i = 0; i < 8; i++)
@@ -112,7 +112,7 @@ namespace Clocktower.Events
                 }
                 else
                 {
-                    listener.Agent.PrivateChatMessage(speaker, message);
+                    await listener.Agent.PrivateChatMessage(speaker, message);
                     chatLog.Add((speaker, message));
                 }
                 if (endChat)
@@ -121,8 +121,8 @@ namespace Clocktower.Events
                 }
             }
 
-            playerA.Agent.EndPrivateChat(playerB);
-            playerB.Agent.EndPrivateChat(playerA);
+            await playerA.Agent.EndPrivateChat(playerB);
+            await playerB.Agent.EndPrivateChat(playerA);
 
             return chatLog;
         }
