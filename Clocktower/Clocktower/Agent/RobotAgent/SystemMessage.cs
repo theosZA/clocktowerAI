@@ -27,7 +27,7 @@ namespace Clocktower.Agent.RobotAgent
             "There is a lot of information in this game. However, some of it might be wrong. If you are drunk or poisoned, you have no ability, but I will pretend that you do: " +
             "your ability won't work and any information you get from your ability may be incorrect.\r\n" +
             TextBuilder.ScriptToText(scriptName, script) +
-            TextBuilder.SetupToText(playerNames.Count) +
+            TextBuilder.SetupToText(playerNames.Count, script) +
             TextBuilder.PlayersToText(playerNames) +
             $"You are {playerName}, a player in the game. (Your clockwise neighbour is {ClockwiseNeighbour(playerNames, playerName)} and your anti-clockwise neighbour is {AnticlockwiseNeighbour(playerNames, playerName)}.) " +
             "{personality} Try to bring out your personality in your conversations with other players.\r\n";

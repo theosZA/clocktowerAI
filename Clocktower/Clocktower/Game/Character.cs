@@ -25,6 +25,7 @@
         Poisoner,
         Assassin,
         Scarlet_Woman,
+        Baron,
 
         Imp = 3000
     }

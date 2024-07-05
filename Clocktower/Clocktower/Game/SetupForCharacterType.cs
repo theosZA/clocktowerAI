@@ -131,6 +131,10 @@ namespace Clocktower.Game
                 }
                 yield return baseOutsiders + 1;
             }
+            else if (isCharacterSelected(Character.Baron))
+            {
+                yield return baseOutsiders + 2;
+            }
             else
             {
                 yield return baseOutsiders;

@@ -31,7 +31,7 @@ namespace Clocktower.Agent
 
             await chat.SendMessage($"Welcome {PlayerName} to a game of Blood on the Clocktower.");
             await chat.SendMessage(TextBuilder.ScriptToText(scriptName, script));
-            await chat.SendMessage(TextBuilder.SetupToText(players.Count));
+            await chat.SendMessage(TextBuilder.SetupToText(players.Count, script));
             await chat.SendMessage(TextBuilder.PlayersToText(players));
         }
 

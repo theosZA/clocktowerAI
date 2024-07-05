@@ -1,0 +1,29 @@
+[
+  {
+    "id": "_meta",
+    "author": "",
+    "name": "Transferring to Trouble"
+  },
+  { "id": "steward" },
+  { "id": "investigator" },
+  { "id": "librarian" },
+  { "id": "shugenja" },
+  { "id": "empath" },
+  { "id": "fortune_teller" },
+  { "id": "undertaker" },
+  { "id": "monk" },
+  { "id": "fisherman" },
+  { "id": "slayer" },
+  { "id": "philosopher" },
+  { "id": "soldier" },
+  { "id": "ravenkeeper" },
+  { "id": "tinker" },
+  { "id": "sweetheart" },
+  { "id": "recluse" },
+  { "id": "drunk" },
+  { "id": "baron" },
+  { "id": "poisoner" },
+  { "id": "assassin" },
+  { "id": "scarlet_woman" },
+  { "id": "imp" }
+]

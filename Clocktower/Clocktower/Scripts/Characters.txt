@@ -24,6 +24,7 @@ Godfather: You start knowing which Outsiders are in-play. If 1 died today, choos
 Poisoner: Each night, choose a player: their ability malfunctions tonight and tomorrow day.
 Assassin: Once per game, at night (except the first night), choose a player: they die, even if for some reason they could not.
 Scarlet Woman: If there are 5 or more players alive and the Demon dies, you become the Demon.
+Baron: There are extra Outsiders in play. [+2 Outsiders]
 
 // Demons
 Imp: Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.

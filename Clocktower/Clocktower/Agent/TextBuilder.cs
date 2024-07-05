@@ -39,9 +39,28 @@ namespace Clocktower.Agent
             return sb.ToString();
         }
 
-        public static string SetupToText(int playerCount)
+        public static string SetupToText(int playerCount, IReadOnlyCollection<Character> script)
         {
-            return $"In this game there are {playerCount} players. That means there will be {TownsfolkCount(playerCount)} Townsfolk, {OutsiderCount(playerCount)} Outsiders, {MinionCount(playerCount)} Minions and 1 Demon (unless modified by a Godfather).\r\n";
+            var sb = new StringBuilder();
+            sb.Append($"In this game there are {playerCount} players. That means there will be {TownsfolkCount(playerCount)} Townsfolk, {OutsiderCount(playerCount)} Outsiders, {MinionCount(playerCount)} Minions and 1 Demon");
+
+            var charactersThatModifySetup = GetCharactersThatCanAlterSetupCounts(script).ToList();
+            if (charactersThatModifySetup.Count > 0)
+            {
+                sb.Append($" (unless modified by a {charactersThatModifySetup[0]}");
+                if (charactersThatModifySetup.Count > 1)
+                {
+                    for (int i = 1; i < charactersThatModifySetup.Count - 1; ++i)
+                    {
+                        sb.Append($", {charactersThatModifySetup[i]}");
+                    }
+                    sb.Append($" or {charactersThatModifySetup.Last()}");
+                }
+                sb.Append(")");
+            }
+            sb.AppendLine();
+
+            return sb.ToString();
         }
 
         public static string PlayersToText(IReadOnlyCollection<string> playerNames)
@@ -107,6 +126,12 @@ namespace Clocktower.Agent
         private static int MinionCount(int playerCount)
         {
             return (playerCount - 4) / 3;
+        }
+
+        private static IEnumerable<Character> GetCharactersThatCanAlterSetupCounts(IReadOnlyCollection<Character> script)
+        {
+            return script.Where(character => character == Character.Godfather
+                                          || character == Character.Baron);
         }
 
         private static readonly Regex descriptionRegex = new(@"^([\w\s]+):(.+)$");

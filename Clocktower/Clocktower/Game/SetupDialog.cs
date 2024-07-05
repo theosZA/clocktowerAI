@@ -26,6 +26,7 @@
         {
             InitializeComponent();
 
+            this.Text = scriptName;
             this.random = random;
             this.forcedAlignments = forcedAlignments;
             this.forcedCharacters = forcedCharacters;
