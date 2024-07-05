@@ -32,14 +32,14 @@ namespace Clocktower.Game
             grimoire.AssignCharacters(storyteller);
         }
 
-        public void AnnounceWinner()
+        public async Task AnnounceWinner()
         {
             var winner = grimoire.Winner;
             if (winner.HasValue)
             {
-                observers.AnnounceWinner(winner.Value,
-                                         grimoire.Players.Where(player => player.Alignment == winner.Value).ToList(),
-                                         grimoire.Players.Where(player => player.Alignment != winner.Value).ToList());
+                await observers.AnnounceWinner(winner.Value,
+                                               grimoire.Players.Where(player => player.Alignment == winner.Value).ToList(),
+                                               grimoire.Players.Where(player => player.Alignment != winner.Value).ToList());
             }
         }
 

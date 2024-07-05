@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            observers.StartRollCall(grimoire.Players.Count(player => player.Alive));
+            await observers.StartRollCall(grimoire.Players.Count(player => player.Alive));
 
             // Give everyone, in grimoire order, a chance to make a public statement about their character and information.
             foreach (var player in grimoire.Players)
@@ -21,7 +21,7 @@ namespace Clocktower.Events
                 var statement = await player.Agent.GetRollCallStatement();
                 if (!string.IsNullOrEmpty(statement))
                 {
-                    observers.PublicStatement(player, statement);
+                    await observers.PublicStatement(player, statement);
                 }
             }
         }

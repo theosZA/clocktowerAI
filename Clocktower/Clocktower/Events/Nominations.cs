@@ -72,13 +72,13 @@ namespace Clocktower.Events
 
             (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
 
-            observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
+            await observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
             if (nominator == nominee)
             {
                 var statement = await nominator.Agent.GetReasonForSelfNomination();
                 if (!string.IsNullOrEmpty(statement))
                 {
-                    observers.PublicStatement(nominator, statement);
+                    await observers.PublicStatement(nominator, statement);
                 }
             }
             else
@@ -86,12 +86,12 @@ namespace Clocktower.Events
                 var prosecution = await nominator.Agent.GetProsecution(nominee);
                 if (!string.IsNullOrEmpty(prosecution))
                 {
-                    observers.PublicStatement(nominator, prosecution);
+                    await observers.PublicStatement(nominator, prosecution);
                 }
                 var defence = await nominee.Agent.GetDefence(nominator);
                 if (!string.IsNullOrEmpty(defence))
                 {
-                    observers.PublicStatement(nominee, defence);
+                    await observers.PublicStatement(nominee, defence);
                 }
             }
 
@@ -99,7 +99,7 @@ namespace Clocktower.Events
             bool beatsCurrent = voteCount >= votesToPutOnBlock;
             bool tiesCurrent = voteCount == votesToTie;
 
-            observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+            await observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
 
             if (tiesCurrent)
             {
@@ -169,7 +169,7 @@ namespace Clocktower.Events
                 if (player.Alive || player.HasGhostVote)
                 {
                     bool votedToExecute = await player.Agent.GetVote(nominee, ghostVote: !player.Alive);
-                    observers.AnnounceVote(player, nominee, votedToExecute);
+                    await observers.AnnounceVote(player, nominee, votedToExecute);
                     if (votedToExecute)
                     {
                         ++voteCount;

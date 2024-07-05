@@ -47,13 +47,15 @@ namespace Clocktower.Agent.RobotAgent
             this.onStatusChange = onStatusChange;
         }
 
-        public void AssignCharacter(Character character, Alignment alignment)
+        public Task AssignCharacter(Character character, Alignment alignment)
         {
             Character = character;
 
             clocktowerChat.AddFormattedMessage("You are the %c. You are %a.", character, alignment);
 
             onStatusChange();
+
+            return Task.CompletedTask;
         }
 
         public void DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)

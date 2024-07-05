@@ -58,7 +58,7 @@ namespace Clocktower.Events
                     playersNotChattingYet.Remove(target);
                     playersToGetPriorityOption.Remove(target);
                     playersChatting.Add((currentPlayer, target));
-                    observers.PrivateChatStarts(currentPlayer, target);
+                    await observers.PrivateChatStarts(currentPlayer, target);
                 }
             }
 
@@ -71,7 +71,7 @@ namespace Clocktower.Events
                                                               : await currentPlayer.Agent.OfferPrivateChatRequired(playersNotChattingYet);
                 playersNotChattingYet.Remove(target);
                 playersChatting.Add((currentPlayer, target));
-                observers.PrivateChatStarts(currentPlayer, target);
+                await observers.PrivateChatStarts(currentPlayer, target);
             }
 
             return playersChatting;

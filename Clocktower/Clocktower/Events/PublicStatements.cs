@@ -27,7 +27,7 @@ namespace Clocktower.Events
                 var statement = morning ? await player.Agent.GetMorningPublicStatement() : await player.Agent.GetEveningPublicStatement();
                 if (!string.IsNullOrEmpty(statement))
                 {
-                    observers.PublicStatement(player, statement);
+                    await observers.PublicStatement(player, statement);
                     StatementsCount++;
                 }
             }

@@ -36,19 +36,21 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
-        public void AssignCharacter(Character character, Alignment _)
+        public Task AssignCharacter(Character character, Alignment alignment)
         {
             this.character = character;
 
             SetTitleText();
 
-            outputText.AppendFormattedText("You are the %c.\n", character);
+            outputText.AppendFormattedText("You are the %c. You are %a.", character, alignment);
 
             autoClaim = character;
             if (autoClaim.Value.Alignment() == Alignment.Evil)
             {
                 autoClaim = script.OfAlignment(Alignment.Good).ToList().RandomPick(random);
             }
+
+            return Task.CompletedTask;
         }
 
         public void YouAreDead()

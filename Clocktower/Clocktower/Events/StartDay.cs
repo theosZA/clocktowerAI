@@ -22,18 +22,18 @@ namespace Clocktower.Events
             {
                 if (dayNumber > 1)  // No need to announce that there were no deaths on the first day.
                 {
-                    observers.NoOneDiedAtNight();
+                    await observers.NoOneDiedAtNight();
                 }
             }
             else
             {
                 foreach (var newlyDeadPlayer in newlyDeadPlayers)
                 {
-                    observers.PlayerDiedAtNight(newlyDeadPlayer);
+                    await observers.PlayerDiedAtNight(newlyDeadPlayer);
                     newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                     newlyDeadPlayer.Kill();
                 }
-                observers.LivingPlayerCount(grimoire.Players.Count(player => player.Alive));
+                await observers.LivingPlayerCount(grimoire.Players.Count(player => player.Alive));
             }
         }
 

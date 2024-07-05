@@ -64,7 +64,7 @@ namespace Clocktower.Events
         {
             bool success = await DoesKillTarget(purportedSlayer, target);
 
-            observers.AnnounceSlayerShot(purportedSlayer, target, success);
+            await observers.AnnounceSlayerShot(purportedSlayer, target, success);
             purportedSlayer.Tokens.Add(Token.AlreadyClaimedSlayer);
             if (purportedSlayer.Character == Character.Slayer)
             {

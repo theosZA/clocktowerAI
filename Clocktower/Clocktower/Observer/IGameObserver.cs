@@ -7,27 +7,27 @@ namespace Clocktower.Observer
     /// </summary>
     public interface IGameObserver
     {
-        void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers);
+        Task AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers);
 
         Task Night(int nightNumber);
         Task Day(int dayNumber);
 
-        void LivingPlayerCount(int numberOfLivingPlayers);
-        void NoOneDiedAtNight();
-        void PlayerDiedAtNight(Player newlyDeadPlayer);
-        void PlayerDies(Player newlyDeadPlayer);
-        void PlayerIsExecuted(Player executedPlayer, bool playerDies);
-        void DayEndsWithNoExecution();
+        Task LivingPlayerCount(int numberOfLivingPlayers);
+        Task NoOneDiedAtNight();
+        Task PlayerDiedAtNight(Player newlyDeadPlayer);
+        Task PlayerDies(Player newlyDeadPlayer);
+        Task PlayerIsExecuted(Player executedPlayer, bool playerDies);
+        Task DayEndsWithNoExecution();
 
         Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock);
-        void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock);
-        void AnnounceVote(Player voter, Player nominee, bool votedToExecute);
-        void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
+        Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock);
+        Task AnnounceVote(Player voter, Player nominee, bool votedToExecute);
+        Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
 
-        void AnnounceSlayerShot(Player slayer, Player target, bool success);
+        Task AnnounceSlayerShot(Player slayer, Player target, bool success);
 
-        void PublicStatement(Player player, string statement);
-        void PrivateChatStarts(Player playerA, Player playerB);
-        void StartRollCall(int playersAlive);
+        Task PublicStatement(Player player, string statement);
+        Task PrivateChatStarts(Player playerA, Player playerB);
+        Task StartRollCall(int playersAlive);
     }
 }

@@ -12,7 +12,7 @@ namespace Clocktower.Agent
 
         Task StartGame();
 
-        void AssignCharacter(Character character, Alignment alignment);
+        Task AssignCharacter(Character character, Alignment alignment);
         void YouAreDead();
 
         void MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);

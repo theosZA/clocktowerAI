@@ -11,7 +11,7 @@ namespace Clocktower.Observer
             this.outputText = outputText;
         }
 
-        public void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
+        public Task AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
         {
             bool forceStorytellerView = true;   // Game over - everyone can know who was what.
             if (winner == Alignment.Good)
@@ -26,6 +26,8 @@ namespace Clocktower.Observer
                 outputText.AppendFormattedText("Winning with the evil team are: %P.\n", winners, forceStorytellerView);
                 outputText.AppendFormattedText("Losing with the good team are: %P.\n", losers, forceStorytellerView);
             }
+
+            return Task.CompletedTask;
         }
 
         public Task Night(int nightNumber)
@@ -40,27 +42,31 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public void LivingPlayerCount(int numberOfLivingPlayers)
+        public Task LivingPlayerCount(int numberOfLivingPlayers)
         {
             outputText.AppendText($"There are {numberOfLivingPlayers} players still alive.\n");
+            return Task.CompletedTask;
         }
 
-        public void NoOneDiedAtNight()
+        public Task NoOneDiedAtNight()
         {
             outputText.AppendText("No one died in the night.\n");
+            return Task.CompletedTask;
         }
 
-        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        public Task PlayerDiedAtNight(Player newlyDeadPlayer)
         {
             outputText.AppendFormattedText("%p died in the night.\n", newlyDeadPlayer, StorytellerView);
+            return Task.CompletedTask;
         }
 
-        public void PlayerDies(Player newlyDeadPlayer)
+        public Task PlayerDies(Player newlyDeadPlayer)
         {
             outputText.AppendFormattedText("%p dies.\n", newlyDeadPlayer, StorytellerView);
+            return Task.CompletedTask;
         }
 
-        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
+        public Task PlayerIsExecuted(Player executedPlayer, bool playerDies)
         {
             if (playerDies)
             {
@@ -74,11 +80,13 @@ namespace Clocktower.Observer
             {
                 outputText.AppendFormattedText("%p's corpse is executed.\n", executedPlayer, StorytellerView);
             }
+            return Task.CompletedTask;
         }
 
-        public void DayEndsWithNoExecution()
+        public Task DayEndsWithNoExecution()
         {
             outputText.AppendText("There is no execution and the day ends.\n");
+            return Task.CompletedTask;
         }
 
         public Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock)
@@ -87,7 +95,7 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
+        public Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             outputText.AppendFormattedText("%p nominates %p.", nominator, nominee, StorytellerView);
             if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
@@ -102,9 +110,11 @@ namespace Clocktower.Observer
             {
                 outputText.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
             {
@@ -121,9 +131,11 @@ namespace Clocktower.Observer
             {
                 outputText.AppendFormattedText("%p does not vote.\n", voter, nominee, StorytellerView);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        public Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
         {
             if (beatsCurrent)
             {
@@ -137,9 +149,11 @@ namespace Clocktower.Observer
             {
                 outputText.AppendFormattedText("%p received %b votes which is not enough.\n", nominee, voteCount, StorytellerView);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceSlayerShot(Player slayer, Player target, bool success)
+        public Task AnnounceSlayerShot(Player slayer, Player target, bool success)
         {
             outputText.AppendFormattedText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target, StorytellerView);
             if (success)
@@ -150,26 +164,32 @@ namespace Clocktower.Observer
             {
                 outputText.AppendText("Nothing happens.\n");
             }
+
+            return Task.CompletedTask;
         }
 
-        public void PublicStatement(Player player, string statement)
+        public Task PublicStatement(Player player, string statement)
         {
             outputText.AppendFormattedText("%p: %n", player, statement, StorytellerView);
             if (!statement.EndsWith("\n"))
             {
                 outputText.AppendText("\n");
             }
+
+            return Task.CompletedTask;
         }
 
-        public void PrivateChatStarts(Player playerA, Player playerB)
+        public Task PrivateChatStarts(Player playerA, Player playerB)
         {
             outputText.AppendFormattedText("%p goes for a private chat with %p.\n", playerA, playerB, StorytellerView);
+            return Task.CompletedTask;
         }
 
-        public void StartRollCall(int playersAlive)
+        public Task StartRollCall(int playersAlive)
         {
             outputText.AppendFormattedText("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability.\n",
                                            playersAlive);
+            return Task.CompletedTask;
         }
 
         private readonly RichTextBox outputText;

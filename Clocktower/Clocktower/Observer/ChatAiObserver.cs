@@ -12,7 +12,7 @@ namespace Clocktower.Observer
             this.robotAgent = robotAgent;
         }
 
-        public void AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
+        public Task AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)
         {
             const bool forceStorytellerView = true;
             if (winner == Alignment.Good)
@@ -23,6 +23,8 @@ namespace Clocktower.Observer
             {
                 clocktowerChat.AddFormattedMessage("\nThe EVIL team has won!\nWinning with the evil team are: %P.\nLosing with the good team are: %P.", winners, losers, forceStorytellerView);
             }
+
+            return Task.CompletedTask;
         }
 
         public async Task Night(int nightNumber)
@@ -40,27 +42,31 @@ namespace Clocktower.Observer
             await clocktowerChat.Day(dayNumber);
         }
 
-        public void LivingPlayerCount(int numberOfLivingPlayers)
+        public Task LivingPlayerCount(int numberOfLivingPlayers)
         {
             clocktowerChat.AddMessage($"There are {numberOfLivingPlayers} players still alive.");
+            return Task.CompletedTask;
         }
 
-        public void NoOneDiedAtNight()
+        public Task NoOneDiedAtNight()
         {
             clocktowerChat.AddMessage("No one died in the night.");
+            return Task.CompletedTask;
         }
 
-        public void PlayerDiedAtNight(Player newlyDeadPlayer)
+        public Task PlayerDiedAtNight(Player newlyDeadPlayer)
         {
             clocktowerChat.AddFormattedMessage("%p died in the night.", newlyDeadPlayer);
+            return Task.CompletedTask;
         }
 
-        public void PlayerDies(Player newlyDeadPlayer)
+        public Task PlayerDies(Player newlyDeadPlayer)
         {
             clocktowerChat.AddFormattedMessage("%p dies.", newlyDeadPlayer);
+            return Task.CompletedTask;
         }
 
-        public void PlayerIsExecuted(Player executedPlayer, bool playerDies)
+        public Task PlayerIsExecuted(Player executedPlayer, bool playerDies)
         {
             if (playerDies)
             {
@@ -74,11 +80,14 @@ namespace Clocktower.Observer
             {
                 clocktowerChat.AddFormattedMessage("%p's corpse is executed.", executedPlayer);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void DayEndsWithNoExecution()
+        public Task DayEndsWithNoExecution()
         {
             clocktowerChat.AddMessage("There is no execution and the day ends.");
+            return Task.CompletedTask;
         }
 
         public async Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock)
@@ -91,7 +100,7 @@ namespace Clocktower.Observer
             }
         }
 
-        public void AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
+        public Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             var sb = new StringBuilder();
             sb.AppendFormattedText("%p nominates %p. ", nominator, nominee);
@@ -108,9 +117,11 @@ namespace Clocktower.Observer
                 sb.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
             }
             clocktowerChat.AddMessage(sb.ToString());
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
             {
@@ -127,9 +138,11 @@ namespace Clocktower.Observer
             {
                 clocktowerChat.AddFormattedMessage("%p does not vote.", voter, nominee);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        public Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
         {
             if (beatsCurrent)
             {
@@ -143,9 +156,11 @@ namespace Clocktower.Observer
             {
                 clocktowerChat.AddFormattedMessage("%p received %b votes which is not enough.", nominee, voteCount);
             }
+
+            return Task.CompletedTask;
         }
 
-        public void AnnounceSlayerShot(Player slayer, Player target, bool success)
+        public Task AnnounceSlayerShot(Player slayer, Player target, bool success)
         {
             var sb = new StringBuilder();
             sb.AppendFormattedText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target);
@@ -158,22 +173,27 @@ namespace Clocktower.Observer
                 sb.Append("Nothing happens.");
             }
             clocktowerChat.AddMessage(sb.ToString());
+
+            return Task.CompletedTask;
         }
 
-        public void PublicStatement(Player player, string statement)
+        public Task PublicStatement(Player player, string statement)
         {
             clocktowerChat.AddFormattedMessage("%p: %n", player, statement);
+            return Task.CompletedTask;
         }
 
-        public void PrivateChatStarts(Player playerA, Player playerB)
+        public Task PrivateChatStarts(Player playerA, Player playerB)
         {
             clocktowerChat.AddFormattedMessage("%p goes for a private chat with %p.", playerA, playerB);
+            return Task.CompletedTask;
         }
 
-        public void StartRollCall(int playersAlive)
+        public Task StartRollCall(int playersAlive)
         {
             clocktowerChat.AddFormattedMessage("Since there are only %b players still alive, we will hold an optional roll call. Everyone will have a chance to claim their character and elaborate on what they learned or how they used their character's ability.",
                                                playersAlive);
+            return Task.CompletedTask;
         }
 
         private readonly ClocktowerChatAi clocktowerChat;

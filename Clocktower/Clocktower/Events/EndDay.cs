@@ -13,24 +13,22 @@ namespace Clocktower.Events
             this.observers = observers;
         }
 
-        public Task RunEvent()
+        public async Task RunEvent()
         {
             if (grimoire.PlayerToBeExecuted == null)
             {
-                observers.DayEndsWithNoExecution();
+                await observers.DayEndsWithNoExecution();
             }
             else
             {
                 bool playerDies = grimoire.PlayerToBeExecuted.Alive;
-                observers.PlayerIsExecuted(grimoire.PlayerToBeExecuted, playerDies);
+                await observers.PlayerIsExecuted(grimoire.PlayerToBeExecuted, playerDies);
                 if (playerDies)
                 {
                     new Kills(storyteller, grimoire).Execute(grimoire.PlayerToBeExecuted);
                 }
                 grimoire.PlayerToBeExecuted = null;
             }
-
-            return Task.CompletedTask;
         }
 
         private readonly IStoryteller storyteller;

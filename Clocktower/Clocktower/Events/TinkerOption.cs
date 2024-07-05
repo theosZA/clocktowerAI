@@ -29,7 +29,7 @@ namespace Clocktower.Events
                     if (duringDay)
                     {
                         kills.DayKill(tinker);
-                        observers.PlayerDies(tinker);
+                        await observers.PlayerDies(tinker);
                     }
                     else
                     {

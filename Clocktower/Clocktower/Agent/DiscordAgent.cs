@@ -22,7 +22,7 @@ namespace Clocktower.Agent
 
         public async Task StartGame()
         {
-            chat = await chatClient.CreateChat(PlayerName);
+            var chat = await chatClient.CreateChat(PlayerName);
 
             observer.Start(chat);
 
@@ -32,9 +32,9 @@ namespace Clocktower.Agent
             await chat.SendMessage(TextBuilder.PlayersToText(players));
         }
 
-        public void AssignCharacter(Character character, Alignment alignment)
+        public async Task AssignCharacter(Character character, Alignment alignment)
         {
-            throw new NotImplementedException();
+            await observer.SendMessage("You are the %c. You are %a.", character, alignment);
         }
 
         public void YouAreDead()
@@ -228,7 +228,6 @@ namespace Clocktower.Agent
         }
 
         private readonly ChatClient chatClient;
-        private Chat? chat;
         private readonly DiscordChatObserver observer = new();
 
         private IReadOnlyCollection<string> players;
