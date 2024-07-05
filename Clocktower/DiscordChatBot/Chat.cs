@@ -15,12 +15,21 @@ namespace DiscordChatBot
 
         public async Task Create(SocketGuild guild)
         {
-            channel = guild.TextChannels.FirstOrDefault(channel => channel.Name == name);
+            channel = guild.TextChannels.FirstOrDefault(channel => string.Equals(channel.Name, name, StringComparison.InvariantCultureIgnoreCase));
             channel ??= await guild.CreateTextChannelAsync(name);
         }
 
         public async Task SendMessage(string message)
         {
+            if (message.Length > 2000)
+            {
+                // Split the message so that length is below 2000.
+                var endPosition = message.LastIndexOf('\n', 1999);
+                await SendMessage(message[..endPosition]);
+                await SendMessage(message[(endPosition + 1)..]);
+                return;
+            }
+
             if (channel != null)
             {
                 await channel.SendMessageAsync(message);

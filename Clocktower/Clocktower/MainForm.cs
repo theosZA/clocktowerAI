@@ -1,3 +1,4 @@
+using Clocktower.Agent;
 using Clocktower.Agent.Config;
 using Clocktower.Game;
 using System.Configuration;
@@ -21,14 +22,16 @@ namespace Clocktower
                 var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
                 var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
 
-                var setupDialog = new SetupDialog(random, forcedAlignments, forcedCharacters);
+                var setupDialog = new SetupDialog("A Simple Matter", random, forcedAlignments, forcedCharacters);
                 var result = setupDialog.ShowDialog();
                 if (result != DialogResult.OK)
                 {
                     return;
                 }
 
-                var clocktowerGame = new ClocktowerGame(setupDialog, random);
+                var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
+                var clocktowerGame = new ClocktowerGame(setupDialog, agents.ToList(), random);
+                await clocktowerGame.StartGame();
                 while (!clocktowerGame.Finished)
                 {
                     await clocktowerGame.RunNightAndDay();

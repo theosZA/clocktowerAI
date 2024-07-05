@@ -10,7 +10,7 @@ namespace Clocktower.Agent
 
         IGameObserver Observer { get; }
 
-        void StartGame();
+        Task StartGame();
 
         void AssignCharacter(Character character, Alignment alignment);
         void YouAreDead();

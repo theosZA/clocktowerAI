@@ -3,6 +3,11 @@
     public partial class SetupDialog : Form, IGameSetup
     {
         /// <summary>
+        /// The name of the script defining the characters available in this game.
+        /// </summary>
+        public string ScriptName { get; private set; }
+
+        /// <summary>
         /// The characters available in this game.
         /// </summary>
         public IReadOnlyCollection<Character> Script { get; private set; }
@@ -17,7 +22,7 @@
         /// </summary>
         public Character[] Characters { get; private set; }
 
-        public SetupDialog(Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
+        public SetupDialog(string scriptName, Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
         {
             InitializeComponent();
 
@@ -26,7 +31,9 @@
             this.forcedCharacters = forcedCharacters;
 
             Characters = Array.Empty<Character>();
-            Script = ClocktowerScriptReader.ReadScriptFromFile("Scripts\\A Simple Matter.json").ToList();
+
+            ScriptName = scriptName;
+            Script = ClocktowerScriptReader.ReadScriptFromFile($"Scripts\\{scriptName}.json").ToList();
 
             // Populate grid with script characters.
             for (int column = 0; column < characterTypes.Length; column++)

@@ -30,9 +30,10 @@ namespace Clocktower.Agent
             Observer = new RichTextBoxObserver(outputText);
         }
 
-        public void StartGame()
+        public Task StartGame()
         {
             Show();
+            return Task.CompletedTask;
         }
 
         public void AssignCharacter(Character character, Alignment _)

@@ -32,11 +32,11 @@ namespace Clocktower.Agent.RobotAgent
 
         public IGameObserver Observer => chatAiObserver;
 
-        public RobotAgent(string model, string playerName, string personality, IReadOnlyCollection<string> playersNames, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
+        public RobotAgent(string model, string playerName, string personality, IReadOnlyCollection<string> playersNames, string scriptName, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
         {
             PlayerName = playerName;
 
-            clocktowerChat = new(model, playerName, personality, playersNames, script);
+            clocktowerChat = new(model, playerName, personality, playersNames, scriptName, script);
             clocktowerChat.OnChatMessage += InternalOnChatMessage;
             clocktowerChat.OnDaySummary += InternalOnDaySummary;
             clocktowerChat.OnTokenCount += InternalOnTokenCount;
@@ -283,9 +283,10 @@ namespace Clocktower.Agent.RobotAgent
             clocktowerChat.AddFormattedMessage("Storyteller: %n", advice.Trim());
         }
 
-        public void StartGame()
+        public Task StartGame()
         {
             onStart();
+            return Task.CompletedTask;
         }
 
         public void StartPrivateChat(Player otherPlayer)

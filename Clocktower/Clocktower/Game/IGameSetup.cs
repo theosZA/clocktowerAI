@@ -3,6 +3,11 @@
     public interface IGameSetup
     {
         /// <summary>
+        /// The name of the script defining the characters available in this game.
+        /// </summary>
+        string ScriptName { get; }
+
+        /// <summary>
         /// The characters available in this game.
         /// </summary>
         IReadOnlyCollection<Character> Script { get; }

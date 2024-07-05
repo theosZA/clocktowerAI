@@ -12,17 +12,24 @@ namespace Clocktower.Game
     {
         public bool Finished => grimoire.Finished;
 
-        public ClocktowerGame(IGameSetup setup, Random random)
+        public ClocktowerGame(IGameSetup setup, IReadOnlyCollection<IAgent> agents, Random random)
         {
-            var agents = AgentFactory.CreateAgentsFromConfig(setup, random).ToList();
-
+            this.agents = agents;
             storyteller = new StorytellerForm(random);
             observers = ProxyCollection<IGameObserver>.CreateProxy(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
             grimoire = new Grimoire(agents, setup.Characters);
 
             gameEventFactory = new GameEventFactory(storyteller, grimoire, observers, setup, random);
+        }
 
-            StartGame(agents);
+        public async Task StartGame()
+        {
+            storyteller.Start();
+
+            var startGameTasks = agents.Select(async agent => await agent.StartGame());
+            await Task.WhenAll(startGameTasks);
+
+            grimoire.AssignCharacters(storyteller);
         }
 
         public void AnnounceWinner()
@@ -44,17 +51,7 @@ namespace Clocktower.Game
             await gameEventFactory.BuildDayEvents(dayNumber).RunEvent();
         }
 
-        private void StartGame(IEnumerable<IAgent> agents)
-        {
-            storyteller.Start();
-            foreach (var agent in agents)
-            {
-                agent.StartGame();
-            }
-
-            grimoire.AssignCharacters(storyteller);
-        }
-
+        private readonly IReadOnlyCollection<IAgent> agents;
         private readonly IStoryteller storyteller;
         private readonly IGameObserver observers;
         private readonly Grimoire grimoire;
