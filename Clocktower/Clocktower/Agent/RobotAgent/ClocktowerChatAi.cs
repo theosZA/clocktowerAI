@@ -141,7 +141,18 @@ namespace Clocktower.Agent.RobotAgent
                 return options.FirstOrDefault(option => option is PassOption) ?? throw new Exception($"{playerName} chose to pass but there is no Pass option");
             }
 
-            return GetMatchingOption(options, choiceAsText) ?? throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
+            var option = GetMatchingOption(options, choiceAsText);
+            if (option != null)
+            {
+                return option;
+            }
+            // AI failed to pick a valid option - default to PASS.
+            var passOption = options.FirstOrDefault(option => option is PassOption);
+            if (passOption != null)
+            {
+                return passOption;    
+            }
+            throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
         }
 
         private static string CleanResponse(string? textFromAi)
