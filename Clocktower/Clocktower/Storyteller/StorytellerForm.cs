@@ -71,6 +71,20 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(redHerringCandidates);
         }
 
+        public async Task<IOption> GetWasherwomanPings(Player washerwoman, IReadOnlyCollection<IOption> washerwomanPingCandidates)
+        {
+            outputText.AppendFormattedText("Choose two players who %p will see as a townsfolk, and the character they will see them as.", washerwoman, StorytellerView);
+            OutputDrunkDisclaimer(washerwoman);
+            var possibleTownsfolk = new HashSet<Player>(washerwomanPingCandidates.Select(option => ((CharacterForTwoPlayersOption)option).PlayerA));
+            foreach (var misregister in possibleTownsfolk.Where(player => player.CanRegisterAsTownsfolk && player.CharacterType != CharacterType.Townsfolk))
+            {
+                outputText.AppendFormattedText(" Remember that %p could register as a townsfolk.", misregister, StorytellerView);
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(washerwomanPingCandidates);
+        }
+
         public async Task<IOption> GetInvestigatorPings(Player investigator, IReadOnlyCollection<IOption> investigatorPingCandidates)
         {
             outputText.AppendFormattedText("Choose two players who %p will see as a minion, and the character they will see them as.", investigator, StorytellerView);
@@ -254,6 +268,11 @@ namespace Clocktower.Storyteller
                 return;
             }
             outputText.AppendFormattedText("%p learns that the following outsiders are in play: %C\n", godfather, outsiders, StorytellerView);
+        }
+
+        public void NotifyWasherwoman(Player washerwoman, Player playerA, Player playerB, Character character)
+        {
+            outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", washerwoman, playerA, playerB, character, StorytellerView);
         }
 
         public void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character)

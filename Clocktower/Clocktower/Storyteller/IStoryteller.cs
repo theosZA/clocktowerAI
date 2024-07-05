@@ -17,6 +17,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetFortuneTellerRedHerring(Player fortuneTeller, IReadOnlyCollection<IOption> redHerringCandidates);
+        Task<IOption> GetWasherwomanPings(Player washerwoman, IReadOnlyCollection<IOption> washerwomanPingCandidates);
         Task<IOption> GetInvestigatorPings(Player investigator, IReadOnlyCollection<IOption> investigatorPingCandidates);
         Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
@@ -35,6 +36,7 @@ namespace Clocktower.Storyteller
         void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders);
+        void NotifyWasherwoman(Player washerwoman, Player playerA, Player playerB, Character character);
         void NotifyLibrarian(Player librarian, Player playerA, Player playerB, Character character);
         void NotifyLibrarianNoOutsiders(Player librarian);
         void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character);

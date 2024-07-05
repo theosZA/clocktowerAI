@@ -15,6 +15,7 @@
         Philosopher,
         Soldier,
         Ravenkeeper,
+        Washerwoman,
 
         Tinker = 1000,
         Sweetheart,

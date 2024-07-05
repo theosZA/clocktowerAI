@@ -12,6 +12,7 @@ Slayer: Once per game, during the day, publicly choose a player: if they are the
 Philosopher: Once per game, at night, choose a good character: gain that ability. If this character is in play, they are drunk.
 Soldier: You are safe from the Demon.
 Ravenkeeper: If you die at night, you are woken to choose a player: you learn their character.
+Washerwoman: You start knowing that 1 of 2 players is a particular Townsfolk.
 
 // Outsiders
 Tinker: You might die at any time.

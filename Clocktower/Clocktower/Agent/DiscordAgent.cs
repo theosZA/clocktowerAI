@@ -75,6 +75,11 @@ namespace Clocktower.Agent
             }
         }
 
+        public async Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
+        {
+            await observer.SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+        }
+
         public async Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             await observer.SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);

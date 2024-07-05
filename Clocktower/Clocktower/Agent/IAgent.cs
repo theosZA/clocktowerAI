@@ -19,6 +19,7 @@ namespace Clocktower.Agent
         Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         Task NotifyGodfather(IReadOnlyCollection<Character> outsiders);
+        Task NotifyWasherwoman(Player playerA, Player playerB, Character character);
         Task NotifyLibrarian(Player playerA, Player playerB, Character character);
         Task NotifyLibrarianNoOutsiders();
         Task NotifyInvestigator(Player playerA, Player playerB, Character character);

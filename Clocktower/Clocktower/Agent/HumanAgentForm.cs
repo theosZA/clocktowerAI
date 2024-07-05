@@ -111,6 +111,12 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
+        {
+            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);

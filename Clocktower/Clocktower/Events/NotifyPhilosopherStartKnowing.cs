@@ -32,6 +32,10 @@ namespace Clocktower.Events
                         await new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
                         break;
 
+                    case Character.Washerwoman:
+                        await new NotifyWasherwoman(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
+                        break;
+
                     case Character.Shugenja:
                         await new NotifyShugenja(storyteller, grimoire).RunEvent(philosopher);
                         break;

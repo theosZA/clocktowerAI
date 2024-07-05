@@ -218,6 +218,12 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
+        {
+            clocktowerChat.AddFormattedMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            return Task.CompletedTask;
+        }
+
         public async Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
         {
             var canPass = options.Any(option => option is PassOption);

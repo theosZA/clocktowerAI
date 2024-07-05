@@ -49,6 +49,7 @@ namespace Clocktower.Game
         public bool CanRegisterAsEvil => Alignment == Alignment.Evil || (Character == Character.Recluse && !DrunkOrPoisoned);
         public bool CanRegisterAsDemon => CharacterType == CharacterType.Demon || (Character == Character.Recluse && !DrunkOrPoisoned);
         public bool CanRegisterAsMinion => CharacterType == CharacterType.Minion || (Character == Character.Recluse && !DrunkOrPoisoned);
+        public bool CanRegisterAsTownsfolk => CharacterType == CharacterType.Townsfolk;
 
         public bool CanBeKilledByDemon => !((Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.Contains(Token.ProtectedByMonk));
 
