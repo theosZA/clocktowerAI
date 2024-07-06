@@ -20,53 +20,10 @@ namespace Clocktower.Events
                 var target = await imp.Agent.RequestChoiceFromImp(grimoire.Players);
 
                 storyteller.ChoiceFromImp(imp, target);
-                if (!imp.DrunkOrPoisoned && target.Alive && target.CanBeKilledByDemon)
+                if (!imp.DrunkOrPoisoned && target.Alive)
                 {
-                    if (target == imp)
-                    {
-                        await StarPass(target);
-                    }
-                    else
-                    {
-                        new Kills(storyteller, grimoire).NightKill(target);
-                    }
+                    await new Kills(storyteller, grimoire).NightKill(target, imp);
                 }
-            }
-        }
-
-        private async Task StarPass(Player dyingImp)
-        {
-            // We need to check if a Scarlet Woman will become the new Imp. If so, that will already be handled.
-            bool scarletWomanCatchesStarPass = grimoire.Players.Count(player => player.Alive) >= 5 && grimoire.Players.Any(player => player.Character == Character.Scarlet_Woman && !player.DrunkOrPoisoned);
-
-            new Kills(storyteller, grimoire).NightKill(dyingImp);
-            if (scarletWomanCatchesStarPass)
-            {
-                return;
-            }
-
-            var newImp = await GetNewImp();
-            if (newImp == null)
-            {
-                return;
-            }
-            grimoire.ChangeCharacter(newImp, Character.Imp);
-            storyteller.AssignCharacter(newImp);
-        }
-
-        private async Task<Player?> GetNewImp()
-        {
-            var aliveMinions = grimoire.Players.Where(player => player.Alive && player.CharacterType == CharacterType.Minion).ToList();
-            switch (aliveMinions.Count)
-            {
-                case 0: // Nobody to star-pass to!
-                    return null;
-
-                case 1:
-                    return aliveMinions[0];
-
-                default:
-                    return await storyteller.GetNewImp(aliveMinions);
             }
         }
 

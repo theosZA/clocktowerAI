@@ -73,7 +73,7 @@ namespace Clocktower.Events
 
             if (success)
             {
-                new Kills(storyteller, grimoire).DayKill(target);
+                await new Kills(storyteller, grimoire).DayKill(target, purportedSlayer);
             }
         }
 

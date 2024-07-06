@@ -22,7 +22,7 @@ namespace Clocktower.Events
                 godfather.Tokens.Remove(Token.GodfatherKillsTonight);
                 if (!godfather.DrunkOrPoisoned && target.Alive)
                 {
-                    new Kills(storyteller, grimoire).NightKill(target);
+                    await new Kills(storyteller, grimoire).NightKill(target, godfather);
                 }
             }
         }

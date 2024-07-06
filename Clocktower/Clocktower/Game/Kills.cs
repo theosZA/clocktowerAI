@@ -10,10 +10,10 @@ namespace Clocktower.Game
             this.grimoire = grimoire;
         }
 
-        public void Execute(Player player)
+        public async Task Execute(Player player)
         {
             player.Tokens.Add(Token.Executed);
-            DayKill(player);
+            await DayKill(player, killer: null);
 
             if (player.Character == Character.Saint && !player.DrunkOrPoisoned)
             {
@@ -21,29 +21,39 @@ namespace Clocktower.Game
             }
         }
 
-        public void DayKill(Player player)
+        public async Task DayKill(Player player, Player? killer)
         {
-            HandleDayDeath(player);
+            await HandleDayDeath(player, killer);
             player.Kill();
         }
 
-        public void NightKill(Player player)
+        public async Task NightKill(Player player, Player? killer)
         {
-            HandleNightDeath(player);
+            if (player.Character == Character.Mayor && !player.DrunkOrPoisoned && player.Alive && killer?.Character != Character.Assassin)
+            {
+                player = await storyteller.GetMayorBounce(player, killer, grimoire.Players);
+            }
+
+            if (killer?.CharacterType == CharacterType.Demon && player.ProtectedFromDemonKill)
+            {
+                return;
+            }
+
+            await HandleNightDeath(player, killer);
             player.Tokens.Add(Token.DiedAtNight);
         }
 
-        private void HandleDayDeath(Player player)
+        private async Task HandleDayDeath(Player dyingPlayer, Player? killer)
         {
-            grimoire.RemoveTokensForCharacter(player.RealCharacter);
-            ProcessDayTriggersForOtherCharacters(player);
-            ProcessTriggersForOtherCharacters(player);
+            grimoire.RemoveTokensForCharacter(dyingPlayer.RealCharacter);
+            ProcessDayTriggersForOtherCharacters(dyingPlayer);
+            await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
-        private void HandleNightDeath(Player player)
+        private async Task HandleNightDeath(Player dyingPlayer, Player? killer)
         {
-            grimoire.RemoveTokensForCharacter(player.RealCharacter);
-            ProcessTriggersForOtherCharacters(player);
+            grimoire.RemoveTokensForCharacter(dyingPlayer.RealCharacter);
+            await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
         private void ProcessDayTriggersForOtherCharacters(Player dyingPlayer)
@@ -58,18 +68,41 @@ namespace Clocktower.Game
             }
         }
 
-        private void ProcessTriggersForOtherCharacters(Player dyingPlayer)
+        private async Task ProcessTriggersForOtherCharacters(Player dyingPlayer, Player? killer)
         {
             // Scarlet Woman
+            bool scarletWomanTriggered = false;
             if (dyingPlayer.CharacterType == CharacterType.Demon && grimoire.Players.Count(player => player.Alive) >= 5)
             {
                 var scarletWoman = grimoire.GetLivingPlayers(Character.Scarlet_Woman).FirstOrDefault(player => player.Alive && !player.DrunkOrPoisoned); // shouldn't be more than 1 Scarlet Woman
                 if (scarletWoman != null)
                 {
+                    scarletWomanTriggered = true;
                     storyteller.ScarletWomanTrigger(dyingPlayer, scarletWoman);
                     grimoire.ChangeCharacter(scarletWoman, dyingPlayer.Character);
                 }
             }
+            // Imp star pass (excluding Scarlet Woman)
+            if (!scarletWomanTriggered && dyingPlayer.Character == Character.Imp && killer == dyingPlayer)
+            {
+                var newImp = await GetNewImp();
+                if (newImp != null)
+                {
+                    grimoire.ChangeCharacter(newImp, Character.Imp);
+                    storyteller.AssignCharacter(newImp);
+                }
+            }
+        }
+
+        private async Task<Player?> GetNewImp()
+        {
+            var aliveMinions = grimoire.Players.Where(player => player.Alive && player.CharacterType == CharacterType.Minion).ToList();
+            return aliveMinions.Count switch
+            {
+                0 => null,  // Nobody to star-pass to!
+                1 => aliveMinions[0],
+                _ => await storyteller.GetNewImp(aliveMinions),
+            };
         }
 
         private readonly IStoryteller storyteller;

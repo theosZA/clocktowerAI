@@ -65,6 +65,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, undertakerOptions.ToOptions())).GetCharacter();
         }
 
+        public static async Task<Player> GetMayorBounce(this IStoryteller storyteller, Player mayor, Player? killer, IEnumerable<Player> mayorOptions)
+        {
+            return (await storyteller.GetMayorBounce(mayor, killer, mayorOptions.ToOptions())).GetPlayer();
+        }
+
         public static async Task<bool> ShouldKillTinker(this IStoryteller storyteller, Player tinker)
         {
             return await storyteller.ShouldKillTinker(tinker, OptionsBuilder.YesOrNo) is YesOption;

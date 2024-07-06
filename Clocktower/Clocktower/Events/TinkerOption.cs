@@ -28,12 +28,12 @@ namespace Clocktower.Events
                     var kills = new Kills(storyteller, grimoire);
                     if (duringDay)
                     {
-                        kills.DayKill(tinker);
+                        await kills.DayKill(tinker, killer: null);
                         await observers.PlayerDies(tinker);
                     }
                     else
                     {
-                        kills.NightKill(tinker);
+                        await kills.NightKill(tinker, killer: null);
                     }
                 }
             }
