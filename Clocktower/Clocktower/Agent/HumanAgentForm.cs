@@ -246,6 +246,12 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.\n", Character.Butler);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("Do you wish to claim %c and shoot a target player?\n", Character.Slayer);

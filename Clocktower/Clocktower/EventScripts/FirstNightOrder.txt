@@ -13,6 +13,7 @@ Investigator
 Chef
 Empath
 FortuneTeller
+Butler
 Steward
 Shugenja
 EndNight

@@ -93,6 +93,10 @@ namespace Clocktower.Game
                 case Character.Poisoner:
                     RemoveToken(Token.PoisonedByPoisoner);
                     break;
+
+                case Character.Butler:
+                    RemoveToken(Token.ChosenByButler);
+                    break;
             }
         }
 

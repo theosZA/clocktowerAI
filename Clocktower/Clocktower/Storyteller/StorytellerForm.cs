@@ -401,6 +401,11 @@ namespace Clocktower.Storyteller
             }
         }
 
+        public void ChoiceFromButler(Player butler, Player target)
+        {
+            outputText.AppendFormattedText("%p has chosen %p to be their master.\n", butler, target, StorytellerView);
+        }
+
         public void ScarletWomanTrigger(Player demon, Player scarletWoman)
         {
             outputText.AppendFormattedText("%p has died and so %p becomes the new %c.\n", demon, scarletWoman, Character.Imp, StorytellerView);

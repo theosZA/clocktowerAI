@@ -62,6 +62,7 @@ namespace Clocktower.Events
                 // Outsiders
                 case "Sweetheart":                  return new SweetheartDrunk(storyteller, grimoire);
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, observers, duringDay);
+                case "Butler":                      return new ChoiceFromButler(storyteller, grimoire);
 
                 // Minions
                 case "Assassin":                    return new ChoiceFromAssassin(storyteller, grimoire);

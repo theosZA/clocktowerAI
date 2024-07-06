@@ -99,7 +99,7 @@ namespace Clocktower.Events
                 }
             }
 
-            int voteCount = await RunVote(nominee);
+            int voteCount = await RunVote(nominator, nominee);
             bool beatsCurrent = voteCount >= votesToPutOnBlock;
             bool tiesCurrent = voteCount == votesToTie;
 
@@ -164,19 +164,19 @@ namespace Clocktower.Events
             return (null, minVotesRequired);
         }
 
-        private async Task<int> RunVote(Player nominee)
+        private async Task<int> RunVote(Player nominator, Player nominee)
         {
-            int voteCount = 0;
+            List<Player> votesInFavourOfExecution = new();
 
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {
                 if (player.Alive || player.HasGhostVote)
                 {
-                    bool votedToExecute = await player.Agent.GetVote(nominee, ghostVote: !player.Alive);
+                    bool votedToExecute = await GetVote(player, nominee, nominator, votesInFavourOfExecution);
                     await observers.AnnounceVote(player, nominee, votedToExecute);
                     if (votedToExecute)
                     {
-                        ++voteCount;
+                        votesInFavourOfExecution.Add(player);
                         if (!player.Alive)
                         {
                             player.UseGhostVote();
@@ -185,7 +185,32 @@ namespace Clocktower.Events
                 }
             }
 
-            return voteCount;
+            return votesInFavourOfExecution.Count;
+        }
+
+        private async Task<bool> GetVote(Player voter, Player nominee, Player nominator, IReadOnlyCollection<Player> playersWhoHaveVotedForNomination)
+        {
+            if (voter.Character == Character.Butler && voter.Alive)
+            {
+                var master = GetMaster(voter);
+                if (master != null && master != nominator && !playersWhoHaveVotedForNomination.Contains(master))
+                {   // Butler may not vote unless their master nominated or already voted (even if drunk or poisoned).
+                    // Note that this is slightly different to how it would be run in a real game, being a bit more restrictive,
+                    // but is the best we can do in the current way of processing the votes.
+                    return false;
+                }
+            }
+
+            return await voter.Agent.GetVote(nominee, ghostVote: !voter.Alive);
+        }
+
+        private Player? GetMaster(Player butler)
+        {
+            if (butler.Tokens.Contains(Token.IsThePhilosopher) || butler.Tokens.Contains(Token.IsTheBadPhilosopher))
+            {
+                return grimoire.Players.WithToken(Token.ChosenByPhiloButler).FirstOrDefault();
+            }
+            return grimoire.Players.WithToken(Token.ChosenByButler).FirstOrDefault();
         }
 
         private async Task<bool> VirginCheck(Player nominator, Player nominee)

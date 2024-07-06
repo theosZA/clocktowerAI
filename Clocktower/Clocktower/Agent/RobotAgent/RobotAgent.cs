@@ -310,6 +310,11 @@ namespace Clocktower.Agent.RobotAgent
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);
         }
 
+        public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
+        {
+            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.", Game.Character.Butler);
+        }
+
         public Task ResponseForFisherman(string advice)
         {
             clocktowerChat.AddFormattedMessage("Storyteller: %n", advice.Trim());

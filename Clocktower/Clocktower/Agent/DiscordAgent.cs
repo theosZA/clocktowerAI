@@ -188,6 +188,11 @@ namespace Clocktower.Agent
             return await prompter.RequestChoice(options, "As the %c please choose a player whose character you wish to learn.", Character.Ravenkeeper);
         }
 
+        public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
+        {
+            return await prompter.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.", Character.Butler);
+        }
+
         public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
         {
             if (characterAbility == Character.Slayer)
