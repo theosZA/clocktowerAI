@@ -135,6 +135,12 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task NotifyChef(int evilPairCount)
+        {
+            outputText.AppendFormattedText($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
             if (reading)

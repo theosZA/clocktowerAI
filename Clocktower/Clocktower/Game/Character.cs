@@ -1,7 +1,22 @@
-﻿namespace Clocktower.Game
+﻿// To add a new character:
+// 1. Add the character to this Character enum.
+// 2. Add the character to a script (in the Scripts folder) for testing.
+// 3. Add the character description to Characters.txt.
+// 4. If relevant, add the character to the night order (NightOrder.txt and/or FirstNightOrder.txt) or day (Day.txt).
+//    a. Create an event for the character's action. Add the implementation of IEvent to the Events folder.
+//       This event will likely require adding one or more of the following:
+//       - Storyteller requests - add a GetXXX method to StorytellerExtensions.
+//       - Player requests - add a RequestXXX method to AgentExtensions.
+//       - Notifications - add a NotifyXXX method to IStoryteller, IAgent and/or IObserver (and implementations) as appropriate.
+//    b. Add the event to the GameEventFactory.
+// 5. Some characters will have abilities that can't be run on an event. You will need to add the functionality in the relevant place,
+//    e.g. within the Nominations event if it's an ability based on nominations.
+
+namespace Clocktower.Game
 {
     public enum Character
     {
+        // Townsfolk
         Steward = 0,
         Investigator,
         Librarian,
@@ -17,19 +32,23 @@
         Ravenkeeper,
         Washerwoman,
         Virgin,
+        Chef,
 
+        // Outsiders
         Tinker = 1000,
         Sweetheart,
         Recluse,
         Drunk,
         Saint,
 
+        // Minions
         Godfather = 2000,
         Poisoner,
         Assassin,
         Scarlet_Woman,
         Baron,
 
+        // Demons
         Imp = 3000
     }
 }

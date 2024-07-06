@@ -95,6 +95,11 @@ namespace Clocktower.Agent
             await observer.SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
         }
 
+        public async Task NotifyChef(int evilPairCount)
+        {
+            await observer.SendMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+        }
+
         public async Task NotifySteward(Player goodPlayer)
         {
             await observer.SendMessage("You learn that %p is a good player.", goodPlayer);

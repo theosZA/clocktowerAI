@@ -10,6 +10,7 @@ GodfatherInformation
 Washerwoman
 Librarian
 Investigator
+Chef
 Empath
 FortuneTeller
 Steward

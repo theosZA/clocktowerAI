@@ -1,4 +1,5 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.RobotAgent;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 
@@ -115,6 +116,21 @@ namespace Clocktower.Storyteller
             outputText.AppendText("\n");
 
             return await PopulateOptions(stewardPingCandidates);
+        }
+
+        public async Task<IOption> GetChefNumber(Player chef, IEnumerable<Player> playersThatCanMisregister, IReadOnlyCollection<IOption> chefOptions)
+        {
+            outputText.AppendFormattedText("Choose what number to show to %p.", chef, StorytellerView);
+            if (!OutputDrunkDisclaimer(chef))
+            {
+                foreach (var player in playersThatCanMisregister)
+                {
+                    outputText.AppendFormattedText(" Remember that %p could register as %a.", player, player.Alignment == Alignment.Evil ? Alignment.Good : Alignment.Evil, StorytellerView);
+                }
+            }
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(chefOptions);
         }
 
         public async Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions)
@@ -288,6 +304,11 @@ namespace Clocktower.Storyteller
         public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
         {
             outputText.AppendFormattedText("%p learns that %p or %p is the %c.\n", investigator, playerA, playerB, character, StorytellerView);
+        }
+
+        public void NotifyChef(Player chef, int evilPairCount)
+        {
+            outputText.AppendFormattedText($"%p learns that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.\n", chef, evilPairCount, StorytellerView);
         }
 
         public void NotifySteward(Player steward, Player goodPlayer)

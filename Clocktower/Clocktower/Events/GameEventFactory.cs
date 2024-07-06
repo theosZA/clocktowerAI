@@ -43,12 +43,12 @@ namespace Clocktower.Events
                 case "RollCall":                    return new RollCall(grimoire, observers);
 
                 // Townsfolk
+                case "Chef":                        return new NotifyChef(storyteller, grimoire);
                 case "Empath":                      return new NotifyEmpath(storyteller, grimoire);
                 case "Fisherman":                   return new FishermanAdvice(storyteller, grimoire);
                 case "FortuneTeller":               return new ChoiceFromFortuneTeller(storyteller, grimoire);
                 case "Investigator":                return new NotifyInvestigator(storyteller, grimoire, setup.Script, random);
                 case "Librarian":                   return new NotifyLibrarian(storyteller, grimoire, setup.Script, random);
-                case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
                 case "Monk":                        return new ChoiceFromMonk(storyteller, grimoire);
                 case "Philosopher":                 return new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script);
                 case "PhilosopherInformation":      return new NotifyPhilosopherStartKnowing(storyteller, grimoire, setup.Script, random);
@@ -57,6 +57,7 @@ namespace Clocktower.Events
                 case "Slayer":                      return new SlayerShot(storyteller, grimoire, observers, random);
                 case "Steward":                     return new NotifySteward(storyteller, grimoire);
                 case "Undertaker":                  return new NotifyUndertaker(storyteller, grimoire, setup.Script);
+                case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
 
                 // Outsiders
                 case "Sweetheart":                  return new SweetheartDrunk(storyteller, grimoire);

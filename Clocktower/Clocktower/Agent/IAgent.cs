@@ -23,6 +23,7 @@ namespace Clocktower.Agent
         Task NotifyLibrarian(Player playerA, Player playerB, Character character);
         Task NotifyLibrarianNoOutsiders();
         Task NotifyInvestigator(Player playerA, Player playerB, Character character);
+        Task NotifyChef(int evilPairCount);
         Task NotifySteward(Player goodPlayer);
         Task NotifyShugenja(Direction direction);
 

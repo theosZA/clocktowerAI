@@ -144,6 +144,12 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public Task NotifyChef(int evilPairCount)
+        {
+            clocktowerChat.AddFormattedMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
             clocktowerChat.AddFormattedMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
