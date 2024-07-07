@@ -55,7 +55,7 @@ namespace Clocktower.Agent
                 return options.FirstOrDefault(option => option is PassOption) ?? throw new Exception($"{playerName} chose to pass but there is no Pass option");
             }
 
-            return GetMatchingOption(options, choiceAsText) ?? throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
+            return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
         }
 
         private async Task<string> Request(string prompt, params object[] objects)
