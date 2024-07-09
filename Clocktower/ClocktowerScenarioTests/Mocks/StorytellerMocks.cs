@@ -32,14 +32,14 @@ namespace ClocktowerScenarioTests.Mocks
             return investigatorPingOptions;
         }
 
-        public static List<(Character playerA, Character playerB, Character character)> MockGetLibrarianPing(this IStoryteller storyteller, Character librarianPing, Character librarianWrong, Character asCharacter)
+        public static List<(Character playerA, Character playerB, Character character)?> MockGetLibrarianPing(this IStoryteller storyteller, Character librarianPing, Character librarianWrong, Character asCharacter)
         {
-            List<(Character playerA, Character playerB, Character character)> librarianPingOptions = new();
+            List<(Character playerA, Character playerB, Character character)?> librarianPingOptions = new();
             storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>
                 {
                     var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                    librarianPingOptions.AddRange(options.Select(option => option.ToCharacterForTwoPlayers()));
+                    librarianPingOptions.AddRange(options.Select(option => option.ToOptionalCharacterForTwoPlayers()));
                     return options.First(option => option.ToCharacterForTwoPlayers() == (librarianPing, librarianWrong, asCharacter));
                 });
             return librarianPingOptions;

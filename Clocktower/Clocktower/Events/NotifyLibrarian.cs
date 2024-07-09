@@ -56,22 +56,30 @@ namespace Clocktower.Events
 
             if (librarian.DrunkOrPoisoned)
             {   // Drunk or poisoned. They can see any two players as any outsider or that there are no Outsiders
-                var options = from outsider in outsiderCharacters
-                              from playerA in players
-                              from playerB in players
-                              where playerA != playerB
-                              select (IOption)new CharacterForTwoPlayersOption(outsider, playerA, playerB);
-                return options.Append(new NoOutsiders());
+                var drunkOptions = from outsider in outsiderCharacters
+                                   from playerA in players
+                                   from playerB in players
+                                   where playerA != playerB
+                                   select (IOption)new CharacterForTwoPlayersOption(outsider, playerA, playerB);
+                return drunkOptions.Append(new NoOutsiders());
             }
 
             // Consider each real outsider as player A, and combine with all other players for player B.
-            return from outsiderCharacter in outsiderCharacters
-                   from playerA in players
-                   where playerA.CanRegisterAsOutsider
-                   where playerA.Character == outsiderCharacter || playerA.CharacterType != CharacterType.Outsider
-                   from playerB in players
-                   where playerA != playerB
-                   select (IOption)new CharacterForTwoPlayersOption(outsiderCharacter, playerA, playerB);
+            var options = from outsiderCharacter in outsiderCharacters
+                          from playerA in players
+                          where playerA.CanRegisterAsOutsider
+                          where playerA.Character == outsiderCharacter || playerA.CharacterType != CharacterType.Outsider
+                          from playerB in players
+                          where playerA != playerB
+                          select (IOption)new CharacterForTwoPlayersOption(outsiderCharacter, playerA, playerB);
+            if (grimoire.Players.Any(player => player.CharacterType == CharacterType.Outsider))
+            {
+                return options;
+            }
+            else
+            {
+                return options.Append(new NoOutsiders());
+            }
         }
 
         private readonly IStoryteller storyteller;

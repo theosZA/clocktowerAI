@@ -16,5 +16,14 @@ namespace ClocktowerScenarioTests
             var current = (CharacterForTwoPlayersOption)option;
             return (current.PlayerA.Character, current.PlayerB.Character, current.Character);
         }
+
+        public static (Character playerA, Character playerB, Character character)? ToOptionalCharacterForTwoPlayers(this IOption option)
+        {
+            if (option is not CharacterForTwoPlayersOption current)
+            {
+                return null;
+            }
+            return (current.PlayerA.Character, current.PlayerB.Character, current.Character);
+        }
     }
 }
