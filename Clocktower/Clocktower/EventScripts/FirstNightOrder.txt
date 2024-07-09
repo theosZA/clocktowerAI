@@ -16,4 +16,5 @@ FortuneTeller
 Butler
 Steward
 Shugenja
+Spy
 EndNight

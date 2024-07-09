@@ -32,6 +32,7 @@ namespace Clocktower.Agent
         Task NotifyRavenkeeper(Player target, Character character);
         Task NotifyUndertaker(Player executedPlayer, Character character);
 
+        Task ShowGrimoireToSpy(Grimoire grimoire);
         Task ResponseForFisherman(string advice);
         Task GainCharacterAbility(Character character);
 

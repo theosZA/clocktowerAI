@@ -22,7 +22,7 @@ namespace Clocktower
                 var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
                 var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
 
-                var setupDialog = new SetupDialog("Transferring to Trouble", random, forcedAlignments, forcedCharacters);
+                var setupDialog = new SetupDialog("Trouble Brewing", random, forcedAlignments, forcedCharacters);
                 var result = setupDialog.ShowDialog();
                 if (result != DialogResult.OK)
                 {

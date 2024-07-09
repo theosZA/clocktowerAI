@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using Clocktower.Options;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
@@ -57,6 +56,20 @@ namespace Clocktower.Events
                 foreach (var minion in scriptCharacters.OfCharacterType(CharacterType.Minion))
                 {
                     possibleCharacters.Add(minion);
+                }
+            }
+            if (executedPlayer.CanRegisterAsOutsider && executedPlayer.CharacterType == CharacterType.Outsider)
+            {
+                foreach (var outsider in scriptCharacters.OfCharacterType(CharacterType.Outsider))
+                {
+                    possibleCharacters.Add(outsider);
+                }
+            }
+            if (executedPlayer.CanRegisterAsTownsfolk && executedPlayer.CharacterType == CharacterType.Townsfolk)
+            {
+                foreach (var townsfolk in scriptCharacters.OfCharacterType(CharacterType.Townsfolk))
+                {
+                    possibleCharacters.Add(townsfolk);
                 }
             }
 

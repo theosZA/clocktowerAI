@@ -321,6 +321,12 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public Task ShowGrimoireToSpy(Grimoire grimoire)
+        {
+            clocktowerChat.AddFormattedMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", Game.Character.Spy);
+            return Task.CompletedTask;
+        }
+
         public Task StartGame()
         {
             onStart();

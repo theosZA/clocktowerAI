@@ -1,4 +1,5 @@
-﻿using Clocktower.Agent.RobotAgent;
+﻿using Clocktower.Agent;
+using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
@@ -176,31 +177,37 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("Choose whether to indicate 'Clockwise' or 'Counter-clockwise' to %p to indicate the direction to the nearest evil player.", shugenja, StorytellerView);
             OutputDrunkDisclaimer(shugenja);
 
-            IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
-            IReadOnlyCollection<Player> allPlayersCounterclockwise = allPlayersClockwise.Reverse().ToList();
-
-            var (evilClockwise, stepsClockwise) = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                                     .First(pair => pair.player.Alignment == Alignment.Evil);
-            outputText.AppendFormattedText(" The first evil player going clockwise is %p, %n steps away.", evilClockwise, stepsClockwise, StorytellerView);
-
-            var (evilCounterclockwise, stepsCounterclockwise) = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                                          .First(pair => pair.player.Alignment == Alignment.Evil);
-            outputText.AppendFormattedText(" The first evil player going counter-clockwise is %p, %n steps away.", evilCounterclockwise, stepsCounterclockwise, StorytellerView);
-
-            if (allPlayersClockwise.Any(player => player.Alignment != Alignment.Evil && player.CanRegisterAsEvil))
+            var players = grimoire.Players.ToList();
+            int shugenjaPosition = players.IndexOf(shugenja);
+            bool nonMisregisteringEvil = false;
+            for (int step = 1; step < grimoire.Players.Count / 2 && !nonMisregisteringEvil; step++)
             {
-                var (possibleEvilClockwise, possibleStepsClockwise) = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                                                         .First(pair => pair.player.Alignment != Alignment.Evil && pair.player.CanRegisterAsEvil);
-                if (possibleStepsClockwise < stepsClockwise)
-                {
-                    outputText.AppendFormattedText(" %p is %n steps clockwise and they may register as evil.", possibleEvilClockwise, possibleStepsClockwise, StorytellerView);
-                }
 
-                var (possibleEvilCounterclockwise, possibleStepsCounterclockwise) = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                                                              .First(pair => pair.player.Alignment != Alignment.Evil && pair.player.CanRegisterAsEvil);
-                if (possibleStepsCounterclockwise < stepsCounterclockwise)
+                var clockwisePlayer = players[(shugenjaPosition + 1) % grimoire.Players.Count];
+                if (clockwisePlayer.CanRegisterAsEvil)
                 {
-                    outputText.AppendFormattedText(" %p is %n steps counter-clockwise and they may register as evil.", possibleEvilCounterclockwise, possibleStepsCounterclockwise, StorytellerView);
+                    if (clockwisePlayer.CanRegisterAsGood)
+                    {
+                        outputText.AppendFormattedText($" %p is %n {(step == 1 ? "step" : "steps")} clockwise and they may register as either good or evil.", clockwisePlayer, step, StorytellerView);
+                    }
+                    else
+                    {
+                        outputText.AppendFormattedText($" %p is %n {(step == 1 ? "step" : "steps")} clockwise and they are evil.", clockwisePlayer, step, StorytellerView);
+                        nonMisregisteringEvil = true;
+                    }
+                }
+                var counterclockwisePlayer = players[(shugenjaPosition - 1 + grimoire.Players.Count) % grimoire.Players.Count];
+                if (counterclockwisePlayer.CanRegisterAsEvil)
+                {
+                    if (counterclockwisePlayer.CanRegisterAsGood)
+                    {
+                        outputText.AppendFormattedText($" %p is %n {(step == 1 ? "step" : "steps")} counter-clockwise and they may register as either good or evil.", counterclockwisePlayer, step, StorytellerView);
+                    }
+                    else
+                    {
+                        outputText.AppendFormattedText($" %p is %n {(step == 1 ? "step" : "steps")} counter-clockwise and they are evil.", counterclockwisePlayer, step, StorytellerView);
+                        nonMisregisteringEvil = true;
+                    }
                 }
             }
 
@@ -357,6 +364,11 @@ namespace Clocktower.Storyteller
         public void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter)
         {
             outputText.AppendFormattedText($"%p learns that the recently executed %p is the %c.\n", undertaker, executedPlayer, executedCharacter, StorytellerView);
+        }
+
+        public void ShowGrimoireToSpy(Player spy, Grimoire grimoire)
+        {
+            outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", spy);
         }
 
         public void ChoiceFromImp(Player imp, Player target)

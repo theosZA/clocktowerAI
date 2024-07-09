@@ -11,9 +11,10 @@
 //       - Tokens - Add a new entry to the Token enum.
 //                - Most tokens should be removed when the character dies; do that in the Grimoire.RemoveTokensForCharacter() method.
 //                - For tokens that need to be cleared each night, do that in the StartNight event.
+//                - For tokens that need to be shown to the Spy in the Grimoire, add the text description to the TextBuilder.TokenToText() method.
 //    b. Add the event to the GameEventFactory.
 // 5. Some characters will have abilities that can't be run on an event. You will need to add the functionality in the relevant place,
-//    e.g. within the Nominations event if it's an ability based on nominations.
+//    e.g. within the Nominations event if it's an ability based on nominations, or in the Player class if it's a character that can misregister.
 
 namespace Clocktower.Game
 {
@@ -52,6 +53,7 @@ namespace Clocktower.Game
         Assassin,
         Scarlet_Woman,
         Baron,
+        Spy,
 
         // Demons
         Imp = 3000

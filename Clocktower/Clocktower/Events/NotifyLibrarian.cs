@@ -30,6 +30,9 @@ namespace Clocktower.Events
                 var chosenOption = await storyteller.GetLibrarianPings(librarian, options);
                 if (chosenOption is CharacterForTwoPlayersOption pings)
                 {
+                    pings.PlayerA.Tokens.Add(Token.LibrarianPing);
+                    pings.PlayerB.Tokens.Add(Token.LibrarianWrong);
+
                     var players = new List<Player> { pings.PlayerA, pings.PlayerB };
                     players.Shuffle(random);
 
@@ -47,13 +50,13 @@ namespace Clocktower.Events
 
         private IEnumerable<IOption> GetOptions(Player librarian)
         {
+            var outsiderCharacters = scriptCharacters.OfCharacterType(CharacterType.Outsider);
             // Exclude the librarian from their own ping.
             var players = grimoire.Players.Where(player => player != librarian);
 
             if (librarian.DrunkOrPoisoned)
             {   // Drunk or poisoned. They can see any two players as any outsider or that there are no Outsiders
-                var outsiders = scriptCharacters.OfCharacterType(CharacterType.Outsider);
-                var options = from outsider in outsiders
+                var options = from outsider in outsiderCharacters
                               from playerA in players
                               from playerB in players
                               where playerA != playerB
@@ -62,11 +65,13 @@ namespace Clocktower.Events
             }
 
             // Consider each real outsider as player A, and combine with all other players for player B.
-            return from playerA in players
-                   where playerA.CharacterType == CharacterType.Outsider
+            return from outsiderCharacter in outsiderCharacters
+                   from playerA in players
+                   where playerA.CanRegisterAsOutsider
+                   where playerA.Character == outsiderCharacter || playerA.CharacterType != CharacterType.Outsider
                    from playerB in players
                    where playerA != playerB
-                   select (IOption)new CharacterForTwoPlayersOption(playerA.RealCharacter, playerA, playerB);
+                   select (IOption)new CharacterForTwoPlayersOption(outsiderCharacter, playerA, playerB);
         }
 
         private readonly IStoryteller storyteller;

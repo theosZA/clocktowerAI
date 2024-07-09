@@ -45,28 +45,24 @@ namespace Clocktower.Events
             {
                 int minEvilCount = 0;
                 int maxEvilCount = 0;
-                if (neighbourA.Alignment == Alignment.Evil)
-                {
-                    ++minEvilCount;
-                    ++maxEvilCount;
-                }
-                else if (neighbourA.CanRegisterAsEvil)
-                {
-                    ++maxEvilCount;
-                }
-                if (neighbourB.Alignment == Alignment.Evil)
-                {
-                    ++minEvilCount;
-                    ++maxEvilCount;
-                }
-                else if (neighbourB.CanRegisterAsEvil)
-                {
-                    ++maxEvilCount;
-                }
+                AdjustPossibleEvilCounts(neighbourA, ref minEvilCount, ref maxEvilCount);
+                AdjustPossibleEvilCounts(neighbourB, ref minEvilCount, ref maxEvilCount);
                 for (int evilCount = minEvilCount; evilCount <= maxEvilCount; ++evilCount)
                 {
                     yield return evilCount;
                 }
+            }
+        }
+
+        private static void AdjustPossibleEvilCounts(Player neighbour, ref int minEvilCount, ref int maxEvilCount)
+        {
+            if (neighbour.CanRegisterAsEvil)
+            {
+                maxEvilCount++;
+            }
+            if (!neighbour.CanRegisterAsGood)
+            {
+                minEvilCount++;
             }
         }
 

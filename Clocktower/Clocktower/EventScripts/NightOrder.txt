@@ -14,4 +14,5 @@ Empath
 FortuneTeller
 Undertaker
 Butler
+Spy
 EndNight

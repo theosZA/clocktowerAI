@@ -174,6 +174,12 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task ShowGrimoireToSpy(Grimoire grimoire)
+        {
+            outputText.AppendFormattedText($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", Character.Spy);
+            return Task.CompletedTask;
+        }
+
         public Task ResponseForFisherman(string advice)
         {
             outputText.AppendBoldText("Storyteller: ", Color.Purple);

@@ -137,6 +137,11 @@ namespace Clocktower.Agent
             await observer.SendMessage("You learn that %p is the %c.", executedPlayer, character);
         }
 
+        public async Task ShowGrimoireToSpy(Grimoire grimoire)
+        {
+            await observer.SendMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", Character.Spy);
+        }
+
         public async Task ResponseForFisherman(string advice)
         {
             await observer.SendMessage("Storyteller: %n", advice.Trim());

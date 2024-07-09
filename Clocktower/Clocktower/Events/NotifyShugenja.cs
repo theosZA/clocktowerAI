@@ -28,38 +28,49 @@ namespace Clocktower.Events
 
         private async Task<Direction> GetDirection(Player shugenja)
         {
+            var possibleDirections = GetPossibleShugenjaDirections(shugenja).Distinct().ToList();
+            if (possibleDirections.Count == 1)
+            {
+                return possibleDirections[0];
+            }
+            return await storyteller.GetShugenjaDirection(shugenja, grimoire);
+        }
+
+        private IEnumerable<Direction> GetPossibleShugenjaDirections(Player shugenja)
+        {
             if (shugenja.DrunkOrPoisoned)
             {
-                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
+                yield return Direction.Clockwise;
+                yield return Direction.Counterclockwise;
             }
 
-            IReadOnlyCollection<Player> allPlayersClockwise = grimoire.GetAllPlayersEndingWithPlayer(shugenja).SkipLast(1).ToList();
-            IReadOnlyCollection<Player> allPlayersCounterclockwise = allPlayersClockwise.Reverse().ToList();
-
-            var minEvilStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                           .First(pair => pair.player.CanRegisterAsEvil).Item2;
-            var maxEvilStepsClockwise = allPlayersClockwise.Select((player, i) => (player, i + 1))
-                                                           .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
-            var minEvilStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                         .First(pair => pair.player.CanRegisterAsEvil).Item2;
-            var maxEvilStepsCounterclockwise = allPlayersCounterclockwise.Select((player, i) => (player, i + 1))
-                                                                         .First(pair => pair.player.Alignment == Alignment.Evil).Item2;
-
-            if (minEvilStepsClockwise <= maxEvilStepsCounterclockwise && maxEvilStepsCounterclockwise < maxEvilStepsClockwise)
-            {   // If we count the Recluse as evil, then this would be clockwise (or equal) instead of counter-clockwise.
-                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
-            }
-            if (minEvilStepsCounterclockwise <= maxEvilStepsClockwise && maxEvilStepsClockwise < maxEvilStepsCounterclockwise)
-            {   // If we count the Recluse as evil, then this would be counter-clockwise (or equal) instead of clockwise.
-                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
-            }
-            // Even if we count the Recluse as evil, it woun't change anything. Proceed to default handling.
-
-            if (maxEvilStepsClockwise == maxEvilStepsCounterclockwise)
+            // Consider each step count until we get to the far side of the Grimoire.
+            // Each time we have a character that can misregister we include them as a possible direction.
+            // We stop when we have a evil player (in either direction) who can't misregister.
+            var players = grimoire.Players.ToList();
+            int shugenjaPosition = players.IndexOf(shugenja);
+            bool nonMisregisteringEvil = false;
+            for (int step = 1; step < grimoire.Players.Count / 2 && !nonMisregisteringEvil; step++)
             {
-                return await storyteller.GetShugenjaDirection(shugenja, grimoire);
+                var clockwisePlayer = players[(shugenjaPosition + 1) % grimoire.Players.Count];
+                if (clockwisePlayer.CanRegisterAsEvil)
+                {
+                    yield return Direction.Clockwise;
+                    if (!clockwisePlayer.CanRegisterAsGood)
+                    {
+                        nonMisregisteringEvil = true;
+                    }
+                }
+                var counterclockwisePlayer = players[(shugenjaPosition -1 + grimoire.Players.Count) % grimoire.Players.Count];
+                if (counterclockwisePlayer.CanRegisterAsEvil)
+                {
+                    yield return Direction.Counterclockwise;
+                    if (!counterclockwisePlayer.CanRegisterAsGood)
+                    {
+                        nonMisregisteringEvil = true;
+                    }
+                }
             }
-            return maxEvilStepsClockwise < maxEvilStepsCounterclockwise ? Direction.Clockwise : Direction.Counterclockwise;
         }
 
         private readonly IStoryteller storyteller;

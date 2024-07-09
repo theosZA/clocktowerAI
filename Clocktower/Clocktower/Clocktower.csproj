@@ -100,7 +100,7 @@
     <None Update="Images\olivia.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Scripts\Transferring to Trouble.json">
+    <None Update="Scripts\Trouble Brewing.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Scripts\A Simple Matter.json">

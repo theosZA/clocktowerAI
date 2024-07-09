@@ -48,6 +48,7 @@ namespace Clocktower.Storyteller
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
         void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading);
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
+        void ShowGrimoireToSpy(Player spy, Grimoire grimoire);
 
         void ChoiceFromImp(Player imp, Player target);
         void ChoiceFromPoisoner(Player poisoner, Player target);

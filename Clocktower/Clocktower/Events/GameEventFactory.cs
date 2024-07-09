@@ -69,6 +69,7 @@ namespace Clocktower.Events
                 case "Godfather":                   return new ChoiceFromGodfather(storyteller, grimoire);
                 case "GodfatherInformation":        return new NotifyGodfather(storyteller, grimoire);
                 case "Poisoner":                    return new ChoiceFromPoisoner(storyteller, grimoire);
+                case "Spy":                         return new ShowGrimoireToSpy(storyteller, grimoire);
 
                 // Demons
                 case "Imp":                         return new ChoiceFromImp(storyteller, grimoire);

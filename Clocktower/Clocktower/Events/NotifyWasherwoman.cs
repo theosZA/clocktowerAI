@@ -25,6 +25,9 @@ namespace Clocktower.Events
         public async Task RunEvent(Player washerwoman)
         {
             var pings = await GetPings(washerwoman);
+            pings.PlayerA.Tokens.Add(Token.WasherwomanPing);
+            pings.PlayerB.Tokens.Add(Token.WasherwomanWrong);
+
             var players = new List<Player> { pings.PlayerA, pings.PlayerB };
             players.Shuffle(random);
 

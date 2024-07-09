@@ -21,9 +21,20 @@ namespace Clocktower.Events
 
         public async Task RunEvent(Player steward)
         {
-            var stewardTarget = (await storyteller.GetStewardPing(steward, grimoire.Players.Where(player => player != steward && (player.Alignment == Alignment.Good || steward.DrunkOrPoisoned))));
-            await steward.Agent.NotifySteward(stewardTarget);
-            storyteller.NotifySteward(steward, stewardTarget);
+            var stewardPing = (await storyteller.GetStewardPing(steward, GetValidStewardPings(steward)));
+            stewardPing.Tokens.Add(Token.StewardPing);
+            await steward.Agent.NotifySteward(stewardPing);
+            storyteller.NotifySteward(steward, stewardPing);
+        }
+
+        public IEnumerable<Player> GetValidStewardPings(Player steward)
+        {
+            if (steward.DrunkOrPoisoned)
+            {
+                return grimoire.Players.Where(player => player != steward);
+            }
+
+            return grimoire.Players.Where(player => player.CanRegisterAsGood);
         }
 
         private readonly IStoryteller storyteller;
