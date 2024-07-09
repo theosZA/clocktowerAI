@@ -14,7 +14,7 @@ namespace ClocktowerScenarioTests.Mocks
                             receivedStewardPing.Value = args.ArgAt<Player>(0).Character;
                             gameToEnd?.EndGame(Alignment.Good);
                         });
-            return receivedStewardPing; 
+            return receivedStewardPing;
         }
 
         public static Wrapper<(Character playerA, Character playerB, Character seenCharacter)> MockNotifyInvestigator(this IAgent agent, ClocktowerGame? gameToEnd = null)
@@ -51,6 +51,18 @@ namespace ClocktowerScenarioTests.Mocks
                     gameToEnd?.EndGame(Alignment.Good);
                 });
             return receivedWasherwomanPing;
+        }
+
+        public static Wrapper<Direction> MockNotifyShugenja(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<Direction> receivedShugenjaDirection = new();
+            agent.When(agent => agent.NotifyShugenja(Arg.Any<Direction>()))
+                .Do(args =>
+                {
+                    receivedShugenjaDirection.Value = args.ArgAt<Direction>(0);
+                    gameToEnd?.EndGame(Alignment.Good);
+                });
+            return receivedShugenjaDirection;
         }
     }
 }

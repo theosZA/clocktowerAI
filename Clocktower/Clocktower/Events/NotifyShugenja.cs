@@ -52,7 +52,7 @@ namespace Clocktower.Events
             bool nonMisregisteringEvil = false;
             for (int step = 1; step < grimoire.Players.Count / 2 && !nonMisregisteringEvil; step++)
             {
-                var clockwisePlayer = players[(shugenjaPosition + 1) % grimoire.Players.Count];
+                var clockwisePlayer = players[(shugenjaPosition + step) % grimoire.Players.Count];
                 if (clockwisePlayer.CanRegisterAsEvil)
                 {
                     yield return Direction.Clockwise;
@@ -61,7 +61,7 @@ namespace Clocktower.Events
                         nonMisregisteringEvil = true;
                     }
                 }
-                var counterclockwisePlayer = players[(shugenjaPosition -1 + grimoire.Players.Count) % grimoire.Players.Count];
+                var counterclockwisePlayer = players[(shugenjaPosition - step + grimoire.Players.Count) % grimoire.Players.Count];
                 if (counterclockwisePlayer.CanRegisterAsEvil)
                 {
                     yield return Direction.Counterclockwise;

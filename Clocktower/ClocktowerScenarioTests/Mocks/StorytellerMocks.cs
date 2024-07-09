@@ -57,5 +57,18 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return washerwomanPingOptions;
         }
+
+        public static List<Direction> MockGetShugenjaDirection(this IStoryteller storyteller, Direction direction)
+        {
+            List<Direction> directionOptions = new();
+            storyteller.GetShugenjaDirection(Arg.Any<Player>(), Arg.Any<Grimoire>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(2).ToList();
+                    directionOptions.AddRange(options.Select(option => ((DirectionOption)option).Direction));
+                    return options.First(option => ((DirectionOption)option).Direction ==  direction);
+                });
+            return directionOptions;
+        }
     }
 }
