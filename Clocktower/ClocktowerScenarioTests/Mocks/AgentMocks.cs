@@ -28,5 +28,17 @@ namespace ClocktowerScenarioTests.Mocks
                     });
             return receivedInvestigatorPing;
         }
+
+        public static Wrapper<(Character playerA, Character playerB, Character seenCharacter)> MockNotifyLibrarian(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedLibrarianPing = new();
+            agent.When(agent => agent.NotifyLibrarian(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Character>()))
+                .Do(args =>
+                {
+                    receivedLibrarianPing.Value = (args.ArgAt<Player>(0).Character, args.ArgAt<Player>(1).Character, args.ArgAt<Character>(2));
+                    gameToEnd?.EndGame(Alignment.Good);
+                });
+            return receivedLibrarianPing;
+        }
     }
 }
