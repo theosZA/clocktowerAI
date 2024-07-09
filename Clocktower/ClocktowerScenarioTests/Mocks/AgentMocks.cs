@@ -1,10 +1,28 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
 
 namespace ClocktowerScenarioTests.Mocks
 {
     internal static class AgentMocks
     {
+        public static void MockImp(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToCharacter() == target));
+        }
+
+        public static void MockImp(this IAgent agent, IReadOnlyCollection<Character> targets)
+        {
+            int targetIndex = 0;
+            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var target = targets.ElementAt(targetIndex++);
+                    return args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToCharacter() == target);
+                });
+        }
+
         public static Wrapper<Character> MockNotifySteward(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<Character> receivedStewardPing = new();
@@ -63,6 +81,18 @@ namespace ClocktowerScenarioTests.Mocks
                     gameToEnd?.EndGame(Alignment.Good);
                 });
             return receivedShugenjaDirection;
+        }
+
+        public static Wrapper<int> MockNotifyEmpath(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<int> receivedEmpathNumber = new();
+            agent.When(agent => agent.NotifyEmpath(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<int>()))
+                .Do(args =>
+                {
+                    receivedEmpathNumber.Value = args.ArgAt<int>(2);
+                    gameToEnd?.EndGame(Alignment.Good);
+                });
+            return receivedEmpathNumber;
         }
     }
 }

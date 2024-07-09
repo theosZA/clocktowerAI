@@ -70,5 +70,18 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return directionOptions;
         }
+
+        public static List<int> MockGetEmpathNumbers(this IStoryteller storyteller, int empathNumber)
+        {
+            List<int> empathNumbers = new();
+            storyteller.GetEmpathNumber(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(3).ToList();
+                    empathNumbers.AddRange(options.Select(option => ((NumberOption)option).Number));
+                    return options.First(option => ((NumberOption)option).Number == empathNumber);
+                });
+            return empathNumbers;
+        }
     }
 }
