@@ -22,7 +22,20 @@ namespace Clocktower
                 var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
                 var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
 
-                var setupDialog = new SetupDialog("Trouble Brewing", random, forcedAlignments, forcedCharacters);
+                var scriptDialog = new OpenFileDialog
+                {
+                    Title = "Choose script",
+                    Filter = "Clocktower scripts|*.json",
+                    InitialDirectory = Path.Combine(Application.StartupPath, "Scripts")
+                };
+                var dialogChoice = scriptDialog.ShowDialog();
+                if (dialogChoice != DialogResult.OK)
+                {
+                    return;
+                }
+                var scriptFileName = scriptDialog.FileName;
+
+                var setupDialog = new SetupDialog(scriptFileName, random, forcedAlignments, forcedCharacters);
                 var result = setupDialog.ShowDialog();
                 if (result != DialogResult.OK)
                 {

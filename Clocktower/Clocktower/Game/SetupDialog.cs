@@ -22,19 +22,18 @@
         /// </summary>
         public Character[] Characters { get; private set; }
 
-        public SetupDialog(string scriptName, Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
+        public SetupDialog(string scriptFileName, Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
         {
             InitializeComponent();
 
-            this.Text = scriptName;
+            ScriptName = Path.GetFileNameWithoutExtension(scriptFileName);
+            Script = ClocktowerScriptReader.ReadScriptFromFile(scriptFileName).ToList();
+            Characters = Array.Empty<Character>();
+
+            this.Text = ScriptName;
             this.random = random;
             this.forcedAlignments = forcedAlignments;
             this.forcedCharacters = forcedCharacters;
-
-            Characters = Array.Empty<Character>();
-
-            ScriptName = scriptName;
-            Script = ClocktowerScriptReader.ReadScriptFromFile($"Scripts\\{scriptName}.json").ToList();
 
             // Populate grid with script characters.
             for (int column = 0; column < characterTypes.Length; column++)
