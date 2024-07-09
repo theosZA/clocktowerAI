@@ -1,7 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
 using Clocktower.Storyteller;
-using NSubstitute;
 
 namespace ClocktowerScenarioTests.Mocks
 {
@@ -11,13 +10,26 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<Character> stewardPingOptions = new();
             storyteller.GetStewardPing(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                                .Returns(args =>
-                                {
-                                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                                    stewardPingOptions.AddRange(options.Select(option => option.GetPlayer().Character));
-                                    return options.First(option => option.GetPlayer().Character == stewardPing);
-                                });
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
+                    stewardPingOptions.AddRange(options.Select(option => option.ToCharacter()));
+                    return options.First(option => option.ToCharacter() == stewardPing);
+                });
             return stewardPingOptions;
+        }
+
+        public static List<(Character playerA, Character playerB, Character character)> MockGetInvestigatorPing(this IStoryteller storyteller, Character investigatorPing, Character investigatorWrong, Character asCharacter)
+        {
+            List<(Character playerA, Character playerB, Character character)> investigatorPingOptions = new();
+            storyteller.GetInvestigatorPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
+                    investigatorPingOptions.AddRange(options.Select(option => option.ToCharacterForTwoPlayers()));
+                    return options.First(option => option.ToCharacterForTwoPlayers() == (investigatorPing, investigatorWrong, asCharacter));
+                });
+            return investigatorPingOptions;
         }
     }
 }
