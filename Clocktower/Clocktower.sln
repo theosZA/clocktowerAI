@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAi", "OpenAi\OpenAi.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApplication", "ChatApplication\ChatApplication.csproj", "{0F001258-5E43-444E-B6F6-4EC5AD869C4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatBot", "DiscordChatBot\DiscordChatBot.csproj", "{556C15C5-BC5A-4854-973B-15F937B5EC7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatBot", "DiscordChatBot\DiscordChatBot.csproj", "{556C15C5-BC5A-4854-973B-15F937B5EC7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClocktowerScenarioTests", "ClocktowerScenarioTests\ClocktowerScenarioTests.csproj", "{43029587-7869-452B-9C83-853BE938751E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{556C15C5-BC5A-4854-973B-15F937B5EC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{556C15C5-BC5A-4854-973B-15F937B5EC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{556C15C5-BC5A-4854-973B-15F937B5EC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43029587-7869-452B-9C83-853BE938751E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43029587-7869-452B-9C83-853BE938751E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43029587-7869-452B-9C83-853BE938751E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43029587-7869-452B-9C83-853BE938751E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

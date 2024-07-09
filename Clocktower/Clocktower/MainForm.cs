@@ -1,6 +1,7 @@
 using Clocktower.Agent;
 using Clocktower.Agent.Config;
 using Clocktower.Game;
+using Clocktower.Storyteller;
 using System.Configuration;
 using System.Diagnostics;
 
@@ -42,8 +43,9 @@ namespace Clocktower
                     return;
                 }
 
+                var storyteller = new StorytellerForm(random);
                 var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
-                var clocktowerGame = new ClocktowerGame(setupDialog, agents.ToList(), random);
+                var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents.ToList(), random);
                 await clocktowerGame.StartGame();
                 while (!clocktowerGame.Finished)
                 {

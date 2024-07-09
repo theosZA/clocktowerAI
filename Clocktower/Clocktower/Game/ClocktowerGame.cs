@@ -12,10 +12,10 @@ namespace Clocktower.Game
     {
         public bool Finished => grimoire.Finished;
 
-        public ClocktowerGame(IGameSetup setup, IReadOnlyCollection<IAgent> agents, Random random)
+        public ClocktowerGame(IGameSetup setup, IStoryteller storyteller, IReadOnlyCollection<IAgent> agents, Random random)
         {
             this.agents = agents;
-            storyteller = new StorytellerForm(random);
+            this.storyteller = storyteller;
             observers = ProxyCollection<IGameObserver>.CreateProxy(agents.Select(agent => agent.Observer).Append(storyteller.Observer));
             grimoire = new Grimoire(agents, setup.Characters);
 
@@ -30,6 +30,11 @@ namespace Clocktower.Game
             await Task.WhenAll(startGameTasks);
 
             grimoire.AssignCharacters(storyteller);
+        }
+
+        public void EndGame(Alignment winner)
+        {
+            grimoire.EndGame(winner);
         }
 
         public async Task AnnounceWinner()
