@@ -40,5 +40,17 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return receivedLibrarianPing;
         }
+
+        public static Wrapper<(Character playerA, Character playerB, Character seenCharacter)> MockNotifyWasherwoman(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedWasherwomanPing = new();
+            agent.When(agent => agent.NotifyWasherwoman(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Character>()))
+                .Do(args =>
+                {
+                    receivedWasherwomanPing.Value = (args.ArgAt<Player>(0).Character, args.ArgAt<Player>(1).Character, args.ArgAt<Character>(2));
+                    gameToEnd?.EndGame(Alignment.Good);
+                });
+            return receivedWasherwomanPing;
+        }
     }
 }

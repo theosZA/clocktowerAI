@@ -44,5 +44,18 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return librarianPingOptions;
         }
+
+        public static List<(Character playerA, Character playerB, Character character)> MockGetWasherwomanPing(this IStoryteller storyteller, Character washerwomanPing, Character washerwomanWrong, Character asCharacter)
+        {
+            List<(Character playerA, Character playerB, Character character)> washerwomanPingOptions = new();
+            storyteller.GetWasherwomanPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
+                    washerwomanPingOptions.AddRange(options.Select(option => option.ToCharacterForTwoPlayers()));
+                    return options.First(option => option.ToCharacterForTwoPlayers() == (washerwomanPing, washerwomanWrong, asCharacter));
+                });
+            return washerwomanPingOptions;
+        }
     }
 }
