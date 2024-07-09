@@ -21,20 +21,29 @@ namespace DiscordChatBot
             channel ??= await guild.CreateTextChannelAsync(Name);
         }
 
-        public async Task SendMessage(string message)
+        public async Task SendMessage(string message, string? imageFileName = null)
         {
             if (message.Length > 2000)
             {
                 // Split the message so that length is below 2000.
                 var endPosition = message.LastIndexOf('\n', 1999);
-                await SendMessage(message[..endPosition]);
+                await SendMessage(message[..endPosition], imageFileName);
                 await SendMessage(message[(endPosition + 1)..]);
                 return;
             }
 
             if (channel != null)
             {
-                await channel.SendMessageAsync(message);
+                if (string.IsNullOrEmpty(imageFileName) || !File.Exists(imageFileName))
+                {
+                    await channel.SendMessageAsync(message);
+                }
+                else
+                {
+                    var embed = new EmbedBuilder().WithImageUrl($"attachment://{Path.GetFileName(imageFileName)}")
+                                                  .Build();
+                    await channel.SendFileAsync(imageFileName, message, false, embed);
+                }
             }
         }
 
@@ -44,10 +53,10 @@ namespace DiscordChatBot
             messageReceivedTsc?.TrySetResult();
         }
 
-        public async Task<string> SendMessageAndGetResponse(string messageToSend)
+        public async Task<string> SendMessageAndGetResponse(string messageToSend, string? imageFileName = null)
         {
             messageReceivedTsc = new TaskCompletionSource();
-            await SendMessage(messageToSend);
+            await SendMessage(messageToSend, imageFileName);
             await messageReceivedTsc.Task;
             return lastReceivedMessage ?? string.Empty;
         }

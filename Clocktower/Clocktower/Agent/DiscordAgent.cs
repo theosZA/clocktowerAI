@@ -2,6 +2,7 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 using DiscordChatBot;
+using System.Numerics;
 
 namespace Clocktower.Agent
 {
@@ -26,7 +27,7 @@ namespace Clocktower.Agent
             var chat = await chatClient.CreateChat(PlayerName);
 
             observer.Start(chat);
-            prompter.SendMessageAndGetResponse = chat.SendMessageAndGetResponse;
+            prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
 
             await chat.SendMessage($"Welcome {PlayerName} to a game of Blood on the Clocktower.");
             await chat.SendMessage(TextBuilder.ScriptToText(scriptName, script));
@@ -257,13 +258,13 @@ namespace Clocktower.Agent
 
         public async Task StartPrivateChat(Player otherPlayer)
         {
-            await observer.SendMessage("You have begun a private chat with %p.", otherPlayer);
+            var imageFileName = Path.Combine("Images", otherPlayer.Name + ".jpg");
+            await observer.SendMessageWithImage(imageFileName, "You have begun a private chat with %p.", otherPlayer);
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
             return await prompter.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can conclude your conversation with \"Goodbye\".", listener);
-
         }
 
         public async Task PrivateChatMessage(Player speaker, string message)

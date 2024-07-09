@@ -1,5 +1,4 @@
-﻿using Clocktower.Agent.RobotAgent;
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using DiscordChatBot;
 using System.Text;
 
@@ -20,13 +19,12 @@ namespace Clocktower.Observer
             }
         }
 
-        public async Task<string> SendMessageAndGetResponse(string text, params object[] objects)
+        public async Task SendMessageWithImage(string imageFileName, string text, params object[] objects)
         {
-            if (chat == null)
+            if (chat != null)
             {
-                return string.Empty;
+                await chat.SendMessage(FormatText(text, objects), imageFileName);
             }
-            return (await chat.SendMessageAndGetResponse(FormatText(text, objects))).Trim();
         }
 
         public async Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
