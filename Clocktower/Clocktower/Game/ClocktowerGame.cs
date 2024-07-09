@@ -11,6 +11,7 @@ namespace Clocktower.Game
     internal class ClocktowerGame
     {
         public bool Finished => grimoire.Finished;
+        public Alignment? Winner => grimoire.Winner;
 
         public ClocktowerGame(IGameSetup setup, IStoryteller storyteller, IReadOnlyCollection<IAgent> agents, Random random)
         {
@@ -39,12 +40,11 @@ namespace Clocktower.Game
 
         public async Task AnnounceWinner()
         {
-            var winner = grimoire.Winner;
-            if (winner.HasValue)
+            if (Winner.HasValue)
             {
-                await observers.AnnounceWinner(winner.Value,
-                                               grimoire.Players.Where(player => player.Alignment == winner.Value).ToList(),
-                                               grimoire.Players.Where(player => player.Alignment != winner.Value).ToList());
+                await observers.AnnounceWinner(Winner.Value,
+                                               grimoire.Players.Where(player => player.Alignment == Winner.Value).ToList(),
+                                               grimoire.Players.Where(player => player.Alignment != Winner.Value).ToList());
             }
         }
 

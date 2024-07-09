@@ -52,8 +52,9 @@ namespace ClocktowerScenarioTests
                 agent.OfferPrivateChat(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First());
                 agent.GetPrivateChat(Arg.Any<Player>()).Returns((string.Empty, true));
 
+                // By default the agents won't nominate anyone, but if that is overridden in a test with a nomination, the agents will vote for that nomination.
                 agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option is PassOption));
-                agent.GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>()).Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option is PassOption));
+                agent.GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>()).Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option is VoteOption));
             }
 
             return this;

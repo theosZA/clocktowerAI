@@ -83,5 +83,18 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return empathNumbers;
         }
+
+        public static List<Character> MockGetNewImp(this IStoryteller storyteller, Character starPassTarget)
+        {
+            List<Character> starPassTargets = new();
+            storyteller.GetNewImp(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(0).ToList();
+                    starPassTargets.AddRange(options.Select(option => option.ToCharacter()));
+                    return options.First(option => option.ToCharacter() == starPassTarget);
+                });
+            return starPassTargets;
+        }
     }
 }

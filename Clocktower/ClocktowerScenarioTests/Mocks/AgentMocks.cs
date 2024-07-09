@@ -6,6 +6,12 @@ namespace ClocktowerScenarioTests.Mocks
 {
     internal static class AgentMocks
     {
+        public static void MockNomination(this IAgent agent, Character nominee)
+        {
+            agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToOptionalCharacter() == nominee));
+        }
+
         public static void MockImp(this IAgent agent, Character target)
         {
             agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
