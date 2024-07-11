@@ -39,6 +39,11 @@ namespace ClocktowerScenarioTests.Mocks
             }
         }
 
+        public static void MockGodfather(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromGodfather(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static Wrapper<Character> MockNotifySteward(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<Character> receivedStewardPing = new();

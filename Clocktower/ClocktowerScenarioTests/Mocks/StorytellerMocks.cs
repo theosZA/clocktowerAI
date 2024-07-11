@@ -96,5 +96,15 @@ namespace ClocktowerScenarioTests.Mocks
                 });
             return starPassTargets;
         }
+
+        public static void MockShouldKillTinker(this IStoryteller storyteller, bool shouldKill)
+        {
+            storyteller.ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldKill, argIndex: 1);
+        }
+
+        public static void MockShouldExecuteWithVirgin(this IStoryteller storyteller, bool shouldExecute)
+        {
+            storyteller.ShouldExecuteWithVirgin(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldExecute, argIndex: 2);
+        }
     }
 }

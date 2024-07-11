@@ -15,5 +15,10 @@ namespace ClocktowerScenarioTests.Mocks
         {
             return onThisBeingCalled.Returns(args => args.GetOptionForCharacterFromArg(target, argIndex));
         }
+
+        public static ConfiguredCall ReturnsYesNoOptionFromArg(this Task<IOption> onThisBeingCalled, bool yesOrNo, int argIndex = 0)
+        {
+            return onThisBeingCalled.Returns(args => args.GetYesNoOptionFromArg(yesOrNo, argIndex));
+        }
     }
 }

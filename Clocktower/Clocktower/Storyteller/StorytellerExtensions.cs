@@ -79,5 +79,10 @@ namespace Clocktower.Storyteller
         {
             return await storyteller.ShouldKillWithSlayer(slayer, target, OptionsBuilder.YesOrNo) is YesOption;
         }
+
+        public static async Task<bool> ShouldExecuteWithVirgin(this IStoryteller storyteller, Player virgin, Player nominator)
+        {
+            return await storyteller.ShouldExecuteWithVirgin(virgin, nominator, OptionsBuilder.YesOrNo) is YesOption;
+        }
     }
 }

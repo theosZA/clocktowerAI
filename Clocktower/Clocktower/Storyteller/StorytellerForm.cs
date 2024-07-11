@@ -259,6 +259,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldExecuteWithVirgin(Player virgin, Player nominator, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            outputText.AppendFormattedText("%p has nominated %p. Should %p register as a Townsfolk and be executed?\n", nominator, virgin, nominator, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<string> GetFishermanAdvice(Player fisherman)
         {
             outputText.AppendFormattedText("%p would like their %c advice.", fisherman, Character.Fisherman, StorytellerView);

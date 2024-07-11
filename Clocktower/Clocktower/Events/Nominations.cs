@@ -227,10 +227,9 @@ namespace Clocktower.Events
                 return false;
             }
 
-            if (nominator.CharacterType != CharacterType.Townsfolk)
-            {
-                // Storyteller must decide whether the nominator registers as a townsfolk and is executed.
-                // TBD when we add Spy
+            if (nominator.CharacterType != CharacterType.Townsfolk && !await storyteller.ShouldExecuteWithVirgin(nominee, nominator))
+            {   // Storyteller decided the nominator should not register as a Townsfolk.
+                return false;
             }
 
             await observers.AnnounceNomination(nominator, nominee, votesToTie: null, votesToPutOnBlock: null);

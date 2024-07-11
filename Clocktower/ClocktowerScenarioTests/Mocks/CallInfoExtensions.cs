@@ -15,5 +15,10 @@ namespace ClocktowerScenarioTests.Mocks
         {
             return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option.ToOptionalCharacter() == target);
         }
+
+        public static IOption GetYesNoOptionFromArg(this CallInfo args, bool yesOrNo, int argIndex = 0)
+        {
+            return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => yesOrNo ? option is YesOption : option is NoOption);
+        }
     }
 }

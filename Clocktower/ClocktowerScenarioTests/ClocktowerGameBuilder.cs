@@ -25,6 +25,10 @@ namespace ClocktowerScenarioTests
 
         public ClocktowerGame Build()
         {
+            for (int i = 0; i < Agents.Count; i++)
+            {
+                agents.Add(Setup.Characters[i], Agents[i]);
+            }
             return new ClocktowerGame(Setup, Storyteller, Agents, new Random());
         }
 
@@ -65,6 +69,11 @@ namespace ClocktowerScenarioTests
             return this;
         }
 
+        public IAgent Agent(Character character)
+        {
+            return agents[character];
+        }
+
         private static IEnumerable<IAgent> CreateAgents(int count)
         {
             for (int i = 0; i < count; i++)
@@ -72,5 +81,7 @@ namespace ClocktowerScenarioTests
                 yield return Substitute.For<IAgent>();
             }
         }
+
+        private readonly Dictionary<Character, IAgent> agents = new();
     }
 }
