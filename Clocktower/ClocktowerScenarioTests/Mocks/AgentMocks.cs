@@ -48,11 +48,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<Character> receivedStewardPing = new();
             agent.When(agent => agent.NotifySteward(Arg.Any<Player>()))
-                    .Do(args =>
-                        {
-                            receivedStewardPing.Value = args.ArgAt<Player>(0).Character;
-                            gameToEnd?.EndGame(Alignment.Good);
-                        });
+                    .Do(args => args.PopulateFromArg(receivedStewardPing, gameToEnd: gameToEnd));
             return receivedStewardPing;
         }
 
@@ -60,11 +56,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedInvestigatorPing = new();
             agent.When(agent => agent.NotifyInvestigator(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Character>()))
-                .Do(args =>
-                    {
-                        receivedInvestigatorPing.Value = (args.ArgAt<Player>(0).Character, args.ArgAt<Player>(1).Character, args.ArgAt<Character>(2));
-                        gameToEnd?.EndGame(Alignment.Good);
-                    });
+                .Do(args => args.PopulateFromArgs(receivedInvestigatorPing, gameToEnd));
             return receivedInvestigatorPing;
         }
 
@@ -72,11 +64,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedLibrarianPing = new();
             agent.When(agent => agent.NotifyLibrarian(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Character>()))
-                .Do(args =>
-                {
-                    receivedLibrarianPing.Value = (args.ArgAt<Player>(0).Character, args.ArgAt<Player>(1).Character, args.ArgAt<Character>(2));
-                    gameToEnd?.EndGame(Alignment.Good);
-                });
+                .Do(args => args.PopulateFromArgs(receivedLibrarianPing, gameToEnd));
             return receivedLibrarianPing;
         }
 
@@ -84,11 +72,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedWasherwomanPing = new();
             agent.When(agent => agent.NotifyWasherwoman(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Character>()))
-                .Do(args =>
-                {
-                    receivedWasherwomanPing.Value = (args.ArgAt<Player>(0).Character, args.ArgAt<Player>(1).Character, args.ArgAt<Character>(2));
-                    gameToEnd?.EndGame(Alignment.Good);
-                });
+                .Do(args => args.PopulateFromArgs(receivedWasherwomanPing, gameToEnd));
             return receivedWasherwomanPing;
         }
 
@@ -96,11 +80,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<Direction> receivedShugenjaDirection = new();
             agent.When(agent => agent.NotifyShugenja(Arg.Any<Direction>()))
-                .Do(args =>
-                {
-                    receivedShugenjaDirection.Value = args.ArgAt<Direction>(0);
-                    gameToEnd?.EndGame(Alignment.Good);
-                });
+                .Do(args => args.PopulateFromArg(receivedShugenjaDirection, gameToEnd: gameToEnd));
             return receivedShugenjaDirection;
         }
 
@@ -108,12 +88,16 @@ namespace ClocktowerScenarioTests.Mocks
         {
             Wrapper<int> receivedEmpathNumber = new();
             agent.When(agent => agent.NotifyEmpath(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<int>()))
-                .Do(args =>
-                {
-                    receivedEmpathNumber.Value = args.ArgAt<int>(2);
-                    gameToEnd?.EndGame(Alignment.Good);
-                });
+                .Do(args => args.PopulateFromArg(receivedEmpathNumber, argIndex: 2, gameToEnd: gameToEnd));
             return receivedEmpathNumber;
+        }
+
+        public static Wrapper<int> MockNotifyChef(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<int> receivedChefNumber = new();
+            agent.When(agent => agent.NotifyChef(Arg.Any<int>()))
+                .Do(args => args.PopulateFromArg(receivedChefNumber, gameToEnd: gameToEnd));
+            return receivedChefNumber;
         }
     }
 }

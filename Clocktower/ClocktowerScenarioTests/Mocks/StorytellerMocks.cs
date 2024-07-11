@@ -10,12 +10,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<Character> stewardPingOptions = new();
             storyteller.GetStewardPing(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                    stewardPingOptions.AddRange(options.Select(option => option.ToCharacter()));
-                    return options.First(option => option.ToCharacter() == stewardPing);
-                });
+                .ReturnsMatchingOptionFromOptionsArg(stewardPing, stewardPingOptions, argIndex: 1);
             return stewardPingOptions;
         }
 
@@ -23,12 +18,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<(Character playerA, Character playerB, Character character)> investigatorPingOptions = new();
             storyteller.GetInvestigatorPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                    investigatorPingOptions.AddRange(options.Select(option => option.ToCharacterForTwoPlayers()));
-                    return options.First(option => option.ToCharacterForTwoPlayers() == (investigatorPing, investigatorWrong, asCharacter));
-                });
+                .ReturnsMatchingOptionFromOptionsArg((investigatorPing, investigatorWrong, asCharacter), investigatorPingOptions, argIndex: 1);
             return investigatorPingOptions;
         }
 
@@ -36,12 +26,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<(Character playerA, Character playerB, Character character)?> librarianPingOptions = new();
             storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                    librarianPingOptions.AddRange(options.Select(option => option.ToOptionalCharacterForTwoPlayers()));
-                    return options.First(option => option.ToCharacterForTwoPlayers() == (librarianPing, librarianWrong, asCharacter));
-                });
+                .ReturnsMatchingOptionFromOptionsArg((librarianPing, librarianWrong, asCharacter), librarianPingOptions, argIndex: 1);
             return librarianPingOptions;
         }
 
@@ -49,12 +34,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<(Character playerA, Character playerB, Character character)> washerwomanPingOptions = new();
             storyteller.GetWasherwomanPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(1).ToList();
-                    washerwomanPingOptions.AddRange(options.Select(option => option.ToCharacterForTwoPlayers()));
-                    return options.First(option => option.ToCharacterForTwoPlayers() == (washerwomanPing, washerwomanWrong, asCharacter));
-                });
+                .ReturnsMatchingOptionFromOptionsArg((washerwomanPing, washerwomanWrong, asCharacter), washerwomanPingOptions, argIndex: 1);
             return washerwomanPingOptions;
         }
 
@@ -62,12 +42,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<Direction> directionOptions = new();
             storyteller.GetShugenjaDirection(Arg.Any<Player>(), Arg.Any<Grimoire>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(2).ToList();
-                    directionOptions.AddRange(options.Select(option => ((DirectionOption)option).Direction));
-                    return options.First(option => ((DirectionOption)option).Direction ==  direction);
-                });
+                .ReturnsMatchingOptionFromOptionsArg(direction, directionOptions, argIndex: 2);
             return directionOptions;
         }
 
@@ -75,25 +50,23 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<int> empathNumbers = new();
             storyteller.GetEmpathNumber(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(3).ToList();
-                    empathNumbers.AddRange(options.Select(option => ((NumberOption)option).Number));
-                    return options.First(option => ((NumberOption)option).Number == empathNumber);
-                });
+                .ReturnsMatchingOptionFromOptionsArg(empathNumber, empathNumbers, argIndex: 3);
             return empathNumbers;
+        }
+
+        public static List<int> MockGetChefNumber(this IStoryteller storyteller, int chefNumber)
+        {
+            List<int> chefNumbers = new();
+            storyteller.GetChefNumber(Arg.Any<Player>(), Arg.Any<IEnumerable<Player>>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(chefNumber, chefNumbers, argIndex: 2);
+            return chefNumbers;
         }
 
         public static List<Character> MockGetNewImp(this IStoryteller storyteller, Character starPassTarget)
         {
             List<Character> starPassTargets = new();
             storyteller.GetNewImp(Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(0).ToList();
-                    starPassTargets.AddRange(options.Select(option => option.ToCharacter()));
-                    return options.First(option => option.ToCharacter() == starPassTarget);
-                });
+                .ReturnsMatchingOptionFromOptionsArg(starPassTarget, starPassTargets);
             return starPassTargets;
         }
 

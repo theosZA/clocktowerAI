@@ -6,6 +6,11 @@ namespace ClocktowerScenarioTests.Mocks
 {
     internal static class ConfiguredCallExtensions
     {
+        public static ConfiguredCall ReturnsMatchingOptionFromOptionsArg<T>(this Task<IOption> onThisBeingCalled, T valueToMatch, List<T> listToPopulate, int argIndex = 0)
+        {
+            return onThisBeingCalled.Returns(args => args.GetMatchingOptionFromOptionsArg(valueToMatch, listToPopulate, argIndex));
+        }
+
         public static ConfiguredCall ReturnsPassOptionFromArg(this Task<IOption> onThisBeingCalled, int argIndex = 0)
         {
             return onThisBeingCalled.Returns(args => args.GetPassOptionFromArg(argIndex));
