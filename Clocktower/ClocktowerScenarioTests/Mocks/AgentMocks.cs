@@ -8,14 +8,12 @@ namespace ClocktowerScenarioTests.Mocks
     {
         public static void MockNomination(this IAgent agent, Character nominee)
         {
-            agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToOptionalCharacter() == nominee));
+            agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(nominee);
         }
 
         public static void MockImp(this IAgent agent, Character target)
         {
-            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args => args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToCharacter() == target));
+            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
         }
 
         public static void MockImp(this IAgent agent, IReadOnlyCollection<Character> targets)
@@ -25,8 +23,20 @@ namespace ClocktowerScenarioTests.Mocks
                 .Returns(args =>
                 {
                     var target = targets.ElementAt(targetIndex++);
-                    return args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option.ToCharacter() == target);
+                    return args.GetOptionForCharacterFromArg(target);
                 });
+        }
+
+        public static void MockAssassin(this IAgent agent, Character? target)
+        {
+            if (target == null)
+            {
+                agent.RequestChoiceFromAssassin(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsPassOptionFromArg();
+            }
+            else
+            {
+                agent.RequestChoiceFromAssassin(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target.Value);
+            }
         }
 
         public static Wrapper<Character> MockNotifySteward(this IAgent agent, ClocktowerGame? gameToEnd = null)

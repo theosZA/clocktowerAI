@@ -1,7 +1,7 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
 
-namespace ClocktowerScenarioTests
+namespace ClocktowerScenarioTests.Mocks
 {
     internal static class OptionExtensions
     {
