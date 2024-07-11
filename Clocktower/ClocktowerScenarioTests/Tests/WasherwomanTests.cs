@@ -9,9 +9,9 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Washerwoman_SeesTownsfolkPlusAnyOther()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Baron,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
 
-            const Character washerwomanPing = Character.Slayer;
+            const Character washerwomanPing = Character.Fisherman;
             const Character washerwomanWrong = Character.Imp;
             var washerwomanPingOptions = setup.Storyteller.MockGetWasherwomanPing(washerwomanPing, washerwomanWrong, washerwomanPing);
             var receivedWasherwomanPing = setup.Agents[0].MockNotifyWasherwoman(gameToEnd: game);
@@ -26,7 +26,7 @@ namespace ClocktowerScenarioTests.Tests
                 // Spot check that we can do all combinations of Townsfolk + Townsfolk, Townsfolk + Outsider, Townsfolk + Minion, Townsfolk + Demon.
                 Assert.That(washerwomanPingOptions, Does.Contain((Character.Soldier, Character.Fisherman, Character.Soldier)));
                 Assert.That(washerwomanPingOptions, Does.Contain((Character.Mayor, Character.Saint, Character.Mayor)));
-                Assert.That(washerwomanPingOptions, Does.Contain((Character.Slayer, Character.Baron, Character.Slayer)));
+                Assert.That(washerwomanPingOptions, Does.Contain((Character.Fisherman, Character.Baron, Character.Fisherman)));
                 Assert.That(washerwomanPingOptions, Does.Contain((Character.Fisherman, Character.Imp, Character.Fisherman)));
 
                 Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
@@ -40,7 +40,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Washerwoman_SeesSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Spy,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Spy,Saint,Soldier,Fisherman,Mayor");
 
             const Character washerwomanPing = Character.Spy;
             const Character washerwomanWrong = Character.Soldier;

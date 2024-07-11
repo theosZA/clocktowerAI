@@ -9,7 +9,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Soldier_SafeFromImp()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Slayer,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
 
             setup.Agents[0].MockImp(Character.Soldier);
 

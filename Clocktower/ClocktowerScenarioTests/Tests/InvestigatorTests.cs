@@ -9,7 +9,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Investigator_SeesMinionPlusAnyOther()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Baron,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
 
             const Character investigatorPing = Character.Baron;
             const Character investigatorWrong = Character.Saint;
@@ -28,7 +28,6 @@ namespace ClocktowerScenarioTests.Tests
                                                                              (Character.Baron, Character.Soldier, Character.Baron),
                                                                              (Character.Baron, Character.Fisherman, Character.Baron),
                                                                              (Character.Baron, Character.Mayor, Character.Baron),
-                                                                             (Character.Baron, Character.Slayer, Character.Baron),
                                                                              (Character.Baron, Character.Imp, Character.Baron) }));
                 Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
                 Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
@@ -41,7 +40,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Investigator_SeesRecluse()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Baron,Recluse,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Baron,Recluse,Soldier,Fisherman,Mayor");
 
             const Character investigatorPing = Character.Recluse;
             const Character investigatorWrong = Character.Soldier;
@@ -68,7 +67,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Investigator_SeesSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Spy,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Spy,Saint,Soldier,Fisherman,Mayor");
 
             const Character investigatorPing = Character.Spy;
             const Character investigatorWrong = Character.Soldier;

@@ -9,7 +9,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Steward_SeesGood()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Baron,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
 
             const Character stewardPing = Character.Saint;
             var stewardPingOptions = setup.Storyteller.MockGetStewardPing(stewardPing);
@@ -22,7 +22,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Steward, Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor, Character.Slayer }));
+                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Steward, Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor }));
                 Assert.That(receivedStewardPing.Value, Is.EqualTo(stewardPing));
             });
         }
@@ -31,7 +31,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Steward_SeesSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Spy,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Spy,Saint,Soldier,Fisherman,Mayor");
 
             const Character stewardPing = Character.Spy;
             var stewardPingOptions = setup.Storyteller.MockGetStewardPing(stewardPing);
@@ -54,7 +54,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Steward_SeesRecluse()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Baron,Recluse,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Baron,Recluse,Soldier,Fisherman,Mayor");
 
             const Character stewardPing = Character.Recluse;
             var stewardPingOptions = setup.Storyteller.MockGetStewardPing(stewardPing);

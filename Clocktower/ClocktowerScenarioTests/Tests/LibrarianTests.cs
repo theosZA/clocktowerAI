@@ -10,7 +10,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_NoOutsiders()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Ravenkeeper,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Ravenkeeper,Soldier,Fisherman,Mayor");
 
             // Act
             await game.StartGame();
@@ -24,10 +24,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_SeesOutsiderPlusAnyOther()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
 
             const Character librarianPing = Character.Saint;
-            const Character librarianWrong = Character.Slayer;
+            const Character librarianWrong = Character.Fisherman;
             var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, librarianPing);
             var receivedLibrarianPing = setup.Agents[0].MockNotifyLibrarian(gameToEnd: game);
 
@@ -43,8 +43,7 @@ namespace ClocktowerScenarioTests.Tests
                                                                           (Character.Saint, Character.Baron, Character.Saint),
                                                                           (Character.Saint, Character.Soldier, Character.Saint),
                                                                           (Character.Saint, Character.Fisherman, Character.Saint),
-                                                                          (Character.Saint, Character.Mayor, Character.Saint),
-                                                                          (Character.Saint, Character.Slayer, Character.Saint) }));
+                                                                          (Character.Saint, Character.Mayor, Character.Saint) }));
                 Assert.That(receivedLibrarianPing.Value.playerA, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
                 Assert.That(receivedLibrarianPing.Value.playerB, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
                 Assert.That(receivedLibrarianPing.Value.playerA, Is.Not.EqualTo(receivedLibrarianPing.Value.playerB));
@@ -56,10 +55,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_SeesRecluse()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Recluse,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Recluse,Soldier,Fisherman,Mayor");
 
             const Character librarianPing = Character.Recluse;
-            const Character librarianWrong = Character.Slayer;
+            const Character librarianWrong = Character.Fisherman;
             var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, librarianPing);
             var receivedLibrarianPing = setup.Agents[0].MockNotifyLibrarian(gameToEnd: game);
 
@@ -82,10 +81,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_SeesSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Saint,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Saint,Soldier,Fisherman,Mayor");
 
             const Character librarianPing = Character.Spy;
-            const Character librarianWrong = Character.Slayer;
+            const Character librarianWrong = Character.Fisherman;
             const Character spySeenAs = Character.Drunk;
             var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, spySeenAs);
             var receivedLibrarianPing = setup.Agents[0].MockNotifyLibrarian(gameToEnd: game);
@@ -109,10 +108,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_NoOutsidersSeeingSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Ravenkeeper,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Ravenkeeper,Soldier,Fisherman,Mayor");
 
             const Character librarianPing = Character.Spy;
-            const Character librarianWrong = Character.Slayer;
+            const Character librarianWrong = Character.Fisherman;
             const Character spySeenAs = Character.Drunk;
             var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, spySeenAs);
             var receivedLibrarianPing = setup.Agents[0].MockNotifyLibrarian(gameToEnd: game);
@@ -137,7 +136,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Librarian_NoOutsidersNotSeeingSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Ravenkeeper,Soldier,Fisherman,Mayor,Slayer");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Ravenkeeper,Soldier,Fisherman,Mayor");
 
             setup.Storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(new NoOutsiders());

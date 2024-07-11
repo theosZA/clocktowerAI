@@ -1,5 +1,4 @@
 using Clocktower.Game;
-using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -10,7 +9,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Imp_LosesWhenExecuted()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Slayer,Soldier,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
             setup.Agents[0].MockNomination(Character.Imp);
 
@@ -27,7 +26,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Imp_KillsAtNight()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Slayer,Soldier,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
             setup.Agents[0].MockImp(Character.Fisherman);
 
@@ -44,7 +43,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Imp_StarPass()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Slayer,Soldier,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
             setup.Agents[0].MockImp(Character.Imp);
 
@@ -63,7 +62,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Imp_StarPassToScarletWoman()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Scarlet_Woman,Soldier,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Scarlet_Woman,Soldier");
 
             setup.Agents[0].MockImp(Character.Imp);
 
@@ -82,7 +81,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Imp_StarPassWithMultipleMinions()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Spy,Soldier,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Spy,Soldier");
 
             setup.Agents[0].MockImp(Character.Imp);
             var starPassTargets = setup.Storyteller.MockGetNewImp(Character.Spy);

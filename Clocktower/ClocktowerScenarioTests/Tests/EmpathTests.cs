@@ -9,7 +9,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_NoAdjacentEvils()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Saint,Baron,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Saint,Baron,Soldier,Fisherman");
 
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
 
@@ -25,7 +25,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_OneAdjacentEvil()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Baron,Saint,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Baron,Saint,Soldier,Fisherman");
 
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
 
@@ -41,7 +41,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_TwoAdjacentEvils()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Slayer,Imp,Empath,Baron,Saint,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Mayor,Imp,Empath,Baron,Saint,Soldier,Fisherman");
 
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
 
@@ -57,7 +57,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_AdjacentToRecluse()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Recluse,Baron,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Recluse,Baron,Soldier,Fisherman");
 
             var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
@@ -78,7 +78,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_AdjacentToSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Spy,Saint,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Spy,Saint,Soldier,Fisherman");
 
             var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
@@ -99,7 +99,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_AdjacentToRecluseAndSpy()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Recluse,Empath,Spy,Slayer,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Recluse,Empath,Spy,Mayor,Soldier,Fisherman");
 
             var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath(gameToEnd: game);
@@ -120,10 +120,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_OneDeadNeighbour()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Saint,Baron,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Empath,Saint,Baron,Soldier,Mayor");
 
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath();
-            setup.Agents[0].MockImp(Character.Slayer);
+            setup.Agents[0].MockImp(Character.Fisherman);
 
             // Act
             await game.StartGame();
@@ -138,10 +138,10 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_TwoDeadNeighbours()
         {
             // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Slayer,Empath,Saint,Baron,Soldier,Fisherman,Mayor");
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Empath,Saint,Baron,Soldier,Mayor");
 
             var receivedEmpathNumber = setup.Agents[2].MockNotifyEmpath();
-            setup.Agents[0].MockImp(new[] { Character.Slayer, Character.Saint });
+            setup.Agents[0].MockImp(new[] { Character.Fisherman, Character.Saint });
 
             // Act
             await game.StartGame();
