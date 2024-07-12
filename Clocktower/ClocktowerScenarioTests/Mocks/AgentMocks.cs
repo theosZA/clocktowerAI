@@ -100,6 +100,21 @@ namespace ClocktowerScenarioTests.Mocks
             return receivedChefNumber;
         }
 
+        public static Wrapper<bool> MockNotifyFortuneTeller(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<bool> receivedFortuneTellerResult = new();
+            agent.When(agent => agent.NotifyFortuneTeller(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<bool>()))
+                .Do(args => args.PopulateFromArg(receivedFortuneTellerResult, argIndex: 2, gameToEnd: gameToEnd));
+            return receivedFortuneTellerResult;
+        }
+
+        public static List<(Character, Character)> MockFortuneTellerChoice(this IAgent agent, Character choiceA, Character choiceB)
+        {
+            List<(Character, Character)> fortuneTellerOptions = new();
+            agent.RequestChoiceFromFortuneTeller(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg((choiceA, choiceB), fortuneTellerOptions);
+            return fortuneTellerOptions;
+        }
+
         public static List<Character> MockRavenkeeperChoice(this IAgent agent, Character choice)
         {
             List<Character> ravenkeeperOptions = new();

@@ -20,6 +20,10 @@ namespace ClocktowerScenarioTests.Mocks
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CS8603 // Possible null reference return.
             }
+            if (type == typeof((Character playerA, Character playerB)))
+            {
+                return (T)(object)option.ToTwoPlayers();
+            }
             if (type == typeof((Character playerA, Character playerB, Character character)))
             {
                 return (T)(object)option.ToCharacterForTwoPlayers();
@@ -53,6 +57,12 @@ namespace ClocktowerScenarioTests.Mocks
             return option is PlayerOption playerOption ? playerOption.Player.Character
                  : option is CharacterOption characterOption ? characterOption.Character
                  : null;
+        }
+
+        public static (Character playerA, Character playerB) ToTwoPlayers(this IOption option)
+        {
+            var current = (TwoPlayersOption)option;
+            return (current.PlayerA.Character, current.PlayerB.Character);
         }
 
         public static (Character playerA, Character playerB, Character character) ToCharacterForTwoPlayers(this IOption option)

@@ -96,5 +96,15 @@ namespace ClocktowerScenarioTests.Mocks
         {
             storyteller.GetFishermanAdvice(Arg.Any<Player>()).Returns(advice);
         }
+
+        public static void MockFortuneTellerRedHerring(this IStoryteller storyteller, Character redHerring)
+        {
+            storyteller.GetFortuneTellerRedHerring(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(redHerring, argIndex: 1);
+        }
+
+        public static void MockFortuneTellerReading(this IStoryteller storyteller, bool reading)
+        {
+            storyteller.GetFortuneTellerReading(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(reading, argIndex: 3);
+        }
     }
 }
