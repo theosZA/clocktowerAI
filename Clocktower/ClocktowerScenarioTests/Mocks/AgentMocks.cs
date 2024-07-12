@@ -106,5 +106,12 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromRavenkeeper(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, ravenkeeperOptions);
             return ravenkeeperOptions;
         }
+
+        public static List<Character> MockMonkChoice(this IAgent agent, Character choice)
+        {
+            List<Character> monkOptions = new();
+            agent.RequestChoiceFromMonk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, monkOptions);
+            return monkOptions;
+        }
     }
 }
