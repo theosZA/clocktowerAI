@@ -91,5 +91,10 @@ namespace ClocktowerScenarioTests.Mocks
         {
             storyteller.ShouldExecuteWithVirgin(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldExecute, argIndex: 2);
         }
+
+        public static void MockFishermanAdvice(this IStoryteller storyteller, string advice)
+        {
+            storyteller.GetFishermanAdvice(Arg.Any<Player>()).Returns(advice);
+        }
     }
 }

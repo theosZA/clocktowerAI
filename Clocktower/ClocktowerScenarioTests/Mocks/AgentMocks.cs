@@ -113,5 +113,18 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromMonk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, monkOptions);
             return monkOptions;
         }
+
+        public static void MockFishermanOption(this IAgent agent, bool getAdvice)
+        {
+            agent.PromptFishermanAdvice(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(getAdvice);
+        }
+
+        public static Wrapper<string> MockFishermanAdvice(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<string> advice = new();
+            agent.When(agent => agent.ResponseForFisherman(Arg.Any<string>()))
+                .Do(args => args.PopulateFromArg(advice, gameToEnd: gameToEnd));
+            return advice;
+        }
     }
 }
