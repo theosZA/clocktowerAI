@@ -58,14 +58,14 @@ namespace Clocktower.Events
                     possibleCharacters.Add(minion);
                 }
             }
-            if (executedPlayer.CanRegisterAsOutsider && executedPlayer.CharacterType == CharacterType.Outsider)
+            if (executedPlayer.CanRegisterAsOutsider && executedPlayer.CharacterType != CharacterType.Outsider)
             {
                 foreach (var outsider in scriptCharacters.OfCharacterType(CharacterType.Outsider))
                 {
                     possibleCharacters.Add(outsider);
                 }
             }
-            if (executedPlayer.CanRegisterAsTownsfolk && executedPlayer.CharacterType == CharacterType.Townsfolk)
+            if (executedPlayer.CanRegisterAsTownsfolk && executedPlayer.CharacterType != CharacterType.Townsfolk)
             {
                 foreach (var townsfolk in scriptCharacters.OfCharacterType(CharacterType.Townsfolk))
                 {

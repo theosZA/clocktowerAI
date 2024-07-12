@@ -70,6 +70,12 @@ namespace ClocktowerScenarioTests.Mocks
             return starPassTargets;
         }
 
+        public static void MockGetCharacterForUndertaker(this IStoryteller storyteller, Character character)
+        {
+            storyteller.GetCharacterForUndertaker(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsOptionForCharacterFromArg(character, argIndex: 2);
+        }
+
         public static void MockShouldKillTinker(this IStoryteller storyteller, bool shouldKill)
         {
             storyteller.ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldKill, argIndex: 1);

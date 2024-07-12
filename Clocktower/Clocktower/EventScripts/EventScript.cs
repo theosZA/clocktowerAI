@@ -6,7 +6,16 @@
 
         public EventScript(string fileName)
         {
+            // We cache the event scripts. Note that this doesn't really help for ordinary gameplay,
+            // but can potentially speed up tests so we don't reload the event script files for every test.
+            if (CachedScripts.TryGetValue(fileName, out var eventNodes))
+            {
+                EventNodes = eventNodes;
+                return;
+            }
+
             EventNodes = ParseEventScript(ReadEventScriptFromFile(fileName)).ToList();
+            CachedScripts.Add(fileName, EventNodes);
         }
 
         private static List<string> ReadEventScriptFromFile(string fileName)
@@ -52,5 +61,7 @@
             ++currentLine;  // skip over the '}'
             return new SequenceNode(children);
         }
+
+        private static readonly Dictionary<string, IReadOnlyCollection<IEventScriptNode>> CachedScripts = new();
     }
 }
