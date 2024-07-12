@@ -99,5 +99,12 @@ namespace ClocktowerScenarioTests.Mocks
                 .Do(args => args.PopulateFromArg(receivedChefNumber, gameToEnd: gameToEnd));
             return receivedChefNumber;
         }
+
+        public static List<Character> MockRavenkeeperChoice(this IAgent agent, Character choice)
+        {
+            List<Character> ravenkeeperOptions = new();
+            agent.RequestChoiceFromRavenkeeper(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, ravenkeeperOptions);
+            return ravenkeeperOptions;
+        }
     }
 }

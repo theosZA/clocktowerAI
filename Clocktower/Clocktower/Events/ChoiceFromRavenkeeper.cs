@@ -47,6 +47,20 @@ namespace Clocktower.Events
                     characters.Add(minion);
                 }
             }
+            if (target.CanRegisterAsOutsider && target.CharacterType != CharacterType.Outsider)
+            {
+                foreach (var outsider in scriptCharacters.OfCharacterType(CharacterType.Outsider))
+                {
+                    characters.Add(outsider);
+                }
+            }
+            if (target.CanRegisterAsTownsfolk && target.CharacterType != CharacterType.Townsfolk)
+            {
+                foreach (var townsfolk in scriptCharacters.OfCharacterType(CharacterType.Townsfolk))
+                {
+                    characters.Add(townsfolk);
+                }
+            }
 
             return await GetCharacterFromList(ravenkeeper, target, characters);
         }
