@@ -129,6 +129,11 @@ namespace ClocktowerScenarioTests.Mocks
             return monkOptions;
         }
 
+        public static void MockSlayerOption(this IAgent agent, Character target)
+        {
+            agent.PromptSlayerShot(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static void MockFishermanOption(this IAgent agent, bool getAdvice)
         {
             agent.PromptFishermanAdvice(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(getAdvice);

@@ -1,0 +1,107 @@
+using Clocktower.Game;
+using ClocktowerScenarioTests.Mocks;
+
+namespace ClocktowerScenarioTests.Tests
+{
+    public class SlayerTests
+    {
+        [Test]
+        public async Task Slayer_ShootsNonDemon()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Baron);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Baron).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_ShootsDemon()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Slayer_ShootsRecluse(bool shouldKill)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Recluse,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Recluse);
+            setup.Storyteller.MockShouldKillWithSlayer(shouldKill);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            if (shouldKill)
+            {
+                await setup.Agent(Character.Recluse).Received().YouAreDead();
+            }
+            else
+            {
+                await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
+            }
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_ShootsDemonOnDayTwo()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            await game.RunNightAndDay();
+
+            Assert.That(game.Finished, Is.False);
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
+
+        [Test]
+        public async Task Slayer_ShootsDemonWithScarletWomanBackup()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Scarlet_Woman,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
+            var imp = setup.Agent(Character.Imp);
+            var scarletWoman = setup.Agent(Character.Scarlet_Woman);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await imp.Received().YouAreDead();
+            await scarletWoman.Received().AssignCharacter(Character.Imp, Alignment.Evil);
+            Assert.That(game.Finished, Is.False);
+        }
+    }
+}
