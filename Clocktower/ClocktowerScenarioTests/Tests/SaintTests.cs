@@ -10,7 +10,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agents[0].MockNomination(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
 
             // Act
             await game.StartGame();
@@ -48,6 +48,22 @@ namespace ClocktowerScenarioTests.Tests
             // Act
             await game.StartGame();
             await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Saint_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Poisoner,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
             await game.RunNightAndDay();
 
             // Assert

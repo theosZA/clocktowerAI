@@ -11,7 +11,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
-            setup.Agents[0].MockNomination(Character.Imp);
+            setup.Agent(Character.Imp).MockNomination(Character.Imp);
 
             // Act
             await game.StartGame();
@@ -28,7 +28,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
-            setup.Agents[0].MockImp(Character.Fisherman);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
 
             // Act
             await game.StartGame();
@@ -36,7 +36,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
-            await setup.Agents[1].Received().YouAreDead();
+            await setup.Agent(Character.Fisherman).Received().YouAreDead();
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor");
 
-            setup.Agents[0].MockImp(Character.Imp);
+            setup.Agent(Character.Imp).MockImp(Character.Imp);
 
             // Act
             await game.StartGame();
@@ -54,8 +54,8 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(game.Finished, Is.False);
-            await setup.Agents[0].Received().YouAreDead();
-            await setup.Agents[4].Received().AssignCharacter(Character.Imp, Alignment.Evil);
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            await setup.Agent(Character.Baron).Received().AssignCharacter(Character.Imp, Alignment.Evil);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Scarlet_Woman,Soldier");
 
-            setup.Agents[0].MockImp(Character.Imp);
+            setup.Agent(Character.Imp).MockImp(Character.Imp);
 
             // Act
             await game.StartGame();
@@ -73,8 +73,8 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(game.Finished, Is.False);
-            await setup.Agents[0].Received().YouAreDead();
-            await setup.Agents[5].Received().AssignCharacter(Character.Imp, Alignment.Evil);    // must go to Scarlet Woman, not Baron
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            await setup.Agent(Character.Scarlet_Woman).Received().AssignCharacter(Character.Imp, Alignment.Evil);    // must go to Scarlet Woman, not Baron
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Baron,Spy,Soldier");
 
-            setup.Agents[0].MockImp(Character.Imp);
+            setup.Agent(Character.Imp).MockImp(Character.Imp);
             var starPassTargets = setup.Storyteller.MockGetNewImp(Character.Spy);
 
             // Act
@@ -94,8 +94,26 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(game.Finished, Is.False);
             Assert.That(starPassTargets, Is.EquivalentTo(new[] { Character.Baron, Character.Spy }));
-            await setup.Agents[0].Received().YouAreDead();
-            await setup.Agents[5].Received().AssignCharacter(Character.Imp, Alignment.Evil);    // must go to Scarlet Woman, not Baron
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            await setup.Agent(Character.Spy).Received().AssignCharacter(Character.Imp, Alignment.Evil);
+        }
+
+        [Test]
+        public async Task Imp_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Ravenkeeper,Saint,Poisoner,Soldier,Mayor");
+
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Imp);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Fisherman).DidNotReceive().YouAreDead();
         }
     }
 }

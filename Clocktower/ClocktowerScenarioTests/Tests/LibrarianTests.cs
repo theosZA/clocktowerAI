@@ -230,5 +230,50 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Librarian).Received().NotifyLibrarianNoOutsiders();
         }
+
+        [Test]
+        public async Task Librarian_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Poisoner,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Librarian);
+
+            const Character librarianPing = Character.Imp;
+            const Character librarianWrong = Character.Soldier;
+            const Character pingCharacter = Character.Recluse;
+            var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, pingCharacter);
+            var receivedlibrarianPing = setup.Agent(Character.Librarian).MockNotifyLibrarian(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(librarianPingOptions, Does.Contain((librarianPing, librarianWrong, pingCharacter)));
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerB, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.Not.EqualTo(receivedlibrarianPing.Value.playerB));
+                Assert.That(receivedlibrarianPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task Librarian_PoisonedAndSeesNoOutsiders()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Poisoner,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Librarian);
+            setup.Storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(new NoOutsiders());
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Librarian).Received().NotifyLibrarianNoOutsiders();
+        }
     }
 }

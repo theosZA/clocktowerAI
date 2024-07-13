@@ -16,19 +16,19 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 and Day 2
-            setup.Agents[0].MockImp(new[] { Character.Soldier, Character.Soldier });
-            setup.Agents[1].MockAssassin(Character.Saint);
+            setup.Agent(Character.Imp).MockImp(new[] { Character.Soldier, Character.Soldier });
+            setup.Agent(Character.Assassin).MockAssassin(Character.Saint);
 
             await game.RunNightAndDay();
 
-            await setup.Agents[3].Received().YouAreDead();
+            await setup.Agent(Character.Saint).Received().YouAreDead();
 
             // Night 3 and Day 3 - ensure the Assassin doesn't kill again.
-            setup.Agents[1].ClearReceivedCalls();
+            setup.Agent(Character.Assassin).ClearReceivedCalls();
 
             await game.RunNightAndDay();
 
-            await setup.Agents[1].DidNotReceive().RequestChoiceFromAssassin(Arg.Any<IReadOnlyCollection<IOption>>());
+            await setup.Agent(Character.Assassin).DidNotReceive().RequestChoiceFromAssassin(Arg.Any<IReadOnlyCollection<IOption>>());
         }
 
         [Test]
@@ -41,8 +41,8 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 and Day 2 - ensure no one dies
-            setup.Agents[0].MockImp(new[] { Character.Soldier, Character.Soldier });
-            setup.Agents[1].MockAssassin(target: null);
+            setup.Agent(Character.Imp).MockImp(new[] { Character.Soldier, Character.Soldier });
+            setup.Agent(Character.Assassin).MockAssassin(target: null);
 
             await game.RunNightAndDay();
 
@@ -52,11 +52,11 @@ namespace ClocktowerScenarioTests.Tests
             }
 
             // Night 3 and Day 3
-            setup.Agents[1].MockAssassin(Character.Saint);
+            setup.Agent(Character.Assassin).MockAssassin(Character.Saint);
 
             await game.RunNightAndDay();
 
-            await setup.Agents[3].Received().YouAreDead();
+            await setup.Agent(Character.Saint).Received().YouAreDead();
         }
 
         [Test]
@@ -64,8 +64,8 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Assassin,Ravenkeeper,Saint,Fisherman,Soldier,Mayor");
-            setup.Agents[0].MockImp(new[] { Character.Fisherman, Character.Saint });
-            setup.Agents[1].MockAssassin(Character.Soldier);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+            setup.Agent(Character.Assassin).MockAssassin(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -73,7 +73,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
-            await setup.Agents[5].Received().YouAreDead();
+            await setup.Agent(Character.Soldier).Received().YouAreDead();
         }
 
         [Test]
@@ -81,8 +81,8 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Assassin,Ravenkeeper,Saint,Fisherman,Soldier,Mayor");
-            setup.Agents[0].MockImp(new[] { Character.Fisherman, Character.Saint });
-            setup.Agents[1].MockAssassin(Character.Mayor);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+            setup.Agent(Character.Assassin).MockAssassin(Character.Mayor);
 
             // Act
             await game.StartGame();
@@ -90,7 +90,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
-            await setup.Agents[6].Received().YouAreDead();
+            await setup.Agent(Character.Mayor).Received().YouAreDead();
             await setup.Storyteller.DidNotReceive().GetMayorBounce(Arg.Any<Player>(), Arg.Any<Player?>(), Arg.Any<IReadOnlyCollection<IOption>>());
         }
 
@@ -99,8 +99,8 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Assassin,Ravenkeeper,Saint,Fisherman,Soldier,Mayor");
-            setup.Agents[0].MockImp(new[] { Character.Fisherman, Character.Saint });
-            setup.Agents[1].MockAssassin(Character.Imp);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+            setup.Agent(Character.Assassin).MockAssassin(Character.Imp);
 
             // Act
             await game.StartGame();
@@ -108,9 +108,27 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
-            await setup.Agents[0].Received().YouAreDead();
+            await setup.Agent(Character.Imp).Received().YouAreDead();
             Assert.That(game.Finished, Is.True);
             Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
+
+        [Test]
+        public async Task Assassin_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Assassin,Poisoner,Saint,Fisherman,Soldier,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Assassin);
+            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+            setup.Agent(Character.Assassin).MockAssassin(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
         }
     }
 }

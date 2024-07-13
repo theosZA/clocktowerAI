@@ -116,5 +116,32 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
             });
         }
+
+        [Test]
+        public async Task Washerwoman_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Poisoner,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Washerwoman);
+
+            const Character washerwomanPing = Character.Imp;
+            const Character washerwomanWrong = Character.Soldier;
+            const Character pingCharacter = Character.Empath;
+            setup.Storyteller.MockGetWasherwomanPing(washerwomanPing, washerwomanWrong, pingCharacter);
+            var receivedWasherwomanPing = setup.Agent(Character.Washerwoman).MockNotifyWasherwoman(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
+                Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
     }
 }

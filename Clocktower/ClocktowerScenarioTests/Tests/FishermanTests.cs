@@ -94,5 +94,24 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(actualAdvice.Value, Is.EqualTo(expectedAdvice));
         }
+
+        [Test]
+        public async Task Fisherman_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Poisoner,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Fisherman);
+            setup.Agent(Character.Fisherman).MockFishermanOption(getAdvice: true);
+            const string expectedAdvice = "Sample advice (which is poisoned)";
+            setup.Storyteller.MockFishermanAdvice(expectedAdvice);
+            var actualAdvice = setup.Agent(Character.Fisherman).MockFishermanAdvice(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(actualAdvice.Value, Is.EqualTo(expectedAdvice));
+        }
     }
 }

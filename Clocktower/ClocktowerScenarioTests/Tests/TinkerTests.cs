@@ -1,6 +1,7 @@
 using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -91,6 +92,21 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Tinker).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task Tinker_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Poisoner,Ravenkeeper,Tinker,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Tinker);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
         }
     }
 }

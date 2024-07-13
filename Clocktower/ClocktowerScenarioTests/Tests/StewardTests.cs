@@ -85,7 +85,28 @@ namespace ClocktowerScenarioTests.Tests
                             .WithDrunk(Character.Steward)
                             .Build();
 
-            var stewardPingOptions = setup.Storyteller.MockGetStewardPing(stewardPing);
+            setup.Storyteller.MockGetStewardPing(stewardPing);
+            var receivedStewardPing = setup.Agent(Character.Steward).MockNotifySteward(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedStewardPing.Value, Is.EqualTo(stewardPing));
+        }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Saint)]
+        [TestCase(Character.Soldier)]
+        public async Task Steward_Poisoned(Character stewardPing)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Steward,Imp,Poisoner,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Steward);
+
+            setup.Storyteller.MockGetStewardPing(stewardPing);
             var receivedStewardPing = setup.Agent(Character.Steward).MockNotifySteward(gameToEnd: game);
 
             // Act

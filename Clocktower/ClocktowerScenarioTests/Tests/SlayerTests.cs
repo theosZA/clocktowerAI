@@ -1,4 +1,5 @@
 using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -122,6 +123,41 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_PoisonedTargetingImp()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Poisoner,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Slayer);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_PoisonedTargetingRecluse()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Poisoner,Ravenkeeper,Recluse,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Slayer);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Recluse);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillWithSlayer(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+            await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
     }

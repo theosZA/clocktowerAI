@@ -179,5 +179,28 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedEmpathNumber.Value, Is.EqualTo(empathNumber));
             });
         }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Empath_Poisoned(int empathNumber)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Saint,Poisoner,Soldier,Fisherman");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Empath);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(empathNumber);
+            var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(empathNumbers, Is.EquivalentTo(new[] { 0, 1, 2 }));
+                Assert.That(receivedEmpathNumber.Value, Is.EqualTo(empathNumber));
+            });
+        }
     }
 }

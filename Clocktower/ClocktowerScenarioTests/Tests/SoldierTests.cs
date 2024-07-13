@@ -40,5 +40,22 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Soldier).Received().YouAreDead();
         }
+
+        [Test]
+        public async Task Soldier_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Poisoner,Fisherman,Mayor");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Soldier);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Soldier).Received().YouAreDead();
+        }
     }
 }

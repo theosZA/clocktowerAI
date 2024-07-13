@@ -134,5 +134,21 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
         }
+
+        [Test]
+        public async Task Virgin_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Poisoner,Virgin,Soldier,Ravenkeeper,Fisherman,Saint");
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Virgin);
+            setup.Agent(Character.Soldier).MockNomination(Character.Virgin);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
+        }
     }
 }
