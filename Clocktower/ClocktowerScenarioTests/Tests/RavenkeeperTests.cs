@@ -85,6 +85,30 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Ravenkeeper_SeesDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Fisherman,Ravenkeeper,Soldier,Undertaker,Mayor")
+                            .WithDrunk(Character.Fisherman)
+                            .Build();
+
+            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Fisherman);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(ravenkeeperOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron, Character.Fisherman, Character.Ravenkeeper, Character.Soldier, Character.Undertaker, Character.Mayor }));
+            await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
+            await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Fisherman), Character.Drunk);
+        }
+
+        [Test]
         public async Task Ravenkeeper_SeesSpy()
         {
             // Arrange
@@ -102,6 +126,33 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(ravenkeeperOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Spy, Character.Saint, Character.Ravenkeeper, Character.Soldier, Character.Undertaker, Character.Mayor }));
             await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
             await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Spy), Character.Butler);
+        }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Ravenkeeper_IsTheDrunk(Character characterToSee)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Mayor")
+                            .WithDrunk(Character.Ravenkeeper)
+                            .Build();
+                            
+            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
+            setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
+            await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
         }
     }
 }

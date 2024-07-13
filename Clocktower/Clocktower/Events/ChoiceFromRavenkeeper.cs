@@ -31,7 +31,7 @@ namespace Clocktower.Events
                 return await GetCharacterFromList(ravenkeeper, target, scriptCharacters);
             }
 
-            List<Character> characters = new() { target.Character };
+            List<Character> characters = new() { target.RealCharacter };
 
             if (target.CanRegisterAsDemon && target.CharacterType != CharacterType.Demon)
             {

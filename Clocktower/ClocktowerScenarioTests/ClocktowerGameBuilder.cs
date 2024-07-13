@@ -3,6 +3,7 @@ using Clocktower.Game;
 using Clocktower.Options;
 using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
+using NSubstitute;
 
 namespace ClocktowerScenarioTests
 {
@@ -35,9 +36,7 @@ namespace ClocktowerScenarioTests
 
         public static (ClocktowerGameBuilder, ClocktowerGame) BuildDefault(string charactersCommaSeparatedList)
         {
-            return BuildDefault(charactersCommaSeparatedList.Split(',')
-                                                            .Select(characterText => Enum.Parse<Character>(characterText))
-                                                            .ToList());
+            return BuildDefault(ReadCharactersFromCommaSeparatedList(charactersCommaSeparatedList).ToList());
         }
 
         public static (ClocktowerGameBuilder, ClocktowerGame) BuildDefault(IReadOnlyCollection<Character> characters)
@@ -64,9 +63,22 @@ namespace ClocktowerScenarioTests
             return this;
         }
 
+        public ClocktowerGameBuilder WithCharacters(string charactersCommaSeparatedList)
+        {
+            return WithCharacters(ReadCharactersFromCommaSeparatedList(charactersCommaSeparatedList).ToList());
+        }
+
+
         public ClocktowerGameBuilder WithCharacters(IReadOnlyCollection<Character> characters)
         {
             Setup.Characters.Returns(characters.ToArray());
+            return this;
+        }
+
+        public ClocktowerGameBuilder WithDrunk(Character character)
+        {
+            Setup.IsCharacterSelected(Character.Drunk).Returns(true);
+            Storyteller.MockGetDrunk(character);
             return this;
         }
 
@@ -81,6 +93,11 @@ namespace ClocktowerScenarioTests
             {
                 yield return Substitute.For<IAgent>();
             }
+        }
+
+        private static IEnumerable<Character> ReadCharactersFromCommaSeparatedList(string charactersCommaSeparatedList)
+        {
+            return charactersCommaSeparatedList.Split(',').Select(characterText => Enum.Parse<Character>(characterText));
         }
 
         private readonly Dictionary<Character, IAgent> agents = new();

@@ -6,6 +6,11 @@ namespace ClocktowerScenarioTests.Mocks
 {
     internal static class StorytellerMocks
     {
+        public static void MockGetDrunk(this IStoryteller storyteller, Character drunkCharacter)
+        {
+            storyteller.GetDrunk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(drunkCharacter);
+        }
+
         public static List<Character> MockGetStewardPing(this IStoryteller storyteller, Character stewardPing)
         {
             List<Character> stewardPingOptions = new();

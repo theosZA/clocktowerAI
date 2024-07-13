@@ -11,7 +11,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Shugenja,Baron,Saint,Soldier,Fisherman");
 
-            var receivedShugenjaDirection = setup.Agents[2].MockNotifyShugenja(gameToEnd: game);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -44,7 +44,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Shugenja,Saint,Baron,Soldier,Fisherman");
 
             var shugenjaOptions = setup.Storyteller.MockGetShugenjaDirection(Direction.Counterclockwise);
-            var receivedShugenjaDirection = setup.Agents[2].MockNotifyShugenja(gameToEnd: game);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -65,7 +65,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Shugenja,Spy,Saint,Soldier,Fisherman");
 
             var shugenjaOptions = setup.Storyteller.MockGetShugenjaDirection(Direction.Counterclockwise);
-            var receivedShugenjaDirection = setup.Agents[2].MockNotifyShugenja(gameToEnd: game);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -86,7 +86,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Soldier,Recluse,Shugenja,Mayor,Baron,Imp,Fisherman");
 
             var shugenjaOptions = setup.Storyteller.MockGetShugenjaDirection(Direction.Counterclockwise);
-            var receivedShugenjaDirection = setup.Agents[2].MockNotifyShugenja(gameToEnd: game);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -98,6 +98,28 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(shugenjaOptions, Is.EquivalentTo(new[] { Direction.Clockwise, Direction.Counterclockwise }));
                 Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(Direction.Counterclockwise));
             });
+        }
+
+        [TestCase(Direction.Clockwise)]
+        [TestCase(Direction.Counterclockwise)]
+        public async Task Shugenja_IsTheDrunk(Direction direction)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Mayor,Shugenja,Baron,Saint,Soldier,Fisherman") // should be clockwise
+                            .WithDrunk(Character.Shugenja)
+                            .Build();
+
+            setup.Storyteller.MockGetShugenjaDirection(direction);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(direction));
         }
     }
 }

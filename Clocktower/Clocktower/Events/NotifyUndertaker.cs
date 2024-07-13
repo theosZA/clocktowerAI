@@ -43,7 +43,7 @@ namespace Clocktower.Events
                 return scriptCharacters;
             }
 
-            var possibleCharacters = new List<Character> { executedPlayer.Character };
+            var possibleCharacters = new List<Character> { executedPlayer.RealCharacter };
             if (executedPlayer.CanRegisterAsDemon && executedPlayer.CharacterType != CharacterType.Demon)
             {
                 foreach (var demon in scriptCharacters.OfCharacterType(CharacterType.Demon))

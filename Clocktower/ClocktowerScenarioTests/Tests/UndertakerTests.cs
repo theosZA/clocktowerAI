@@ -41,6 +41,28 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Undertaker_SeesExecutedDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Fisherman,Ravenkeeper,Soldier,Undertaker,Mayor")
+                            .WithDrunk(Character.Mayor)
+                            .Build();
+
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Drunk);
+        }
+
+        [Test]
         public async Task Undertaker_SeesExecutedRecluse()
         {
             // Arrange
@@ -141,6 +163,32 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             await setup.Agent(Character.Undertaker).DidNotReceive().NotifyUndertaker(Arg.Any<Player>(), Arg.Any<Character>());
+        }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Undertaker_IsTheDrunk(Character characterToSee)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Mayor")
+                            .WithDrunk(Character.Undertaker)
+                            .Build();
+
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Storyteller.MockGetCharacterForUndertaker(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
         }
     }
 }

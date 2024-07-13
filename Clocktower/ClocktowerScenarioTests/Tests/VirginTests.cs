@@ -66,6 +66,25 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Virgin_NominatedByDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Virgin,Soldier,Ravenkeeper,Fisherman,Saint")
+                            .WithDrunk(Character.Soldier)
+                            .Build();
+            setup.Agent(Character.Soldier).MockNomination(Character.Virgin);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Saint), Arg.Any<bool>());
+        }
+
+        [Test]
         public async Task Virgin_NominatedBySpyRegisteringAsTownsfolk()
         {
             // Arrange
@@ -95,6 +114,25 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Spy), Arg.Any<bool>());
+        }
+
+        [Test]
+        public async Task Virgin_IsTheDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Virgin,Soldier,Ravenkeeper,Fisherman,Saint")
+                            .WithDrunk(Character.Virgin)
+                            .Build();
+            setup.Agent(Character.Soldier).MockNomination(Character.Virgin);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
         }
     }
 }

@@ -14,7 +14,7 @@ namespace ClocktowerScenarioTests.Tests
             const Character investigatorPing = Character.Baron;
             const Character investigatorWrong = Character.Saint;
             var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, investigatorPing);
-            var receivedInvestigatorPing = setup.Agents[0].MockNotifyInvestigator(gameToEnd: game);
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -46,7 +46,7 @@ namespace ClocktowerScenarioTests.Tests
             const Character investigatorWrong = Character.Soldier;
             const Character recluseSeenAs = Character.Poisoner;
             var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, recluseSeenAs);
-            var receivedInvestigatorPing = setup.Agents[0].MockNotifyInvestigator(gameToEnd: game);
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -72,7 +72,7 @@ namespace ClocktowerScenarioTests.Tests
             const Character investigatorPing = Character.Spy;
             const Character investigatorWrong = Character.Soldier;
             var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, investigatorPing);
-            var receivedInvestigatorPing = setup.Agents[0].MockNotifyInvestigator(gameToEnd: game);
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
 
             // Act
             await game.StartGame();
@@ -86,6 +86,37 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
                 Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
                 Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(investigatorPing));
+            });
+        }
+
+        [Test]
+        public async Task Investigator_IsTheDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Investigator,Imp,Baron,Saint,Soldier,Fisherman,Mayor")
+                            .WithDrunk(Character.Investigator)
+                            .Build();
+
+            const Character investigatorPing = Character.Saint;
+            const Character investigatorWrong = Character.Soldier;
+            const Character pingCharacter = Character.Poisoner;
+            var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, pingCharacter);
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(investigatorPingOptions, Does.Contain((investigatorPing, investigatorWrong, pingCharacter)));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
             });
         }
     }

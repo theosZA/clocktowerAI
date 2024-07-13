@@ -91,5 +91,29 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FortuneTeller_IsTheDrunk(bool reading)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Fortune_Teller,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithDrunk(Character.Fortune_Teller)
+                            .Build();
+
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Fortune_Teller);
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Mayor);
+            setup.Storyteller.MockFortuneTellerReading(reading: reading);
+            var fortuneTellerReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+        }
     }
 }

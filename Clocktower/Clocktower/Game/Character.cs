@@ -15,6 +15,11 @@
 //    b. Add the event to the GameEventFactory.
 // 5. Some characters will have abilities that can't be run on an event. You will need to add the functionality in the relevant place,
 //    e.g. within the Nominations event if it's an ability based on nominations, or in the Player class if it's a character that can misregister.
+// 6. Add scenario tests for the character. These tests may include the following:
+//    - Regular postive and negative test cases.
+//    - Cases for when the character is really the Drunk or otherwise drunk.
+//    - Cases for then the character has been poisoned.
+//    - Cases for when the character dies and their effect on the game should end.
 
 namespace Clocktower.Game
 {

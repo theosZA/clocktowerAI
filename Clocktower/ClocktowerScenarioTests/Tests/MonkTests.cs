@@ -71,5 +71,27 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(monkOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Mayor }));  // not Monk
             await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
         }
+
+        [Test]
+        public async Task Monk_IsTheDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Monk,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithDrunk(Character.Monk)
+                            .Build();
+
+            setup.Agent(Character.Monk).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockImp(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+        }
     }
 }

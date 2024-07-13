@@ -68,7 +68,7 @@ namespace Clocktower.Events
             var options = from outsiderCharacter in outsiderCharacters
                           from playerA in players
                           where playerA.CanRegisterAsOutsider
-                          where playerA.Character == outsiderCharacter || playerA.CharacterType != CharacterType.Outsider
+                          where playerA.RealCharacter == outsiderCharacter || playerA.CharacterType != CharacterType.Outsider
                           from playerB in players
                           where playerA != playerB
                           select (IOption)new CharacterForTwoPlayersOption(outsiderCharacter, playerA, playerB);

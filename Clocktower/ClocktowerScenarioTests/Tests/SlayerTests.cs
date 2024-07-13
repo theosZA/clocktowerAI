@@ -103,5 +103,26 @@ namespace ClocktowerScenarioTests.Tests
             await scarletWoman.Received().AssignCharacter(Character.Imp, Alignment.Evil);
             Assert.That(game.Finished, Is.False);
         }
+
+        [Test]
+        public async Task Slayer_IsTheDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Mayor")
+                            .WithDrunk(Character.Slayer)
+                            .Build();
+
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
     }
 }
