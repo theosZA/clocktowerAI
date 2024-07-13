@@ -129,6 +129,13 @@ namespace ClocktowerScenarioTests.Mocks
             return monkOptions;
         }
 
+        public static List<Character> MockButlerChoice(this IAgent agent, Character master)
+        {
+            List<Character> masterOptions = new();
+            agent.RequestChoiceFromButler(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(master, masterOptions);
+            return masterOptions;
+        }
+
         public static void MockSlayerOption(this IAgent agent, Character target)
         {
             agent.PromptSlayerShot(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
