@@ -25,8 +25,8 @@ namespace Clocktower.Events
         public async Task RunEvent(Player investigator)
         {
             var pings = await GetPings(investigator);
-            pings.PlayerA.Tokens.Add(Token.InvestigatorPing);
-            pings.PlayerB.Tokens.Add(Token.InvestigatorWrong);
+            pings.PlayerA.Tokens.Add(Token.InvestigatorPing, investigator);
+            pings.PlayerB.Tokens.Add(Token.InvestigatorWrong, investigator);
 
             var players = new List<Player> { pings.PlayerA, pings.PlayerB };
             players.Shuffle(random);

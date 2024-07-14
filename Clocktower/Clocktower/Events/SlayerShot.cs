@@ -57,7 +57,7 @@ namespace Clocktower.Events
 
         private static bool CanPlayerClaimSlayer(Player player)
         {
-            return player.Alive && !player.Tokens.Contains(Token.AlreadyClaimedSlayer) && !player.Tokens.Contains(Token.NeverBluffingSlayer);
+            return player.Alive && !player.Tokens.HasToken(Token.AlreadyClaimedSlayer) && !player.Tokens.HasToken(Token.NeverBluffingSlayer);
         }
 
         private async Task ShootTarget(Player purportedSlayer, Player target)
@@ -65,10 +65,10 @@ namespace Clocktower.Events
             bool success = await DoesKillTarget(purportedSlayer, target);
 
             await observers.AnnounceSlayerShot(purportedSlayer, target, success);
-            purportedSlayer.Tokens.Add(Token.AlreadyClaimedSlayer);
+            purportedSlayer.Tokens.Add(Token.AlreadyClaimedSlayer, purportedSlayer);
             if (purportedSlayer.Character == Character.Slayer)
             {
-                purportedSlayer.Tokens.Add(Token.UsedOncePerGameAbility);
+                purportedSlayer.Tokens.Add(Token.UsedOncePerGameAbility, purportedSlayer);
             }
 
             if (success)
@@ -85,7 +85,7 @@ namespace Clocktower.Events
             (Player? target, bool alwaysPass) = await purportedSlayer.Agent.PromptSlayerShot(targets, purportedSlayer.Character != Character.Slayer);
             if (alwaysPass)
             {
-                purportedSlayer.Tokens.Add(Token.NeverBluffingSlayer);
+                purportedSlayer.Tokens.Add(Token.NeverBluffingSlayer, purportedSlayer);
             }
             return target;
         }
@@ -100,7 +100,7 @@ namespace Clocktower.Events
             {
                 return false;
             }
-            if (purportedSlayer.Tokens.Contains(Token.UsedOncePerGameAbility))
+            if (purportedSlayer.Tokens.HasToken(Token.UsedOncePerGameAbility))
             {
                 return false;
             }

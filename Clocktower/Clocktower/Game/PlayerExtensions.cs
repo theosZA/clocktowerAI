@@ -14,12 +14,12 @@
 
         public static IEnumerable<Player> WithToken(this IEnumerable<Player> players, Token token) 
         {
-            return players.Where(player => player.Tokens.Contains(token));
+            return players.Where(player => player.Tokens.HasToken(token));
         }
 
         public static IEnumerable<Player> WithoutToken(this IEnumerable<Player> players, Token token)
         {
-            return players.Where(player => !player.Tokens.Contains(token));
+            return players.Where(player => !player.Tokens.HasToken(token));
         }
     }
 }

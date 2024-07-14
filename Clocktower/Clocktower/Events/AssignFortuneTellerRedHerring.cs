@@ -21,7 +21,7 @@ namespace Clocktower.Events
             }
 
             var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
-            (await storyteller.GetFortuneTellerRedHerring(fortuneTeller, redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring);
+            (await storyteller.GetFortuneTellerRedHerring(fortuneTeller, redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring, fortuneTeller);
         }
 
         private readonly IStoryteller storyteller;

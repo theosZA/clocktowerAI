@@ -56,7 +56,7 @@ namespace ClocktowerScenarioTests.Mocks
             return directionOptions;
         }
 
-        public static List<int> MockGetEmpathNumbers(this IStoryteller storyteller, int empathNumber)
+        public static List<int> MockGetEmpathNumber(this IStoryteller storyteller, int empathNumber)
         {
             List<int> empathNumbers = new();
             storyteller.GetEmpathNumber(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())

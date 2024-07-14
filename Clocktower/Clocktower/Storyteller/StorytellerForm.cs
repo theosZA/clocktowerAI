@@ -416,7 +416,7 @@ namespace Clocktower.Storyteller
 
         public void ChoiceFromPhilosopher(Player philosopher, Player? philosopherDrunkedPlayer, Character newCharacterAbility)
         {
-            if (philosopher.Tokens.Contains(Token.IsTheBadPhilosopher))
+            if (philosopher.Tokens.HasToken(Token.IsTheBadPhilosopher))
             {
                 outputText.AppendFormattedText("%p has chosen to gain the ability of the %c. Since they were drunk or poisoned at the time, they didn't really gain the ability but will continue to be treated like a drunk version of that character.\n",
                                                philosopher, newCharacterAbility, StorytellerView);
@@ -511,7 +511,7 @@ namespace Clocktower.Storyteller
 
         private bool OutputDrunkDisclaimer(Player player)
         {
-            if (player.Tokens.Contains(Token.IsTheBadPhilosopher))
+            if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
             {
                 outputText.AppendBoldText($" They were drunk or poisoned when they used their {TextUtilities.CharacterToText(Character.Philosopher)} ability, so they are not really the {TextUtilities.CharacterToText(player.Character)}. Therefore this should generally be bad information.", Color.Purple);
                 return true;

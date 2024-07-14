@@ -23,7 +23,7 @@ namespace Clocktower.Events
             {
                 if (await fisherman.Agent.PromptFishermanAdvice())
                 {
-                    fisherman.Tokens.Add(Token.UsedOncePerGameAbility);
+                    fisherman.Tokens.Add(Token.UsedOncePerGameAbility, fisherman);
                     var advice = await storyteller.GetFishermanAdvice(fisherman);
                     await fisherman.Agent.ResponseForFisherman(advice);
                 }
@@ -48,7 +48,7 @@ namespace Clocktower.Events
 
         private static bool CanPlayerAskForFishermanAdvice(Player player)
         {
-            return player.Character == Character.Fisherman && player.Alive && !player.Tokens.Contains(Token.UsedOncePerGameAbility);
+            return player.Character == Character.Fisherman && player.Alive && !player.Tokens.HasToken(Token.UsedOncePerGameAbility);
         }
 
         private readonly IStoryteller storyteller;

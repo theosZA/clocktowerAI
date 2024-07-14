@@ -31,7 +31,7 @@ namespace Clocktower.Events
             {   // The Philosopher believes they've gained their new ability, but they haven't.
                 // We treat this like they're a drunk version of the character whose ability they think they've gained.
                 philosopher.GainCharacterAbility(character);
-                philosopher.Tokens.Add(Token.IsTheBadPhilosopher);
+                philosopher.Tokens.Add(Token.IsTheBadPhilosopher, philosopher);
 
                 storyteller.ChoiceFromPhilosopher(philosopher, philosopherDrunkedPlayer: null, character);
             }
@@ -40,7 +40,7 @@ namespace Clocktower.Events
                 philosopher.GainCharacterAbility(character);
 
                 var philosopherDrunkedPlayer = grimoire.Players.FirstOrDefault(player => player.RealCharacter == character);
-                philosopherDrunkedPlayer?.Tokens.Add(Token.PhilosopherDrunk);
+                philosopherDrunkedPlayer?.Tokens.Add(Token.PhilosopherDrunk, philosopher);
 
                 storyteller.ChoiceFromPhilosopher(philosopher, philosopherDrunkedPlayer, character);
 
@@ -50,11 +50,11 @@ namespace Clocktower.Events
 
         private async Task ApplyImmediateEffectsOfCharacter(Player philosopher, Character character)
         {
-            philosopher.Tokens.Add(Token.PhilosopherUsedAbilityTonight);    // Any start-knowing information will be provided later tonight as indicated by this token.
+            philosopher.Tokens.Add(Token.PhilosopherUsedAbilityTonight, philosopher);    // Any start-knowing information will be provided later tonight as indicated by this token.
             if (character == Character.Fortune_Teller)
             {
                 var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
-                (await storyteller.GetFortuneTellerRedHerring(philosopher, redHerringCandidates)).Tokens.Add(Token.PhilosopherFortuneTellerRedHerring);
+                (await storyteller.GetFortuneTellerRedHerring(philosopher, redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring, philosopher);
             }
         }
 

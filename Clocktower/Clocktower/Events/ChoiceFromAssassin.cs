@@ -21,7 +21,7 @@ namespace Clocktower.Events
 
                 if (target != null)
                 {
-                    assassin.Tokens.Add(Token.UsedOncePerGameAbility);
+                    assassin.Tokens.Add(Token.UsedOncePerGameAbility, assassin);
                     if (!assassin.DrunkOrPoisoned && target.Alive)
                     {
                         await new Kills(storyteller, grimoire).NightKill(target, assassin);

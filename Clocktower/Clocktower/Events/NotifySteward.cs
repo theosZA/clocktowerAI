@@ -22,7 +22,7 @@ namespace Clocktower.Events
         public async Task RunEvent(Player steward)
         {
             var stewardPing = (await storyteller.GetStewardPing(steward, GetValidStewardPings(steward)));
-            stewardPing.Tokens.Add(Token.StewardPing);
+            stewardPing.Tokens.Add(Token.StewardPing, steward);
             await steward.Agent.NotifySteward(stewardPing);
             storyteller.NotifySteward(steward, stewardPing);
         }

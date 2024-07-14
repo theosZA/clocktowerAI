@@ -51,14 +51,7 @@ namespace Clocktower.Events
 
         private static bool IsRedHerring(Player fortuneTeller, Player target)
         {
-            if (fortuneTeller.Tokens.Contains(Token.IsThePhilosopher))
-            {
-                return target.Tokens.Contains(Token.PhilosopherFortuneTellerRedHerring);
-            }
-            else
-            {
-                return target.Tokens.Contains(Token.FortuneTellerRedHerring);
-            }
+            return target.Tokens.HasTokenForPlayer(Token.FortuneTellerRedHerring, fortuneTeller);
         }
 
         private readonly IStoryteller storyteller;

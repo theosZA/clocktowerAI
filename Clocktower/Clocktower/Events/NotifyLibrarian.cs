@@ -30,8 +30,8 @@ namespace Clocktower.Events
                 var chosenOption = await storyteller.GetLibrarianPings(librarian, options);
                 if (chosenOption is CharacterForTwoPlayersOption pings)
                 {
-                    pings.PlayerA.Tokens.Add(Token.LibrarianPing);
-                    pings.PlayerB.Tokens.Add(Token.LibrarianWrong);
+                    pings.PlayerA.Tokens.Add(Token.LibrarianPing, librarian);
+                    pings.PlayerB.Tokens.Add(Token.LibrarianWrong, librarian);
 
                     var players = new List<Player> { pings.PlayerA, pings.PlayerB };
                     players.Shuffle(random);

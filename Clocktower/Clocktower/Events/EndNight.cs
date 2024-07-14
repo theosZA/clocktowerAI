@@ -14,8 +14,7 @@ namespace Clocktower.Events
             // Clear expired tokens.
             foreach (var player in grimoire.Players)
             {
-                player.Tokens.Remove(Token.Executed);
-                player.Tokens.Remove(Token.PhilosopherUsedAbilityTonight);
+                player.Tokens.ClearTokensForEndOfNight();
             }
 
             return Task.CompletedTask;

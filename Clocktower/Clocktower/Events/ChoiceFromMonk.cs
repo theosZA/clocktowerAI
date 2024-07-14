@@ -20,7 +20,7 @@ namespace Clocktower.Events
                 storyteller.ChoiceFromMonk(monk, target);
                 if (!monk.DrunkOrPoisoned)
                 {
-                    target.Tokens.Add(Token.ProtectedByMonk);
+                    target.Tokens.Add(Token.ProtectedByMonk, monk);
                 }
             }
         }

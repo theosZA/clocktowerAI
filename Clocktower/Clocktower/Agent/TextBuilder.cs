@@ -85,10 +85,10 @@ namespace Clocktower.Agent
 
             foreach (var player in grimoire.Players)
             {
-                var aliveStatus = player.Tokens.Contains(Token.DiedAtNight) ? "Died tonight"
+                var aliveStatus = player.Tokens.HasToken(Token.DiedAtNight) ? "Died tonight"
                                                              : player.Alive ? "Alive" 
                                                                             : "Dead";
-                sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {TokensToText(player.Tokens)}", player, player.Alignment, player.Character);
+                sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
                 sb.AppendLine();
             }
 
@@ -104,41 +104,6 @@ namespace Clocktower.Agent
                 throw new InvalidEnumArgumentException(nameof(character));
             }
             return $"- {TextUtilities.CharacterToText(character)}: {description}";
-        }
-
-        private static string TokensToText(IEnumerable<Token> tokens)
-        {
-            return string.Join(", ", tokens.Order()
-                                           .Select(TokenToText)
-                                           .Where(text => !string.IsNullOrEmpty(text)));
-        }
-
-        private static string TokenToText(Token token)
-        {
-            return token switch
-            {
-                Token.IsTheDrunk => "is the Drunk",
-                Token.IsThePhilosopher => "is the Philosopher",
-                Token.IsTheBadPhilosopher => "is the Philosopher (drunk/posioned when used)",
-                Token.UsedOncePerGameAbility => "has used their once-per-game ability",
-                Token.SweetheartDrunk => "Sweetheart drunk",
-                Token.PhilosopherDrunk => "Philosopher drunk",
-                Token.PoisonedByPoisoner => "poisoned by Poisoner",
-                Token.FortuneTellerRedHerring => "Fortune Teller red herring",
-                Token.GodfatherKillsTonight => "Godfather kills tonight",
-                Token.ProtectedByMonk => "protected by the Monk",
-                Token.ChosenByButler => "chosen by the Butler",
-                Token.WasherwomanPing => "seen by the Washerwoman",
-                Token.WasherwomanWrong => "incorrectly seen by the Washerwoman",
-                Token.LibrarianPing => "seen by the Librarian",
-                Token.LibrarianWrong => "incorrectly seen by the Librarian",
-                Token.InvestigatorPing => "seen by the Investigator",
-                Token.InvestigatorWrong => "incorrectly seen by the Investigator",
-                Token.StewardPing => "seen by the Steward",
-                Token.PhilosopherFortuneTellerRedHerring => "Fortune Teller red herring (Philosopher)",
-                Token.ChosenByPhiloButler => "chosen by the Butler (Philosopher)",
-                _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
-            };
         }
 
         private static IDictionary<Character, string> ReadCharacterDescriptionsFromFile(string fileName)

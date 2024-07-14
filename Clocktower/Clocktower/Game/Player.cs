@@ -11,7 +11,7 @@ namespace Clocktower.Game
         public string Name => Agent.PlayerName;
         public IAgent Agent { get; }
 
-        public bool Alive => alive && !Tokens.Contains(Token.DiedAtNight);
+        public bool Alive => alive && !Tokens.HasToken(Token.DiedAtNight);
         public bool HasGhostVote { get; private set; } = true;
 
         /// <summary>
@@ -29,22 +29,15 @@ namespace Clocktower.Game
         /// <summary>
         /// The player's real character. The player may believe differently, e.g. if they're a Drunk or Lunatic.
         /// </summary>
-        public Character RealCharacter => Tokens.Contains(Token.IsTheDrunk) ? Character.Drunk
-                                        : Tokens.Contains(Token.IsThePhilosopher) ? Character.Philosopher
-                                        : Character;
+        public Character RealCharacter => Tokens.Character ?? Character;
         /// <summary>
         /// The player's real character type. The player may believe differently, e.g. if they're a Drunk or Lunatic.
         /// </summary>
         public CharacterType CharacterType => RealCharacter.CharacterType();
 
-        public bool DrunkOrPoisoned => Tokens.Where(token => token == Token.IsTheDrunk || 
-                                                    token == Token.SweetheartDrunk || 
-                                                    token == Token.PhilosopherDrunk || 
-                                                    token == Token.PoisonedByPoisoner ||
-                                                    token == Token.IsTheBadPhilosopher)
-                                             .Any();
+        public bool DrunkOrPoisoned => Tokens.DrunkOrPoisoned;
 
-        public List<Token> Tokens { get; } = new();
+        public TokensOnPlayer Tokens { get; }
 
         public bool CanRegisterAsGood => Alignment == Alignment.Good || (Character == Character.Spy && !DrunkOrPoisoned);
         public bool CanRegisterAsTownsfolk => CharacterType == CharacterType.Townsfolk || (Character == Character.Spy && !DrunkOrPoisoned);
@@ -54,13 +47,14 @@ namespace Clocktower.Game
         public bool CanRegisterAsMinion => CharacterType == CharacterType.Minion || (Character == Character.Recluse && !DrunkOrPoisoned);
         public bool CanRegisterAsDemon => CharacterType == CharacterType.Demon || (Character == Character.Recluse && !DrunkOrPoisoned);
 
-        public bool ProtectedFromDemonKill => (Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.Contains(Token.ProtectedByMonk);
+        public bool ProtectedFromDemonKill => (Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.HasHealthyToken(Token.ProtectedByMonk);
 
         public Player(IAgent agent, Character character, Alignment alignment)
         {
             Agent = agent;
             Character = character;
             Alignment = alignment;
+            Tokens = new(this);
         }
 
         public void ChangeCharacter(Character newCharacter)
@@ -73,7 +67,7 @@ namespace Clocktower.Game
         {
             if (Character == Character.Philosopher)
             {
-                Tokens.Add(Token.IsThePhilosopher);
+                Tokens.Add(Token.IsThePhilosopher, this);
             }
 
             Character = newCharacter;

@@ -45,8 +45,8 @@ namespace Clocktower.Events
 
         private static bool IsNewPhilosopher(Player player)
         {
-            return (player.Tokens.Contains(Token.IsThePhilosopher) || player.Tokens.Contains(Token.IsTheBadPhilosopher))
-                && player.Tokens.Contains(Token.PhilosopherUsedAbilityTonight);
+            return (player.Tokens.HasToken(Token.IsThePhilosopher) || player.Tokens.HasToken(Token.IsTheBadPhilosopher))
+                && player.Tokens.HasToken(Token.PhilosopherUsedAbilityTonight);
         }
 
         private readonly IStoryteller storyteller;

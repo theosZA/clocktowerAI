@@ -22,9 +22,6 @@
         InvestigatorPing,
         InvestigatorWrong,
         StewardPing,
-        // Philosopher-version of normal tokens (for cases where both the original character and Philosopher-version of the character need to track their tokens separately).
-        PhilosopherFortuneTellerRedHerring = 2000,
-        ChosenByPhiloButler,
         // Special marker (not actually represented by a token in the real game).
         DiedAtNight = 3000,
         // Not real tokens, just used here for tracking stuff needed for this implementation.

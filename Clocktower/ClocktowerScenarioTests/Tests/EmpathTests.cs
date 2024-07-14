@@ -59,7 +59,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Recluse,Baron,Soldier,Fisherman");
 
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(1);
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -80,7 +80,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Spy,Saint,Soldier,Fisherman");
 
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(1);
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -101,7 +101,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Recluse,Empath,Spy,Mayor,Soldier,Fisherman");
 
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(1);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(1);
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -165,7 +165,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithDrunk(Character.Empath)
                             .Build();
 
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(empathNumber);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(empathNumber);
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -188,7 +188,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Saint,Poisoner,Soldier,Fisherman");
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Empath);
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumbers(empathNumber);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(empathNumber);
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -209,7 +209,7 @@ namespace ClocktowerScenarioTests.Tests
         public async Task Empath_SweetheartDrunk(int empathNumber)
         {
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Sweetheart,Baron,Soldier,Fisherman");
-            setup.Storyteller.MockGetEmpathNumbers(empathNumber);
+            setup.Storyteller.MockGetEmpathNumber(empathNumber);
             await game.StartGame();
 
             // Night 1 & Day 1

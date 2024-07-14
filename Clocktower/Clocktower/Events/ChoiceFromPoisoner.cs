@@ -20,7 +20,7 @@ namespace Clocktower.Events
                 storyteller.ChoiceFromPoisoner(poisoner, target);
                 if (!poisoner.DrunkOrPoisoned)
                 {
-                    target.Tokens.Add(Token.PoisonedByPoisoner);
+                    target.Tokens.Add(Token.PoisonedByPoisoner, poisoner);
                 }
             }
         }

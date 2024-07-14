@@ -12,7 +12,7 @@ namespace Clocktower.Game
 
         public async Task Execute(Player player)
         {
-            player.Tokens.Add(Token.Executed);
+            player.Tokens.Add(Token.Executed, player);
             await DayKill(player, killer: null);
 
             if (player.Character == Character.Saint && !player.DrunkOrPoisoned)
@@ -40,7 +40,7 @@ namespace Clocktower.Game
             }
 
             await HandleNightDeath(player, killer);
-            player.Tokens.Add(Token.DiedAtNight);
+            player.Tokens.Add(Token.DiedAtNight, killer ?? player);
         }
 
         private async Task HandleDayDeath(Player dyingPlayer, Player? killer)
@@ -63,7 +63,7 @@ namespace Clocktower.Game
             {
                 foreach (var godfather in grimoire.GetLivingPlayers(Character.Godfather))
                 {
-                    godfather.Tokens.Add(Token.GodfatherKillsTonight);
+                    godfather.Tokens.Add(Token.GodfatherKillsTonight, dyingPlayer);
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace Clocktower.Game
             if (dyingPlayer.Character == Character.Sweetheart)
             {
                 var sweetheartDrunk = await storyteller.GetSweetheartDrunk(grimoire.Players);
-                sweetheartDrunk.Tokens.Add(Token.SweetheartDrunk);
+                sweetheartDrunk.Tokens.Add(Token.SweetheartDrunk, dyingPlayer);
             }
         }
 

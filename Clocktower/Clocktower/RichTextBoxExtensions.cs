@@ -140,18 +140,18 @@ namespace Clocktower
             {
                 box.AppendText(" (");
 
-                if (player.Tokens.Contains(Token.IsTheDrunk))
+                if (player.Tokens.HasToken(Token.IsTheDrunk))
                 {
                     box.AppendText(TextUtilities.CharacterToText(Character.Drunk), TextUtilities.AlignmentToColor(player.Alignment));
                     box.AppendText("-");
                 }
-                if (player.Tokens.Contains(Token.IsThePhilosopher) || player.Tokens.Contains(Token.IsTheBadPhilosopher))
+                if (player.Tokens.HasToken(Token.IsThePhilosopher) || player.Tokens.HasToken(Token.IsTheBadPhilosopher))
                 {
                     box.AppendText(TextUtilities.CharacterToText(Character.Philosopher), TextUtilities.AlignmentToColor(player.Alignment));
                     box.AppendText("-");
                 }
                 box.AppendText($"{TextUtilities.CharacterToText(player.Character)}", TextUtilities.AlignmentToColor(player.Alignment));
-                if (player.Tokens.Contains(Token.IsTheBadPhilosopher))
+                if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
                 {
                     box.AppendText("*");    // We use the asterisk here to denote that they never really gained that ability.
                 }

@@ -19,11 +19,7 @@ namespace Clocktower.Events
             // Clear expired tokens.
             foreach (var player in grimoire.Players)
             {
-                player.Tokens.Remove(Token.PoisonedByPoisoner);
-                player.Tokens.Remove(Token.ProtectedByMonk);
-                player.Tokens.Remove(Token.ChosenByButler);
-                player.Tokens.Remove(Token.ChosenByPhiloButler);
-                player.Tokens.Remove(Token.AlreadyClaimedSlayer);   // We allow players to claim Slayer once each day to allow for Philosopher into Slayer.
+                player.Tokens.ClearTokensForEndOfDay();
             }
         }
 

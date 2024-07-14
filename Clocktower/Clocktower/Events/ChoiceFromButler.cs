@@ -23,15 +23,7 @@ namespace Clocktower.Events
 
                 var target = await butler.Agent.RequestChoiceFromButler(grimoire.Players.Where(player => player != butler));
                 storyteller.ChoiceFromButler(butler, target);
-                if (butler.Tokens.Contains(Token.IsThePhilosopher) || butler.Tokens.Contains(Token.IsTheBadPhilosopher))
-                {   // We need a separate token for a Philosopher-turned-Butler, since the real Butler, even though drunked,
-                    // still needs their own token to ensure they follow the Butler rules.
-                    target.Tokens.Add(Token.ChosenByPhiloButler);
-                }
-                else
-                {
-                    target.Tokens.Add(Token.ChosenByButler);
-                }
+                target.Tokens.Add(Token.ChosenByButler, butler);
             }
         }
 

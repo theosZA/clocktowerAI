@@ -206,21 +206,17 @@ namespace Clocktower.Events
 
         private Player? GetMaster(Player butler)
         {
-            if (butler.Tokens.Contains(Token.IsThePhilosopher) || butler.Tokens.Contains(Token.IsTheBadPhilosopher))
-            {
-                return grimoire.Players.WithToken(Token.ChosenByPhiloButler).FirstOrDefault();
-            }
-            return grimoire.Players.WithToken(Token.ChosenByButler).FirstOrDefault();
+            return grimoire.Players.FirstOrDefault(player => player.Tokens.HasTokenForPlayer(Token.ChosenByButler, butler));
         }
 
         private async Task<bool> VirginCheck(Player nominator, Player nominee)
         {
-            if (nominee.Character != Character.Virgin || !nominee.Alive || nominee.Tokens.Contains(Token.UsedOncePerGameAbility))
+            if (nominee.Character != Character.Virgin || !nominee.Alive || nominee.Tokens.HasToken(Token.UsedOncePerGameAbility))
             {
                 return false;
             }
 
-            nominee.Tokens.Add(Token.UsedOncePerGameAbility);
+            nominee.Tokens.Add(Token.UsedOncePerGameAbility, nominee);
             
             if (nominee.DrunkOrPoisoned || !nominator.CanRegisterAsTownsfolk)
             {
