@@ -202,5 +202,31 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedEmpathNumber.Value, Is.EqualTo(empathNumber));
             });
         }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Empath_SweetheartDrunk(int empathNumber)
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Empath,Sweetheart,Baron,Soldier,Fisherman");
+            setup.Storyteller.MockGetEmpathNumbers(empathNumber);
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            var firstEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
+
+            await game.RunNightAndDay();
+
+            Assert.That(firstEmpathNumber.Value, Is.EqualTo(0));
+
+            // Night 2
+            setup.Agent(Character.Imp).MockImp(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Empath);
+            var secondEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.That(secondEmpathNumber.Value, Is.EqualTo(empathNumber));
+        }
     }
 }

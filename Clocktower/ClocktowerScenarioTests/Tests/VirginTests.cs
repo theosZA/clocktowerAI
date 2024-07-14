@@ -150,5 +150,26 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
         }
+
+        [Test]
+        public async Task Virgin_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Virgin,Soldier,Ravenkeeper,Fisherman,Sweetheart");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Virgin);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Fisherman).MockNomination(Character.Virgin);
+
+            await game.RunNightAndDay();
+
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Fisherman), Arg.Any<bool>());
+        }
     }
 }

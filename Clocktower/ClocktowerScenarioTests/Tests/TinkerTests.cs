@@ -1,7 +1,5 @@
-using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
-using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -106,6 +104,30 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+        }
+
+        [Test]
+        public async Task Tinker_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Tinker,Soldier,Sweetheart,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockShouldKillTinker(false);
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Tinker);
+
+            await game.RunNightAndDay();
+
+            await setup.Storyteller.Received().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+            setup.Storyteller.ClearReceivedCalls();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+
+            await game.RunNightAndDay();
+
             await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
         }
     }

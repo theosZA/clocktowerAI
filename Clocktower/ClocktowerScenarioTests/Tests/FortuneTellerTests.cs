@@ -135,5 +135,32 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FortuneTeller_SweetheartDrunk(bool reading)
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fortune_Teller,Ravenkeeper,Sweetheart,Baron,Fisherman,Mayor");
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Mayor);
+            setup.Storyteller.MockFortuneTellerReading(reading);
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Fortune_Teller);
+            var firstReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller();
+
+            await game.RunNightAndDay();
+
+            Assert.That(firstReading.Value, Is.True);
+
+            // Night 2
+            setup.Agent(Character.Imp).MockImp(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Fortune_Teller);
+            var secondReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.That(secondReading.Value, Is.EqualTo(reading));
+        }
     }
 }

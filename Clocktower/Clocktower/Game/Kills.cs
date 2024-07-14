@@ -92,6 +92,12 @@ namespace Clocktower.Game
                     storyteller.AssignCharacter(newImp);
                 }
             }
+            // Sweetheart
+            if (dyingPlayer.Character == Character.Sweetheart)
+            {
+                var sweetheartDrunk = await storyteller.GetSweetheartDrunk(grimoire.Players);
+                sweetheartDrunk.Tokens.Add(Token.SweetheartDrunk);
+            }
         }
 
         private async Task<Player?> GetNewImp()

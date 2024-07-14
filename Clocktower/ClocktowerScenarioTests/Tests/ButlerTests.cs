@@ -79,5 +79,31 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(masterOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Soldier, Character.Ravenkeeper, Character.Baron, Character.Fisherman, Character.Mayor }));  // excludes Butler
             await setup.Agent(Character.Butler).Received().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
         }
+
+        [Test]
+        public async Task Butler_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Sweetheart,Baron,Butler,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Butler).MockButlerChoice(Character.Mayor);
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Butler);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
+            setup.Agent(Character.Butler).ClearReceivedCalls();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Soldier);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);    // Butler restriction doesn't turn off if drunked
+            setup.Agent(Character.Butler).ClearReceivedCalls();
+        }
     }
 }

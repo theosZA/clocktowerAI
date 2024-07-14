@@ -93,5 +93,24 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Fisherman).DidNotReceive().YouAreDead();
         }
+
+        [Test]
+        public async Task Godfather_SweetheartDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Sweetheart,Fisherman,Soldier,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Godfather);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Godfather).MockGodfather(Character.Fisherman);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Fisherman).DidNotReceive().YouAreDead();
+        }
     }
 }

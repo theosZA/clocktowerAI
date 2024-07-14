@@ -6,7 +6,7 @@ Monk
 Imp
 Assassin
 Godfather
-Sweetheart
+// Sweetheart - this is their theoretical place in the night order, but they actually drunk someone immediately on death
 Tinker
 PhilosopherInformation // If the Philosopher chooses a "start knowing" character, this is when they will learn that information
 Ravenkeeper

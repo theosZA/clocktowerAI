@@ -34,6 +34,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
 
@@ -51,6 +52,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
 
@@ -67,6 +69,29 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Saint_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Sweetheart,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Saint);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Saint).Received().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
     }

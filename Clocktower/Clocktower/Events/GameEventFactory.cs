@@ -60,7 +60,6 @@ namespace Clocktower.Events
                 case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
 
                 // Outsiders
-                case "Sweetheart":                  return new SweetheartDrunk(storyteller, grimoire);
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, observers, duringDay);
                 case "Butler":                      return new ChoiceFromButler(storyteller, grimoire);
 

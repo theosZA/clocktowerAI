@@ -212,5 +212,27 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
         }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Undertaker_SweetheartDrunk(Character characterToSee)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Sweetheart,Ravenkeeper,Soldier,Undertaker,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Undertaker);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Storyteller.MockGetCharacterForUndertaker(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Sweetheart), characterToSee);
+        }
     }
 }

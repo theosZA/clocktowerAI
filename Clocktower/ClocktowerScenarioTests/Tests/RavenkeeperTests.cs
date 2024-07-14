@@ -177,5 +177,29 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
             await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
         }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Ravenkeeper_SweetheartDrunk(Character characterToSee)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Sweetheart,Ravenkeeper,Soldier,Undertaker,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
+            setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
+            await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
+        }
     }
 }

@@ -160,5 +160,50 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
+
+        [Test]
+        public async Task Slayer_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Sweetheart,Soldier,Slayer,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Slayer);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_SweetheartDrunkTargetingRecluse()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Recluse,Sweetheart,Soldier,Slayer,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Slayer);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Recluse);
+
+            await game.RunNightAndDay();
+
+            await setup.Storyteller.DidNotReceive().ShouldKillWithSlayer(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+            await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
     }
 }
