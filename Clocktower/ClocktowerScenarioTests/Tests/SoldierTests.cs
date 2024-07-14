@@ -1,4 +1,6 @@
+using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -74,6 +76,40 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Soldier).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task Soldier_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Soldier);
+            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Soldier));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Soldier).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task PhilosopherSoldier()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Soldier);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Philosopher).DidNotReceive().YouAreDead();
         }
     }
 }

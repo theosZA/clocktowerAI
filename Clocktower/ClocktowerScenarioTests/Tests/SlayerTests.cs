@@ -205,5 +205,58 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
             Assert.That(game.Finished, Is.False);
         }
+
+        [Test]
+        public async Task Slayer_PhilosopherDrunkTargetingImp()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Slayer);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Slayer_PhilosopherDrunkTargetingRecluse()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Recluse,Soldier,Slayer,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Slayer);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Recluse);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillWithSlayer(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+            await setup.Agent(Character.Recluse).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task PhilosopherSlayer()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Slayer);
+            setup.Agent(Character.Philosopher).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).Received().YouAreDead();
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
     }
 }

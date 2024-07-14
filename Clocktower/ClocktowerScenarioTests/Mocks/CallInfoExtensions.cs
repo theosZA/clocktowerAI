@@ -41,9 +41,19 @@ namespace ClocktowerScenarioTests.Mocks
             return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option.ToOptionalCharacter() == target);
         }
 
+        public static IOption GetOptionForRealCharacterFromArg(this CallInfo args, Character target, int argIndex = 0)
+        {
+            return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option.ToOptionalRealCharacter() == target);
+        }
+
         public static IOption GetYesNoOptionFromArg(this CallInfo args, bool yesOrNo, int argIndex = 0)
         {
             return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => yesOrNo ? option is YesOption : option is NoOption);
+        }
+
+        public static IOption GetNoOutsidersOptionFromArg(this CallInfo args, int argIndex = 0)
+        {
+            return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option is NoOutsiders);
         }
 
         private static T GetArg<T>(this CallInfo args, Type[] argTypes, int argIndex)

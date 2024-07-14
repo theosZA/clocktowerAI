@@ -17,7 +17,9 @@ namespace Clocktower.Events
         {
             foreach (var philosopher in grimoire.GetLivingPlayers(Character.Philosopher))
             {
-                var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => character.Alignment() == Alignment.Good && character != Character.Philosopher));
+                var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => character.Alignment() == Alignment.Good 
+                                                                                                                      && character != Character.Philosopher
+                                                                                                                      && character != Character.Drunk));
                 if (character != null)
                 {
                     await ApplyPhilosopherChoice(philosopher, character.Value);

@@ -113,5 +113,24 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(actualAdvice.Value, Is.EqualTo(expectedAdvice));
         }
+
+        [Test]
+        public async Task PhilosopherFisherman()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Fisherman);
+            setup.Agent(Character.Philosopher).MockFishermanOption(getAdvice: true);
+            const string expectedAdvice = "Sample advice";
+            setup.Storyteller.MockFishermanAdvice(expectedAdvice);
+            var actualAdvice = setup.Agent(Character.Philosopher).MockFishermanAdvice(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(actualAdvice.Value, Is.EqualTo(expectedAdvice));
+        }
     }
 }

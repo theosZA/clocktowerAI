@@ -1,4 +1,5 @@
 using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -161,6 +162,68 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             Assert.That(secondReading.Value, Is.EqualTo(reading));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FortuneTeller_PhilosopherDrunk(bool reading)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fortune_Teller,Ravenkeeper,Saint,Baron,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Fortune_Teller);
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.RealCharacter == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForCharacterFromArg(Character.Saint, argIndex: 1));
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.RealCharacter == Character.Philosopher), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForCharacterFromArg(Character.Mayor, argIndex: 1));
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Fortune_Teller);
+            setup.Agent(Character.Philosopher).MockFortuneTellerChoice(Character.Mayor, Character.Fortune_Teller);  // hits the Philosopher's red herring
+            setup.Storyteller.MockFortuneTellerReading(reading: reading);
+            var fortuneTellerReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
+            var philosopherFortuneTellerReading = setup.Agent(Character.Philosopher).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+            Assert.That(philosopherFortuneTellerReading.Value, Is.True);    // hit their red herring
+        }
+
+        [Test]
+        public async Task PhilosopherFortuneTeller_ChoosesImp()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Fortune_Teller);
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Mayor);
+            setup.Agent(Character.Philosopher).MockFortuneTellerChoice(Character.Imp, Character.Fortune_Teller);
+            var fortuneTellerReading = setup.Agent(Character.Philosopher).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.True);
+        }
+
+        [Test]
+        public async Task PhilosopherFortuneTeller_ChoosesRedHerring()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Fortune_Teller);
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Mayor);
+            setup.Agent(Character.Philosopher).MockFortuneTellerChoice(Character.Fisherman, Character.Mayor);
+            var fortuneTellerReading = setup.Agent(Character.Philosopher).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.True);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -93,6 +94,40 @@ namespace ClocktowerScenarioTests.Tests
 
             await setup.Agent(Character.Saint).Received().YouAreDead();
             Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task Saint_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Saint);
+            setup.Agent(Character.Imp).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Saint));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task PhilosopherSaint()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Philosopher,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
         }
     }
 }

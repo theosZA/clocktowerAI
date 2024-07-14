@@ -60,6 +60,14 @@ namespace ClocktowerScenarioTests.Mocks
                  : null;
         }
 
+        public static Character? ToOptionalRealCharacter(this IOption option)
+        {
+            return option is PlayerOption playerOption ? playerOption.Player.RealCharacter
+                 : option is CharacterOption characterOption ? characterOption.Character
+                 : option is SlayerShotOption slayerShotOption ? slayerShotOption.Target.RealCharacter
+                 : null;
+        }
+
         public static (Character playerA, Character playerB) ToTwoPlayers(this IOption option)
         {
             var current = (TwoPlayersOption)option;

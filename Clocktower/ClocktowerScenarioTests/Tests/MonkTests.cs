@@ -131,5 +131,43 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Fisherman).Received().YouAreDead();
         }
+
+        [Test]
+        public async Task Monk_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Monk,Ravenkeeper,Saint,Baron,Fisherman,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Monk);
+            setup.Agent(Character.Philosopher).MockMonkChoice(Character.Imp);
+            setup.Agent(Character.Monk).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockImp(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task PhilosopherMonk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Monk);
+            var monkOptions = setup.Agent(Character.Philosopher).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockImp(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(monkOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Mayor }));  // not Philosopher or Monk
+            await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
+        }
     }
 }

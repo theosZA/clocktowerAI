@@ -1,4 +1,3 @@
-using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
@@ -104,6 +103,25 @@ namespace ClocktowerScenarioTests.Tests
 
             await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);    // Butler restriction doesn't turn off if drunked
             setup.Agent(Character.Butler).ClearReceivedCalls();
+        }
+
+        [Test]
+        public async Task PhilosopherButler()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Philosopher,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Butler);
+            var masterOptions = setup.Agent(Character.Philosopher).MockButlerChoice(Character.Ravenkeeper);
+            setup.Agent(Character.Soldier).MockNomination(Character.Soldier);
+            setup.Agent(Character.Ravenkeeper).GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false).Returns(args => args.GetPassOptionFromArg());
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(masterOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Soldier, Character.Ravenkeeper, Character.Baron, Character.Fisherman, Character.Mayor }));  // excludes Philo-Butler
+            await setup.Agent(Character.Philosopher).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>());
         }
     }
 }

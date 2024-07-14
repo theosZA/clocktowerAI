@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -141,6 +142,62 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
                 Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
                 Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task Washerwoman_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Washerwoman,Imp,Baron,Saint,Soldier,Fisherman,Philosopher");
+
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Washerwoman);
+            setup.Storyteller.GetWasherwomanPings(Arg.Is<Player>(player => player.RealCharacter == Character.Philosopher), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Soldier, Character.Fisherman, Character.Soldier), new(), argIndex: 1));
+
+            const Character washerwomanPing = Character.Imp;
+            const Character washerwomanWrong = Character.Soldier;
+            const Character pingCharacter = Character.Empath;
+            setup.Storyteller.GetWasherwomanPings(Arg.Is<Player>(player => player.RealCharacter == Character.Washerwoman), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((washerwomanPing, washerwomanWrong, pingCharacter), new(), argIndex: 1));
+            var receivedWasherwomanPing = setup.Agent(Character.Washerwoman).MockNotifyWasherwoman(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
+                Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task PhilosopherWasherwoman()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Philosopher,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Washerwoman);
+            const Character washerwomanPing = Character.Fisherman;
+            const Character washerwomanWrong = Character.Imp;
+            setup.Storyteller.MockGetWasherwomanPing(washerwomanPing, washerwomanWrong, washerwomanPing);
+            var receivedWasherwomanPing = setup.Agent(Character.Philosopher).MockNotifyWasherwoman(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(washerwomanPing).Or.EqualTo(washerwomanWrong));
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
+                Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(washerwomanPing));
             });
         }
     }

@@ -20,6 +20,7 @@
 //    - Cases for when the character is really the Drunk or otherwise drunk.
 //    - Cases for then the character has been poisoned.
 //    - Cases for when the character dies and their effect on the game should end.
+//    - Cases for when this character ability is chosen by the Philosopher.
 
 namespace Clocktower.Game
 {

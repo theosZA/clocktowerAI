@@ -1,4 +1,6 @@
 ﻿using Clocktower.Game;
+using Clocktower.Options;
+using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -145,6 +147,63 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
                 Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
                 Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task Investigator_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Investigator,Imp,Baron,Saint,Soldier,Fisherman,Philosopher");
+
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Investigator);
+            setup.Storyteller.GetInvestigatorPings(Arg.Is<Player>(player => player.RealCharacter == Character.Philosopher), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Baron, Character.Saint, Character.Baron), new(), argIndex: 1));
+
+            const Character investigatorPing = Character.Saint;
+            const Character investigatorWrong = Character.Soldier;
+            const Character pingCharacter = Character.Scarlet_Woman;
+            setup.Storyteller.GetInvestigatorPings(Arg.Is<Player>(player => player.RealCharacter == Character.Investigator), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((investigatorPing, investigatorWrong, pingCharacter), new(), argIndex: 1));
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task PhilosopherInvestigator()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Philosopher,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Investigator);
+            const Character investigatorPing = Character.Baron;
+            const Character investigatorWrong = Character.Saint;
+            var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, investigatorPing);
+            var receivedInvestigatorPing = setup.Agent(Character.Philosopher).MockNotifyInvestigator(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(investigatorPingOptions, Does.Contain((investigatorPing, investigatorWrong, investigatorPing)));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(investigatorPing));
             });
         }
     }

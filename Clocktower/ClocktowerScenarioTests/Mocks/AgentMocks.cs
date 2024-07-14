@@ -49,6 +49,11 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromPoisoner(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
         }
 
+        public static void MockPhilosopher(this IAgent agent, Character characterAbility)
+        {
+            agent.RequestChoiceFromPhilosopher(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(characterAbility);
+        }
+
         public static Wrapper<Character> MockNotifySteward(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<Character> receivedStewardPing = new();

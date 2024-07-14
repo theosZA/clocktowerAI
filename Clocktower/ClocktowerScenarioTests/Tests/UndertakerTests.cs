@@ -234,5 +234,45 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Sweetheart), characterToSee);
         }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Undertaker_PhilosopherDrunk(Character characterToSee)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Undertaker);
+            setup.Agent(Character.Imp).MockNomination(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Storyteller.MockGetCharacterForUndertaker(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Undertaker).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Ravenkeeper), characterToSee);
+        }
+
+        [Test]
+        public async Task PhilosopherUndertaker()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Undertaker);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Philosopher).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
+        }
     }
 }

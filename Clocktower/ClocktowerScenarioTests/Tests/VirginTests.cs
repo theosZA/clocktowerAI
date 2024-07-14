@@ -1,4 +1,6 @@
+using Clocktower.Agent;
 using Clocktower.Game;
+using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -170,6 +172,38 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Fisherman), Arg.Any<bool>());
+        }
+
+        [Test]
+        public async Task Virgin_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Virgin,Soldier,Ravenkeeper,Fisherman,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Virgin);
+            setup.Agent(Character.Soldier).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Virgin));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
+        }
+
+        [Test]
+        public async Task PhilosopherVirgin()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Philosopher,Soldier,Ravenkeeper,Fisherman,Saint");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Virgin);
+            setup.Agent(Character.Soldier).MockNomination(Character.Virgin);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.Received().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), true);
         }
     }
 }

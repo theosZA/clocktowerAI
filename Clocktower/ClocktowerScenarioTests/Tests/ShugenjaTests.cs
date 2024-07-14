@@ -140,5 +140,45 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(direction));
         }
+
+        [TestCase(Direction.Clockwise)]
+        [TestCase(Direction.Counterclockwise)]
+        public async Task Shugenja_PhilosopherDrunk(Direction direction)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Shugenja,Baron,Saint,Soldier,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Shugenja);
+            setup.Storyteller.MockGetShugenjaDirection(direction);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(direction));
+        }
+
+        [TestCase(Direction.Clockwise)]
+        [TestCase(Direction.Counterclockwise)]
+        public async Task PhilosopherShugenja(Direction direction)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Philosopher,Saint,Baron,Soldier,Fisherman");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Shugenja);
+            var shugenjaOptions = setup.Storyteller.MockGetShugenjaDirection(direction);
+            var receivedShugenjaDirection = setup.Agent(Character.Philosopher).MockNotifyShugenja(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(shugenjaOptions, Is.EquivalentTo(new[] { Direction.Clockwise, Direction.Counterclockwise }));
+                Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(direction));
+            });
+        }
     }
 }

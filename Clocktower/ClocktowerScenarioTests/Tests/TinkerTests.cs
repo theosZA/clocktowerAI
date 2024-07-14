@@ -130,5 +130,37 @@ namespace ClocktowerScenarioTests.Tests
 
             await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
         }
+
+        [Test]
+        public async Task Tinker_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Tinker,Soldier,Slayer,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Tinker);
+            setup.Storyteller.MockShouldKillTinker(shouldKill: false);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Is<Player>(player => player.RealCharacter == Character.Tinker), Arg.Any<IReadOnlyCollection<IOption>>());
+        }
+
+        [Test]
+        public async Task PhilosopherTinker()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Philosopher,Soldier,Slayer,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Tinker);
+            setup.Storyteller.MockShouldKillTinker(shouldKill: true);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Philosopher).Received().YouAreDead();
+        }
     }
 }

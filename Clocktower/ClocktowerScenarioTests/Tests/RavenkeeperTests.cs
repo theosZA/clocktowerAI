@@ -201,5 +201,48 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
             await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
         }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
+        public async Task Ravenkeeper_PhilosopherDrunk(Character characterToSee)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Philosopher");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Ravenkeeper));
+            setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Imp);
+            setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
+            await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Imp), characterToSee);
+        }
+
+        [Test]
+        public async Task PhilosopherRavenkeeper()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Philosopher,Soldier,Undertaker,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            var ravenkeeperOptions = setup.Agent(Character.Philosopher).MockRavenkeeperChoice(Character.Mayor);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(ravenkeeperOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron, Character.Saint, Character.Ravenkeeper, Character.Soldier, Character.Undertaker, Character.Mayor }));
+            await setup.Agent(Character.Philosopher).Received().YouAreDead();
+            await setup.Agent(Character.Philosopher).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
+        }
     }
 }

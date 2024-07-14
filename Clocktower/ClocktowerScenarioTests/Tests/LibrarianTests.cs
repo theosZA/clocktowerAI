@@ -169,7 +169,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Spy,Ravenkeeper,Soldier,Fisherman,Mayor");
 
             setup.Storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(new NoOutsiders());
+                .Returns(args => args.GetNoOutsidersOptionFromArg(argIndex: 1));
 
             // Act
             await game.StartGame();
@@ -221,7 +221,7 @@ namespace ClocktowerScenarioTests.Tests
                             .Build();
 
             setup.Storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(new NoOutsiders());
+                .Returns(args => args.GetNoOutsidersOptionFromArg(argIndex: 1));
 
             // Act
             await game.StartGame();
@@ -266,7 +266,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Poisoner,Saint,Soldier,Fisherman,Mayor");
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Librarian);
             setup.Storyteller.GetLibrarianPings(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(new NoOutsiders());
+                .Returns(args => args.GetNoOutsidersOptionFromArg(argIndex: 1));
 
             // Act
             await game.StartGame();
@@ -274,6 +274,84 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Librarian).Received().NotifyLibrarianNoOutsiders();
+        }
+
+        [Test]
+        public async Task Librarian_PhilosopherDrunk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Saint,Soldier,Fisherman,Philosopher");
+
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Librarian);
+            setup.Storyteller.GetLibrarianPings(Arg.Is<Player>(player => player.RealCharacter == Character.Philosopher), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Saint, Character.Baron, Character.Saint), new List<(Character, Character, Character)?>(), argIndex: 1));
+
+            const Character librarianPing = Character.Imp;
+            const Character librarianWrong = Character.Soldier;
+            const Character pingCharacter = Character.Recluse;
+            setup.Storyteller.GetLibrarianPings(Arg.Is<Player>(player => player.RealCharacter == Character.Librarian), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((librarianPing, librarianWrong, pingCharacter), new List<(Character, Character, Character)?>(), argIndex: 1));
+            var receivedlibrarianPing = setup.Agent(Character.Librarian).MockNotifyLibrarian(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerB, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.Not.EqualTo(receivedlibrarianPing.Value.playerB));
+                Assert.That(receivedlibrarianPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
+        public async Task Librarian_PhilosopherDrunkAndSeesNoOutsiders()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Librarian,Imp,Baron,Saint,Soldier,Fisherman,Philosopher");
+
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Librarian);
+            setup.Storyteller.GetLibrarianPings(Arg.Is<Player>(player => player.RealCharacter == Character.Philosopher), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Saint, Character.Baron, Character.Saint), new List<(Character, Character, Character)?>(), argIndex: 1));
+
+            setup.Storyteller.GetLibrarianPings(Arg.Is<Player>(player => player.RealCharacter == Character.Librarian), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetNoOutsidersOptionFromArg(argIndex: 1));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Librarian).Received().NotifyLibrarianNoOutsiders();
+        }
+
+        [Test]
+        public async Task PhilosopherLibrarian()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Philosopher,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Librarian);
+            const Character librarianPing = Character.Saint;
+            const Character librarianWrong = Character.Fisherman;
+            var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, librarianPing);
+            var receivedLibrarianPing = setup.Agent(Character.Philosopher).MockNotifyLibrarian(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(librarianPingOptions, Does.Contain((librarianPing, librarianWrong, librarianPing)));
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedLibrarianPing.Value.playerB, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.Not.EqualTo(receivedLibrarianPing.Value.playerB));
+                Assert.That(receivedLibrarianPing.Value.seenCharacter, Is.EqualTo(librarianPing));
+            });
         }
     }
 }
