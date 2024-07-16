@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var assassin in grimoire.GetLivingPlayers(Character.Assassin).WithoutToken(Token.UsedOncePerGameAbility))
+            foreach (var assassin in grimoire.GetPlayersWithUnusedAbility(Character.Assassin))
             {
                 var target = await assassin.Agent.RequestChoiceFromAssassin(grimoire.Players);
                 storyteller.ChoiceFromAssassin(assassin, target);

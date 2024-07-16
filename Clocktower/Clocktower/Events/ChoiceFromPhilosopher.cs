@@ -15,7 +15,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var philosopher in grimoire.GetLivingPlayers(Character.Philosopher))
+            foreach (var philosopher in grimoire.GetPlayersWithAbility(Character.Philosopher))
             {
                 var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => character.Alignment() == Alignment.Good 
                                                                                                                       && character != Character.Philosopher
@@ -31,7 +31,8 @@ namespace Clocktower.Events
         {
             if (philosopher.DrunkOrPoisoned)
             {   // The Philosopher believes they've gained their new ability, but they haven't.
-                // We treat this like they're a drunk version of the character whose ability they think they've gained.
+                // We treat this like they're a drunk version of the character whose ability they think they've gained for as long
+                // as they are drunk or poisoned.
                 philosopher.GainCharacterAbility(character);
                 philosopher.Tokens.Add(Token.IsTheBadPhilosopher, philosopher);
 

@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var monk in grimoire.GetLivingPlayers(Character.Monk))
+            foreach (var monk in grimoire.GetPlayersWithAbility(Character.Monk))
             {
                 var target = await monk.Agent.RequestChoiceFromMonk(grimoire.Players.Where(player => player != monk));
                 storyteller.ChoiceFromMonk(monk, target);

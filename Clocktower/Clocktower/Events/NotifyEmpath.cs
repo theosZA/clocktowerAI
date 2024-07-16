@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var empath in grimoire.GetLivingPlayers(Character.Empath))
+            foreach (var empath in grimoire.GetPlayersWithAbility(Character.Empath))
             {
                 var (neighbourA, neighbourB) = grimoire.GetLivingNeighbours(empath);
                 int evilCount = await GetEmpathNumber(empath, neighbourA, neighbourB);

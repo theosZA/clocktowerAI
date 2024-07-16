@@ -71,8 +71,7 @@
             return token == Token.IsTheDrunk
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
-                || token == Token.PoisonedByPoisoner
-                || token == Token.IsTheBadPhilosopher;
+                || token == Token.PoisonedByPoisoner;
         }
 
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
@@ -116,7 +115,7 @@
             };
         }
 
-        private Player player;
+        private readonly Player player;
         private readonly List<(Token token, Player player)> tokens = new();  // Each token together with the player that token belongs to.
     }
 }

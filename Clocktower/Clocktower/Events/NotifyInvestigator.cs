@@ -16,7 +16,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var investigator in grimoire.GetLivingPlayers(Character.Investigator))
+            foreach (var investigator in grimoire.GetPlayersWithAbility(Character.Investigator))
             {
                 await RunEvent(investigator);
             }

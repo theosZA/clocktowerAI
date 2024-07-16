@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var chef in grimoire.GetLivingPlayers(Character.Chef))
+            foreach (var chef in grimoire.GetPlayersWithAbility(Character.Chef))
             {
                 int chefCount = await GetChefNumber(chef);
                 await chef.Agent.NotifyChef(chefCount);

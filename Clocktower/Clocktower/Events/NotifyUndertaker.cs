@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var undertaker in grimoire.GetLivingPlayers(Character.Undertaker))
+            foreach (var undertaker in grimoire.GetPlayersWithAbility(Character.Undertaker))
             {
                 var executedPlayer = grimoire.Players.FirstOrDefault(player => player.Tokens.HasToken(Token.Executed)); // There should be at most 1 executed player.
                 if (executedPlayer != null)

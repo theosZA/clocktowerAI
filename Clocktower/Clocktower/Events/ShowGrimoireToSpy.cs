@@ -13,7 +13,11 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var spy in grimoire.GetLivingPlayers(Character.Spy))
+            // What do we do with a drunk or poisoned Spy?
+            // In theory they see a bad Grimoire, but that doesn't seem reasonable to implement.
+            // So they just won't get to see the Grimoire.
+
+            foreach (var spy in grimoire.GetHealthyPlayersWithRealAbility(Character.Spy))
             {
                 await RunEvent(spy);
             }
@@ -21,14 +25,6 @@ namespace Clocktower.Events
 
         public async Task RunEvent(Player spy)
         {
-            if (spy.DrunkOrPoisoned)
-            {
-                // What do we do with a drunk or poisoned Spy?
-                // In theory they see a bad Grimoire, but that doesn't seem reasonable to implement.
-                // So they just won't get to see the Grimoire.
-                return;
-            }
-
             await spy.Agent.ShowGrimoireToSpy(grimoire);
             storyteller.ShowGrimoireToSpy(spy, grimoire);
         }

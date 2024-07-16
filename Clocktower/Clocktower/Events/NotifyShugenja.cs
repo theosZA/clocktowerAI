@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var shugenja in grimoire.GetLivingPlayers(Character.Shugenja))
+            foreach (var shugenja in grimoire.GetPlayersWithAbility(Character.Shugenja))
             {
                 await RunEvent(shugenja);
             }

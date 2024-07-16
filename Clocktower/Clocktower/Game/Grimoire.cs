@@ -112,13 +112,35 @@ namespace Clocktower.Game
         }
 
         /// <summary>
-        /// Returns all living players with the given character ability (or that believe they are that character, e.g. Drunk or Lunatic).
+        /// Returns all players that we should treat as having the given ability, whether they actually have that ability or not.
         /// </summary>
         /// <param name="character">The character ability to filter by.</param>
-        /// <returns>A collection of living players with the given character ability.</returns>
-        public IEnumerable<Player> GetLivingPlayers(Character character)
+        /// <returns>A collection of players who we should treat as having the given character ability.</returns>
+        public IEnumerable<Player> GetPlayersWithAbility(Character character)
         {
-            return Players.Where(player => player.Alive && player.Character == character);
+            return Players.Where(player => player.ShouldRunAbility(character));
+        }
+
+        /// <summary>
+        /// Returns all players that we should treat as having the given ability, whether they actually have that ability or not, that have not
+        /// yet used their ability.
+        /// </summary>
+        /// <param name="character">The character ability to filter by.</param>
+        /// <returns>A collection of players who we should treat as having the given character ability.</returns>
+        public IEnumerable<Player> GetPlayersWithUnusedAbility(Character character)
+        {
+            return Players.Where(player => player.ShouldRunAbility(character) && !player.Tokens.HasToken(Token.UsedOncePerGameAbility));
+        }
+
+        /// <summary>
+        /// Returns all players that actually have the given ability. This will exclude drunk or poisoned players, as well as
+        /// characters who think they have this ability but do not, e.g. Lunatic and Marionette.
+        /// </summary>
+        /// <param name="character">The character ability to filter by.</param>
+        /// <returns>A collection of players who actually have the ability.</returns>
+        public IEnumerable<Player> GetHealthyPlayersWithRealAbility(Character character)
+        {
+            return Players.Where(player => player.ShouldRunAbility(character) && !player.DrunkOrPoisoned);
         }
 
         public (Player, Player) GetLivingNeighbours(Player player)

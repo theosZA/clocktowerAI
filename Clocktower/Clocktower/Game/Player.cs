@@ -74,6 +74,31 @@ namespace Clocktower.Game
             Agent.GainCharacterAbility(newCharacter);
         }
 
+        public bool ShouldRunAbility(Character characterAbility)
+        {
+            // We should run an ability for a player if they believe they have that ability
+            // whether they actually have that ability or not.
+
+            if (Character != characterAbility)
+            {
+                return false;
+            }
+
+            if (!Alive)
+            {
+                return false;
+            }
+
+            if (Tokens.HasToken(Token.IsTheBadPhilosopher) && !DrunkOrPoisoned)
+            {   // The philosopher was drunk or poisoned when choosing their ability.
+                // The storyteller pretends that they have the ability that they believed that they gained.                 
+                // But they are no longer drunk or poisoned, so we don't pretend they have the ability.
+                return false;
+            }
+
+            return true;
+        }
+
         public void Kill()
         {
             alive = false;

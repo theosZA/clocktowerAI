@@ -38,7 +38,7 @@ namespace Clocktower.Events
             {
                 return;
             }
-            var mayors = grimoire.GetLivingPlayers(Character.Mayor)
+            var mayors = grimoire.GetPlayersWithAbility(Character.Mayor)
                                  .Where(mayor => !mayor.DrunkOrPoisoned)
                                  .ToList();
             // There really shouldn't be more than one player with a Mayor ability here, but just in case

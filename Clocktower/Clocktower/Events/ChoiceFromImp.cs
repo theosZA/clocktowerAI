@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var imps = grimoire.GetLivingPlayers(Character.Imp).ToList();   // Fix the imp(s) first, so that minions who receive a star-pass don't get to kill.
+            var imps = grimoire.GetPlayersWithAbility(Character.Imp).ToList();   // Fix the imp(s) first, so that minions who receive a star-pass don't get to kill.
             foreach (var imp in imps)
             {
                 var target = await imp.Agent.RequestChoiceFromImp(grimoire.Players);
