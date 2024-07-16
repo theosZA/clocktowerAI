@@ -7,6 +7,25 @@ namespace ClocktowerScenarioTests.Tests
     public class FortuneTellerTests
     {
         [Test]
+        public async Task FortuneTeller_ValidRedHerringOptions()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fortune_Teller,Ravenkeeper,Recluse,Spy,Fisherman,Baron");
+            var redHerringOptions = new List<Character>();
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, redHerringOptions, argIndex: 1));
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Fortune_Teller, Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            // Options should include Recluse (a poor choice, but allowed), Spy (since they can register as good), but not any others on the evil team.
+            Assert.That(redHerringOptions, Is.EquivalentTo(new[] { Character.Fortune_Teller, Character.Ravenkeeper, Character.Recluse, Character.Spy, Character.Fisherman }));
+        }
+
+        [Test]
         public async Task FortuneTeller_No()
         {
             // Arrange
@@ -91,6 +110,24 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+        }
+
+        [Test]
+        public async Task FortuneTeller_ChoosesPoisonedRecluse()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fortune_Teller,Ravenkeeper,Recluse,Poisoner,Fisherman,Mayor");
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Fortune_Teller);
+            setup.Agent(Character.Poisoner).MockPoisoner(Character.Recluse);
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Recluse, Character.Mayor);
+            var fortuneTellerReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.False);
         }
 
         [TestCase(true)]
@@ -188,6 +225,26 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
             Assert.That(philosopherFortuneTellerReading.Value, Is.True);    // hit their red herring
+        }
+
+        [Test]
+        public async Task PhilosopherFortuneTeller_ValidRedHerringOptions()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Recluse,Spy,Fisherman,Baron");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Fortune_Teller);
+            var redHerringOptions = new List<Character>();
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, redHerringOptions, argIndex: 1));
+            setup.Agent(Character.Philosopher).MockFortuneTellerChoice(Character.Fortune_Teller, Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            // Options should include Recluse (a poor choice, but allowed), Spy (since they can register as good), but not any others on the evil team.
+            Assert.That(redHerringOptions, Is.EquivalentTo(new[] { Character.Fortune_Teller, Character.Ravenkeeper, Character.Recluse, Character.Spy, Character.Fisherman }));
         }
 
         [Test]

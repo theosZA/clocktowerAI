@@ -55,8 +55,7 @@ namespace Clocktower.Events
             philosopher.Tokens.Add(Token.PhilosopherUsedAbilityTonight, philosopher);    // Any start-knowing information will be provided later tonight as indicated by this token.
             if (character == Character.Fortune_Teller)
             {
-                var redHerringCandidates = grimoire.Players.Where(player => player.CharacterType != CharacterType.Demon);
-                (await storyteller.GetFortuneTellerRedHerring(philosopher, redHerringCandidates)).Tokens.Add(Token.FortuneTellerRedHerring, philosopher);
+                await new AssignFortuneTellerRedHerring(storyteller, grimoire).AssignRedHerring(fortuneTeller: philosopher);
             }
         }
 
