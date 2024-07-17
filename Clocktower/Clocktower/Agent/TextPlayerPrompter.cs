@@ -70,7 +70,7 @@ namespace Clocktower.Agent
         private static string FormatText(string text, params object[] objects)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText(text, objects);
+            sb.AppendFormattedMarkupText(text, objects);
             return sb.ToString();
         }
 

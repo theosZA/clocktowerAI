@@ -30,18 +30,18 @@ namespace Clocktower.Observer
         public async Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText("%p nominates %p. ", nominator, nominee);
+            sb.AppendFormattedMarkupText("%p nominates %p. ", nominator, nominee);
             if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
             {
-                sb.AppendFormattedText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
+                sb.AppendFormattedMarkupText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
             }
             else if (votesToTie.HasValue)
             {
-                sb.AppendFormattedText("%b votes to tie.", votesToTie.Value);
+                sb.AppendFormattedMarkupText("%b votes to tie.", votesToTie.Value);
             }
             else if (votesToPutOnBlock.HasValue)
             {
-                sb.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
+                sb.AppendFormattedMarkupText("%b votes to put them on the block.", votesToPutOnBlock.Value);
             }
             await SendMessage(sb.ToString());
         }
@@ -49,10 +49,10 @@ namespace Clocktower.Observer
         public async Task AnnounceSlayerShot(Player slayer, Player target, bool success)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target);
+            sb.AppendFormattedMarkupText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target);
             if (success)
             {
-                sb.AppendFormattedText("%p dies.\n", target);
+                sb.AppendFormattedMarkupText("%p dies.\n", target);
             }
             else
             {
@@ -111,7 +111,7 @@ namespace Clocktower.Observer
 
         public async Task Day(int dayNumber)
         {
-            await SendMessage($"Day {dayNumber}");
+            await SendMessage($"## Day {dayNumber}");
         }
 
         public async Task DayEndsWithNoExecution()
@@ -126,7 +126,7 @@ namespace Clocktower.Observer
 
         public async Task Night(int nightNumber)
         {
-            await SendMessage($"Night {nightNumber}");
+            await SendMessage($"## Night {nightNumber}");
         }
 
         public async Task NoOneDiedAtNight()
@@ -185,7 +185,7 @@ namespace Clocktower.Observer
         private static string FormatText(string text, params object[] objects)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText(text, objects);
+            sb.AppendFormattedMarkupText(text, objects);
             return sb.ToString();
         }
     }

@@ -2,7 +2,6 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 using DiscordChatBot;
-using System.Numerics;
 
 namespace Clocktower.Agent
 {
@@ -30,9 +29,9 @@ namespace Clocktower.Agent
             prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
 
             await chat.SendMessage($"Welcome {PlayerName} to a game of Blood on the Clocktower.");
-            await chat.SendMessage(TextBuilder.ScriptToText(scriptName, script));
+            await chat.SendMessage(TextBuilder.ScriptToText(scriptName, script, markup: true));
             await chat.SendMessage(TextBuilder.SetupToText(players.Count, script));
-            await chat.SendMessage(TextBuilder.PlayersToText(players));
+            await chat.SendMessage(TextBuilder.PlayersToText(players, markup: true));
         }
 
         public async Task AssignCharacter(Character character, Alignment alignment)
@@ -139,7 +138,7 @@ namespace Clocktower.Agent
 
         public async Task ShowGrimoireToSpy(Grimoire grimoire)
         {
-            await observer.SendMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", Character.Spy);
+            await observer.SendMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire, markup: true)}", Character.Spy);
         }
 
         public async Task ResponseForFisherman(string advice)

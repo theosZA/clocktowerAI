@@ -14,7 +14,7 @@
         public override string ToString()
         {
             return string.Join(", ", tokens.Order()
-                                           .Select(pair => $"{TokenToText(pair.token)} ({pair.player})")
+                                           .Select(pair => TokenPairToText(pair.token, pair.player))
                                            .Where(text => !string.IsNullOrEmpty(text)));
         }
 
@@ -88,6 +88,14 @@
                 || token == Token.PhilosopherUsedAbilityTonight;
         }
 
+        private string TokenPairToText(Token token, Player assigningPlayer)
+        {
+            if (assigningPlayer == player)
+            {
+                return TokenToText(token);
+            }
+            return $"{TokenToText(token)} ({assigningPlayer.Name})";
+        }
 
         private static string TokenToText(Token token)
         {
