@@ -52,7 +52,7 @@ namespace Clocktower.Agent
         public static string SetupToText(int playerCount, IReadOnlyCollection<Character> script)
         {
             var sb = new StringBuilder();
-            sb.Append($"In this game there are {playerCount} players. That means there will be {TownsfolkCount(playerCount)} Townsfolk, {OutsiderCount(playerCount)} Outsiders, {MinionCount(playerCount)} Minions and 1 Demon");
+            sb.Append($"In this game there are {playerCount} players. That means there will be {CharacterTypeCountToText(CharacterType.Townsfolk, playerCount)}, {CharacterTypeCountToText(CharacterType.Outsider, playerCount)}, {CharacterTypeCountToText(CharacterType.Minion, playerCount)} and {CharacterTypeCountToText(CharacterType.Demon, playerCount)}");
 
             var charactersThatModifySetup = GetCharactersThatCanAlterSetupCounts(script).ToList();
             if (charactersThatModifySetup.Count > 0)
@@ -66,7 +66,7 @@ namespace Clocktower.Agent
                     }
                     sb.Append($" or {charactersThatModifySetup.Last()}");
                 }
-                sb.Append(")");
+                sb.Append(')');
             }
             sb.AppendLine();
 
@@ -148,6 +148,26 @@ namespace Clocktower.Agent
             sb.Append($"{characterType} ({alignment}):");
 
             return sb.ToString();
+        }
+
+        private static string CharacterTypeCountToText(CharacterType characterType, int playerCount)
+        {
+            var count = characterType switch
+            {
+                CharacterType.Townsfolk => TownsfolkCount(playerCount),
+                CharacterType.Outsider => OutsiderCount(playerCount),
+                CharacterType.Minion => MinionCount(playerCount),
+                CharacterType.Demon => 1,
+                _ => throw new InvalidEnumArgumentException(nameof(characterType), (int)characterType, typeof(CharacterType))
+            };
+
+            var name = characterType.ToString();
+            if (count != 1 && characterType != CharacterType.Townsfolk)
+            {   // All character types take an 's' to make plural except townsfolk.
+                name += 's';
+            }
+
+            return $"{count} {name}";
         }
 
         private static string CharacterToText(Character character, IDictionary<Character, string> characterDescriptions, bool markup)
