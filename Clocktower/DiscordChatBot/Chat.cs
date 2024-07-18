@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System.Text;
 
 namespace DiscordChatBot
 {
@@ -21,8 +22,19 @@ namespace DiscordChatBot
             channel ??= await guild.CreateTextChannelAsync(Name);
         }
 
-        public async Task SendMessage(string message, string? imageFileName = null)
+        public async Task SendMessage(string messageToSend, string? imageFileName = null)
         {
+            string message;
+            if (!string.IsNullOrEmpty(imageFileName) && messageQueue.Any())
+            {
+                await SendMessageToChannel(PrependMessageQueue(null));
+                message = messageToSend;
+            }
+            else
+            {
+                message = PrependMessageQueue(messageToSend);
+            }
+
             if (message.Length > 2000)
             {
                 // Split the message so that length is below 2000.
@@ -32,19 +44,12 @@ namespace DiscordChatBot
                 return;
             }
 
-            if (channel != null)
-            {
-                if (string.IsNullOrEmpty(imageFileName) || !File.Exists(imageFileName))
-                {
-                    await channel.SendMessageAsync(message);
-                }
-                else
-                {
-                    var embed = new EmbedBuilder().WithImageUrl($"attachment://{Path.GetFileName(imageFileName)}")
-                                                  .Build();
-                    await channel.SendFileAsync(imageFileName, message, false, embed);
-                }
-            }
+            await SendMessageToChannel(message, imageFileName);
+        }
+
+        public void QueueMessage(string message)
+        {
+            messageQueue.Enqueue(message);
         }
 
         public void MessageReceived(string message)
@@ -61,9 +66,44 @@ namespace DiscordChatBot
             return lastReceivedMessage ?? string.Empty;
         }
 
+        private async Task SendMessageToChannel(string messageToSend, string? imageFileName = null)
+        {
+            if (channel != null)
+            {
+                if (string.IsNullOrEmpty(imageFileName) || !File.Exists(imageFileName))
+                {
+                    await channel.SendMessageAsync(messageToSend);
+                }
+                else
+                {
+                    var embed = new EmbedBuilder().WithImageUrl($"attachment://{Path.GetFileName(imageFileName)}")
+                                                  .Build();
+                    await channel.SendFileAsync(imageFileName, messageToSend, false, embed);
+                }
+            }
+        }
+
+        private string PrependMessageQueue(string? messageAtEnd)
+        {
+            StringBuilder sb = new();
+            
+            while (messageQueue.TryDequeue(out var message))
+            {
+                sb.AppendLine(message);
+            }
+
+            if (messageAtEnd != null)
+            {
+                sb.AppendLine(messageAtEnd);
+            }
+
+            return sb.ToString();
+        }
+
         private ITextChannel? channel;
 
         private string? lastReceivedMessage;
         private TaskCompletionSource? messageReceivedTsc;
+        private readonly Queue<string> messageQueue = new();
     }
 }

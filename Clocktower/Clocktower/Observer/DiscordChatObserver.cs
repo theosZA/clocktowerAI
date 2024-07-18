@@ -11,6 +11,11 @@ namespace Clocktower.Observer
             this.chat = chat;
         }
 
+        public void QueueMessage(string text, params object[] objects)
+        {
+            chat?.QueueMessage(FormatText(text, objects));
+        }
+
         public async Task SendMessage(string text, params object[] objects)
         {
             if (chat != null)
@@ -61,23 +66,25 @@ namespace Clocktower.Observer
             await SendMessage(sb.ToString());
         }
 
-        public async Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
             {
                 if (voter.Alive)
                 {
-                    await SendMessage("%p votes to execute %p.", voter, nominee);
+                    QueueMessage("%p votes to execute %p.", voter, nominee);
                 }
                 else
                 {
-                    await SendMessage("%p uses their ghost vote to execute %p.", voter, nominee);
+                    QueueMessage("%p uses their ghost vote to execute %p.", voter, nominee);
                 }
             }
             else
             {
-                await SendMessage("%p does not vote.", voter, nominee);
+                QueueMessage("%p does not vote.", voter, nominee);
             }
+
+            return Task.CompletedTask;
         }
 
         public async Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
