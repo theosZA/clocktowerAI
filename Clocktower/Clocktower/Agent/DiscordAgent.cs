@@ -143,7 +143,7 @@ namespace Clocktower.Agent
 
         public async Task ResponseForFisherman(string advice)
         {
-            await observer.SendMessage("Storyteller: %n", advice.Trim());
+            await observer.SendMessage("**Storyteller**: %n", advice.Trim());
         }
 
         public Task GainCharacterAbility(Character character)
@@ -164,7 +164,7 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Character.Assassin);
+            return await prompter.RequestChoice(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with the name of a player to use the ability, or `PASS` if you want to save your ability for later.", Character.Assassin);
         }
 
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
@@ -174,12 +174,12 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Character.Philosopher);
+            return await prompter.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or `PASS` if you want to save your ability for later.", Character.Philosopher);
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "As the %c please choose two players. Response with \"PLAYER1 and PLAYER2\"", Character.Fortune_Teller);
+            return await prompter.RequestChoice(options, "As the %c please choose two players. Respond in the form: *PLAYER1* and *PLAYER2*", Character.Fortune_Teller);
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
@@ -201,11 +201,11 @@ namespace Clocktower.Agent
         {
             if (characterAbility == Character.Slayer)
             {
-                return await prompter.RequestChoice(options, "Do you wish to claim %c and use your once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Character.Slayer);
+                return await prompter.RequestChoice(options, "Do you wish to claim %c and use your once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or `PASS` if you want to save your ability for later.", Character.Slayer);
             }
             else
             {
-                return await prompter.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you don't want to use this bluff right now, or ALWAYS PASS if you never want to use this bluff.", Character.Slayer);
+                return await prompter.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or `PASS` if you don't want to use this bluff right now, or `ALWAYS PASS` if you never want to use this bluff.", Character.Slayer);
             }
         }
 
@@ -216,7 +216,7 @@ namespace Clocktower.Agent
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "You may nominate a player. Either provide the name of the player you wish to nominate or respond with PASS. The players you can nominate are: %P.",
+            return await prompter.RequestChoice(options, "You may nominate a player. Either provide the name of the player you wish to nominate or respond with `PASS`. The players you can nominate are: %P.",
                                                 options.Where(option => option is PlayerOption)
                                                        .Select(option => ((PlayerOption)option).Player));
         }
@@ -224,7 +224,7 @@ namespace Clocktower.Agent
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
             var voteOption = (VoteOption)options.First(option => option is VoteOption);
-            return await prompter.RequestChoice(options, "If you wish, you may vote for executing %p. %nRespond with EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
+            return await prompter.RequestChoice(options, "If you wish, you may vote for executing %p. %nRespond with `EXECUTE` to execute them or `PASS` if you don't wish to execute them.", voteOption.Nominee,
                                                 ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
         }
 
@@ -233,7 +233,7 @@ namespace Clocktower.Agent
             var canPass = options.Any(option => option is PassOption);
             if (canPass)
             {
-                return await prompter.RequestChoice(options, "Is there someone you wish to speak to privately as a priority? If you want to wait and first see if anyone wants to speak with you, respond with PASS. The players you can talk to are: %P.",
+                return await prompter.RequestChoice(options, "Is there someone you wish to speak to privately as a priority? If you want to wait and first see if anyone wants to speak with you, respond with `PASS`. The players you can talk to are: %P.",
                                                     options.Where(option => option is PlayerOption)
                                                            .Select(option => ((PlayerOption)option).Player));
             }
@@ -247,32 +247,32 @@ namespace Clocktower.Agent
 
         public async Task<string> GetRollCallStatement()
         {
-            return await prompter.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - respond with just the single word PASS to say nothing.)");
+            return await prompter.RequestDialogue("For this roll call, provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character. (This is optional - respond with just the single word `PASS` to say nothing.)");
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            return await prompter.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await prompter.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with `PASS` if you don't wish to say anything.)");
         }
 
         public async Task<string> GetEveningPublicStatement()
         {
-            return await prompter.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await prompter.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with `PASS` if you don't wish to say anything.)");
         }
 
         public async Task<string> GetProsecution(Player nominee)
         {
-            return await prompter.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with just the single word PASS if you don't wish to say anything.)", nominee);
+            return await prompter.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with `PASS` if you don't wish to say anything.)", nominee);
         }
 
         public async Task<string> GetDefence(Player nominator)
         {
-            return await prompter.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with just the single word PASS if you don't wish to say anything.)", nominator);
+            return await prompter.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with `PASS` if you don't wish to say anything.)", nominator);
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
-            return await prompter.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await prompter.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with `PASS` if you don't wish to say anything.)");
         }
 
         public async Task StartPrivateChat(Player otherPlayer)
@@ -283,7 +283,7 @@ namespace Clocktower.Agent
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            return await prompter.RequestChatDialogue("What will you say to %p? Once you're happy that there's nothing more to say and you're ready to talk to someone else, you can conclude your conversation with \"Goodbye\".", listener);
+            return await prompter.RequestChatDialogue("What will you say to %p? To end the conversation respond with `PASS` or conclude what you wish to say with \"Goodbye\".", listener);
         }
 
         public async Task PrivateChatMessage(Player speaker, string message)
