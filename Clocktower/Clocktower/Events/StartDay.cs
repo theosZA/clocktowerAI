@@ -33,7 +33,7 @@ namespace Clocktower.Events
                     newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                     newlyDeadPlayer.Kill();
                 }
-                await observers.LivingPlayerCount(grimoire.Players.Count(player => player.Alive));
+                await observers.AnnounceLivingPlayers(grimoire.Players);
             }
         }
 

@@ -42,9 +42,23 @@ namespace Clocktower.Observer
             await clocktowerChat.Day(dayNumber);
         }
 
-        public Task LivingPlayerCount(int numberOfLivingPlayers)
+        public Task AnnounceLivingPlayers(IReadOnlyCollection<Player> players)
         {
-            clocktowerChat.AddMessage($"There are {numberOfLivingPlayers} players still alive.");
+            StringBuilder sb = new();
+
+            sb.AppendLine($"There are {players.Count(player => player.Alive)} players still alive. Our players are...");
+            bool firstPlayer = true;
+            foreach (var player in players)
+            {
+                if (!firstPlayer)
+                {
+                    sb.Append(", ");
+                }
+                sb.AppendFormattedText($"%p - {(player.Alive ? "ALIVE" : "DEAD")}", player);
+                firstPlayer = false;
+            }
+
+            clocktowerChat.AddMessage(sb.ToString());
             return Task.CompletedTask;
         }
 

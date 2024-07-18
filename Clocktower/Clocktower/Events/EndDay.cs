@@ -30,6 +30,11 @@ namespace Clocktower.Events
                 }
                 grimoire.PlayerToBeExecuted = null;
             }
+
+            if (!grimoire.Finished)
+            {
+                await observers.AnnounceLivingPlayers(grimoire.Players);
+            }
         }
 
         public void CheckForMayorWin()

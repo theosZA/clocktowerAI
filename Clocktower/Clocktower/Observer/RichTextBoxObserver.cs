@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using System.Text;
 
 namespace Clocktower.Observer
 {
@@ -42,9 +43,19 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public Task LivingPlayerCount(int numberOfLivingPlayers)
+        public Task AnnounceLivingPlayers(IReadOnlyCollection<Player> players)
         {
-            outputText.AppendText($"There are {numberOfLivingPlayers} players still alive.\n");
+            outputText.AppendText($"There are {players.Count(player => player.Alive)} players still alive: ");
+            bool firstPlayer = true;
+            foreach (var player in players)
+            {
+                if (!firstPlayer)
+                {
+                    outputText.AppendText(", ");
+                }
+                outputText.AppendFormattedText($"%p - {(player.Alive ? "ALIVE" : "DEAD")}", player, StorytellerView);
+                firstPlayer = false;
+            }
             return Task.CompletedTask;
         }
 
