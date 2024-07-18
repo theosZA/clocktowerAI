@@ -196,7 +196,7 @@ namespace Clocktower.Observer
 
         public async Task PublicStatement(Player player, string statement)
         {
-            await SendMessage("%p: %n", player, statement);
+            await SendMessage("%p:\n>>> %n", player, statement);
         }
 
         public async Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock)

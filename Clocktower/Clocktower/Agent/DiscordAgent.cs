@@ -288,7 +288,7 @@ namespace Clocktower.Agent
 
         public async Task PrivateChatMessage(Player speaker, string message)
         {
-            await observer.SendMessage($"%p: %n", speaker, message);
+            await observer.SendMessage($"%p:\n>>> %n", speaker, message);
         }
 
         public async Task EndPrivateChat(Player otherPlayer)
