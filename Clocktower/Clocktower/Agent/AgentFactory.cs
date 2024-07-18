@@ -41,6 +41,6 @@ namespace Clocktower.Agent
 
         private static ChatClient? discordChatClient;
 
-        private const string DefaultModel = "gpt-3.5-turbo";
+        private const string DefaultModel = "gpt-4o-mini";
     }
 }

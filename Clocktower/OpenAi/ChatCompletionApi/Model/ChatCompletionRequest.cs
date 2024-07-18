@@ -8,7 +8,7 @@ namespace OpenAi.ChatCompletionApi.Model
         /// ID of the model to use. See the model endpoint compatibility table (https://platform.openai.com/docs/models/model-endpoint-compatibility)
         /// for details on which models work with the Chat API.
         /// </summary>
-        public string Model { get; set; } = "gpt-3.5-turbo";
+        public string Model { get; set; } = "gpt-4o-mini";
 
         /// <summary>
         /// A list of messages comprising the conversation so far.
