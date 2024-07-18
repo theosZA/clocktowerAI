@@ -193,7 +193,7 @@ namespace Clocktower
                     sb.AppendCharacter(Character.Philosopher, enableBoldMarkup);
                     sb.Append('-');
                 }
-                sb.AppendCharacter(player.RealCharacter, enableBoldMarkup);
+                sb.AppendCharacter(player.Character, enableBoldMarkup);
                 if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
                 {
                     sb.Append('*');    // We use the asterisk here to denote that they never really gained that ability.
