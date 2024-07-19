@@ -1,7 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
 using OpenAi;
-using System.Text;
 
 namespace Clocktower.Agent.RobotAgent
 {
@@ -66,7 +65,7 @@ namespace Clocktower.Agent.RobotAgent
         /// </param>
         public void AddFormattedMessage(string message, params object[] objects)
         {
-            gameChat.AddMessage(FormatText(message, objects));
+            gameChat.AddMessage(TextUtilities.FormatText(message, objects));
         }
 
         public async Task<string> Request(string? prompt = null, params object[] objects)
@@ -76,7 +75,7 @@ namespace Clocktower.Agent.RobotAgent
                 return await gameChat.Request(prompt: null);
             }
 
-            return await gameChat.Request(FormatText(prompt, objects));
+            return await gameChat.Request(TextUtilities.FormatText(prompt, objects));
         }
 
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
@@ -227,13 +226,6 @@ namespace Clocktower.Agent.RobotAgent
             int splitIndex = choiceAsText.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
             return string.Equals(choiceAsText[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
                 && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private static string FormatText(string text, params object[] objects)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormattedText(text, objects);
-            return sb.ToString();
         }
 
         private void InternalOnChatMessage(Role role, string message)

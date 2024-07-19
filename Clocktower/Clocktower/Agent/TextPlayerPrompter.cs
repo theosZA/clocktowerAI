@@ -47,7 +47,7 @@ namespace Clocktower.Agent
 
         private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)
         {
-            string prompt = "That is not a valid option. Please choice one of the following options: " + string.Join(", ", options.Select(option => option.Name));
+            string prompt = "That is not a valid option. Please choose one of the following options: " + string.Join(", ", options.Select(AsPromptText));
             var choiceAsText = (await Request(prompt)).Trim();
 
             if (string.IsNullOrEmpty(choiceAsText))
@@ -108,8 +108,24 @@ namespace Clocktower.Agent
         private static bool MatchesTwoPlayers(string choiceAsText, string player1, string player2)
         {
             int splitIndex = choiceAsText.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
-            return string.Equals(choiceAsText[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
+            return splitIndex >= 0
+                && string.Equals(choiceAsText[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
                 && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private static string AsPromptText(IOption option)
+        {
+            return option switch
+            {
+                AlwaysPassOption _ => "`ALWAYS PASS`",
+                CharacterOption characterOption => TextUtilities.FormatMarkupText("%c", characterOption.Character),
+                PassOption _ => "`PASS`",
+                PlayerOption playerOption => TextUtilities.FormatMarkupText("%p", playerOption.Player),
+                SlayerShotOption slayerShotOption => TextUtilities.FormatMarkupText("%p", slayerShotOption.Target),
+                TwoPlayersOption twoPlayersOption => TextUtilities.FormatMarkupText("%p and %p", twoPlayersOption.PlayerA, twoPlayersOption.PlayerB),
+                VoteOption voteOption => "`EXECUTE`",
+                _ => throw new ArgumentException($"Unknown option type {option.GetType()}", nameof(option))
+            };
         }
 
         private readonly string playerName;

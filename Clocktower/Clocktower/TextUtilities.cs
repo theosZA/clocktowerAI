@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using System.ComponentModel;
+using System.Text;
 
 namespace Clocktower
 {
@@ -23,6 +24,20 @@ namespace Clocktower
         public static string CharacterToText(Character character)
         {
             return character.ToString().Replace('_', ' ');
+        }
+
+        public static string FormatText(string text, params object[] objects)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText(text, objects);
+            return sb.ToString();
+        }
+
+        public static string FormatMarkupText(string text, params object[] objects)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedMarkupText(text, objects);
+            return sb.ToString();
         }
     }
 }
