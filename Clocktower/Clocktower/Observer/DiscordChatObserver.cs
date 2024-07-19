@@ -13,14 +13,14 @@ namespace Clocktower.Observer
 
         public void QueueMessage(string text, params object[] objects)
         {
-            chat?.QueueMessage(FormatText(text, objects));
+            chat?.QueueMessage(TextUtilities.FormatMarkupText(text, objects));
         }
 
         public async Task SendMessage(string text, params object[] objects)
         {
             if (chat != null)
             {
-                await chat.SendMessage(FormatText(text, objects));
+                await chat.SendMessage(TextUtilities.FormatMarkupText(text, objects));
             }
         }
 
@@ -28,7 +28,7 @@ namespace Clocktower.Observer
         {
             if (chat != null)
             {
-                await chat.SendMessage(FormatText(text, objects), imageFileName);
+                await chat.SendMessage(TextUtilities.FormatMarkupText(text, objects), imageFileName);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Clocktower.Observer
                 }
                 else
                 {
-                    sb.AppendFormattedText("👻 %p 👻", player);   // dead players will not be bolded
+                    sb.AppendFormattedText(" 👻 %p 👻 ", player);   // dead players will not be bolded
 
                 }
                 firstPlayer = false;
@@ -210,12 +210,5 @@ namespace Clocktower.Observer
         }
 
         private Chat? chat;
-
-        private static string FormatText(string text, params object[] objects)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormattedMarkupText(text, objects);
-            return sb.ToString();
-        }
     }
 }

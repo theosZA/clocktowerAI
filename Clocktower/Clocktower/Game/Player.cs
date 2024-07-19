@@ -35,6 +35,12 @@ namespace Clocktower.Game
         /// </summary>
         public CharacterType CharacterType => RealCharacter.CharacterType();
 
+        /// <summary>
+        /// All characters a player has previously been ending with their current character, e.g. if they were a Scarlet Woman who became the Imp.
+        /// In cases where additional characters are applicable (e.g. Drunk or Philosopher), they are included in a list.
+        /// </summary>
+        public IReadOnlyCollection<List<Character>> CharacterHistory => characterHistory;
+
         public bool DrunkOrPoisoned => Tokens.DrunkOrPoisoned;
 
         public TokensOnPlayer Tokens { get; }
@@ -59,6 +65,18 @@ namespace Clocktower.Game
 
         public void ChangeCharacter(Character newCharacter)
         {
+            var currentCharacterInfo = new List<Character>();
+            if (Tokens.HasToken(Token.IsTheDrunk))
+            {
+                currentCharacterInfo.Add(Character.Drunk);
+            }
+            if (Tokens.HasToken(Token.IsThePhilosopher))
+            {
+                currentCharacterInfo.Add(Character.Philosopher);
+            }
+            currentCharacterInfo.Add(Character);
+            characterHistory.Add(currentCharacterInfo);
+
             Character = newCharacter;
             Agent.AssignCharacter(Character, Alignment);
         }
@@ -111,5 +129,7 @@ namespace Clocktower.Game
         }
 
         private bool alive = true;
+
+        private readonly List<List<Character>> characterHistory = new();
     }
 }

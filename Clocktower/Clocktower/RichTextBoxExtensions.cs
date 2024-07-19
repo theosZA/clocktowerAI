@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using System.Text;
 
 namespace Clocktower
 {
@@ -133,28 +134,55 @@ namespace Clocktower
             box.AppendCharacter(characters[characters.Count - 1]);
         }
 
+        private static void AppendCharacterSequence(this RichTextBox box, IEnumerable<Character> characters)
+        {
+            bool first = true;
+            foreach (var character in characters)
+            {
+                if (!first)
+                {
+                    box.AppendText("-");
+                }
+                box.AppendCharacter(character);
+                first = false;
+            }
+        }
+
+        private static void AppendCharacterHistory(this RichTextBox box, Player player)
+        {
+            foreach (var characterInfo in player.CharacterHistory)
+            {
+                box.AppendCharacterSequence(characterInfo);
+            }
+            if (player.CharacterHistory.Count > 0)
+            {
+                box.AppendText(" → ");
+            }
+
+            var currentCharacterInfo = new List<Character>();
+            if (player.Tokens.HasToken(Token.IsTheDrunk))
+            {
+                currentCharacterInfo.Add(Character.Drunk);
+            }
+            if (player.Tokens.HasToken(Token.IsThePhilosopher))
+            {
+                currentCharacterInfo.Add(Character.Philosopher);
+            }
+            currentCharacterInfo.Add(player.Character);
+            box.AppendCharacterSequence(currentCharacterInfo);
+            if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
+            {
+                box.AppendText("*");    // We use the asterisk here to denote that they never really gained that ability.
+            }
+        }
+
         public static void AppendPlayer(this RichTextBox box, Player player, bool storytellerView = false)
         {
             box.AppendBoldText(player.Name);
             if (storytellerView)
             {
                 box.AppendText(" (");
-
-                if (player.Tokens.HasToken(Token.IsTheDrunk))
-                {
-                    box.AppendText(TextUtilities.CharacterToText(Character.Drunk), TextUtilities.AlignmentToColor(player.Alignment));
-                    box.AppendText("-");
-                }
-                if (player.Tokens.HasToken(Token.IsThePhilosopher) || player.Tokens.HasToken(Token.IsTheBadPhilosopher))
-                {
-                    box.AppendText(TextUtilities.CharacterToText(Character.Philosopher), TextUtilities.AlignmentToColor(player.Alignment));
-                    box.AppendText("-");
-                }
-                box.AppendText($"{TextUtilities.CharacterToText(player.Character)}", TextUtilities.AlignmentToColor(player.Alignment));
-                if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
-                {
-                    box.AppendText("*");    // We use the asterisk here to denote that they never really gained that ability.
-                }
+                box.AppendCharacterHistory(player);
                 box.AppendText(")");
             }
         }

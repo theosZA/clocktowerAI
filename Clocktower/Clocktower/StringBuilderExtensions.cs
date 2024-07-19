@@ -176,28 +176,55 @@ namespace Clocktower
             sb.AppendCharacter(characters[characters.Count - 1], enableBoldMarkup);
         }
 
+        private static void AppendCharacterSequence(this StringBuilder sb, IEnumerable<Character> characters, bool enableBoldMarkup)
+        {
+            bool first = true;
+            foreach (var character in characters)
+            {
+                if (!first)
+                {
+                    sb.Append('-');
+                }
+                sb.AppendCharacter(character, enableBoldMarkup);
+                first = false;
+            }
+        }
+
+        private static void AppendCharacterHistory(this StringBuilder sb, Player player, bool enableBoldMarkup)
+        {
+            foreach (var characterInfo in player.CharacterHistory)
+            {
+                sb.AppendCharacterSequence(characterInfo, enableBoldMarkup);
+            }
+            if (player.CharacterHistory.Count > 0)
+            {
+                sb.Append(" → ");
+            }
+
+            var currentCharacterInfo = new List<Character>();
+            if (player.Tokens.HasToken(Token.IsTheDrunk))
+            {
+                currentCharacterInfo.Add(Character.Drunk);
+            }
+            if (player.Tokens.HasToken(Token.IsThePhilosopher))
+            {
+                currentCharacterInfo.Add(Character.Philosopher);
+            }
+            currentCharacterInfo.Add(player.Character);
+            sb.AppendCharacterSequence(currentCharacterInfo, enableBoldMarkup);
+            if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
+            {
+                sb.Append('*');    // We use the asterisk here to denote that they never really gained that ability.
+            }
+        }
+
         private static void AppendPlayer(this StringBuilder sb, Player player, bool enableBoldMarkup, bool storytellerView)
         {
             sb.AppendBoldText(player.Name, enableBoldMarkup);
             if (storytellerView)
             {
                 sb.Append(" (");
-
-                if (player.Tokens.HasToken(Token.IsTheDrunk))
-                {
-                    sb.AppendCharacter(Character.Drunk, enableBoldMarkup);
-                    sb.Append('-');
-                }
-                if (player.Tokens.HasToken(Token.IsThePhilosopher) || player.Tokens.HasToken(Token.IsTheBadPhilosopher))
-                {
-                    sb.AppendCharacter(Character.Philosopher, enableBoldMarkup);
-                    sb.Append('-');
-                }
-                sb.AppendCharacter(player.Character, enableBoldMarkup);
-                if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
-                {
-                    sb.Append('*');    // We use the asterisk here to denote that they never really gained that ability.
-                }
+                sb.AppendCharacterHistory(player, enableBoldMarkup);
                 sb.Append(')');
             }
         }
