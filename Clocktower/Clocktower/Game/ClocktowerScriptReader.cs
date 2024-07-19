@@ -28,10 +28,10 @@ namespace Clocktower.Game
             {
                 foreach (var item in array)
                 {
-                    if (item is JObject jsonObject)
+                    if (item is JValue value)
                     {
-                        var character = jsonObject.GetValue("id")?.ToString();
-                        if (!string.IsNullOrEmpty(character) && character != "_meta")
+                        var character = value.ToString();
+                        if (!string.IsNullOrEmpty(character))
                         {
                             yield return Enum.Parse<Character>(character, ignoreCase: true);
                         }
