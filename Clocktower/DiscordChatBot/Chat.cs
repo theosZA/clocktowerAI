@@ -47,6 +47,14 @@ namespace DiscordChatBot
             await SendMessageToChannel(message, imageFileName);
         }
 
+        public async Task SendFile(string fileName)
+        {
+            if (channel != null)
+            {
+                await channel.SendFileAsync(fileName);
+            }
+        }
+
         public void QueueMessage(string message)
         {
             messageQueue.Enqueue(message);
@@ -78,7 +86,7 @@ namespace DiscordChatBot
                 {
                     var embed = new EmbedBuilder().WithImageUrl($"attachment://{Path.GetFileName(imageFileName)}")
                                                   .Build();
-                    await channel.SendFileAsync(imageFileName, messageToSend, false, embed);
+                    await channel.SendFileAsync(imageFileName, messageToSend, embed: embed);
                 }
             }
         }
