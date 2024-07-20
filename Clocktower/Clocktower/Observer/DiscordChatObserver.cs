@@ -131,23 +131,25 @@ namespace Clocktower.Observer
             StringBuilder sb = new();
 
             sb.AppendLine($"There are {players.Count(player => player.Alive)} players still alive. Our players are...");
-            bool firstPlayer = true;
             foreach (var player in players)
             {
-                if (!firstPlayer)
-                {
-                    sb.Append(", ");
-                }
                 if (player.Alive)
                 {
                     sb.AppendFormattedMarkupText("%p", player);
+                    sb.AppendLine();
                 }
                 else
                 {
-                    sb.AppendFormattedText(" 👻 %p 👻 ", player);   // dead players will not be bolded
-
+                    sb.AppendFormattedText("👻 %p 👻", player);   // dead players will not be bolded
+                    if (player.HasGhostVote)
+                    {
+                        sb.AppendLine(" (ghost vote available)");
+                    }
+                    else
+                    {
+                        sb.AppendLine();
+                    }
                 }
-                firstPlayer = false;
             }
 
             await SendMessage(sb.ToString());
