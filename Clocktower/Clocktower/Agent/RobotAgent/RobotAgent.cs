@@ -270,7 +270,7 @@ namespace Clocktower.Agent.RobotAgent
             }
             else
             {
-                return await clocktowerChat.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you don't want to use this bluff right now, or ALWAYS PASS if you never want to use this bluff.", Game.Character.Slayer);
+                return await clocktowerChat.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with ALWAYS PASS if you're not planning to bluff as the %c, PASS if you'd like the option to bluff a shot in the future, or the name of a player if you want bluff a shot right now.", Game.Character.Slayer, Game.Character.Slayer);
             }
         }
 
