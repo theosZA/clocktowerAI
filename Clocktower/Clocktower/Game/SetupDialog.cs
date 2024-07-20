@@ -22,12 +22,21 @@
         /// </summary>
         public Character[] Characters { get; private set; }
 
-        public SetupDialog(string scriptFileName, Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
+        public SetupDialog(string? scriptFileName, Random random, IReadOnlyCollection<Alignment?> forcedAlignments, IReadOnlyCollection<Character?> forcedCharacters)
         {
             InitializeComponent();
 
-            ScriptName = Path.GetFileNameWithoutExtension(scriptFileName);
-            Script = ClocktowerScriptReader.ReadScriptFromFile(scriptFileName).ToList();
+            if (scriptFileName == null)
+            {   // If no script name is passed in we use "Whale Bucket", the script that includes all characters.
+                ScriptName = "Whale Bucket";
+                Script = Enum.GetValues<Character>().OrderBy(character => character.ToString()).ToList();
+            }
+            else
+            {
+                ScriptName = Path.GetFileNameWithoutExtension(scriptFileName);
+                Script = ClocktowerScriptReader.ReadScriptFromFile(scriptFileName).ToList();
+            }
+
             Characters = Array.Empty<Character>();
 
             this.Text = ScriptName;

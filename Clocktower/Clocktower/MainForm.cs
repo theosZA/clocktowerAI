@@ -18,11 +18,6 @@ namespace Clocktower
         {
             try
             {
-                var playerConfigsSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
-                var playerConfigs = playerConfigsSection.Players.PlayerConfigs.ToList();
-                var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
-                var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
-
                 var scriptDialog = new OpenFileDialog
                 {
                     Title = "Choose script",
@@ -30,34 +25,54 @@ namespace Clocktower
                     InitialDirectory = Path.Combine(Application.StartupPath, "Scripts")
                 };
                 var dialogChoice = scriptDialog.ShowDialog();
-                if (dialogChoice != DialogResult.OK)
+                if (dialogChoice == DialogResult.OK)
                 {
-                    return;
+                    await SetupAndRunGame(scriptDialog.FileName);
                 }
-                var scriptFileName = scriptDialog.FileName;
-
-                var setupDialog = new SetupDialog(scriptFileName, random, forcedAlignments, forcedCharacters);
-                var result = setupDialog.ShowDialog();
-                if (result != DialogResult.OK)
-                {
-                    return;
-                }
-
-                var storyteller = new StorytellerForm(random);
-                var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
-                var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents.ToList(), random);
-                await clocktowerGame.StartGame();
-                while (!clocktowerGame.Finished)
-                {
-                    await clocktowerGame.RunNightAndDay();
-                }
-                await clocktowerGame.AnnounceWinner();
             }
             catch (Exception exception)
             {
                 statusLabel.Text = exception.Message;
                 Debug.WriteLine(exception.ToString());
             }
+        }
+
+        private async void newWhaleBucketToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await SetupAndRunGame(scriptFileName: null);
+            }
+            catch (Exception exception)
+            {
+                statusLabel.Text = exception.Message;
+                Debug.WriteLine(exception.ToString());
+            }
+        }
+
+        private async Task SetupAndRunGame(string? scriptFileName)
+        {
+            var playerConfigsSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
+            var playerConfigs = playerConfigsSection.Players.PlayerConfigs.ToList();
+            var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
+            var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
+
+            var setupDialog = new SetupDialog(scriptFileName, random, forcedAlignments, forcedCharacters);
+            var result = setupDialog.ShowDialog();
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            var storyteller = new StorytellerForm(random);
+            var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
+            var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents.ToList(), random);
+            await clocktowerGame.StartGame();
+            while (!clocktowerGame.Finished)
+            {
+                await clocktowerGame.RunNightAndDay();
+            }
+            await clocktowerGame.AnnounceWinner();
         }
 
         private readonly Random random = new();

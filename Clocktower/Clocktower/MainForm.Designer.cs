@@ -31,6 +31,7 @@
             mainMenu = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
+            newWhaleBucketToolStripMenuItem = new ToolStripMenuItem();
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
             mainMenu.SuspendLayout();
@@ -48,7 +49,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, newWhaleBucketToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -56,9 +57,16 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(180, 22);
+            newToolStripMenuItem.Size = new Size(182, 22);
             newToolStripMenuItem.Text = "&New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            // 
+            // newWhaleBucketToolStripMenuItem
+            // 
+            newWhaleBucketToolStripMenuItem.Name = "newWhaleBucketToolStripMenuItem";
+            newWhaleBucketToolStripMenuItem.Size = new Size(182, 22);
+            newWhaleBucketToolStripMenuItem.Text = "New &Whale Bucket...";
+            newWhaleBucketToolStripMenuItem.Click += newWhaleBucketToolStripMenuItem_Click;
             // 
             // statusStrip
             // 
@@ -98,5 +106,6 @@
         private ToolStripMenuItem newToolStripMenuItem;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
+        private ToolStripMenuItem newWhaleBucketToolStripMenuItem;
     }
 }
