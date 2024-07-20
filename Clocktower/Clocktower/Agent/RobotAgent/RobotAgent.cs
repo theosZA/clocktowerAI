@@ -412,8 +412,8 @@ namespace Clocktower.Agent.RobotAgent
             }
             if (Character.Value.Alignment() == Alignment.Evil)
             {
-                await clocktowerChat.Request("Please provide a list of all players in the game, and for each player list whether they're alive or dead, and the character or characters that you think they're most likely to be (and in brackets how confident " +
-                                             "you are of this opinion). For example: * Zeke - Alive - Slayer (almost certain) or Soldier (unlikely)");
+                await clocktowerChat.Request("Please provide a list of all players in the game, and for each player list whether they're alive or dead and good or evil, and the character or characters that you think they're most likely to be (and in brackets how confident " +
+                                             "you are of this opinion). For example: * Zeke - Alive - Good - Slayer (almost certain) or Soldier (unlikely)");
             }
             else // Alignment is Good
             {
