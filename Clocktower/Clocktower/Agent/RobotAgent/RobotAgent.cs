@@ -1,4 +1,4 @@
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
@@ -83,7 +83,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> GetDefence(Player nominator)
         {
-            return await clocktowerChat.RequestDialogue("You have been nominated by %p. Present the case for your defence. (Respond with just the single word PASS if you don't wish to say anything.)", nominator);
+            return await clocktowerChat.RequestDialogue("You have been nominated by %p. Present the case for your defence.", nominator);
         }
 
         public async Task<string> GetEveningPublicStatement()
@@ -114,12 +114,12 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> GetProsecution(Player nominee)
         {
-            return await clocktowerChat.RequestDialogue("You have nominated %p. Present the case to have them executed. (Respond with just the single word PASS if you don't wish to say anything.)", nominee);
+            return await clocktowerChat.RequestDialogue("You have nominated %p. Present the case to have them executed.", nominee);
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
-            return await clocktowerChat.RequestDialogue("You have nominated yourself. You may present your reason now. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("You have nominated yourself. You may present your reason now.");
         }
 
         public async Task<string> GetRollCallStatement()
