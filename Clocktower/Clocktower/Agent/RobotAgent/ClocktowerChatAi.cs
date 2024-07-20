@@ -145,13 +145,13 @@ namespace Clocktower.Agent.RobotAgent
             {
                 return option;
             }
-            // AI failed to pick a valid option - default to PASS.
+            // AI failed to pick a valid option - default to PASS or the first listed option.
             var passOption = options.FirstOrDefault(option => option is PassOption);
             if (passOption != null)
             {
                 return passOption;    
             }
-            throw new Exception($"{playerName} chose \"{choiceAsText}\" but there is no matching option");
+            return options.First();
         }
 
         private static string CleanResponse(string? textFromAi)
