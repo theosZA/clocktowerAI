@@ -46,12 +46,12 @@
 
         public static string TextAfter(this string text, string precedingText)
         {
-            int end = text.IndexOf(precedingText);
-            if (end == -1) 
+            int position = text.IndexOf(precedingText);
+            if (position == -1) 
             {
                 return text;
             }
-            return text[(end + 1)..];
+            return text[(position + precedingText.Length)..];
         }
 
         public static bool ContainsWhitespace(this string text)
