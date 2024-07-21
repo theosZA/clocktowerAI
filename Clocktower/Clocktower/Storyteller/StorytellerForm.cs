@@ -285,6 +285,10 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p would like their %c advice.", fisherman, Character.Fisherman, StorytellerView);
             OutputDrunkDisclaimer(fisherman);
             outputText.AppendText("\n");
+            if (AutoAct)
+            {
+                return "I suggest you execute the demon.";
+            }
             return await GetTextResponse();
         }
 
