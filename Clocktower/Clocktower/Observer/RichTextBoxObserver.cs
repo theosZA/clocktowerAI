@@ -56,6 +56,7 @@ namespace Clocktower.Observer
                 outputText.AppendFormattedText($"%p - {(player.Alive ? "ALIVE" : "DEAD")}", player, StorytellerView);
                 firstPlayer = false;
             }
+            outputText.AppendText("\n");
             return Task.CompletedTask;
         }
 

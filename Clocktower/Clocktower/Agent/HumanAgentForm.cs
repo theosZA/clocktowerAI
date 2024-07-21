@@ -41,7 +41,7 @@ namespace Clocktower.Agent
 
             SetTitleText();
 
-            outputText.AppendFormattedText("You are the %c. You are %a.", character, alignment);
+            outputText.AppendFormattedText("You are the %c. You are %a.\n", character, alignment);
 
             autoClaim = character;
             if (autoClaim.Value.Alignment() == Alignment.Evil)
@@ -212,7 +212,7 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a character to kill.", Character.Ojo);
+            outputText.AppendFormattedText("As the %c please choose a character to kill...\n", Character.Ojo);
             return await PopulateOptions(options);
         }
 
