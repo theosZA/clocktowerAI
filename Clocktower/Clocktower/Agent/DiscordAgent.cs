@@ -162,6 +162,11 @@ namespace Clocktower.Agent
             return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", Character.Imp);
         }
 
+        public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
+        {
+            return await prompter.RequestChoice(options, "As the %c please choose a _character_ to kill.", Character.Ojo);
+        }
+
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
             return await prompter.RequestChoice(options, "As the %c please choose a player to poison.", Character.Poisoner);

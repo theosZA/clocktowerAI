@@ -55,6 +55,29 @@ namespace Clocktower.Options
             return players.Select(player => new SlayerShotOption(player, bluff)).ToList();
         }
 
+        public static IReadOnlyCollection<IOption> ToAllPossibleSubsetsAsOptions(this IEnumerable<Player> players)
+        {
+            return SubsetsOf(players).Select(playerSet => playerSet.ToList())
+                                     .OrderBy(playerList => playerList.Count())
+                                     .Select(playerList => new PlayerListOption(playerList))
+                                     .ToList();
+        }
+
+        private static IEnumerable<IEnumerable<T>> SubsetsOf<T>(IEnumerable<T> source)
+        {
+            if (!source.Any())
+            {
+                return Enumerable.Repeat(Array.Empty<T>(), 1);
+            }
+
+            var element = source.Take(1);
+
+            var haveNots = SubsetsOf(source.Skip(1));
+            var haves = haveNots.Select(set => element.Concat(set));
+
+            return haves.Concat(haveNots);
+        }
+
         private static readonly IReadOnlyCollection<IOption> yesOrNo = new IOption[]
         {
             new NoOption(),

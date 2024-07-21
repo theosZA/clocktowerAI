@@ -26,6 +26,11 @@ namespace ClocktowerScenarioTests.Mocks
             return options.First(option => EqualityComparer<T>.Default.Equals(option.AsType<T>(), valueToMatch));
         }
 
+        public static IOption GetMatchingOptionFromOptionsArg<T>(this CallInfo args, T valueToMatch, int argIndex = 0)
+        {
+            return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option.IsEquivalentTo(valueToMatch));
+        }
+
         public static IOption GetPassOptionFromArg(this CallInfo args, int argIndex = 0)
         {
             return args.ArgAt<IReadOnlyCollection<IOption>>(argIndex).First(option => option is PassOption);

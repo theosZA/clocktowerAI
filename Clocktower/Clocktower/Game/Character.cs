@@ -1,6 +1,6 @@
 ﻿// To add a new character:
 // 1. Add the character to this Character enum.
-// 2. Add the character to a script (in the Scripts folder) for testing.
+// 2. Add the character to a script (in the Scripts folder) for testing. Alternatively it can be tested with the Whale Bucket script.
 // 3. Add the character description to Characters.txt.
 // 4. If relevant, add the character to the night order (NightOrder.txt and/or FirstNightOrder.txt) or day (Day.txt).
 //    a. Create an event for the character's action. Add the implementation of IEvent to the Events folder.
@@ -62,6 +62,7 @@ namespace Clocktower.Game
         Spy,
 
         // Demons
-        Imp = 3000
+        Imp = 3000,
+        Ojo
     }
 }

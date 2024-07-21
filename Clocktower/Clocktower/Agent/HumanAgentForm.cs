@@ -210,6 +210,12 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a character to kill.", Character.Ojo);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c please choose a player to poison...\n", Character.Poisoner);

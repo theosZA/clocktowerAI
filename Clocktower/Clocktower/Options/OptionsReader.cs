@@ -9,6 +9,11 @@ namespace Clocktower.Options
             return ((PlayerOption)option).Player;
         }
 
+        public static IEnumerable<Player> GetPlayers(this IOption option)
+        {
+            return ((PlayerListOption)option).Players;
+        }
+
         public static Player? GetPlayerOptional(this IOption option)
         {
             return option is PlayerOption playerOption ? playerOption.Player : null;

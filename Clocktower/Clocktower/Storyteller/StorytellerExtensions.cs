@@ -15,6 +15,16 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetNewImp(impCandidates.ToOptions())).GetPlayer();
         }
 
+        public static async Task<IEnumerable<Player>> GetOjoVictims(this IStoryteller storyteller, Player ojo, Character targetCharacter, IEnumerable<Player> livingPlayers)
+        {
+            return (await storyteller.GetOjoVictims(ojo, targetCharacter, livingPlayers.ToList().ToAllPossibleSubsetsAsOptions())).GetPlayers();
+        }
+
+        public static async Task<Player> GetOjoVictim(this IStoryteller storyteller, Player ojo, Character targetCharacter, IEnumerable<Player> matchingPlayers)
+        {   // This is the case for when the Ojo picks a character and there are multiple such players with that character currently alive.
+            return (await storyteller.GetOjoVictims(ojo, targetCharacter, matchingPlayers.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> GetDrunk(this IStoryteller storyteller, IEnumerable<Player> drunkCandidates)
         {
             return (await storyteller.GetDrunk(drunkCandidates.ToOptions())).GetPlayer();

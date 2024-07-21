@@ -27,6 +27,11 @@ namespace ClocktowerScenarioTests.Mocks
                 });
         }
 
+        public static void MockOjo(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromOjo(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static void MockAssassin(this IAgent agent, Character? target)
         {
             if (target == null)

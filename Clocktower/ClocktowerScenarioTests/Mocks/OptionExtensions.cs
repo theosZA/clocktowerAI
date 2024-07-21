@@ -5,6 +5,19 @@ namespace ClocktowerScenarioTests.Mocks
 {
     internal static class OptionExtensions
     {
+        public static bool IsEquivalentTo<T>(this IOption option, T value)
+        {
+            var type = typeof(T);
+            if (type == typeof(IReadOnlyCollection<Character>))
+            {
+                var characterSet = value as IReadOnlyCollection<Character> ?? Array.Empty<Character>();
+                var optionCharacterSet = option is PlayerListOption playerListOption ? playerListOption.GetPlayers().Select(player => player.Character) : Enumerable.Repeat(option.AsType<Character>(), 1);
+                var symmetricDifference = characterSet.Except(optionCharacterSet).Union(optionCharacterSet.Except(characterSet));
+                return !symmetricDifference.Any();
+            }
+            return EqualityComparer<T>.Default.Equals(option.AsType<T>(), value);
+        }
+
         public static T AsType<T>(this IOption option)
         {
             var type = typeof(T);

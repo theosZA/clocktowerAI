@@ -80,6 +80,12 @@ namespace ClocktowerScenarioTests.Mocks
             return starPassTargets;
         }
 
+        public static void MockGetOjoVictims(this IStoryteller storyteller, Character expectedTargetCharacter, IReadOnlyCollection<Character> ojoVictims)
+        {
+            storyteller.GetOjoVictims(Arg.Any<Player>(), expectedTargetCharacter, Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(ojoVictims, argIndex: 2);
+        }
+
         public static void MockGetCharacterForUndertaker(this IStoryteller storyteller, Character character)
         {
             storyteller.GetCharacterForUndertaker(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())

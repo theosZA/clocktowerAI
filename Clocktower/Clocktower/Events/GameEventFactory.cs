@@ -72,6 +72,7 @@ namespace Clocktower.Events
 
                 // Demons
                 case "Imp":                         return new ChoiceFromImp(storyteller, grimoire);
+                case "Ojo":                         return new ChoiceFromOjo(storyteller, grimoire, setup.Script);
 
                 default: throw new Exception($"Unknown event name \"{name}\"");
             }

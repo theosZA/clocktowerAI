@@ -92,6 +92,28 @@ namespace Clocktower.Game
             Agent.GainCharacterAbility(newCharacter);
         }
 
+        public bool CanRegisterAs(Character character)
+        {
+            if (RealCharacter == character)
+            {
+                return true;
+            }
+
+            if (CharacterType == character.CharacterType())
+            {
+                return false;
+            }
+
+            return character.CharacterType() switch
+            {
+                CharacterType.Demon => CanRegisterAsDemon,
+                CharacterType.Minion => CanRegisterAsMinion,
+                CharacterType.Outsider => CanRegisterAsOutsider,
+                CharacterType.Townsfolk => CanRegisterAsTownsfolk,
+                _ => false,
+            };
+        }
+
         public bool ShouldRunAbility(Character characterAbility)
         {
             // We should run an ability for a player if they believe they have that ability

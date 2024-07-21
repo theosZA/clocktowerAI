@@ -1,5 +1,4 @@
 ﻿using Clocktower.Agent;
-using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
@@ -50,6 +49,22 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("The %c has star-passed. Choose a minion to become the new %c...\n", Character.Imp, Character.Imp);
 
             return await PopulateOptions(impCandidates);
+        }
+
+        public async Task<IOption> GetOjoVictims(Player ojo, Character targetCharacter, IReadOnlyCollection<IOption> victimOptions)
+        {
+            if (victimOptions.FirstOrDefault() is PlayerOption)
+            {
+                // Case where options are all a single player.
+                outputText.AppendFormattedText("%p has chosen to kill the %c. Choose a matching player to be the %'s victim....\n", ojo, targetCharacter, Character.Ojo, StorytellerView);
+            }
+            else
+            {
+                // Case where options are all subsets of living players.
+                outputText.AppendFormattedText("%p has chosen to kill the %c. Since there is no such player, choose any number of players to die (usually 1 player)...\n", ojo, targetCharacter, StorytellerView);
+            }
+
+            return await PopulateOptions(victimOptions);
         }
 
         public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
@@ -380,6 +395,24 @@ namespace Clocktower.Storyteller
         public void ChoiceFromImp(Player imp, Player target)
         {
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
+        }
+
+        public void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims)
+        {
+            switch (victims.Count)
+            {
+                case 0:
+                    outputText.AppendFormattedText("%p has chosen to kill the %c. No one is killed.\n", ojo, targetCharacter, StorytellerView);
+                    break;
+
+                case 1:
+                    outputText.AppendFormattedText("%p has chosen to kill the %c. %p is the %c's victim.\n", ojo, targetCharacter, victims.ElementAt(0), Character.Ojo, StorytellerView);
+                    break;
+
+                default:
+                    outputText.AppendFormattedText("%p has chosen to kill the %c. %P are the %c's victims.\n", ojo, targetCharacter, victims, Character.Ojo, StorytellerView);
+                    break;
+            }
         }
 
         public void ChoiceFromPoisoner(Player poisoner, Player target)
