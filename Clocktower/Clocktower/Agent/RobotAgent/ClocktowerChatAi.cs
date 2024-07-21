@@ -167,6 +167,9 @@ namespace Clocktower.Agent.RobotAgent
                 return string.Empty;
             }
 
+            // Straighten all speech marks to make it easier for us to determine what the AI considers its actual dialogue.
+            text = text.Replace('“', '"').Replace('”', '"');
+
             // If there's a colon before the second word, it means the player has presumably prepended a speaker name (which may or may not be correct).
             if (text.IndexOf(':') < text.IndexOf(' '))
             {
