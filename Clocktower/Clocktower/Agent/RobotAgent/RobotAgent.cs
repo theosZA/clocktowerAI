@@ -105,11 +105,11 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            if (messagesInCurrentChat == 0)
-            {
-                return await clocktowerChat.RequestChatDialogue("What will you say to %p?", listener);
-            }
-            return await clocktowerChat.RequestChatDialogue("What will you say to %p? (Once you're ready to finish this conversation, you can conclude what you say with \"Goodbye\").", listener);
+            var chatMessage = (messagesInCurrentChat == 0)
+                ? await clocktowerChat.RequestChatDialogue("What will you say to %p?", listener)
+                : await clocktowerChat.RequestChatDialogue("What will you say to %p? (Once you're ready to finish this conversation, you can conclude what you say with \"Goodbye\").", listener);
+            messagesInCurrentChat++;
+            return chatMessage;
         }
 
         public async Task<string> GetProsecution(Player nominee)
