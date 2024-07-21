@@ -80,6 +80,7 @@
             // charactersPanel
             // 
             charactersPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            charactersPanel.AutoScroll = true;
             charactersPanel.ColumnCount = 4;
             charactersPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             charactersPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
