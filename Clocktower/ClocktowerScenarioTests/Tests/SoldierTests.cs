@@ -1,4 +1,3 @@
-using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;

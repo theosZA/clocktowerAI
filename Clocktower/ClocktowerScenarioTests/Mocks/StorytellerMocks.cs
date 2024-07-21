@@ -86,6 +86,12 @@ namespace ClocktowerScenarioTests.Mocks
                 .ReturnsMatchingOptionFromOptionsArg(ojoVictims, argIndex: 2);
         }
 
+        public static void MockGetMayorBounce(this IStoryteller storyteller, Character newKill)
+        {
+            storyteller.GetMayorBounce(Arg.Any<Player>(), Arg.Any<Player?>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(newKill, argIndex: 2);
+        }
+
         public static void MockGetCharacterForUndertaker(this IStoryteller storyteller, Character character)
         {
             storyteller.GetCharacterForUndertaker(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())

@@ -29,7 +29,11 @@ namespace Clocktower.Game
 
         public async Task NightKill(Player player, Player? killer)
         {
-            if (player.Character == Character.Mayor && !player.DrunkOrPoisoned && player.Alive && killer?.Character != Character.Assassin)
+            if (player.Character == Character.Mayor
+                && !player.DrunkOrPoisoned 
+                && player.Alive
+                && !(killer?.CharacterType == CharacterType.Demon && player.ProtectedFromDemonKill)
+                && killer?.Character != Character.Assassin)
             {
                 player = await storyteller.GetMayorBounce(player, killer, grimoire.Players);
             }
