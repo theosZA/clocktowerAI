@@ -520,6 +520,29 @@ namespace Clocktower.Storyteller
                 return passOption;
             }
 
+            // For PlayerList options, limit it to just options with a single living non-Demon player.
+            if (options.Any(option => option is PlayerListOption))
+            {
+                var autoPlayerListOptions = options.Where(option =>
+                {
+                    if (option is not PlayerListOption playerListOption)
+                    {
+                        return false;
+                    }
+                    var players = playerListOption.GetPlayers().ToList();
+                    if (players.Count != 1)
+                    {
+                        return false;
+                    }
+                    var player = players[0];
+                    return player.Alive && player.CharacterType != CharacterType.Demon;
+                }).ToList();
+                if (autoPlayerListOptions.Any())
+                {
+                    return autoPlayerListOptions.RandomPick(random);
+                }
+            }
+
             // For now, just pick an option at random.
             // Exclude dead players from our choices.
             var autoOptions = options.Where(option => option is not PassOption)
