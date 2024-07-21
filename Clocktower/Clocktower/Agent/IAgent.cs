@@ -36,7 +36,7 @@ namespace Clocktower.Agent
         Task ResponseForFisherman(string advice);
         Task GainCharacterAbility(Character character);
 
-        Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options);

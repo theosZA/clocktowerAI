@@ -5,9 +5,9 @@ namespace Clocktower.Agent
 {
     internal static class AgentExtensions
     {
-        public static async Task<Player> RequestChoiceFromImp(this IAgent agent, IEnumerable<Player> players)
+        public static async Task<Player> RequestChoiceFromDemon(this IAgent agent, Character demonCharacter, IEnumerable<Player> players)
         {
-            return (await agent.RequestChoiceFromImp(players.ToOptions())).GetPlayer();
+            return (await agent.RequestChoiceFromDemon(demonCharacter, players.ToOptions())).GetPlayer();
         }
 
         public static async Task<Character> RequestChoiceFromOjo(this IAgent agent, IEnumerable<Character> characters)

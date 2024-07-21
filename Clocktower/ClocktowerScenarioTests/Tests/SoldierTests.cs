@@ -11,7 +11,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -31,7 +31,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithCharacters("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
                             .WithDrunk(Character.Soldier)
                             .Build();
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -48,7 +48,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Poisoner,Fisherman,Mayor");
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Soldier);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -66,7 +66,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Sweetheart,Baron,Fisherman,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Soldier);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -83,7 +83,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Philosopher");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Soldier);
-            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Soldier));
+            setup.Agent(Character.Imp).RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Soldier, argIndex: 1));
 
             // Act
             await game.StartGame();
@@ -100,7 +100,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Soldier);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();

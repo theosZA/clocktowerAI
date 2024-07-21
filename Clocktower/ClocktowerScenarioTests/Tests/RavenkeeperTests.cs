@@ -12,7 +12,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
 
             // Act
@@ -31,7 +31,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Assassin,Saint,Ravenkeeper,Soldier,Undertaker,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Assassin).MockAssassin(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
 
@@ -52,7 +52,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Ravenkeeper);
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
 
             // Act
             await game.StartGame();
@@ -69,7 +69,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Recluse,Ravenkeeper,Soldier,Undertaker,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Recluse);
             setup.Storyteller.MockGetCharacterForRavenkeeper(Character.Assassin);
 
@@ -94,7 +94,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithDrunk(Character.Fisherman)
                             .Build();
 
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Fisherman);
 
             // Act
@@ -113,7 +113,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Spy,Saint,Ravenkeeper,Soldier,Undertaker,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Spy);
             setup.Storyteller.MockGetCharacterForRavenkeeper(Character.Butler);
 
@@ -141,7 +141,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithDrunk(Character.Ravenkeeper)
                             .Build();
                             
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
             setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
 
@@ -164,7 +164,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Poisoner,Saint,Ravenkeeper,Soldier,Undertaker,Mayor");
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Ravenkeeper);
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
             setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
 
@@ -188,7 +188,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Sweetheart,Ravenkeeper,Soldier,Undertaker,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Ravenkeeper);
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
             setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
 
@@ -211,7 +211,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Undertaker,Philosopher");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ravenkeeper);
-            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Ravenkeeper));
+            setup.Agent(Character.Imp).RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Ravenkeeper, argIndex: 1));
             setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Imp);
             setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
 
@@ -231,7 +231,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Philosopher,Soldier,Undertaker,Mayor");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ravenkeeper);
-            setup.Agent(Character.Imp).MockImp(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
             var ravenkeeperOptions = setup.Agent(Character.Philosopher).MockRavenkeeperChoice(Character.Mayor);
 
             // Act

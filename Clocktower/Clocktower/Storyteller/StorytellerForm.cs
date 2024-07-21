@@ -396,9 +396,9 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", spy);
         }
 
-        public void ChoiceFromImp(Player imp, Player target)
+        public void ChoiceFromDemon(Player demon, Player target)
         {
-            outputText.AppendFormattedText("%p has chosen to kill %p.\n", imp, target, StorytellerView);
+            outputText.AppendFormattedText("%p has chosen to kill %p.\n", demon, target, StorytellerView);
         }
 
         public void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims)

@@ -12,7 +12,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Saint,Fisherman,Soldier,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             // Act
             await game.StartGame();
@@ -28,7 +28,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Tinker,Fisherman,Soldier,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Godfather).MockGodfather(Character.Fisherman);
             setup.Storyteller.MockShouldKillTinker(shouldKill: true);
 
@@ -47,7 +47,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Recluse,Fisherman,Soldier,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Recluse);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Godfather).MockGodfather(Character.Fisherman);
 
             // Act
@@ -64,7 +64,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Saint,Fisherman,Soldier,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Saint);
 
             // Act
             await game.StartGame();
@@ -82,7 +82,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Poisoner,Recluse,Fisherman,Soldier,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Recluse);
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Godfather);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Godfather).MockGodfather(Character.Fisherman);
 
             // Act
@@ -101,7 +101,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Godfather,Ravenkeeper,Sweetheart,Fisherman,Soldier,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Godfather);
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Godfather).MockGodfather(Character.Fisherman);
 
             // Act

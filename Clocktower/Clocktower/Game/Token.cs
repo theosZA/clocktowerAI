@@ -10,6 +10,7 @@
         UsedOncePerGameAbility = 1000,
         SweetheartDrunk,
         PhilosopherDrunk,
+        NoDashiiPoisoned,
         PoisonedByPoisoner,
         FortuneTellerRedHerring,
         GodfatherKillsTonight,

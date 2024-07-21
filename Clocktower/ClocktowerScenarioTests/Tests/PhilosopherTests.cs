@@ -54,7 +54,7 @@ namespace ClocktowerScenarioTests.Tests
             });
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             await game.RunNightAndDay();
 
@@ -85,7 +85,7 @@ namespace ClocktowerScenarioTests.Tests
             });
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             await game.RunNightAndDay();
 
@@ -114,7 +114,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Empath); // Note that they now think they have the Empath ability but they do not.
             setup.Storyteller.MockGetEmpathNumber(empathNumber: 2); // It would be 1 if they were the real Empath.
             var empathReading = setup.Agent(Character.Philosopher).MockNotifyEmpath();

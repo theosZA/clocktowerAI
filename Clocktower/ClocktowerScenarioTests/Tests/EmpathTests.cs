@@ -123,7 +123,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Empath,Saint,Baron,Soldier,Mayor");
 
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
-            setup.Agents[0].MockImp(Character.Fisherman);
+            setup.Agents[0].MockDemonKill(Character.Fisherman);
 
             // Act
             await game.StartGame();
@@ -141,7 +141,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Empath,Saint,Baron,Soldier,Mayor");
 
             var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
-            setup.Agents[0].MockImp(new[] { Character.Fisherman, Character.Saint });
+            setup.Agents[0].MockDemonKill(new[] { Character.Fisherman, Character.Saint });
 
             // Act
             await game.StartGame();
@@ -220,7 +220,7 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(firstEmpathNumber.Value, Is.EqualTo(0));
 
             // Night 2
-            setup.Agent(Character.Imp).MockImp(Character.Sweetheart);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Empath);
             var secondEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
 

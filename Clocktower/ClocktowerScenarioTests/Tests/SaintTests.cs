@@ -27,7 +27,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Saint);
 
             // Act
             await game.StartGame();
@@ -44,7 +44,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Assassin,Fisherman,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Assassin).MockAssassin(Character.Saint);
 
             // Act
@@ -87,7 +87,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Imp).MockNomination(Character.Saint);
 
             await game.RunNightAndDay();

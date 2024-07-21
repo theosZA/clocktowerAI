@@ -22,7 +22,7 @@ namespace ClocktowerScenarioTests.Tests
 
             // Night 2 & Day 2
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Empath);
-            setup.Agent(Character.Imp).MockImp(Character.Poisoner);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Poisoner);
             var secondEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
 
             await game.RunNightAndDay();
@@ -47,7 +47,7 @@ namespace ClocktowerScenarioTests.Tests
 
             // Night 2 & Day 2
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Empath);
-            setup.Agent(Character.Imp).MockImp(Character.Sweetheart);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Poisoner);
             var secondEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
 

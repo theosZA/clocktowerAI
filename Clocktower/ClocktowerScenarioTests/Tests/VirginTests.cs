@@ -166,7 +166,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Fisherman).MockNomination(Character.Virgin);
 
             await game.RunNightAndDay();

@@ -11,7 +11,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
             setup.Storyteller.MockGetMayorBounce(Character.Fisherman);
 
             // Act
@@ -33,7 +33,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithCharacters("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
                             .WithDrunk(Character.Mayor)
                             .Build();
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
 
             // Act
             await game.StartGame();
@@ -50,7 +50,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Poisoner,Fisherman,Mayor");
             setup.Agent(Character.Poisoner).MockPoisoner(Character.Mayor);
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
 
             // Act
             await game.StartGame();
@@ -68,7 +68,7 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Sweetheart,Baron,Fisherman,Mayor");
             setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Mayor);
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
 
             // Act
             await game.StartGame();
@@ -85,7 +85,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Ravenkeeper,Saint,Baron,Fisherman,Philosopher");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
-            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Mayor));
+            setup.Agent(Character.Imp).RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Mayor, argIndex: 1));
 
             // Act
             await game.StartGame();
@@ -101,7 +101,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
             setup.Storyteller.MockGetMayorBounce(Character.Soldier);
 
             // Act
@@ -120,7 +120,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Monk,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
             setup.Agent(Character.Monk).MockMonkChoice(Character.Mayor);
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
 
             // Act
             await game.StartGame();
@@ -138,7 +138,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Soldier");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
-            setup.Agent(Character.Imp).MockImp(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Mayor);
             setup.Storyteller.MockGetMayorBounce(Character.Fisherman);
 
             // Act

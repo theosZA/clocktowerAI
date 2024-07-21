@@ -204,9 +204,9 @@ namespace Clocktower.Agent
         }
 
 
-        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a player to kill...\n", Character.Imp);
+            outputText.AppendFormattedText("As the %c please choose a player to kill...\n", demonCharacter);
             return await PopulateOptions(options);
         }
 

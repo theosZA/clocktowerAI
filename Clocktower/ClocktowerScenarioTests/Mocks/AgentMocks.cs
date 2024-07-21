@@ -11,19 +11,19 @@ namespace ClocktowerScenarioTests.Mocks
             agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(nominee);
         }
 
-        public static void MockImp(this IAgent agent, Character target)
+        public static void MockDemonKill(this IAgent agent, Character target)
         {
-            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+            agent.RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target, argIndex: 1);
         }
 
-        public static void MockImp(this IAgent agent, IReadOnlyCollection<Character> targets)
+        public static void MockDemonKill(this IAgent agent, IReadOnlyCollection<Character> targets)
         {
             int targetIndex = 0;
-            agent.RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
+            agent.RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>
                 {
                     var target = targets.ElementAt(targetIndex++);
-                    return args.GetOptionForCharacterFromArg(target);
+                    return args.GetOptionForCharacterFromArg(target, argIndex: 1);
                 });
         }
 

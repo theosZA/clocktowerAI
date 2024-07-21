@@ -53,7 +53,7 @@ namespace Clocktower.Storyteller
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
         void ShowGrimoireToSpy(Player spy, Grimoire grimoire);
 
-        void ChoiceFromImp(Player imp, Player target);
+        void ChoiceFromDemon(Player demon, Player target);
         void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims);
         void ChoiceFromPoisoner(Player poisoner, Player target);
         void ChoiceFromAssassin(Player assassin, Player? target);

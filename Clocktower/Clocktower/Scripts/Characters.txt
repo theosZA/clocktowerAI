@@ -36,3 +36,4 @@ Spy: Each night, you see the Grimoire. You might register as good and as a Towns
 // Demons
 Imp: Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.
 Ojo: Each night (except the first night), choose a character: they die. If they are not in play, the Storyteller chooses who dies.
+No Dashii: Each night (except the first night), choose a player: they die. Your 2 Townsfolk neighbors are poisoned.

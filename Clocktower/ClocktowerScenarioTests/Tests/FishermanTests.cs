@@ -42,7 +42,7 @@ namespace ClocktowerScenarioTests.Tests
             setup.Agent(Character.Fisherman).ClearReceivedCalls();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Fisherman).MockFishermanOption(getAdvice: true);
 
             await game.RunNightAndDay();
@@ -65,7 +65,7 @@ namespace ClocktowerScenarioTests.Tests
             setup.Agent(Character.Fisherman).ClearReceivedCalls();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Fisherman);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Fisherman);
 
             await game.RunNightAndDay();
 

@@ -55,12 +55,12 @@ namespace Clocktower.Game
 
         public bool ProtectedFromDemonKill => (Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.HasHealthyToken(Token.ProtectedByMonk);
 
-        public Player(IAgent agent, Character character, Alignment alignment)
+        public Player(Grimoire grimoire, IAgent agent, Character character, Alignment alignment)
         {
             Agent = agent;
             Character = character;
             Alignment = alignment;
-            Tokens = new(this);
+            Tokens = new(grimoire, this);
         }
 
         public void ChangeCharacter(Character newCharacter)

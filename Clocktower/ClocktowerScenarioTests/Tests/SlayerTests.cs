@@ -76,7 +76,7 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(game.Finished, Is.False);
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
 
             await game.RunNightAndDay();
@@ -174,7 +174,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
 
             await game.RunNightAndDay();
@@ -196,7 +196,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Slayer).MockSlayerOption(Character.Recluse);
 
             await game.RunNightAndDay();

@@ -157,9 +157,9 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
-        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", Character.Imp);
+            return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", demonCharacter);
         }
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)

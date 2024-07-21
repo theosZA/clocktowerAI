@@ -35,11 +35,11 @@ namespace ClocktowerScenarioTests.Tests
                 });
 
             // - Tinker should trigger between Imp kill and Ravenkeeper choice.
-            setup.Agent(Character.Imp).RequestChoiceFromImp(Arg.Any<IReadOnlyCollection<IOption>>())
+            setup.Agent(Character.Imp).RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>
                 {
                     shouldKill = true;
-                    return args.GetOptionForCharacterFromArg(Character.Ravenkeeper);
+                    return args.GetOptionForCharacterFromArg(Character.Ravenkeeper, argIndex: 1);
                 });
             setup.Agent(Character.Ravenkeeper).RequestChoiceFromRavenkeeper(Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>
@@ -124,7 +124,7 @@ namespace ClocktowerScenarioTests.Tests
             setup.Storyteller.ClearReceivedCalls();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
 
             await game.RunNightAndDay();
 

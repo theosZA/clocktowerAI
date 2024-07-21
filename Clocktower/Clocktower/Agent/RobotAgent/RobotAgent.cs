@@ -289,9 +289,9 @@ namespace Clocktower.Agent.RobotAgent
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to kill. Respond with the name of a player you wish to kill tonight.", Game.Character.Godfather);
         }
 
-        public async Task<IOption> RequestChoiceFromImp(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to kill. Respond with the name of a player you wish to kill tonight.", Game.Character.Imp);
+            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to kill. Respond with the name of a player you wish to kill tonight.", demonCharacter);
         }
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)

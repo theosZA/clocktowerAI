@@ -4,6 +4,7 @@ Poisoner
 Monk
 // Scarlet Woman - this is their theoretical place in the night order, but they actually become the demon immediately
 Imp
+NoDashii
 Ojo
 Assassin
 Godfather

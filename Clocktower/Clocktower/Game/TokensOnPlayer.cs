@@ -4,18 +4,25 @@
     {
         public Character? Character => tokens.Select(pair => TokenToCharacter(pair.token)).FirstOrDefault(character => character != null);
 
-        public bool DrunkOrPoisoned => tokens.Any(pair => IsDrunkOrPoisonedToken(pair.token) && (pair.player == player || !pair.player.DrunkOrPoisoned));
+        public bool DrunkOrPoisoned => HasDrunkOrPoisonToken() || NoDashiiPoisoned(out _);
 
-        public TokensOnPlayer(Player player)
+        public TokensOnPlayer(Grimoire grimoire, Player player)
         {
+            this.grimoire = grimoire;
             this.player = player;
         }
 
         public override string ToString()
         {
-            return string.Join(", ", tokens.Order()
-                                           .Select(pair => TokenPairToText(pair.token, pair.player))
-                                           .Where(text => !string.IsNullOrEmpty(text)));
+            var allTokens = new List<(Token token, Player player)>(tokens);
+            if (NoDashiiPoisoned(out var noDashii) && noDashii != null)
+            {
+                allTokens.Add((Token.NoDashiiPoisoned, noDashii));
+            }
+
+            return string.Join(", ", allTokens.Order()
+                                              .Select(pair => TokenPairToText(pair.token, pair.player))
+                                              .Where(text => !string.IsNullOrEmpty(text)));
         }
 
         public void Add(Token token, Player assigningPlayer)
@@ -107,6 +114,7 @@
                 Token.UsedOncePerGameAbility => "has used their once-per-game ability",
                 Token.SweetheartDrunk => "Sweetheart drunk",
                 Token.PhilosopherDrunk => "Philosopher drunk",
+                Token.NoDashiiPoisoned => "poisoned by No Dashii",
                 Token.PoisonedByPoisoner => "poisoned by Poisoner",
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",
                 Token.GodfatherKillsTonight => "Godfather kills tonight",
@@ -123,6 +131,73 @@
             };
         }
 
+        private bool HasDrunkOrPoisonToken()
+        {
+            return tokens.Any(pair => IsDrunkOrPoisonedToken(pair.token) && (pair.player == player || !pair.player.DrunkOrPoisoned));
+        }
+
+        private bool NoDashiiPoisoned(out Player? noDashii)
+        {
+            // Are we a Townsfolk neighbour of a No Dashii (ignoring intervening non-Townsfolk)?
+
+            noDashii = null;
+
+            if (player.CharacterType != CharacterType.Townsfolk)
+            {
+                return false;
+            }
+
+            if (player.Character == Game.Character.Soldier && !HasDrunkOrPoisonToken())
+            {
+                return false;
+            }
+
+            if (HasHealthyToken(Token.ProtectedByMonk))
+            {
+                return false;
+            }
+
+            var players = grimoire.Players.ToList();
+            if (!players.Any(player => player.RealCharacter == Game.Character.No_Dashii && !player.DrunkOrPoisoned))
+            {
+                return false;
+            }
+
+            // To determine this we go clockwise and counterclockwise from our seat until we encounter a Townsfolk or a healthy No Dashii.
+            int myIndex = players.IndexOf(player);
+            // Clockwise check.
+            for (int step = 1; step < players.Count; step++)
+            {
+                var clockwisePlayer = players[(myIndex + step) % players.Count];
+                if (clockwisePlayer.CharacterType == CharacterType.Townsfolk)
+                {
+                    break;
+                }
+                if (clockwisePlayer.RealCharacter == Game.Character.No_Dashii && !clockwisePlayer.DrunkOrPoisoned)
+                {
+                    noDashii = clockwisePlayer;
+                    return true;
+                }
+            }
+            // Counterclockwise check.
+            for (int step = 1; step < players.Count; step++)
+            {
+                var counterclockwisePlayer = players[(myIndex + players.Count - step) % players.Count];
+                if (counterclockwisePlayer.CharacterType == CharacterType.Townsfolk)
+                {
+                    break;
+                }
+                if (counterclockwisePlayer.RealCharacter == Game.Character.No_Dashii && !counterclockwisePlayer.DrunkOrPoisoned)
+                {
+                    noDashii = counterclockwisePlayer;
+                    return true;
+                }
+            }
+            // Townsfolk buffer between us and the No Dashii, so not poisoned by the No Dashii.
+            return false;
+        }
+
+        private readonly Grimoire grimoire;
         private readonly Player player;
         private readonly List<(Token token, Player player)> tokens = new();  // Each token together with the player that token belongs to.
     }

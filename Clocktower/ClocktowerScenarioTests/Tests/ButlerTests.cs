@@ -96,7 +96,7 @@ namespace ClocktowerScenarioTests.Tests
             setup.Agent(Character.Butler).ClearReceivedCalls();
 
             // Night 2 & Day 2
-            setup.Agent(Character.Imp).MockImp(Character.Soldier);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Imp).MockNomination(Character.Soldier);
 
             await game.RunNightAndDay();

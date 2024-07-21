@@ -71,7 +71,8 @@ namespace Clocktower.Events
                 case "Spy":                         return new ShowGrimoireToSpy(storyteller, grimoire);
 
                 // Demons
-                case "Imp":                         return new ChoiceFromImp(storyteller, grimoire);
+                case "Imp":                         return new ChoiceFromDemon(Character.Imp, storyteller, grimoire);
+                case "NoDashii":                    return new ChoiceFromDemon(Character.No_Dashii, storyteller, grimoire);
                 case "Ojo":                         return new ChoiceFromOjo(storyteller, grimoire, setup.Script);
 
                 default: throw new Exception($"Unknown event name \"{name}\"");

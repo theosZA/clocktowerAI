@@ -192,7 +192,7 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(firstReading.Value, Is.True);
 
             // Night 2
-            setup.Agent(Character.Imp).MockImp(Character.Sweetheart);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Sweetheart);
             setup.Storyteller.MockGetSweetheartDrunk(Character.Fortune_Teller);
             var secondReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
 
