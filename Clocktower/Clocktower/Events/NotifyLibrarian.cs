@@ -27,7 +27,7 @@ namespace Clocktower.Events
             var options = GetOptions(librarian).ToList();
             if (options.Count > 0)
             {
-                var chosenOption = await storyteller.GetLibrarianPings(librarian, options);
+                var chosenOption = options.Count > 1 ? await storyteller.GetLibrarianPings(librarian, options) : options[0];
                 if (chosenOption is CharacterForTwoPlayersOption pings)
                 {
                     pings.PlayerA.Tokens.Add(Token.LibrarianPing, librarian);
