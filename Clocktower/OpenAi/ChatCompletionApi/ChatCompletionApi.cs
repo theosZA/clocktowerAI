@@ -74,7 +74,7 @@ namespace OpenAi.ChatCompletionApi
 
         private static readonly AsyncRetryPolicy policy = Policy.Handle<HttpRequestException>()
                                                                 .WaitAndRetryAsync(retryCount: 9,
-                                                                                   sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Exponential backoff formula
+                                                                                   sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(5 * Math.Pow(2, retryAttempt))); // Exponential backoff formula
 
         private static readonly JsonSerializerOptions jsonSerializerOptions = new()
         {
