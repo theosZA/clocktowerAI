@@ -7,11 +7,12 @@ namespace Clocktower.Events
 {
     internal class Nominations : IGameEvent
     {
-        public Nominations(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, Random random)
+        public Nominations(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
             this.observers = observers;
+            this.scriptCharacters = scriptCharacters;
             this.random = random;
         }
 
@@ -33,8 +34,8 @@ namespace Clocktower.Events
                 {   // No more nominations.
                     return;
                 }
-                if (await VirginCheck(nomination.Value.nominator, nomination.Value.nominee))
-                {   // Virgin execution occurred. No more nominations.
+                if (await RunNominationTriggersBeforeAnnouncement(nomination.Value.nominator, nomination.Value.nominee))
+                {   // Nomination phase has been ended by a trigger.
                     return;
                 }
                 await HandleNomination(nomination.Value.nominator, nomination.Value.nominee);
@@ -77,6 +78,7 @@ namespace Clocktower.Events
             (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
 
             await observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
+            await RunNominationTriggersOnAnnouncement(nominator, nominee);
             if (nominator == nominee)
             {
                 var statement = await nominator.Agent.GetReasonForSelfNomination();
@@ -150,20 +152,6 @@ namespace Clocktower.Events
             return (votesToTie, votesToPutOnBlock);
         }
 
-        private (int? votesToTie, int votesToPutOnBlock) GetVotesRequiredBase()
-        {
-            if (highestVoteCount.HasValue)
-            {
-                if (grimoire.PlayerToBeExecuted == null)
-                {
-                    return (null, highestVoteCount.Value + 1);
-                }
-                return (highestVoteCount.Value, highestVoteCount.Value + 1);
-            }
-            int minVotesRequired = (grimoire.Players.Count(player => player.Alive) + 1) / 2;
-            return (null, minVotesRequired);
-        }
-
         private async Task<int> RunVote(Player nominator, Player nominee)
         {
             List<Player> votesInFavourOfExecution = new();
@@ -209,6 +197,29 @@ namespace Clocktower.Events
             return grimoire.Players.FirstOrDefault(player => player.Tokens.HasTokenForPlayer(Token.ChosenByButler, butler));
         }
 
+        /// <summary>
+        /// Checks to see if anything should happen when the nominator nominates the nominee.
+        /// This version is for triggers that can conclude the nomination phase immediately and so will use their own appropriate announcement.
+        /// </summary>
+        /// <param name="nominator">The player making the nomination.</param>
+        /// <param name="nominee">The player who is the target of the nomination.</param>
+        /// <returns>True if this concludes the Nominations event. Otherwise false is return and the vote should be run as normal.</returns>
+        private async Task<bool> RunNominationTriggersBeforeAnnouncement(Player nominator, Player nominee)
+        {
+            return await VirginCheck(nominator, nominee);
+        }
+
+        /// <summary>
+        /// Checks to see if anything should happen when the nominator nominates the nominee.
+        /// This version is for triggers that will not stop the running of the voting, such as placing tokens or triggering a Witch's curse.
+        /// </summary>
+        /// <param name="nominator">The player making the nomination.</param>
+        /// <param name="nominee">The player who is the target of the nomination.</param>
+        private async Task RunNominationTriggersOnAnnouncement(Player nominator, Player nominee)
+        {
+            await WitchCheck(nominator);
+        }
+
         private async Task<bool> VirginCheck(Player nominator, Player nominee)
         {
             if (nominee.Character != Character.Virgin || !nominee.Alive || nominee.Tokens.HasToken(Token.UsedOncePerGameAbility))
@@ -237,9 +248,33 @@ namespace Clocktower.Events
             return true;
         }
 
+        private async Task WitchCheck(Player nominator)
+        {
+            if (grimoire.Players.Count(player => player.Alive) <= 3)
+            {   // Witch can't trigger on 3 alive players.
+                return;
+            }
+
+            if (nominator.Tokens.HasHealthyToken(Token.CursedByWitch))
+            {
+                var witch = nominator.Tokens.GetAssigningPlayerForToken(Token.CursedByWitch);
+                await observers.PlayerDies(nominator);
+                await new Kills(storyteller, grimoire).DayKill(nominator, witch);
+            }
+            else if (scriptCharacters.Contains(Character.Witch) && nominator.Character == Character.Tinker && !nominator.DrunkOrPoisoned)
+            {   // The Tinker can die at any time, so doesn't need to actually be cursed by the Witch.
+                if (await storyteller.ShouldKillTinker(nominator))
+                {
+                    await observers.PlayerDies(nominator);
+                    await new Kills(storyteller, grimoire).DayKill(nominator, killer: null);
+                }
+            }
+        }
+
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
         private readonly IGameObserver observers;
+        private readonly IReadOnlyCollection<Character> scriptCharacters;
         private readonly Random random;
 
         private int? highestVoteCount;

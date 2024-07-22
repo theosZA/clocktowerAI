@@ -9,9 +9,7 @@
 //       - Player requests - add a RequestXXX method to AgentExtensions and a matching RequestXXX method to IAgent and implementations.
 //       - Notifications - add a NotifyXXX method to IStoryteller, IAgent and/or IObserver (and implementations) as appropriate.
 //       - Tokens - Add a new entry to the Token enum.
-//                - Most tokens should be removed when the character dies; do that in the Grimoire.RemoveTokensForCharacter() method.
-//                - For tokens that need to be cleared each night, do that in the StartNight event.
-//                - For tokens that need to be shown to the Spy in the Grimoire, add the text description to the TextBuilder.TokenToText() method.
+//                - Check methods in the TokensOnPlayer class for token behaviour, especially when they should be removed and what should be shown to the Spy.
 //    b. Add the event to the GameEventFactory.
 // 5. Some characters will have abilities that can't be run on an event. You will need to add the functionality in the relevant place,
 //    e.g. within the Nominations event if it's an ability based on nominations, or in the Player class if it's a character that can misregister.
@@ -61,6 +59,7 @@ namespace Clocktower.Game
         Scarlet_Woman,
         Baron,
         Spy,
+        Witch,
 
         // Demons
         Imp = 3000,

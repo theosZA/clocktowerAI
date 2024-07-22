@@ -20,6 +20,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromPoisoner(players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromWitch(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromWitch(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player?> RequestChoiceFromAssassin(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromAssassin(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();

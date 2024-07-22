@@ -226,6 +226,12 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a player to curse...\n", Character.Witch);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a player to kill...\n", Character.Assassin);

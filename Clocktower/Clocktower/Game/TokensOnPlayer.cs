@@ -45,6 +45,16 @@
             tokens.RemoveAll(pair => IsTokenThatExpiresAtEndOfNight(pair.token));
         }
 
+        public void ClearTokensOnPlayerDeath(Player playerWhoHasDied)
+        {
+            tokens.RemoveAll(pair => pair.player == playerWhoHasDied && IsTokenThatExpiresOnPlayerDeath(pair.token));
+        }
+
+        public void ClearTokensForPlayer(Player assigningPlayer)
+        {
+            tokens.RemoveAll(pair => pair.player == assigningPlayer);
+        }
+
         public bool HasToken(Token token)
         {
             return tokens.Any(pair => pair.token == token);
@@ -53,6 +63,11 @@
         public bool HasTokenForPlayer(Token token, Player assigningPlayer)
         {
             return tokens.Contains((token, assigningPlayer));
+        }
+
+        public Player GetAssigningPlayerForToken(Token token)
+        {
+            return tokens.FirstOrDefault(pair => pair.token == token).player;
         }
 
         /// <summary>
@@ -84,6 +99,7 @@
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
         {
             return token == Token.PoisonedByPoisoner
+                || token == Token.CursedByWitch
                 || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler
                 || token == Token.AlreadyClaimedSlayer; // We allow players to claim Slayer once each day to allow for Philosopher into Slayer.
@@ -93,6 +109,16 @@
         {
             return token == Token.Executed
                 || token == Token.PhilosopherUsedAbilityTonight;
+        }
+
+        private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
+        {   // These are generally only tokens that have an active effect on the game and so need to be removed immediately to stop them having their effect.
+            return token == Token.PhilosopherDrunk
+                || token == Token.NoDashiiPoisoned
+                || token == Token.PoisonedByPoisoner
+                || token == Token.CursedByWitch
+                || token == Token.ProtectedByMonk
+                || token == Token.ChosenByButler;
         }
 
         private string TokenPairToText(Token token, Player assigningPlayer)
@@ -114,8 +140,9 @@
                 Token.UsedOncePerGameAbility => "has used their once-per-game ability",
                 Token.SweetheartDrunk => "Sweetheart drunk",
                 Token.PhilosopherDrunk => "Philosopher drunk",
-                Token.NoDashiiPoisoned => "poisoned by No Dashii",
-                Token.PoisonedByPoisoner => "poisoned by Poisoner",
+                Token.NoDashiiPoisoned => "poisoned by the No Dashii",
+                Token.PoisonedByPoisoner => "poisoned by the Poisoner",
+                Token.CursedByWitch => "cursed by the Witch",
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",
                 Token.GodfatherKillsTonight => "Godfather kills tonight",
                 Token.ProtectedByMonk => "protected by the Monk",

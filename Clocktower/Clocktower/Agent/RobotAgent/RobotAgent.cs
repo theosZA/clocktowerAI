@@ -318,6 +318,11 @@ namespace Clocktower.Agent.RobotAgent
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to poison. Respond with the name of the player you wish to poison.", Game.Character.Poisoner);
         }
 
+        public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)
+        {
+            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to curse. Respond with the name of the player on whom you wish to use your character ability.", Game.Character.Witch);
+        }
+
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);

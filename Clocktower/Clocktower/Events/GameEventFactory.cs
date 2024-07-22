@@ -35,7 +35,7 @@ namespace Clocktower.Events
                 case "EndNight":                    return new EndNight(grimoire);
 
                 // Day activities
-                case "Nominations":                 return new Nominations(storyteller, grimoire, observers, random);
+                case "Nominations":                 return new Nominations(storyteller, grimoire, observers, setup.Script, random);
                 case "PrivateChats":                return new PrivateChats(storyteller, grimoire, observers, random, dayNumber, setup.PlayerCount);
                 case "MorningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: true);
                 case "EveningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: false);
@@ -68,6 +68,7 @@ namespace Clocktower.Events
                 case "Godfather":                   return new ChoiceFromGodfather(storyteller, grimoire);
                 case "GodfatherInformation":        return new NotifyGodfather(storyteller, grimoire);
                 case "Poisoner":                    return new ChoiceFromPoisoner(storyteller, grimoire);
+                case "Witch":                       return new ChoiceFromWitch(storyteller, grimoire);
                 case "Spy":                         return new ShowGrimoireToSpy(storyteller, grimoire);
 
                 // Demons

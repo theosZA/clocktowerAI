@@ -66,39 +66,18 @@ namespace Clocktower.Game
 
         public void ChangeCharacter(Player player, Character newCharacter)
         {
-            player.Tokens.Remove(Token.UsedOncePerGameAbility);
-            RemoveTokensForCharacter(player.RealCharacter);
+            foreach (var affectedPlayer in players)
+            {
+                affectedPlayer.Tokens.ClearTokensForPlayer(player);
+            }
             player.ChangeCharacter(newCharacter);
         }
 
-        public void RemoveTokensForCharacter(Character character)
+        public void ClearTokensOnPlayerDeath(Player player)
         {
-            // Remove any ongoing effects that character has.
-            switch (character)
+            foreach (var affectedPlayer in players)
             {
-                case Character.Fortune_Teller:
-                    RemoveToken(Token.FortuneTellerRedHerring);
-                    break;
-
-                case Character.Monk:
-                    RemoveToken(Token.ProtectedByMonk);
-                    break;
-
-                case Character.Philosopher:
-                    RemoveToken(Token.PhilosopherDrunk);
-                    break;
-
-                case Character.Sweetheart:
-                    RemoveToken(Token.SweetheartDrunk);
-                    break;
-
-                case Character.Poisoner:
-                    RemoveToken(Token.PoisonedByPoisoner);
-                    break;
-
-                case Character.Butler:
-                    RemoveToken(Token.ChosenByButler);
-                    break;
+                affectedPlayer.Tokens.ClearTokensOnPlayerDeath(player);
             }
         }
 
@@ -157,14 +136,6 @@ namespace Clocktower.Game
                 index = (index + increment) % players.Count;
             }
             return players[index];
-        }
-
-        private void RemoveToken(Token token)
-        {
-            foreach (var player in players)
-            {
-                player.Tokens.Remove(token);
-            }
         }
 
         private readonly List<Player> players;

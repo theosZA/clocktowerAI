@@ -176,6 +176,11 @@ namespace Clocktower.Agent
             return await prompter.RequestChoice(options, "As the %c please choose a player to poison.", Character.Poisoner);
         }
 
+        public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)
+        {
+            return await prompter.RequestChoice(options, "As the %c please choose a player to curse.", Character.Witch);
+        }
+
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
             return await prompter.RequestChoice(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with the name of a player to use the ability, or `PASS` if you want to save your ability for later.", Character.Assassin);

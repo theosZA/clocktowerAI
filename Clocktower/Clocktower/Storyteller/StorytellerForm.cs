@@ -437,6 +437,11 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p has chosen to poison %p.\n", poisoner, target, StorytellerView);
         }
 
+        public void ChoiceFromWitch(Player witch, Player target)
+        {
+            outputText.AppendFormattedText("%p has chosen to curse %p.\n", witch, target, StorytellerView);
+        }
+
         public void ChoiceFromAssassin(Player assassin, Player? target)
         {
             if (target == null)

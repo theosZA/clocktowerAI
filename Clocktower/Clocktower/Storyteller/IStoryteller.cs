@@ -57,6 +57,7 @@ namespace Clocktower.Storyteller
         void ChoiceFromDemon(Player demon, Player target);
         void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims);
         void ChoiceFromPoisoner(Player poisoner, Player target);
+        void ChoiceFromWitch(Player witch, Player target);
         void ChoiceFromAssassin(Player assassin, Player? target);
         void ChoiceFromGodfather(Player godfather, Player target);
         void ChoiceFromMonk(Player monk, Player target);

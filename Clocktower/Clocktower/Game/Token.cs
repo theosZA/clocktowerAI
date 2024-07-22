@@ -12,6 +12,7 @@
         PhilosopherDrunk,
         NoDashiiPoisoned,
         PoisonedByPoisoner,
+        CursedByWitch,
         FortuneTellerRedHerring,
         GodfatherKillsTonight,
         ProtectedByMonk,

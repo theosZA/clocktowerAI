@@ -49,14 +49,14 @@ namespace Clocktower.Game
 
         private async Task HandleDayDeath(Player dyingPlayer, Player? killer)
         {
-            grimoire.RemoveTokensForCharacter(dyingPlayer.RealCharacter);
+            grimoire.ClearTokensOnPlayerDeath(dyingPlayer);
             ProcessDayTriggersForOtherCharacters(dyingPlayer);
             await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
         private async Task HandleNightDeath(Player dyingPlayer, Player? killer)
         {
-            grimoire.RemoveTokensForCharacter(dyingPlayer.RealCharacter);
+            grimoire.ClearTokensOnPlayerDeath(dyingPlayer);
             await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
