@@ -2,6 +2,7 @@
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
+using System.Reactive;
 
 namespace Clocktower.Storyteller
 {
@@ -42,6 +43,13 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the demon, %p...\n", demon, StorytellerView);
 
             return await PopulateOptions(demonBluffOptions);
+        }
+
+        public async Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions)
+        {
+            outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the minion, %p...\n", minion, StorytellerView);
+
+            return await PopulateOptions(minionBluffOptions);
         }
 
         public async Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates)
@@ -304,16 +312,21 @@ namespace Clocktower.Storyteller
             }
         }
 
-        public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             if (fellowMinions.Any())
             {
-                outputText.AppendFormattedText($"%p learns that %p is their demon and that their fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", minion, demon, fellowMinions, StorytellerView);
+                outputText.AppendFormattedText($"%p learns that %p is their demon and that their fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P", minion, demon, fellowMinions, StorytellerView);
             }
             else
             {
-                outputText.AppendFormattedText($"%p learns that %p is their demon.\n", minion, demon, StorytellerView);
+                outputText.AppendFormattedText($"%p learns that %p is their demon", minion, demon, StorytellerView);
             }
+            if (notInPlayCharacters.Any())
+            {
+                outputText.AppendFormattedText(", and that the following characters are not in play: %C", notInPlayCharacters, StorytellerView);
+            }
+            outputText.AppendText(".\n");
         }
 
         public void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)

@@ -37,9 +37,9 @@ namespace ClocktowerScenarioTests.Mocks
             {
                 return (T)(object)option.ToTwoPlayers();
             }
-            if (type == typeof((Character playerA, Character playerB, Character character)))
+            if (type == typeof((Character, Character, Character)))
             {
-                return (T)(object)option.ToCharacterForTwoPlayers();
+                return (T)(object)option.ToThreeCharacters();
             }
             if (type == typeof((Character playerA, Character playerB, Character character)?))
             {
@@ -87,8 +87,13 @@ namespace ClocktowerScenarioTests.Mocks
             return (current.PlayerA.Character, current.PlayerB.Character);
         }
 
-        public static (Character playerA, Character playerB, Character character) ToCharacterForTwoPlayers(this IOption option)
+        public static (Character, Character, Character) ToThreeCharacters(this IOption option)
         {
+            if (option is ThreeCharactersOption threeCharactersOption)
+            {
+                return (threeCharactersOption.CharacterA, threeCharactersOption.CharacterB, threeCharactersOption.CharacterC);
+            }
+
             var current = (CharacterForTwoPlayersOption)option;
             return (current.PlayerA.Character, current.PlayerB.Character, current.Character);
         }

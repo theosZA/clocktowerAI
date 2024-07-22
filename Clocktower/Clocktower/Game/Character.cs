@@ -52,6 +52,7 @@ namespace Clocktower.Game
         Drunk,
         Saint,
         Butler,
+        Snitch,
 
         // Minions
         Godfather = 2000,

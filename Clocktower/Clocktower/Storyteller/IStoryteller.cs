@@ -13,6 +13,7 @@ namespace Clocktower.Storyteller
         void PrivateChatMessage(Player speaker, Player listener, string message);
 
         Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
+        Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions);
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetOjoVictims(Player ojo, Character targetCharacter, IReadOnlyCollection<IOption> victimOptions);
 
@@ -37,7 +38,7 @@ namespace Clocktower.Storyteller
 
         void AssignCharacter(Player player);
 
-        void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions);
+        void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters);
         void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders);

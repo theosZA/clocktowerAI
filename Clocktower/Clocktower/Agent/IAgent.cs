@@ -15,7 +15,7 @@ namespace Clocktower.Agent
         Task AssignCharacter(Character character, Alignment alignment);
         Task YouAreDead();
 
-        Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions);
+        Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters);
         Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         Task NotifyGodfather(IReadOnlyCollection<Character> outsiders);

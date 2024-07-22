@@ -10,6 +10,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetDemonBluffs(demon, availableBluffs.ToThreeCharactersOptions())).GetThreeCharacters();
         }
 
+        public static async Task<IEnumerable<Character>> GetMinionBluffs(this IStoryteller storyteller, Player minion, IReadOnlyCollection<Character> availableBluffs)
+        {
+            return (await storyteller.GetMinionBluffs(minion, availableBluffs.ToThreeCharactersOptions())).GetThreeCharacters();
+        }
+
         public static async Task<Player> GetNewImp(this IStoryteller storyteller, IEnumerable<Player> impCandidates)
         {
             return (await storyteller.GetNewImp(impCandidates.ToOptions())).GetPlayer();

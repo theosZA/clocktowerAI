@@ -26,7 +26,7 @@ namespace Clocktower.Events
                 case "AssignDrunk":                 return new AssignDrunk(storyteller, grimoire);
                 case "FortuneTellerRedHerring":     return new AssignFortuneTellerRedHerring(storyteller, grimoire);
                 case "DemonInformation":            return new DemonInformation(storyteller, grimoire, setup.Script, random);
-                case "MinionInformation":           return new MinionInformation(storyteller, grimoire);
+                case "MinionInformation":           return new MinionInformation(storyteller, grimoire, setup.Script, random);
 
                 // Storyteller announcements / game progression
                 case "StartDay":                    return new StartDay(grimoire, observers, dayNumber);

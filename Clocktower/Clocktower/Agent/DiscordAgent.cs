@@ -50,7 +50,7 @@ namespace Clocktower.Agent
             await observer.SendMessage("You are dead and are now a ghost. You may only vote one more time.");
         }
 
-        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             if (fellowMinions.Any())
             {
@@ -58,7 +58,11 @@ namespace Clocktower.Agent
             }
             else
             {
-                await observer.SendMessage($"As a minion, you learn that %p is your demon.", demon);
+                await observer.SendMessage("As a minion, you learn that %p is your demon.", demon);
+            }
+            if (notInPlayCharacters.Any())
+            {
+                await observer.SendMessage("You also learn that the following characters are not in play: %C.", notInPlayCharacters);
             }
         }
 

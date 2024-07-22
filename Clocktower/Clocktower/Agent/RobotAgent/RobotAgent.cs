@@ -134,7 +134,7 @@ namespace Clocktower.Agent.RobotAgent
                                                         ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
         }
 
-        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             this.demon = demon;
             if (fellowMinions.Any())
@@ -143,7 +143,11 @@ namespace Clocktower.Agent.RobotAgent
             }
             else
             {
-                clocktowerChat.AddFormattedMessage($"As a minion, you learn that %p is your demon.", demon);
+                clocktowerChat.AddFormattedMessage("As a minion, you learn that %p is your demon.", demon);
+            }
+            if (notInPlayCharacters.Any())
+            {
+                clocktowerChat.AddFormattedMessage("You also learn that the following characters are not in play: %C.", notInPlayCharacters);
             }
             return Task.CompletedTask;
         }

@@ -63,7 +63,7 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
-        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions)
+        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             if (fellowMinions.Any())
             {
@@ -71,7 +71,11 @@ namespace Clocktower.Agent
             }
             else
             {
-                outputText.AppendFormattedText($"As a minion, you learn that %p is your demon.\n", demon);
+                outputText.AppendFormattedText("As a minion, you learn that %p is your demon.\n", demon);
+            }
+            if (notInPlayCharacters.Any())
+            {
+                outputText.AppendFormattedText("You also learn that the following characters are not in play: %C.\n", notInPlayCharacters);
             }
 
             return Task.CompletedTask;
