@@ -42,6 +42,7 @@ namespace Clocktower.Game
         Virgin,
         Chef,
         Mayor,
+        Juggler,
 
         // Outsiders
         Tinker = 1000,

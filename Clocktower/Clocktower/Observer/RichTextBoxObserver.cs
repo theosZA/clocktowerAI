@@ -1,5 +1,4 @@
 ﻿using Clocktower.Game;
-using System.Text;
 
 namespace Clocktower.Observer
 {
@@ -152,15 +151,15 @@ namespace Clocktower.Observer
         {
             if (beatsCurrent)
             {
-                outputText.AppendFormattedText("%p received %b votes. That is enough to put them on the block.\n", nominee, voteCount, StorytellerView);
+                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.\n", nominee, voteCount, StorytellerView);
             }
             else if (tiesCurrent)
             {
-                outputText.AppendFormattedText("%p received %b votes which is a tie. No one is on the block.\n", nominee, voteCount, StorytellerView);
+                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.\n", nominee, voteCount, StorytellerView);
             }
             else
             {
-                outputText.AppendFormattedText("%p received %b votes which is not enough.\n", nominee, voteCount, StorytellerView);
+                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.\n", nominee, voteCount, StorytellerView);
             }
 
             return Task.CompletedTask;
@@ -177,6 +176,24 @@ namespace Clocktower.Observer
             {
                 outputText.AppendText("Nothing happens.\n");
             }
+
+            return Task.CompletedTask;
+        }
+
+        public Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles)
+        {
+            outputText.AppendFormattedText("%p claims %c and guesses the following characters: ", juggler, Character.Juggler);
+            bool firstJuggle = true;
+            foreach (var juggle in juggles)
+            {
+                if (!firstJuggle)
+                {
+                    outputText.AppendText(", ");
+                }
+                outputText.AppendFormattedText("%p as the %c", juggle.player, juggle.character);
+                firstJuggle = false;
+            }
+            outputText.AppendText(".\n");
 
             return Task.CompletedTask;
         }

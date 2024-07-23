@@ -60,6 +60,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetEmpathNumber(empath, neighbourA, neighbourB, empathOptions.ToOptions())).GetNumber();
         }
 
+        public static async Task<int> GetJugglerNumber(this IStoryteller storyteller, Player juggler, int realJugglerNumber)
+        {
+            return (await storyteller.GetJugglerNumber(juggler, realJugglerNumber, Enumerable.Range(0, 6).ToOptions())).GetNumber();
+        }
+
         public static async Task<bool> GetFortuneTellerReading(this IStoryteller storyteller, Player fortuneTeller, Player targetA, Player targetB)
         {
             return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;
@@ -98,6 +103,11 @@ namespace Clocktower.Storyteller
         public static async Task<bool> ShouldExecuteWithVirgin(this IStoryteller storyteller, Player virgin, Player nominator)
         {
             return await storyteller.ShouldExecuteWithVirgin(virgin, nominator, OptionsBuilder.YesOrNo) is YesOption;
+        }
+
+        public static async Task<bool> ShouldRegisterForJuggle(this IStoryteller storyteller, Player juggler, Player juggledPlayer, Character juggledCharacter)
+        {
+            return await storyteller.ShouldRegisterForJuggle(juggler, juggledPlayer, juggledCharacter, OptionsBuilder.YesOrNo) is YesOption;
         }
     }
 }

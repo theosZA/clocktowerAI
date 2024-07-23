@@ -61,6 +61,11 @@ namespace Clocktower.Game
             Character = character;
             Alignment = alignment;
             Tokens = new(grimoire, this);
+
+            if (character == Character.Juggler)
+            {
+                Tokens.Add(Token.JugglerBeforeFirstDay, this);
+            }
         }
 
         public void ChangeCharacter(Character newCharacter)
@@ -79,6 +84,11 @@ namespace Clocktower.Game
 
             Character = newCharacter;
             Agent.AssignCharacter(Character, Alignment);
+
+            if (newCharacter == Character.Juggler)
+            {
+                Tokens.Add(Token.JugglerBeforeFirstDay, this);
+            }
         }
 
         public void GainCharacterAbility(Character newCharacter)
@@ -90,6 +100,11 @@ namespace Clocktower.Game
 
             Character = newCharacter;
             Agent.GainCharacterAbility(newCharacter);
+
+            if (newCharacter == Character.Juggler)
+            {
+                Tokens.Add(Token.JugglerBeforeFirstDay, this);
+            }
         }
 
         public bool CanRegisterAs(Character character)

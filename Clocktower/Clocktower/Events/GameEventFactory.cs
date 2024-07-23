@@ -41,6 +41,7 @@ namespace Clocktower.Events
                 case "EveningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: false);
                 case "FinalPublicStatements":       return new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true };
                 case "RollCall":                    return new RollCall(grimoire, observers);
+                case "Shenanigans":                 return new Shenanigans(storyteller, grimoire, observers, setup.Script, random, dayNumber);
 
                 // Townsfolk
                 case "Chef":                        return new NotifyChef(storyteller, grimoire);
@@ -54,10 +55,10 @@ namespace Clocktower.Events
                 case "PhilosopherInformation":      return new NotifyPhilosopherStartKnowing(storyteller, grimoire, setup.Script, random);
                 case "Ravenkeeper":                 return new ChoiceFromRavenkeeper(storyteller, grimoire, setup.Script);
                 case "Shugenja":                    return new NotifyShugenja(storyteller, grimoire);
-                case "Slayer":                      return new SlayerShot(storyteller, grimoire, observers, random);
                 case "Steward":                     return new NotifySteward(storyteller, grimoire);
                 case "Undertaker":                  return new NotifyUndertaker(storyteller, grimoire, setup.Script);
                 case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
+                case "Juggler":                     return new NotifyJuggler(storyteller, grimoire);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, observers, duringDay);

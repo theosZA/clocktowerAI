@@ -2,7 +2,6 @@
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
-using System.Reactive;
 
 namespace Clocktower.Storyteller
 {
@@ -176,6 +175,15 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(empathOptions);
         }
 
+        public async Task<IOption> GetJugglerNumber(Player juggler, int realJugglerNumber, IReadOnlyCollection<IOption> jugglerOptions)
+        {
+            outputText.AppendFormattedText("Choose what number to show to %p. They made %b correct guesses during the day.", juggler, realJugglerNumber, StorytellerView);
+            OutputDrunkDisclaimer(juggler);
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(jugglerOptions);
+        }
+
         public async Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> readingOptions)
         {
             outputText.AppendFormattedText("Choose whether to say 'Yes' or 'No' to %p to indicate whether they've seen a Demon between %p and %p.", fortuneTeller, targetA, targetB, StorytellerView);
@@ -288,6 +296,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldRegisterForJuggle(Player juggler, Player juggledPlayer, Character juggledCharacter, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            outputText.AppendFormattedText("%p has juggled %p as the %c. Should %p register as this character and count as a correct juggle?\n", juggler, juggledPlayer, juggledCharacter, juggledPlayer, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<string> GetFishermanAdvice(Player fisherman)
         {
             outputText.AppendFormattedText("%p would like their %c advice.", fisherman, Character.Fisherman, StorytellerView);
@@ -304,7 +318,7 @@ namespace Clocktower.Storyteller
         {
             if (player.Character != player.RealCharacter)
             {
-                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, player.RealCharacter);
+                outputText.AppendFormattedText("%p believes they are the %c but they are actually the %c.\n", player, player.Character, player.RealCharacter, StorytellerView);
             }
             else
             {
@@ -356,7 +370,7 @@ namespace Clocktower.Storyteller
 
         public void NotifyLibrarianNoOutsiders(Player librarian)
         {
-            outputText.AppendFormattedText("%p learns that there are no outsiders in play.\n", librarian);
+            outputText.AppendFormattedText("%p learns that there are no outsiders in play.\n", librarian, StorytellerView);
         }
 
         public void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character)
@@ -390,12 +404,12 @@ namespace Clocktower.Storyteller
             if (reading)
             {
                 outputText.AppendBoldText("Yes");
-                outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB);
+                outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB, StorytellerView);
             }
             else
             {
                 outputText.AppendBoldText("No");
-                outputText.AppendFormattedText($", neither of %p or %p is the demon.\n", targetA, targetB);
+                outputText.AppendFormattedText($", neither of %p or %p is the demon.\n", targetA, targetB, StorytellerView);
             }
         }
 
@@ -404,9 +418,14 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText($"%p learns that the recently executed %p is the %c.\n", undertaker, executedPlayer, executedCharacter, StorytellerView);
         }
 
+        public void NotifyJuggler(Player juggler, int jugglerCount)
+        {
+            outputText.AppendFormattedText("%p learns that %b of their juggles were correct.\n", juggler, jugglerCount, StorytellerView);
+        }
+
         public void ShowGrimoireToSpy(Player spy, Grimoire grimoire)
         {
-            outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", spy);
+            outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", spy, StorytellerView);
         }
 
         public void ChoiceFromDemon(Player demon, Player target)

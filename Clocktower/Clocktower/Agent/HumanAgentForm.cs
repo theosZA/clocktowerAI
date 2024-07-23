@@ -16,11 +16,11 @@ namespace Clocktower.Agent
             set => autoCheckbox.Checked = value;
         }
 
-        public HumanAgentForm(string playerName, IReadOnlyCollection<Character> script, Random random)
+        public HumanAgentForm(string playerName, IEnumerable<Character> script, Random random)
         {
             InitializeComponent();
 
-            this.script = script;
+            this.script = script.ToList();
             this.random = random;
 
             PlayerName = playerName;
@@ -178,9 +178,15 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task NotifyJuggler(int jugglerCount)
+        {
+            outputText.AppendFormattedText("You learn that %b of your juggles were correct.\n", jugglerCount);
+            return Task.CompletedTask;
+        }
+
         public Task ShowGrimoireToSpy(Grimoire grimoire)
         {
-            outputText.AppendFormattedText($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", Character.Spy);
+            outputText.AppendFormattedText($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}\n", Character.Spy);
             return Task.CompletedTask;
         }
 
@@ -274,16 +280,36 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
-        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
-        {
-            outputText.AppendFormattedText("Do you wish to claim %c and shoot a target player?\n", Character.Slayer);
-            return await PopulateOptions(options);
-        }
-
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("Do you wish to go to the Storyteller for your %c advice?\n", Character.Fisherman);
             return await PopulateOptions(options);
+        }
+
+        public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendText("You have the option now to use or bluff any abilities that are to be publicly used during the day.\n");
+            var choice = await PopulateOptions(options);
+
+            if (choice is JugglerOption jugglerOption)
+            {
+                // We need to populate the juggle.
+                if (AutoAct)
+                {
+                    jugglerOption.AddJuggles(Enumerable.Range(0, 5).Select(_ => (jugglerOption.PossiblePlayers.ToList().RandomPick(random), jugglerOption.ScriptCharacters.ToList().RandomPick(random))));
+                }
+                else
+                {
+                    var juggleDialog = new JuggleDialog(jugglerOption.PossiblePlayers, jugglerOption.ScriptCharacters);
+                    var result = juggleDialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        jugglerOption.AddJuggles(juggleDialog.GetJuggles());
+                    }
+                }
+            }
+
+            return choice;
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
@@ -390,10 +416,6 @@ namespace Clocktower.Agent
             if (AutoAct)
             {
                 var autoChosenOption = AutoChooseOption(options);
-                if (autoChosenOption is SlayerShotOption)
-                {
-                    usedSlayerAbility = true;
-                }
                 outputText.AppendBoldText($">> {autoChosenOption.Name}\n", Color.Green);
                 return Task.FromResult(autoChosenOption);
             }
@@ -423,6 +445,27 @@ namespace Clocktower.Agent
 
         private IOption AutoChooseOption(IReadOnlyCollection<IOption> options)
         {
+            // If Juggle is an option and we are the Juggler, always pick it since we only get one chance.
+            if ((character == Character.Juggler || autoClaim == Character.Juggler) && !usedOncePerGameDayAbility)
+            {
+                var jugglerOption = options.FirstOrDefault(option => option is JugglerOption);
+                if (jugglerOption != null)
+                {
+                    usedOncePerGameDayAbility = true;
+                    return jugglerOption;
+                }
+            }
+            // If Slayer is an option and we are the Slayer, pick it 50% of the time.
+            if ((character == Character.Slayer || autoClaim == Character.Slayer) && !usedOncePerGameDayAbility && random.Next(2) == 1)
+            {
+                var slayerOption = options.FirstOrDefault(option => option is SlayerShotOption);
+                if (slayerOption != null)
+                {
+                    usedOncePerGameDayAbility = true;
+                    return slayerOption;
+                }
+            }
+
             // If Pass is an option, pick it 40% of the time.
             var passOption = options.FirstOrDefault(option => option is PassOption);
             if (passOption != null && random.Next(5) < 2)
@@ -432,11 +475,12 @@ namespace Clocktower.Agent
 
             // For now, just pick an option at random.
             // Exclude dead players and ourself from our choices.
-            // Also exclude Slayer-shot options unless we are the Slayer (or bluffing Slayer) who hasn't used their ability yet.
+            // Also exclude public claims as they are handled above.
             var autoOptions = options.Where(option => option is not PassOption)
                                      .Where(option => option is not PlayerOption playerOption || (playerOption.Player.Alive && playerOption.Player.Name != PlayerName))
                                      .Where(option => option is not VoteOption voteOption || (voteOption.Nominee.Alive && voteOption.Nominee.Name != PlayerName))
-                                     .Where(option => option is not SlayerShotOption || ((character == Character.Slayer || autoClaim == Character.Slayer) && !usedSlayerAbility))
+                                     .Where(option => option is not SlayerShotOption)
+                                     .Where(option => option is not JugglerOption)
                                      .ToList();
             if (autoOptions.Count > 0)
             {
@@ -540,14 +584,14 @@ namespace Clocktower.Agent
             OnText?.Invoke(text);
         }
 
-        private readonly IReadOnlyCollection<Character> script;
+        private readonly List<Character> script;
         private readonly Random random;
 
         private Character? originalCharacter;
         private Character? character;
         private Character? autoClaim;
         private bool alive = true;
-        private bool usedSlayerAbility = false;
+        private bool usedOncePerGameDayAbility = false;
         private bool firstMessageInChat = true;
 
         public delegate void ChoiceEventHandler(IOption choice);

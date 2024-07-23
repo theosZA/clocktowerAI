@@ -2,6 +2,7 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 using DiscordChatBot;
+using System.Text;
 
 namespace Clocktower.Agent
 {
@@ -145,6 +146,11 @@ namespace Clocktower.Agent
             await observer.SendMessage("You learn that %p is the %c.", executedPlayer, character);
         }
 
+        public async Task NotifyJuggler(int jugglerCount)
+        {
+            await observer.SendMessage("You learn that %b of your juggles were correct.", jugglerCount);
+        }
+
         public async Task ShowGrimoireToSpy(Grimoire grimoire)
         {
             await observer.SendMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire, markup: true)}", Character.Spy);
@@ -216,21 +222,37 @@ namespace Clocktower.Agent
             return await prompter.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.", Character.Butler);
         }
 
-        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
-        {
-            if (characterAbility == Character.Slayer)
-            {
-                return await prompter.RequestChoice(options, "Do you wish to claim %c and use your once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or `PASS` if you want to save your ability for later.", Character.Slayer);
-            }
-            else
-            {
-                return await prompter.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or `PASS` if you don't want to use this bluff right now, or `ALWAYS PASS` if you never want to use this bluff.", Character.Slayer);
-            }
-        }
-
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
             return await prompter.RequestChoice(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Character.Fisherman);
+        }
+
+        public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
+        {
+            var sb = new StringBuilder();
+            var objects = new List<object>();
+
+            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day.");
+            if (options.Any(option => option is SlayerShotOption))
+            {
+                sb.AppendLine("- `Slayer: player_name` if you wish to claim %c and target the specified player.");
+                objects.Add(Character.Slayer);
+            }
+            if (options.Any(option => option is JugglerOption))
+            {
+                sb.AppendLine("- `Juggler: player_name as character, player_name as character, ...` with up to 5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated");
+                objects.Add(Character.Juggler);
+            }
+            if (options.Any(option => option is PassOption))
+            {
+                sb.AppendLine("- `PASS` if you don't wish to use or bluff any of these abilities.");
+            }
+            if (options.Any(option => option is AlwaysPassOption))
+            {
+                sb.AppendLine("- `ALWAYS PASS` if you never wish to bluff any of these abilities (though you'll still be prompted if you do have an ability you can use).");
+            }
+
+            return await prompter.RequestChoice(options, sb.ToString(), objects);
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)

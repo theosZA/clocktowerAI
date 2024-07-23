@@ -26,6 +26,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
         Task<IOption> GetChefNumber(Player chef, IEnumerable<Player> playersThatCanMisregister, IReadOnlyCollection<IOption> chefOptions);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
+        Task<IOption> GetJugglerNumber(Player juggler, int realJugglerNumber, IReadOnlyCollection<IOption> jugglerOptions);
         Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
         Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
         Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions);
@@ -34,6 +35,7 @@ namespace Clocktower.Storyteller
         Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldExecuteWithVirgin(Player virgin, Player nominator, IReadOnlyCollection<IOption> yesOrNo);
+        Task<IOption> ShouldRegisterForJuggle(Player juggler, Player juggledPlayer, Character juggledCharacter, IReadOnlyCollection<IOption> yesOrNo);
         Task<string> GetFishermanAdvice(Player fisherman);
 
         void AssignCharacter(Player player);
@@ -52,6 +54,7 @@ namespace Clocktower.Storyteller
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
         void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading);
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
+        void NotifyJuggler(Player juggler, int jugglerCount);
         void ShowGrimoireToSpy(Player spy, Grimoire grimoire);
 
         void ChoiceFromDemon(Player demon, Player target);

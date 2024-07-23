@@ -66,6 +66,24 @@ namespace Clocktower.Observer
             await SendMessage(sb.ToString());
         }
 
+        public async Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedMarkupText("%p claims %c and guesses the following characters: ", juggler, Character.Juggler);
+            bool firstJuggle = true;
+            foreach (var juggle in juggles)
+            {
+                if (!firstJuggle)
+                {
+                    sb.Append(", ");
+                }
+                sb.AppendFormattedMarkupText("%p as the %c", juggle.player, juggle.character);
+                firstJuggle = false;
+            }
+            sb.Append('.');
+            await SendMessage(sb.ToString());
+        }
+
         public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
@@ -91,15 +109,15 @@ namespace Clocktower.Observer
         {
             if (beatsCurrent)
             {
-                await SendMessage("%p received %b votes. That is enough to put them on the block.", nominee, voteCount);
+                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.", nominee, voteCount);
             }
             else if (tiesCurrent)
             {
-                await SendMessage("%p received %b votes which is a tie. No one is on the block.", nominee, voteCount);
+                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.", nominee, voteCount);
             }
             else
             {
-                await SendMessage("%p received %b votes which is not enough.", nominee, voteCount);
+                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.", nominee, voteCount);
             }
         }
 

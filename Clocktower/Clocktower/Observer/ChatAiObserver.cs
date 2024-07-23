@@ -160,15 +160,15 @@ namespace Clocktower.Observer
         {
             if (beatsCurrent)
             {
-                clocktowerChat.AddFormattedMessage("%p received %b votes. That is enough to put them on the block.", nominee, voteCount);
+                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.", nominee, voteCount);
             }
             else if (tiesCurrent)
             {
-                clocktowerChat.AddFormattedMessage("%p received %b votes which is a tie. No one is on the block.", nominee, voteCount);
+                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.", nominee, voteCount);
             }
             else
             {
-                clocktowerChat.AddFormattedMessage("%p received %b votes which is not enough.", nominee, voteCount);
+                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.", nominee, voteCount);
             }
 
             return Task.CompletedTask;
@@ -186,6 +186,26 @@ namespace Clocktower.Observer
             {
                 sb.Append("Nothing happens.");
             }
+            clocktowerChat.AddMessage(sb.ToString());
+
+            return Task.CompletedTask;
+        }
+
+        public Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("%p claims %c and guesses the following characters: ", juggler, Character.Juggler);
+            bool firstJuggle = true;
+            foreach (var juggle in juggles)
+            {
+                if (!firstJuggle)
+                {
+                    sb.Append(", ");
+                }
+                sb.AppendFormattedText("%p as the %c", juggle.player, juggle.character);
+                firstJuggle = false;
+            }
+            sb.Append('.');
             clocktowerChat.AddMessage(sb.ToString());
 
             return Task.CompletedTask;

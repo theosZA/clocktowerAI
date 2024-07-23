@@ -25,6 +25,7 @@ namespace Clocktower.Observer
         Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
 
         Task AnnounceSlayerShot(Player slayer, Player target, bool success);
+        Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles);
 
         Task PublicStatement(Player player, string statement);
         Task PrivateChatStarts(Player playerA, Player playerB);

@@ -2,6 +2,7 @@
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
+using System.Text;
 
 namespace Clocktower.Agent.RobotAgent
 {
@@ -196,6 +197,12 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public Task NotifyJuggler(int jugglerCount)
+        {
+            clocktowerChat.AddFormattedMessage("You learn that %b of your juggles were correct.", jugglerCount);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
@@ -266,16 +273,32 @@ namespace Clocktower.Agent.RobotAgent
             return await clocktowerChat.RequestChoice(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later? Respond with YES or NO only.", Game.Character.Fisherman);
         }
 
-        public async Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
         {
-            if (Character == Game.Character.Slayer)
+            var sb = new StringBuilder();
+            var objects = new List<object>();
+
+            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day.");
+            if (options.Any(option => option is SlayerShotOption))
             {
-                return await clocktowerChat.RequestChoice(options, "Do you wish to claim %c and use your once-per-game ability to shoot a player? Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Game.Character.Slayer);
+                sb.AppendLine("- SLAYER: PLAYER_NAME if you wish to claim %c and target the specified player.");
+                objects.Add(Game.Character.Slayer);
             }
-            else
+            if (options.Any(option => option is JugglerOption))
             {
-                return await clocktowerChat.RequestChoice(options, "Do you wish to bluff as %c and pretend to use the once-per-game ability to shoot a player? Respond with ALWAYS PASS if you're not planning to bluff as the %c, PASS if you'd like the option to bluff a shot in the future, or the name of a player if you want bluff a shot right now.", Game.Character.Slayer, Game.Character.Slayer);
+                sb.AppendLine("- JUGGLER: PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ... with up to 5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated");
+                objects.Add(Game.Character.Juggler);
             }
+            if (options.Any(option => option is PassOption))
+            {
+                sb.AppendLine("- PASS if you don't wish to use or bluff any of these abilities.");
+            }
+            if (options.Any(option => option is AlwaysPassOption))
+            {
+                sb.AppendLine("- ALWAYS PASS if you aren't bluffing any of these characters and so will skip this prompt in the future (unless you do have an ability you can use).");
+            }
+
+            return await clocktowerChat.RequestChoice(options, sb.ToString(), objects);
         }
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)

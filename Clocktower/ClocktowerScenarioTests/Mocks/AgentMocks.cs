@@ -158,7 +158,19 @@ namespace ClocktowerScenarioTests.Mocks
 
         public static void MockSlayerOption(this IAgent agent, Character target)
         {
-            agent.PromptSlayerShot(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
+        public static void MockJugglerOption(this IAgent agent, IEnumerable<(Character player, Character character)> juggles)
+        {
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(0);
+                    var jugglerOption = (JugglerOption)options.First(option => option is JugglerOption);
+                    jugglerOption.AddJuggles(juggles.Select(juggle => (jugglerOption.PossiblePlayers.First(player => player.Character == juggle.player), juggle.character)));
+                    return jugglerOption;
+                });
         }
 
         public static void MockFishermanOption(this IAgent agent, bool getAdvice)

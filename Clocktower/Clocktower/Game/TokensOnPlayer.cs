@@ -43,6 +43,12 @@
         public void ClearTokensForEndOfNight()
         {
             tokens.RemoveAll(pair => IsTokenThatExpiresAtEndOfNight(pair.token));
+
+            if (tokens.Any(pair => pair.token == Token.JugglerBeforeFirstDay))
+            {
+                tokens.RemoveAll(pair => pair.token == Token.JugglerBeforeFirstDay);
+                tokens.Add((Token.JugglerFirstDay, player));
+            }
         }
 
         public void ClearTokensOnPlayerDeath(Player playerWhoHasDied)
@@ -63,6 +69,11 @@
         public bool HasTokenForPlayer(Token token, Player assigningPlayer)
         {
             return tokens.Contains((token, assigningPlayer));
+        }
+
+        public int CountTokensForPlayer(Token token, Player assigningPlayer)
+        {
+            return tokens.Count(pair => pair.token == token && pair.player == assigningPlayer);
         }
 
         public Player GetAssigningPlayerForToken(Token token)
@@ -101,14 +112,14 @@
             return token == Token.PoisonedByPoisoner
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByMonk
-                || token == Token.ChosenByButler
-                || token == Token.AlreadyClaimedSlayer; // We allow players to claim Slayer once each day to allow for Philosopher into Slayer.
+                || token == Token.ChosenByButler;
         }
 
         private static bool IsTokenThatExpiresAtEndOfNight(Token token)
         {
             return token == Token.Executed
-                || token == Token.PhilosopherUsedAbilityTonight;
+                || token == Token.PhilosopherUsedAbilityTonight
+                || token == Token.JuggledCorrectly;
         }
 
         private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
@@ -118,7 +129,9 @@
                 || token == Token.PoisonedByPoisoner
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByMonk
-                || token == Token.ChosenByButler;
+                || token == Token.ChosenByButler
+                || token == Token.JugglerBeforeFirstDay
+                || token == Token.JugglerFirstDay;
         }
 
         private string TokenPairToText(Token token, Player assigningPlayer)
@@ -154,6 +167,7 @@
                 Token.InvestigatorPing => "seen by the Investigator",
                 Token.InvestigatorWrong => "incorrectly seen by the Investigator",
                 Token.StewardPing => "seen by the Steward",
+                Token.JuggledCorrectly => "juggled correctly by the Juggler",
                 _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
             };
         }

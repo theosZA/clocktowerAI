@@ -64,6 +64,20 @@ namespace ClocktowerScenarioTests.Mocks
             return empathNumbers;
         }
 
+        public static List<int> MockGetJugglerNumber(this IStoryteller storyteller, int jugglerNumber)
+        {
+            List<int> jugglerNumbers = new();
+            storyteller.GetJugglerNumber(Arg.Any<Player>(), Arg.Any<int>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(jugglerNumber, jugglerNumbers, argIndex: 2);
+            return jugglerNumbers;
+        }
+
+        public static void MockShouldRegisterForJuggle(this IStoryteller storyteller, Character player, Character asCharacter, bool shouldRegister)
+        {
+            storyteller.ShouldRegisterForJuggle(Arg.Any<Player>(), Arg.Is<Player>(p => p.Character == player), Arg.Is(asCharacter), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsYesNoOptionFromArg(shouldRegister, argIndex: 3);
+        }
+
         public static List<int> MockGetChefNumber(this IStoryteller storyteller, int chefNumber)
         {
             List<int> chefNumbers = new();

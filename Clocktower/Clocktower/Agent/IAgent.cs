@@ -31,6 +31,7 @@ namespace Clocktower.Agent
         Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         Task NotifyRavenkeeper(Player target, Character character);
         Task NotifyUndertaker(Player executedPlayer, Character character);
+        Task NotifyJuggler(int jugglerCount);
 
         Task ShowGrimoireToSpy(Grimoire grimoire);
         Task ResponseForFisherman(string advice);
@@ -48,8 +49,9 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options);
-        Task<IOption> PromptSlayerShot(IReadOnlyCollection<IOption> options);
         Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options);
+
+        Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options);
 
         Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote);

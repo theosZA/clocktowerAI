@@ -50,11 +50,6 @@ namespace Clocktower.Options
                     select new ThreeCharactersOption(characterA, characterB, characterC)).ToList();
         }
 
-        public static IReadOnlyCollection<IOption> ToSlayerShotOptions(this IEnumerable<Player> players, bool bluff)
-        {
-            return players.Select(player => new SlayerShotOption(player, bluff)).ToList();
-        }
-
         public static IReadOnlyCollection<IOption> ToAllPossibleSubsetsAsOptions(this IEnumerable<Player> players)
         {
             return SubsetsOf(players).Select(playerSet => playerSet.ToList())

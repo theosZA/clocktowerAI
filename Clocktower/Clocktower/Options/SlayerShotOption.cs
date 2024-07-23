@@ -8,16 +8,13 @@ namespace Clocktower.Options
     /// </summary>
     internal class SlayerShotOption : IOption
     {
-        public string Name => $"{(bluff ? "Bluff" : "Claim")} {TextUtilities.CharacterToText(Character.Slayer)} and shoot {Target.Name}";
+        public string Name => $"Slayer: {Target.Name}";
 
         public Player Target { get; private set; }
 
-        public SlayerShotOption(Player target, bool bluff)
+        public SlayerShotOption(Player target)
         {
             Target = target;
-            this.bluff = bluff;
         }
-
-        private readonly bool bluff;
     }
 }

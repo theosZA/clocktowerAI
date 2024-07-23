@@ -24,12 +24,14 @@
         InvestigatorPing,
         InvestigatorWrong,
         StewardPing,
+        JuggledCorrectly,
         // Special marker (not actually represented by a token in the real game).
         DiedAtNight = 3000,
         // Not real tokens, just used here for tracking stuff needed for this implementation.
         Executed = 4000,
         PhilosopherUsedAbilityTonight,
-        AlreadyClaimedSlayer,   // once a player has claimed Slayer and taken a shot that day, we no longer allow them to claim a second time (regardless of whether they're the real Slayer or not)
-        NeverBluffingSlayer     // a player may opt out of bluffing Slayer in which case they are never again prompted for a Slayer shot
+        NeverBluffingShenanigans,    // a player may opt out of future "Shenanigans" phases unless they gain an ability which can be used then
+        JugglerBeforeFirstDay,
+        JugglerFirstDay
     }
 }

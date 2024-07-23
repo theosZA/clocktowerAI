@@ -60,17 +60,6 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromButler(players.ToOptions())).GetPlayer();
         }
 
-        public static async Task<(Player? target, bool alwaysPass)> PromptSlayerShot(this IAgent agent, IEnumerable<Player> players, bool bluff)
-        {
-            var options = players.ToSlayerShotOptions(bluff).ToList();
-            options.Insert(0, new PassOption());
-            if (bluff)
-            {
-                options.Insert(0, new AlwaysPassOption());
-            }
-            return (await agent.PromptSlayerShot(options)).GetSlayerTargetOptional();
-        }
-
         public static async Task<bool> PromptFishermanAdvice(this IAgent agent)
         {
             return await agent.PromptFishermanAdvice(OptionsBuilder.YesOrNo) is YesOption;
