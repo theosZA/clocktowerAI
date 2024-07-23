@@ -75,10 +75,30 @@ namespace Clocktower.Events
             playersWhoHaveAlreadyNominated.Add(nominator);
             playersWhoHaveAlreadyBeenNominated.Add(nominee);
 
-            (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
+            await AnnounceNomination(nominator, nominee);
+            await GetPublicStatements(nominator, nominee);
 
-            await observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
+            int voteCount = await RunVote(nominator, nominee);
+
+            await HandleVoteResult(nominee, voteCount);
+        }
+
+        private async Task AnnounceNomination(Player nominator, Player nominee)
+        {
+            if (SecretVoting())
+            {
+                await observers.AnnounceNomination(nominator, nominee, votesToTie: null, votesToPutOnBlock: null);
+            }
+            else
+            {
+                (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
+                await observers.AnnounceNomination(nominator, nominee, votesToTie, votesToPutOnBlock);
+            }
             await RunNominationTriggersOnAnnouncement(nominator, nominee);
+        }
+
+        private async Task GetPublicStatements(Player nominator, Player nominee)
+        {
             if (nominator == nominee)
             {
                 var statement = await nominator.Agent.GetReasonForSelfNomination();
@@ -100,12 +120,22 @@ namespace Clocktower.Events
                     await observers.PublicStatement(nominee, defence);
                 }
             }
+        }
 
-            int voteCount = await RunVote(nominator, nominee);
+        private async Task HandleVoteResult(Player nominee, int voteCount)
+        {
+            (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
             bool beatsCurrent = voteCount >= votesToPutOnBlock;
             bool tiesCurrent = voteCount == votesToTie;
 
-            await observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+            if (SecretVoting())
+            {
+                await storyteller.Observer.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+            }
+            else
+            {
+                await observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+            }
 
             if (tiesCurrent)
             {
@@ -155,13 +185,21 @@ namespace Clocktower.Events
         private async Task<int> RunVote(Player nominator, Player nominee)
         {
             List<Player> votesInFavourOfExecution = new();
+            bool secretVoting = SecretVoting();
 
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {
                 if (player.Alive || player.HasGhostVote)
                 {
                     bool votedToExecute = await GetVote(player, nominee, nominator, votesInFavourOfExecution);
-                    await observers.AnnounceVote(player, nominee, votedToExecute);
+                    if (secretVoting)
+                    {
+                        await storyteller.Observer.AnnounceVote(player, nominee, votedToExecute);
+                    }
+                    else
+                    {
+                        await observers.AnnounceVote(player, nominee, votedToExecute);
+                    }
                     if (votedToExecute)
                     {
                         votesInFavourOfExecution.Add(player);
@@ -171,6 +209,11 @@ namespace Clocktower.Events
                         }
                     }
                 }
+            }
+
+            if (nominee.Character == Character.Organ_Grinder && !nominee.DrunkOrPoisoned && !votesInFavourOfExecution.Contains(nominee))
+            {   // Organ Grinder did not vote for themself. By their character ability this counts as a vote tally of 0.
+                return 0;
             }
 
             return votesInFavourOfExecution.Count;
@@ -269,6 +312,11 @@ namespace Clocktower.Events
                     await new Kills(storyteller, grimoire).DayKill(nominator, killer: null);
                 }
             }
+        }
+
+        private bool SecretVoting()
+        {
+            return grimoire.GetHealthyPlayersWithRealAbility(Character.Organ_Grinder).Any();
         }
 
         private readonly IStoryteller storyteller;

@@ -35,6 +35,7 @@ Scarlet Woman: If there are 5 or more players alive and the Demon dies, you beco
 Baron: There are extra Outsiders in play. [+2 Outsiders]
 Spy: Each night, you see the Grimoire. You might register as good and as a Townsfolk or Outsider, even if dead.
 Witch: Each night, choose a player: if they nominate tomorrow, they die. If just 3 players live, you lose this ability.
+Organ Grinder: All voting is done in secret and the vote tally is not public. Votes for you only count if you vote.
 
 // Demons
 Imp: Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.

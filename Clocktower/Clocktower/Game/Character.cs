@@ -61,6 +61,7 @@ namespace Clocktower.Game
         Baron,
         Spy,
         Witch,
+        Organ_Grinder,
 
         // Demons
         Imp = 3000,
