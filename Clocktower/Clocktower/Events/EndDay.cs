@@ -22,7 +22,7 @@ namespace Clocktower.Events
             }
             else
             {
-                bool playerDies = grimoire.PlayerToBeExecuted.Alive;
+                bool playerDies = await DoesExecutedPlayerDie(grimoire.PlayerToBeExecuted);
                 await observers.PlayerIsExecuted(grimoire.PlayerToBeExecuted, playerDies);
                 if (playerDies)
                 {
@@ -37,7 +37,22 @@ namespace Clocktower.Events
             }
         }
 
-        public void CheckForMayorWin()
+        private async Task<bool> DoesExecutedPlayerDie(Player executedPlayer)
+        {
+            if (!executedPlayer.Alive)
+            {
+                return false;
+            }
+
+            if (executedPlayer.CanRegisterAsGood && grimoire.GetHealthyPlayersWithRealAbility(Character.Pacifist).Any())
+            {
+                return !await storyteller.ShouldSaveWithPacifist(grimoire.GetHealthyPlayersWithRealAbility(Character.Pacifist).First(), executedPlayer);
+            }
+
+            return true;
+        }
+
+        private void CheckForMayorWin()
         {
             if (grimoire.Players.Alive() != 3)
             {

@@ -290,6 +290,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldSaveWithPacifist(Player pacifist, Player executedPlayer, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            outputText.AppendFormattedText("%p is to be executed. Should they be saved from death by %p with the %c ability?\n", executedPlayer, pacifist, Character.Pacifist, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<IOption> ShouldExecuteWithVirgin(Player virgin, Player nominator, IReadOnlyCollection<IOption> yesOrNo)
         {
             outputText.AppendFormattedText("%p has nominated %p. Should %p register as a Townsfolk and be executed?\n", nominator, virgin, nominator, StorytellerView);

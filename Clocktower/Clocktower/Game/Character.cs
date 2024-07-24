@@ -43,6 +43,7 @@ namespace Clocktower.Game
         Chef,
         Mayor,
         Juggler,
+        Pacifist,
 
         // Outsiders
         Tinker = 1000,

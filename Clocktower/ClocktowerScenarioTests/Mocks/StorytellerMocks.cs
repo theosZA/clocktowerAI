@@ -128,6 +128,11 @@ namespace ClocktowerScenarioTests.Mocks
             storyteller.ShouldKillWithSlayer(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldKill, argIndex: 2);
         }
 
+        public static void MockShouldSaveWithPacifist(this IStoryteller storyteller, bool shouldSave)
+        {
+            storyteller.ShouldSaveWithPacifist(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldSave, argIndex: 2);
+        }
+
         public static void MockShouldExecuteWithVirgin(this IStoryteller storyteller, bool shouldExecute)
         {
             storyteller.ShouldExecuteWithVirgin(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldExecute, argIndex: 2);
