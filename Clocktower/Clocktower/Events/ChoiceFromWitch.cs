@@ -16,7 +16,7 @@ namespace Clocktower.Events
         {
             if (grimoire.Players.Count(player => player.Alive) > 3)
             {
-                foreach (var witch in grimoire.GetPlayersWithAbility(Character.Witch))
+                foreach (var witch in grimoire.PlayersForWhomWeShouldRunAbility(Character.Witch))
                 {
                     var target = await witch.Agent.RequestChoiceFromWitch(grimoire.Players);
                     storyteller.ChoiceFromWitch(witch, target);

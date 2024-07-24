@@ -15,7 +15,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var philosopher in grimoire.GetPlayersWithAbility(Character.Philosopher))
+            foreach (var philosopher in grimoire.PlayersForWhomWeShouldRunAbility(Character.Philosopher))
             {
                 var character = await philosopher.Agent.RequestChoiceFromPhilosopher(scriptCharacters.Where(character => character.Alignment() == Alignment.Good 
                                                                                                                       && character != Character.Philosopher

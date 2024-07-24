@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var juggler in grimoire.GetPlayersWithAbility(Character.Juggler).Where(juggler => juggler.Tokens.HasToken(Token.JugglerFirstDay)))
+            foreach (var juggler in grimoire.PlayersForWhomWeShouldRunAbility(Character.Juggler).Where(juggler => juggler.Tokens.HasToken(Token.JugglerFirstDay)))
             {
                 await RunJuggler(juggler);
             }

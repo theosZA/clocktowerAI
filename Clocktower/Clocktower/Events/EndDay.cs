@@ -44,9 +44,9 @@ namespace Clocktower.Events
                 return false;
             }
 
-            if (executedPlayer.CanRegisterAsGood && grimoire.GetHealthyPlayersWithRealAbility(Character.Pacifist).Any())
+            if (executedPlayer.CanRegisterAsGood && grimoire.PlayersWithHealthyAbility(Character.Pacifist).Any())
             {
-                return !await storyteller.ShouldSaveWithPacifist(grimoire.GetHealthyPlayersWithRealAbility(Character.Pacifist).First(), executedPlayer);
+                return !await storyteller.ShouldSaveWithPacifist(grimoire.PlayersWithHealthyAbility(Character.Pacifist).First(), executedPlayer);
             }
 
             return true;
@@ -58,9 +58,7 @@ namespace Clocktower.Events
             {
                 return;
             }
-            var mayors = grimoire.GetPlayersWithAbility(Character.Mayor)
-                                 .Where(mayor => !mayor.DrunkOrPoisoned)
-                                 .ToList();
+            var mayors = grimoire.PlayersWithHealthyAbility(Character.Mayor).ToList();
             // There really shouldn't be more than one player with a Mayor ability here, but just in case
             // we apply the rule that any good mayor win trumps any evil mayor win.
             if (mayors.Any(mayor => mayor.Alignment == Alignment.Good))

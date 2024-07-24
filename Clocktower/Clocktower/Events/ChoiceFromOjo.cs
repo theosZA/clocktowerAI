@@ -15,7 +15,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var ojo in grimoire.GetPlayersWithAbility(Character.Ojo))
+            foreach (var ojo in grimoire.PlayersForWhomWeShouldRunAbility(Character.Ojo))
             {
                 await RunOjo(ojo);
             }

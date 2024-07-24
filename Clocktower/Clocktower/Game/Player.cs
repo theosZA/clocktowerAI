@@ -129,11 +129,36 @@ namespace Clocktower.Game
             };
         }
 
+        /// <summary>
+        /// Does this player really have the specified ability? This will only be if they are neither
+        /// drunk nor poisoned, alive and have not already used it in the case of once-per-game abilities.
+        /// </summary>
+        /// <param name="characterAbility">Character ability to check for.</param>
+        /// <returns>True if the player really has the specified ability.</returns>
+        public bool HasHealthyAbility(Character characterAbility)
+        {
+            if (!ShouldRunAbility(characterAbility))
+            {
+                return false;
+            }
+
+            if (DrunkOrPoisoned)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Should we treat the player like they have the specified ability? This will include not
+        /// only cases where they actually do have the ability, but also cases where they only
+        /// think that they do, like if they are poisoned or drunk.
+        /// </summary>
+        /// <param name="characterAbility">Character ability to check for.</param>
+        /// <returns>True if we should treat the player like they have the ability, whether they really have the ability or not.</returns>
         public bool ShouldRunAbility(Character characterAbility)
         {
-            // We should run an ability for a player if they believe they have that ability
-            // whether they actually have that ability or not.
-
             if (Character != characterAbility)
             {
                 return false;
@@ -149,6 +174,27 @@ namespace Clocktower.Game
                 // The storyteller pretends that they have the ability that they believed that they gained.                 
                 // But they are no longer drunk or poisoned, so we don't pretend they have the ability.
                 return false;
+            }
+
+            // If the ability is a once-per-game ability, then we should only run it if they have not yet used it.
+            switch (characterAbility)
+            {
+                case Character.Fisherman:
+                case Character.Slayer:
+                case Character.Virgin:
+                case Character.Assassin:
+                    if (Tokens.HasToken(Token.UsedOncePerGameAbility))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case Character.Juggler:
+                    if (!Tokens.HasToken(Token.JugglerFirstDay))
+                    {
+                        return false;
+                    }
+                    break;
             }
 
             return true;

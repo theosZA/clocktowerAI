@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var butler in grimoire.GetPlayersWithAbility(Character.Butler))
+            foreach (var butler in grimoire.PlayersForWhomWeShouldRunAbility(Character.Butler))
             {
                 // Note that the Butler's choice still takes effect even if they are drunk or poisoned.
                 // This is because they can't ever be 100% certain that they are drunk or poisoned,

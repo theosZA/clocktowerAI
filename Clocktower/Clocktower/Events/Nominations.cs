@@ -211,7 +211,7 @@ namespace Clocktower.Events
                 }
             }
 
-            if (nominee.Character == Character.Organ_Grinder && !nominee.DrunkOrPoisoned && !votesInFavourOfExecution.Contains(nominee))
+            if (nominee.HasHealthyAbility(Character.Organ_Grinder) && !votesInFavourOfExecution.Contains(nominee))
             {   // Organ Grinder did not vote for themself. By their character ability this counts as a vote tally of 0.
                 return 0;
             }
@@ -221,7 +221,7 @@ namespace Clocktower.Events
 
         private async Task<bool> GetVote(Player voter, Player nominee, Player nominator, IReadOnlyCollection<Player> playersWhoHaveVotedForNomination)
         {
-            if (voter.Character == Character.Butler && voter.Alive)
+            if (voter.ShouldRunAbility(Character.Butler))
             {
                 var master = GetMaster(voter);
                 if (master != null && master != nominator && !playersWhoHaveVotedForNomination.Contains(master))
@@ -265,14 +265,18 @@ namespace Clocktower.Events
 
         private async Task<bool> VirginCheck(Player nominator, Player nominee)
         {
-            if (nominee.Character != Character.Virgin || !nominee.Alive || nominee.Tokens.HasToken(Token.UsedOncePerGameAbility))
+            if (!nominee.ShouldRunAbility(Character.Virgin))
             {
                 return false;
             }
 
             nominee.Tokens.Add(Token.UsedOncePerGameAbility, nominee);
+            if (nominee.DrunkOrPoisoned)
+            {
+                return false;
+            }
             
-            if (nominee.DrunkOrPoisoned || !nominator.CanRegisterAsTownsfolk)
+            if (!nominator.CanRegisterAsTownsfolk)
             {
                 return false;
             }
@@ -304,7 +308,7 @@ namespace Clocktower.Events
                 await observers.PlayerDies(nominator);
                 await new Kills(storyteller, grimoire).DayKill(nominator, witch);
             }
-            else if (scriptCharacters.Contains(Character.Witch) && nominator.Character == Character.Tinker && !nominator.DrunkOrPoisoned)
+            else if (scriptCharacters.Contains(Character.Witch) && nominator.HasHealthyAbility(Character.Tinker))
             {   // The Tinker can die at any time, so doesn't need to actually be cursed by the Witch.
                 if (await storyteller.ShouldKillTinker(nominator))
                 {
@@ -316,7 +320,7 @@ namespace Clocktower.Events
 
         private bool SecretVoting()
         {
-            return grimoire.GetHealthyPlayersWithRealAbility(Character.Organ_Grinder).Any();
+            return grimoire.PlayersWithHealthyAbility(Character.Organ_Grinder).Any();
         }
 
         private readonly IStoryteller storyteller;

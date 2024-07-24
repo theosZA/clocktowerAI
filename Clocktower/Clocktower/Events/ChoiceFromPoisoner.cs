@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var poisoner in grimoire.GetPlayersWithAbility(Character.Poisoner))
+            foreach (var poisoner in grimoire.PlayersForWhomWeShouldRunAbility(Character.Poisoner))
             {
                 var target = await poisoner.Agent.RequestChoiceFromPoisoner(grimoire.Players);
                 storyteller.ChoiceFromPoisoner(poisoner, target);

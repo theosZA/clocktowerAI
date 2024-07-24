@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public Task RunEvent()
         {
-            foreach (var godfather in grimoire.GetPlayersWithAbility(Character.Godfather))
+            foreach (var godfather in grimoire.PlayersForWhomWeShouldRunAbility(Character.Godfather))
             {
                 var outsiders = grimoire.Players.Where(player => player.CharacterType == CharacterType.Outsider)
                                                 .Select(player => player.RealCharacter)

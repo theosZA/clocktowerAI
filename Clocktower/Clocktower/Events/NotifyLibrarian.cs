@@ -16,7 +16,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var librarian in grimoire.GetPlayersWithAbility(Character.Librarian))
+            foreach (var librarian in grimoire.PlayersForWhomWeShouldRunAbility(Character.Librarian))
             {
                 await RunEvent(librarian);
             }

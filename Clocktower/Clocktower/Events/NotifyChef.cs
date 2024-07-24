@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var chef in grimoire.GetPlayersWithAbility(Character.Chef))
+            foreach (var chef in grimoire.PlayersForWhomWeShouldRunAbility(Character.Chef))
             {
                 int chefCount = await GetChefNumber(chef);
                 await chef.Agent.NotifyChef(chefCount);
@@ -28,7 +28,7 @@ namespace Clocktower.Events
                 return await storyteller.GetChefNumber(chef, Array.Empty<Player>(), Enumerable.Range(0, grimoire.Players.Count + 1));
             }
 
-            var possibleChefNumbers = GetPossibleChefNumbers(chef).ToList();
+            var possibleChefNumbers = GetPossibleChefNumbers().ToList();
             if (possibleChefNumbers.Count == 1)
             {
                 return possibleChefNumbers[0];
@@ -37,7 +37,7 @@ namespace Clocktower.Events
             return await storyteller.GetChefNumber(chef, GetPossibleMisregistrations(), possibleChefNumbers);
         }
 
-        private IEnumerable<int> GetPossibleChefNumbers(Player chef)
+        private IEnumerable<int> GetPossibleChefNumbers()
         {
             int minEvilPairs = 0;
             int maxEvilPairs = 0;

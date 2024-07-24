@@ -16,7 +16,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var washerwoman in grimoire.GetPlayersWithAbility(Character.Washerwoman))
+            foreach (var washerwoman in grimoire.PlayersForWhomWeShouldRunAbility(Character.Washerwoman))
             {
                 await RunEvent(washerwoman);
             }

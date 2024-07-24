@@ -15,7 +15,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var demons = grimoire.GetPlayersWithAbility(demonCharacter).ToList();   // Fix the demons first, so that any demons created during this process don't get a kill.
+            var demons = grimoire.PlayersForWhomWeShouldRunAbility(demonCharacter).ToList();   // Fix the demons first, so that any demons created during this process don't get a kill.
             foreach (var demon in demons)
             {
                 var target = await demon.Agent.RequestChoiceFromDemon(demonCharacter, grimoire.Players);

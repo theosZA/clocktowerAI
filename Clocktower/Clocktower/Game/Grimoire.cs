@@ -93,33 +93,33 @@ namespace Clocktower.Game
         /// <summary>
         /// Returns all players that we should treat as having the given ability, whether they actually have that ability or not.
         /// </summary>
-        /// <param name="character">The character ability to filter by.</param>
+        /// <param name="characterAbility">The character ability to filter by.</param>
         /// <returns>A collection of players who we should treat as having the given character ability.</returns>
-        public IEnumerable<Player> GetPlayersWithAbility(Character character)
+        public IEnumerable<Player> PlayersForWhomWeShouldRunAbility(Character characterAbility)
         {
-            return Players.Where(player => player.ShouldRunAbility(character));
-        }
-
-        /// <summary>
-        /// Returns all players that we should treat as having the given ability, whether they actually have that ability or not, that have not
-        /// yet used their ability.
-        /// </summary>
-        /// <param name="character">The character ability to filter by.</param>
-        /// <returns>A collection of players who we should treat as having the given character ability.</returns>
-        public IEnumerable<Player> GetPlayersWithUnusedAbility(Character character)
-        {
-            return Players.Where(player => player.ShouldRunAbility(character) && !player.Tokens.HasToken(Token.UsedOncePerGameAbility));
+            return players.Where(player => player.ShouldRunAbility(characterAbility));
         }
 
         /// <summary>
         /// Returns all players that actually have the given ability. This will exclude drunk or poisoned players, as well as
         /// characters who think they have this ability but do not, e.g. Lunatic and Marionette.
         /// </summary>
-        /// <param name="character">The character ability to filter by.</param>
+        /// <param name="characterAbility">The character ability to filter by.</param>
         /// <returns>A collection of players who actually have the ability.</returns>
-        public IEnumerable<Player> GetHealthyPlayersWithRealAbility(Character character)
+        public IEnumerable<Player> PlayersWithHealthyAbility(Character characterAbility)
         {
-            return Players.Where(player => player.ShouldRunAbility(character) && !player.DrunkOrPoisoned);
+            return players.Where(player => player.HasHealthyAbility(characterAbility));
+        }
+
+        /// <summary>
+        /// Returns the first player that actually has the given ability. This will exclude drunk or poisoned players, as well as
+        /// characters who think they have this ability but do not, e.g. Lunatic and Marionette.
+        /// </summary>
+        /// <param name="characterAbility">The character ability to filter by.</param>
+        /// <returns>One player with the given ability, or null if no players have the ability.</returns>
+        public Player? GetPlayerWithHealthyAbility(Character characterAbility)
+        {
+            return PlayersWithHealthyAbility(characterAbility).FirstOrDefault();
         }
 
         public (Player, Player) GetLivingNeighbours(Player player)

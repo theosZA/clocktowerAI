@@ -21,7 +21,7 @@ namespace Clocktower.Events
         /// </summary>
         public async Task RunEvent()
         {
-            foreach (var tinker in grimoire.GetHealthyPlayersWithRealAbility(Character.Tinker))
+            foreach (var tinker in grimoire.PlayersWithHealthyAbility(Character.Tinker))
             {
                 if (await storyteller.ShouldKillTinker(tinker))
                 {

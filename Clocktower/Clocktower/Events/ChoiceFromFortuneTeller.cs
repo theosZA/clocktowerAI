@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var fortuneTeller in grimoire.GetPlayersWithAbility(Character.Fortune_Teller))
+            foreach (var fortuneTeller in grimoire.PlayersForWhomWeShouldRunAbility(Character.Fortune_Teller))
             {
                 var (targetA, targetB) = await fortuneTeller.Agent.RequestChoiceFromFortuneTeller(grimoire.Players);
                 bool reading = await GetReading(fortuneTeller, targetA, targetB);

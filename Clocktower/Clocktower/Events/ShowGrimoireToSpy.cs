@@ -17,7 +17,7 @@ namespace Clocktower.Events
             // In theory they see a bad Grimoire, but that doesn't seem reasonable to implement.
             // So they just won't get to see the Grimoire.
 
-            foreach (var spy in grimoire.GetHealthyPlayersWithRealAbility(Character.Spy))
+            foreach (var spy in grimoire.PlayersWithHealthyAbility(Character.Spy))
             {
                 await RunEvent(spy);
             }

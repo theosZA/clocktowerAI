@@ -13,7 +13,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var steward in grimoire.GetPlayersWithAbility(Character.Steward))
+            foreach (var steward in grimoire.PlayersForWhomWeShouldRunAbility(Character.Steward))
             {
                 await RunEvent(steward);
             }

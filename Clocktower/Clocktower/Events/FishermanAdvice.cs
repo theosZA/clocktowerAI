@@ -14,7 +14,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var fisherman in grimoire.Players.Where(player => player.ShouldRunAbility(Character.Fisherman) && !player.Tokens.HasToken(Token.UsedOncePerGameAbility)))
+            foreach (var fisherman in grimoire.PlayersForWhomWeShouldRunAbility(Character.Fisherman))
             {
                 if (await fisherman.Agent.PromptFishermanAdvice())
                 {

@@ -27,7 +27,7 @@ namespace Clocktower.Events
 
         private async Task<IReadOnlyCollection<Character>> GetMinionBluffs(Player minion)
         {
-            if (!grimoire.GetHealthyPlayersWithRealAbility(Character.Snitch).Any())
+            if (!grimoire.PlayersWithHealthyAbility(Character.Snitch).Any())
             {
                 return Array.Empty<Character>();
             }

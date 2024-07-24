@@ -65,7 +65,7 @@ namespace Clocktower.Game
             // Godfather
             if (dyingPlayer.CharacterType == CharacterType.Outsider)
             {
-                foreach (var godfather in grimoire.GetPlayersWithAbility(Character.Godfather))
+                foreach (var godfather in grimoire.PlayersForWhomWeShouldRunAbility(Character.Godfather))
                 {
                     godfather.Tokens.Add(Token.GodfatherKillsTonight, dyingPlayer);
                 }
@@ -78,7 +78,7 @@ namespace Clocktower.Game
             bool scarletWomanTriggered = false;
             if (dyingPlayer.CharacterType == CharacterType.Demon && grimoire.Players.Count(player => player.Alive) >= 5)
             {
-                var scarletWoman = grimoire.GetHealthyPlayersWithRealAbility(Character.Scarlet_Woman).FirstOrDefault(); // shouldn't be more than 1 Scarlet Woman
+                var scarletWoman = grimoire.PlayersWithHealthyAbility(Character.Scarlet_Woman).FirstOrDefault(); // shouldn't be more than 1 Scarlet Woman
                 if (scarletWoman != null)
                 {
                     scarletWomanTriggered = true;

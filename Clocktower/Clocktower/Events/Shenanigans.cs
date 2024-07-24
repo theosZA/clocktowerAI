@@ -63,11 +63,11 @@ namespace Clocktower.Events
 
             if (player.Tokens.HasToken(Token.NeverBluffingShenanigans))
             {   // Only include options for legitimate claims.
-                if (player.Character == Character.Slayer && !player.Tokens.HasToken(Token.UsedOncePerGameAbility))
+                if (player.ShouldRunAbility(Character.Slayer))
                 {
                     AddSlayerOptions(options);
                 }
-                if (player.Character == Character.Juggler && player.Tokens.HasToken(Token.JugglerFirstDay))
+                if (player.ShouldRunAbility(Character.Juggler))
                 {
                     AddJugglerOptions(options);
                 }
@@ -133,16 +133,11 @@ namespace Clocktower.Events
         {
             await observers.AnnounceJuggles(juggler, juggles.Juggles);
 
-            if (juggler.Character != Character.Juggler)
+            if (!juggler.ShouldRunAbility(Character.Juggler))
             {
                 return;
             }
             
-            if (!juggler.Tokens.HasToken(Token.JugglerFirstDay))
-            {
-                return;
-            }
-
             foreach (var juggle in juggles.Juggles)
             {
                 if (juggle.player.RealCharacter == juggle.character)
@@ -161,19 +156,11 @@ namespace Clocktower.Events
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)
         {
-            if (target.Character == Character.Tinker && !target.DrunkOrPoisoned)
+            if (target.HasHealthyAbility(Character.Tinker))
             {   // The Tinker can die at any time, so doesn't even need a real Slayer to shoot them.
                 return await storyteller.ShouldKillWithSlayer(purportedSlayer, target);
             }
-            if (purportedSlayer.Character != Character.Slayer)
-            {
-                return false;
-            }
-            if (purportedSlayer.Tokens.HasToken(Token.UsedOncePerGameAbility))
-            {
-                return false;
-            }
-            if (purportedSlayer.DrunkOrPoisoned)
+            if (!purportedSlayer.HasHealthyAbility(Character.Slayer))
             {
                 return false;
             }
