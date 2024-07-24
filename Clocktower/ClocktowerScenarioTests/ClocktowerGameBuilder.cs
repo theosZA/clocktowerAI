@@ -57,7 +57,7 @@ namespace ClocktowerScenarioTests
 
                 // By default the agents won't nominate anyone, but if that is overridden in a test with a nomination, the agents will vote for that nomination.
                 agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetPassOptionFromArg());
-                agent.GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>()).Returns(args => args.GetVoteOptionFromArg());
+                agent.MockVote(voteToExecute: true);
             }
 
             return this;

@@ -353,7 +353,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.", Game.Character.Butler);
+            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Game.Character.Butler);
         }
 
         public Task ResponseForFisherman(string advice)

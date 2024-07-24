@@ -219,7 +219,7 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
-            return await prompter.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if it is their nomination or if they have voted for that nomination.", Character.Butler);
+            return await prompter.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Character.Butler);
         }
 
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)

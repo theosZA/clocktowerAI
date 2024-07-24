@@ -56,11 +56,9 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(masterOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Soldier, Character.Ravenkeeper, Character.Baron, Character.Fisherman, Character.Mayor }));  // excludes Butler
-            await setup.Agent(Character.Butler).Received().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
+            await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>());
         }
 
-        // This is the most dubious case as it runs counter to how the Butler is run in a real game of Blood on the Clocktower.
-        // I've chosen to allow the Butler vote in this case to keep the text of the adjusted Butler ability to a reasonable length, and thus simpler to understand.
         [Test]
         public async Task Butler_MasterHasNominatedButVotedAgainstExecution()
         {
@@ -76,7 +74,7 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(masterOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Soldier, Character.Ravenkeeper, Character.Baron, Character.Fisherman, Character.Mayor }));  // excludes Butler
-            await setup.Agent(Character.Butler).Received().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
+            await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>());
         }
 
         [Test]
@@ -93,16 +91,15 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
-            setup.Agent(Character.Butler).ClearReceivedCalls();
 
             // Night 2 & Day 2
+            setup.Agent(Character.Butler).ClearReceivedCalls();
             setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Agent(Character.Imp).MockNomination(Character.Soldier);
 
             await game.RunNightAndDay();
 
             await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);    // Butler restriction doesn't turn off if drunked
-            setup.Agent(Character.Butler).ClearReceivedCalls();
         }
 
         [Test]

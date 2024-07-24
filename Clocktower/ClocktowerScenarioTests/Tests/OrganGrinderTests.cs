@@ -135,5 +135,55 @@ namespace ClocktowerScenarioTests.Tests
                 await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), 7, VoteResult.OnTheBlock);
             }
         }
+
+        // Organ Grinder / Butler: If the Organ Grinder is causing secret voting, the Butler may raise their hand to vote but their vote is only counted if their master voted too.
+
+        [Test]
+        public async Task OrganGrinder_Butler_Jinx_MasterVotes()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Butler,Organ_Grinder,Fisherman,Mayor");
+            setup.Agent(Character.Butler).MockButlerChoice(Character.Ravenkeeper);
+            setup.Agent(Character.Soldier).MockNomination(Character.Soldier);
+            setup.Agent(Character.Imp).MockVote(voteToExecute: true);
+            setup.Agent(Character.Soldier).MockVote(voteToExecute: true);
+            setup.Agent(Character.Ravenkeeper).MockVote(voteToExecute: true);
+            setup.Agent(Character.Butler).MockVote(voteToExecute: true);
+            setup.Agent(Character.Organ_Grinder).MockVote(voteToExecute: false);
+            setup.Agent(Character.Fisherman).MockVote(voteToExecute: false);
+            setup.Agent(Character.Mayor).MockVote(voteToExecute: false);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Butler).Received().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
+            await setup.Agent(Character.Soldier).Received().YouAreDead();   // If the Butler's vote hadn't counted, the Soldier wouldn't be executed.
+        }
+
+        [Test]
+        public async Task OrganGrinder_Butler_Jinx_MasterDoesNotVote()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Butler,Organ_Grinder,Fisherman,Mayor");
+            setup.Agent(Character.Butler).MockButlerChoice(Character.Ravenkeeper);
+            setup.Agent(Character.Soldier).MockNomination(Character.Soldier);
+            setup.Agent(Character.Imp).MockVote(voteToExecute: true);
+            setup.Agent(Character.Soldier).MockVote(voteToExecute: true);
+            setup.Agent(Character.Ravenkeeper).MockVote(voteToExecute: false);
+            setup.Agent(Character.Butler).MockVote(voteToExecute: true);
+            setup.Agent(Character.Organ_Grinder).MockVote(voteToExecute: false);
+            setup.Agent(Character.Fisherman).MockVote(voteToExecute: false);
+            setup.Agent(Character.Mayor).MockVote(voteToExecute: true);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Butler).Received().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);
+            await setup.Agent(Character.Soldier).DidNotReceive().YouAreDead();   // Without the Butler's vote counting, the Soldier shouldn't be executed.
+        }
     }
 }

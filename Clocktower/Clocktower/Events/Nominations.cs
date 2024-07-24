@@ -1,4 +1,4 @@
-using Clocktower.Agent;
+﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Storyteller;
@@ -203,7 +203,7 @@ namespace Clocktower.Events
             {
                 if (player.Alive || player.HasGhostVote)
                 {
-                    bool votedToExecute = await GetVote(player, nominee, nominator, votesInFavourOfExecution);
+                    bool votedToExecute = await GetVote(player, nominee, votesInFavourOfExecution, secretVoting);
                     if (secretVoting)
                     {
                         await storyteller.Observer.AnnounceVote(player, nominee, votedToExecute);
@@ -228,16 +228,36 @@ namespace Clocktower.Events
                 return 0;
             }
 
+            if (secretVoting)
+            {
+                // Organ Grinder - Butler jinx: "the Butler may raise their hand to vote but their vote is only counted if their master voted too"
+                // Check for any (healthy) Butlers and see if their vote should be excluded.
+                votesInFavourOfExecution = votesInFavourOfExecution.Where(player =>
+                {
+                    if (!player.HasHealthyAbility(Character.Butler))
+                    {
+                        return true;
+                    }
+
+                    var master = GetMaster(player);
+                    if (master == null)
+                    {
+                        return false;
+                    }
+                    return votesInFavourOfExecution.Contains(master);
+                }).ToList();
+            }
+
             return votesInFavourOfExecution.Count;
         }
 
-        private async Task<bool> GetVote(Player voter, Player nominee, Player nominator, IReadOnlyCollection<Player> playersWhoHaveVotedForNomination)
+        private async Task<bool> GetVote(Player voter, Player nominee, IReadOnlyCollection<Player> playersWhoHaveVotedForNomination, bool secretVoting)
         {
-            if (voter.ShouldRunAbility(Character.Butler))
-            {
+            if (voter.ShouldRunAbility(Character.Butler) && !secretVoting)    
+            {   
                 var master = GetMaster(voter);
-                if (master != null && master != nominator && !playersWhoHaveVotedForNomination.Contains(master))
-                {   // Butler may not vote unless their master nominated or already voted (even if drunk or poisoned).
+                if (master != null && !playersWhoHaveVotedForNomination.Contains(master))
+                {   // Butler may not vote unless their master already voted (even if drunk or poisoned).
                     // Note that this is slightly different to how it would be run in a real game, being a bit more restrictive,
                     // but is the best we can do in the current way of processing the votes.
                     return false;

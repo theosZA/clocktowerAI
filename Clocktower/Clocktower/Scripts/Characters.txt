@@ -25,7 +25,7 @@ Sweetheart: When you die, 1 player is drunk from now on.
 Recluse: You might register as evil and as a Minion or Demon, even if dead.
 Drunk: You do not know you are the Drunk. You think you are a Townsfolk, but your ability malfunctions.
 Saint: If you die by execution, your team loses.
-Butler: Each night, choose a player (not yourself): tomorrow, you may only vote for their nomination or if they have voted for that nomination.
+Butler: Each night, choose a player (not yourself): tomorrow, you may only vote if they have voted for that nomination.
 Snitch: Minions start knowing 3 not-in-play characters.
 
 // Minions

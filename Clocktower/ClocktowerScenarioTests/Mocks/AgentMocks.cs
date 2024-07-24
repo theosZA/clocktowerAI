@@ -11,6 +11,11 @@ namespace ClocktowerScenarioTests.Mocks
             agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(nominee);
         }
 
+        public static void MockVote(this IAgent agent, bool voteToExecute)
+        {
+            agent.GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>()).Returns(args => voteToExecute ? args.GetVoteOptionFromArg() : args.GetPassOptionFromArg());
+        }
+
         public static void MockDemonKill(this IAgent agent, Character target)
         {
             agent.RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target, argIndex: 1);
