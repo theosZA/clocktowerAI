@@ -1,4 +1,5 @@
 using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 
@@ -21,7 +22,7 @@ namespace ClocktowerScenarioTests.Tests
             foreach (var agent in setup.Agents)
             {
                 await agent.Observer.DidNotReceive().AnnounceVote(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<bool>());
-                await agent.Observer.DidNotReceive().AnnounceVoteResult(Arg.Any<Player>(), Arg.Any<int>(), Arg.Any<bool>(), Arg.Any<bool>());
+                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), null, VoteResult.UnknownResult);
             }
         }
 
@@ -43,7 +44,7 @@ namespace ClocktowerScenarioTests.Tests
             foreach (var agent in setup.Agents)
             {
                 await agent.Observer.Received(7).AnnounceVote(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<bool>());
-                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), Arg.Any<int>(), Arg.Any<bool>(), Arg.Any<bool>());
+                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), 7, VoteResult.OnTheBlock);
             }
         }
 
@@ -63,7 +64,7 @@ namespace ClocktowerScenarioTests.Tests
             foreach (var agent in setup.Agents)
             {
                 await agent.Observer.Received(7).AnnounceVote(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<bool>());
-                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), Arg.Any<int>(), Arg.Any<bool>(), Arg.Any<bool>());
+                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), 7, VoteResult.OnTheBlock);
             }
         }
 
@@ -113,6 +114,26 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Organ_Grinder).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task OrganGrinder_WitchCursed()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Organ_Grinder,Ravenkeeper,Saint,Witch,Soldier,Mayor");
+            setup.Agent(Character.Witch).MockWitch(Character.Organ_Grinder);
+            setup.Agent(Character.Organ_Grinder).MockNomination(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            foreach (var agent in setup.Agents)
+            {
+                await agent.Observer.Received(7).AnnounceVote(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<bool>());
+                await agent.Observer.Received(1).AnnounceVoteResult(Arg.Any<Player>(), 7, VoteResult.OnTheBlock);
+            }
         }
     }
 }

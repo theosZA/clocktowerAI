@@ -21,8 +21,9 @@ namespace Clocktower.Observer
 
         Task StartNominations(int numberOfLivingPlayers, int votesToPutOnBlock);
         Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock);
+        Task AnnounceSecretVote(Player nominee);
         Task AnnounceVote(Player voter, Player nominee, bool votedToExecute);
-        Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent);
+        Task AnnounceVoteResult(Player nominee, int? voteCount, VoteResult voteResult);
 
         Task AnnounceSlayerShot(Player slayer, Player target, bool success);
         Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles);

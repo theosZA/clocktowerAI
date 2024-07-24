@@ -51,6 +51,51 @@ namespace Clocktower.Observer
             await SendMessage(sb.ToString());
         }
 
+        public async Task AnnounceSecretVote(Player nominee)
+        {
+            await SendMessage("The vote on %p will be conducted in secret.", nominee);
+        }
+
+        public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
+        {
+            if (votedToExecute)
+            {
+                if (voter.Alive)
+                {
+                    QueueMessage("%p votes to execute %p.", voter, nominee);
+                }
+                else
+                {
+                    QueueMessage("%p uses their ghost vote to execute %p.", voter, nominee);
+                }
+            }
+            else
+            {
+                QueueMessage("%p does not vote.", voter, nominee);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public async Task AnnounceVoteResult(Player nominee, int? voteCount, VoteResult voteResult)
+        {
+            if (!voteCount.HasValue)
+            {
+                await SendMessage("The voting on %p has concluded.", nominee);
+                return;
+            }
+
+            var resultText = voteResult switch
+            {
+                VoteResult.OnTheBlock => ". That is enough to put them on the block",
+                VoteResult.Tied => " which is a tie. No one is on the block",
+                VoteResult.InsufficientVotes => " which is not enough",
+                _ => string.Empty
+            };
+
+            await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}{resultText}.", nominee, voteCount.Value);
+        }
+
         public async Task AnnounceSlayerShot(Player slayer, Player target, bool success)
         {
             var sb = new StringBuilder();
@@ -82,43 +127,6 @@ namespace Clocktower.Observer
             }
             sb.Append('.');
             await SendMessage(sb.ToString());
-        }
-
-        public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
-        {
-            if (votedToExecute)
-            {
-                if (voter.Alive)
-                {
-                    QueueMessage("%p votes to execute %p.", voter, nominee);
-                }
-                else
-                {
-                    QueueMessage("%p uses their ghost vote to execute %p.", voter, nominee);
-                }
-            }
-            else
-            {
-                QueueMessage("%p does not vote.", voter, nominee);
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public async Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
-        {
-            if (beatsCurrent)
-            {
-                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.", nominee, voteCount);
-            }
-            else if (tiesCurrent)
-            {
-                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.", nominee, voteCount);
-            }
-            else
-            {
-                await SendMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.", nominee, voteCount);
-            }
         }
 
         public async Task AnnounceWinner(Alignment winner, IReadOnlyCollection<Player> winners, IReadOnlyCollection<Player> losers)

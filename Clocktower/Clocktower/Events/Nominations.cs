@@ -1,4 +1,4 @@
-﻿using Clocktower.Agent;
+using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Storyteller;
@@ -24,7 +24,7 @@ namespace Clocktower.Events
             {
                 // Is it even possible to change the player on the block?
                 var (votesToTie, votesToPutOnBlock) = GetVotesRequired();
-                if (!votesToTie.HasValue && !votesToPutOnBlock.HasValue)
+                if (!votesToTie.HasValue && !votesToPutOnBlock.HasValue && !anyVotesConductedInSecret)
                 {   // Not enough votes available to remove the player on the block or add a new player. End nominations.
                     return;
                 }
@@ -85,7 +85,7 @@ namespace Clocktower.Events
 
         private async Task AnnounceNomination(Player nominator, Player nominee)
         {
-            if (SecretVoting())
+            if (anyVotesConductedInSecret)
             {
                 await observers.AnnounceNomination(nominator, nominee, votesToTie: null, votesToPutOnBlock: null);
             }
@@ -125,23 +125,30 @@ namespace Clocktower.Events
         private async Task HandleVoteResult(Player nominee, int voteCount)
         {
             (int? votesToTie, int? votesToPutOnBlock) = GetVotesRequired();
-            bool beatsCurrent = voteCount >= votesToPutOnBlock;
-            bool tiesCurrent = voteCount == votesToTie;
+            var voteResult = voteCount >= votesToPutOnBlock ? VoteResult.OnTheBlock
+                                  : voteCount == votesToTie ? VoteResult.Tied
+                                                            : VoteResult.InsufficientVotes;
 
             if (SecretVoting())
             {
-                await storyteller.Observer.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+                anyVotesConductedInSecret = true;
+                await observers.AnnounceVoteResult(nominee, voteCount: null, VoteResult.UnknownResult);
+            }
+            else if (anyVotesConductedInSecret)
+            {   // This is the case when an Organ Grinder has died. This vote was public, but the players don't know
+                // if this vote changed anything.
+                await observers.AnnounceVoteResult(nominee, voteCount, VoteResult.UnknownResult);
             }
             else
             {
-                await observers.AnnounceVoteResult(nominee, voteCount, beatsCurrent, tiesCurrent);
+                await observers.AnnounceVoteResult(nominee, voteCount, voteResult);
             }
 
-            if (tiesCurrent)
+            if (voteResult == VoteResult.Tied)
             {
                 grimoire.PlayerToBeExecuted = null;
             }
-            else if (beatsCurrent)
+            else if (voteResult == VoteResult.OnTheBlock)
             {
                 grimoire.PlayerToBeExecuted = nominee;
                 highestVoteCount = voteCount;
@@ -186,6 +193,11 @@ namespace Clocktower.Events
         {
             List<Player> votesInFavourOfExecution = new();
             bool secretVoting = SecretVoting();
+
+            if (secretVoting)
+            {
+                await observers.AnnounceSecretVote(nominee);
+            }
 
             foreach (var player in grimoire.GetAllPlayersEndingWithPlayer(nominee))
             {
@@ -330,6 +342,7 @@ namespace Clocktower.Events
         private readonly Random random;
 
         private int? highestVoteCount;
+        private bool anyVotesConductedInSecret = false;
 
         private readonly List<Player> playersWhoHaveAlreadyNominated = new();
         private readonly List<Player> playersWhoHaveAlreadyBeenNominated = new();

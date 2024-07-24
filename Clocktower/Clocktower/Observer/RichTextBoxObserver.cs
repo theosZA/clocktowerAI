@@ -126,6 +126,12 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
+        public Task AnnounceSecretVote(Player nominee)
+        {
+            outputText.AppendFormattedText("The vote on %p will be conducted in secret.\n", nominee, StorytellerView);
+            return Task.CompletedTask;
+        }
+
         public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
@@ -147,21 +153,23 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        public Task AnnounceVoteResult(Player nominee, int? voteCount, VoteResult voteResult)
         {
-            if (beatsCurrent)
+            if (!voteCount.HasValue)
             {
-                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.\n", nominee, voteCount, StorytellerView);
-            }
-            else if (tiesCurrent)
-            {
-                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.\n", nominee, voteCount, StorytellerView);
-            }
-            else
-            {
-                outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.\n", nominee, voteCount, StorytellerView);
+                outputText.AppendFormattedText("The voting on %p has concluded.\n", nominee, StorytellerView);
+                return Task.CompletedTask;
             }
 
+            var resultText = voteResult switch
+            {
+                VoteResult.OnTheBlock => ". That is enough to put them on the block",
+                VoteResult.Tied => " which is a tie. No one is on the block",
+                VoteResult.InsufficientVotes => " which is not enough",
+                _ => string.Empty
+            };
+
+            outputText.AppendFormattedText($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}{resultText}.\n", nominee, voteCount.Value, StorytellerView);
             return Task.CompletedTask;
         }
 

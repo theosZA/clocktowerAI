@@ -135,6 +135,12 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
+        public Task AnnounceSecretVote(Player nominee)
+        {
+            clocktowerChat.AddFormattedMessage("The vote on %p will be conducted in secret.", nominee);
+            return Task.CompletedTask;
+        }
+
         public Task AnnounceVote(Player voter, Player nominee, bool votedToExecute)
         {
             if (votedToExecute)
@@ -156,21 +162,23 @@ namespace Clocktower.Observer
             return Task.CompletedTask;
         }
 
-        public Task AnnounceVoteResult(Player nominee, int voteCount, bool beatsCurrent, bool tiesCurrent)
+        public Task AnnounceVoteResult(Player nominee, int? voteCount, VoteResult voteResult)
         {
-            if (beatsCurrent)
+            if (!voteCount.HasValue)
             {
-                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}. That is enough to put them on the block.", nominee, voteCount);
-            }
-            else if (tiesCurrent)
-            {
-                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is a tie. No one is on the block.", nominee, voteCount);
-            }
-            else
-            {
-                clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")} which is not enough.", nominee, voteCount);
+                clocktowerChat.AddFormattedMessage("The voting on %p has concluded.", nominee);
+                return Task.CompletedTask;
             }
 
+            var resultText = voteResult switch
+            {
+                VoteResult.OnTheBlock => ". That is enough to put them on the block",
+                VoteResult.Tied => " which is a tie. No one is on the block",
+                VoteResult.InsufficientVotes => " which is not enough",
+                _ => string.Empty
+            };
+
+            clocktowerChat.AddFormattedMessage($"%p received %b vote{(voteCount == 1 ? string.Empty : "s")}{resultText}.", nominee, voteCount.Value);
             return Task.CompletedTask;
         }
 
