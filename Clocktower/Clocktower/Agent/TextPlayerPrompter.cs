@@ -31,6 +31,14 @@ namespace Clocktower.Agent
             return (dialogue, endChat);
         }
 
+        public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string prompt, params object[] objects)
+        {
+            // This is for a case where there is a variety of different options and we are going to try our best to figure out which one the AI is trying to choose.
+
+            var choiceAsText = await Request(prompt, objects);
+            return TextParser.ReadShenaniganOptionFromText(choiceAsText, options);
+        }
+
         public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string prompt, params object[] objects)
         {
             // Note that the prompt should be specific on how to choose from the options available.
@@ -86,8 +94,6 @@ namespace Clocktower.Agent
                 AlwaysPassOption _ => choiceAsText.StartsWith("always", StringComparison.InvariantCultureIgnoreCase),
                 PassOption _ => choiceAsText.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase),
                 VoteOption _ => choiceAsText.StartsWith("execute", StringComparison.InvariantCultureIgnoreCase),
-                SlayerShotOption slayerShotOption => choiceAsText.Equals(slayerShotOption.Name, StringComparison.InvariantCultureIgnoreCase),
-                JugglerOption jugglerOption => MatchesJuggle(jugglerOption, choiceAsText),
                 TwoPlayersOption twoPlayersOption => MatchesTwoPlayers(choiceAsText, twoPlayersOption.PlayerA.Name, twoPlayersOption.PlayerB.Name),
                 _ => choiceAsText.StartsWith(option.Name, StringComparison.InvariantCultureIgnoreCase),
             };
@@ -100,7 +106,6 @@ namespace Clocktower.Agent
                 AlwaysPassOption _ => choiceAsText.Contains("always", StringComparison.InvariantCultureIgnoreCase),
                 PassOption _ => choiceAsText.Contains("pass", StringComparison.InvariantCultureIgnoreCase),
                 VoteOption _ => choiceAsText.Contains("execute", StringComparison.InvariantCultureIgnoreCase),
-                SlayerShotOption slayerShotOption => choiceAsText.StartsWith("Slayer", StringComparison.InvariantCultureIgnoreCase) && choiceAsText.Contains(slayerShotOption.Target.Name, StringComparison.InvariantCultureIgnoreCase),
                 TwoPlayersOption twoPlayersOption => choiceAsText.Contains(twoPlayersOption.PlayerA.Name, StringComparison.InvariantCultureIgnoreCase) && choiceAsText.Contains(twoPlayersOption.PlayerB.Name, StringComparison.InvariantCultureIgnoreCase),
                 _ => choiceAsText.Contains(option.Name, StringComparison.InvariantCultureIgnoreCase),
             };
@@ -114,14 +119,6 @@ namespace Clocktower.Agent
                 && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static bool MatchesJuggle(JugglerOption juggle, string choiceAsText)
-        {
-            // If the given text describes a juggle, then we will populate the option with the specified juggle.
-
-            return (choiceAsText.StartsWith("Juggler", StringComparison.InvariantCultureIgnoreCase)
-                    && juggle.AddJugglesFromText(choiceAsText));
-        }
-
         private static string AsPromptText(IOption option)
         {
             return option switch
@@ -130,9 +127,8 @@ namespace Clocktower.Agent
                 CharacterOption characterOption => TextUtilities.FormatMarkupText("%c", characterOption.Character),
                 PassOption _ => "`PASS`",
                 PlayerOption playerOption => TextUtilities.FormatMarkupText("%p", playerOption.Player),
-                SlayerShotOption slayerShotOption => TextUtilities.FormatMarkupText("%p", slayerShotOption.Target),
                 TwoPlayersOption twoPlayersOption => TextUtilities.FormatMarkupText("%p and %p", twoPlayersOption.PlayerA, twoPlayersOption.PlayerB),
-                VoteOption voteOption => "`EXECUTE`",
+                VoteOption _ => "`EXECUTE`",
                 _ => throw new ArgumentException($"Unknown option type {option.GetType()}", nameof(option))
             };
         }

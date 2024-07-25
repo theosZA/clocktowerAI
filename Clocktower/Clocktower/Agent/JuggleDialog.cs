@@ -38,7 +38,7 @@ namespace Clocktower.Agent
                 var player = players.FirstOrDefault(player => player.Name == playersComboBox.Text);
                 if (player != null)
                 {
-                    if (characters.Any(character => character.ToString() == charactersComboBox.Text))
+                    if (characters.Any(character => TextUtilities.CharacterToText(character) == charactersComboBox.Text))
                     {
                         var character = characters.First(character => TextUtilities.CharacterToText(character) == charactersComboBox.Text);
                         yield return (player, character);

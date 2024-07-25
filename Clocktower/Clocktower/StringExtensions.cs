@@ -1,4 +1,6 @@
-﻿namespace Clocktower
+﻿using System.Text;
+
+namespace Clocktower
 {
     internal static class StringExtensions
     {
@@ -44,10 +46,30 @@
             return text[..start];
         }
 
+        public static string TextBefore(this string text, string succeedingText, StringComparison stringComparison)
+        {
+            int start = text.IndexOf(succeedingText, stringComparison);
+            if (start == -1)
+            {
+                return text;
+            }
+            return text[..start];
+        }
+
         public static string TextAfter(this string text, string precedingText)
         {
             int position = text.IndexOf(precedingText);
             if (position == -1) 
+            {
+                return text;
+            }
+            return text[(position + precedingText.Length)..];
+        }
+
+        public static string TextAfter(this string text, string precedingText, StringComparison stringComparison)
+        {
+            int position = text.IndexOf(precedingText, stringComparison);
+            if (position == -1)
             {
                 return text;
             }

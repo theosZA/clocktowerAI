@@ -1,4 +1,5 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent;
+using Clocktower.Game;
 
 namespace Clocktower.Options
 {
@@ -8,13 +9,32 @@ namespace Clocktower.Options
     /// </summary>
     internal class SlayerShotOption : IOption
     {
-        public string Name => $"Slayer: {Target.Name}";
+        public string Name => $"Slayer...";
 
-        public Player Target { get; private set; }
+        public Player? Target { get; private set; }
 
-        public SlayerShotOption(Player target)
+        public IReadOnlyCollection<Player> PossiblePlayers { get; private init; }
+
+        public SlayerShotOption(IReadOnlyCollection<Player> players)
         {
-            Target = target;
+            PossiblePlayers = players;
+        }
+        
+        public void SetTarget(Player target)
+        {
+            if (PossiblePlayers.Contains(target))
+            {
+                Target = target;
+            }
+        }
+
+        public void SetTargetFromText(string text)
+        {
+            var target = TextParser.ReadPlayerFromText(text, PossiblePlayers);
+            if (target != null)
+            {
+                Target = target;
+            }
         }
     }
 }

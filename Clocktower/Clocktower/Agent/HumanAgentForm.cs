@@ -291,7 +291,21 @@ namespace Clocktower.Agent
             outputText.AppendText("You have the option now to use or bluff any abilities that are to be publicly used during the day.\n");
             var choice = await PopulateOptions(options);
 
-            if (choice is JugglerOption jugglerOption)
+            if (choice is SlayerShotOption slayerOption)
+            {
+                // We need to choose who to slay.
+                if (AutoAct)
+                {
+                    slayerOption.SetTarget(slayerOption.PossiblePlayers.Where(player => player.Alive && player.Name != Name).ToList().RandomPick(random));
+                }
+                else
+                {
+                    outputText.AppendFormattedText("Choose who you wish to target with your claimed %c ability.\n", Character.Slayer);
+                    var target = (await PopulateOptions(slayerOption.PossiblePlayers.ToOptions())).GetPlayer();
+                    slayerOption.SetTarget(target);
+                }
+            }
+            else if (choice is JugglerOption jugglerOption)
             {
                 // We need to populate the juggle.
                 if (AutoAct)

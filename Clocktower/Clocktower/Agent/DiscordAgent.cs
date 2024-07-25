@@ -252,7 +252,7 @@ namespace Clocktower.Agent
                 sb.AppendLine("- `ALWAYS PASS` if you never wish to bluff any of these abilities (though you'll still be prompted if you do have an ability you can use).");
             }
 
-            return await prompter.RequestChoice(options, sb.ToString(), objects);
+            return await prompter.RequestShenanigans(options, sb.ToString(), objects);
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)

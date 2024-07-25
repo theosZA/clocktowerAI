@@ -278,7 +278,7 @@ namespace Clocktower.Agent.RobotAgent
             var sb = new StringBuilder();
             var objects = new List<object>();
 
-            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day.");
+            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day. You can explain your reasoning but your response should conclude with exactly one of the following options.");
             if (options.Any(option => option is SlayerShotOption))
             {
                 sb.AppendLine("- SLAYER: PLAYER_NAME if you wish to claim %c and target the specified player.");
@@ -298,7 +298,7 @@ namespace Clocktower.Agent.RobotAgent
                 sb.AppendLine("- ALWAYS PASS if you aren't bluffing any of these characters and so will skip this prompt in the future (unless you do have an ability you can use).");
             }
 
-            return await clocktowerChat.RequestChoice(options, sb.ToString(), objects);
+            return await clocktowerChat.RequestShenanigans(options, sb.ToString(), objects);
         }
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)

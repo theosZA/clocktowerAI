@@ -47,9 +47,9 @@ namespace Clocktower.Events
             {
                 player.Tokens.Add(Token.NeverBluffingShenanigans, player);
             }
-            else if (shenanigan is SlayerShotOption slayerShot)
+            else if (shenanigan is SlayerShotOption slayerShot && slayerShot.Target != null)
             {
-                await HandleSlayerClaim(player, slayerShot);
+                await HandleSlayerClaim(player, slayerShot.Target);
             }
             else if (shenanigan is JugglerOption juggles)
             {
@@ -101,22 +101,20 @@ namespace Clocktower.Events
             return options;
         }
 
-        private void AddSlayerOptions(List<IOption> options)
+        private void AddSlayerOptions(IList<IOption> options)
         {
-            options.AddRange(grimoire.Players.Select(player => new SlayerShotOption(player)));
+            options.Add(new SlayerShotOption(grimoire.Players));
         }
 
         private void AddJugglerOptions(IList<IOption> options)
         {
-            // Juggles are a special case where we don't generate all the options - there would be way too many of them!
-            // Instead we pass the Juggle option to the agent with an empty list that the agent can populate.
             options.Add(new JugglerOption(grimoire.Players, scriptCharacters));
         }
 
-        private async Task HandleSlayerClaim(Player slayer, SlayerShotOption slayerShot)
+        private async Task HandleSlayerClaim(Player slayer, Player target)
         {
-            bool success = await DoesKillTarget(slayer, slayerShot.Target);
-            await observers.AnnounceSlayerShot(slayer, slayerShot.Target, success);
+            bool success = await DoesKillTarget(slayer, target);
+            await observers.AnnounceSlayerShot(slayer, target, success);
 
             if (slayer.Character == Character.Slayer)
             {
@@ -125,7 +123,7 @@ namespace Clocktower.Events
 
             if (success)
             {
-                await new Kills(storyteller, grimoire).DayKill(slayerShot.Target, slayer);
+                await new Kills(storyteller, grimoire).DayKill(target, slayer);
             }
         }
 

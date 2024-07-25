@@ -75,7 +75,9 @@ namespace ClocktowerScenarioTests.Tests
                 .Returns(args =>
                 {
                     shouldKill = true;
-                    return args.GetOptionForCharacterFromArg(Character.Tinker);
+                    var slayerOption = (SlayerShotOption)args.ArgAt<IReadOnlyCollection<IOption>>(0).First(option => option is SlayerShotOption);
+                    slayerOption.SetTarget(slayerOption.PossiblePlayers.First(player => player.Character == Character.Tinker));
+                    return slayerOption;
                 });
             setup.Agent(Character.Imp).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>

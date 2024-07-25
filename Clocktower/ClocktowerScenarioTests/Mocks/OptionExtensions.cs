@@ -69,7 +69,6 @@ namespace ClocktowerScenarioTests.Mocks
         {
             return option is PlayerOption playerOption ? playerOption.Player.Character
                  : option is CharacterOption characterOption ? characterOption.Character
-                 : option is SlayerShotOption slayerShotOption ? slayerShotOption.Target.Character
                  : null;
         }
 
@@ -77,7 +76,6 @@ namespace ClocktowerScenarioTests.Mocks
         {
             return option is PlayerOption playerOption ? playerOption.Player.RealCharacter
                  : option is CharacterOption characterOption ? characterOption.Character
-                 : option is SlayerShotOption slayerShotOption ? slayerShotOption.Target.RealCharacter
                  : null;
         }
 
