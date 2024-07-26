@@ -197,6 +197,11 @@ namespace Clocktower.Agent
             return await prompter.RequestChoice(options, "As the %c please choose a player to kill.", Character.Godfather);
         }
 
+        public async Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options)
+        {
+            return await prompter.RequestChoice(options, "As the %c please choose a player to protect from execution.", Character.Devils_Advocate);
+        }
+
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
             return await prompter.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or `PASS` if you want to save your ability for later.", Character.Philosopher);

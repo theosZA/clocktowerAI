@@ -35,6 +35,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromGodfather(players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromDevilsAdvocate(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromDevilsAdvocate(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Character?> RequestChoiceFromPhilosopher(this IAgent agent, IEnumerable<Character> characters)
         {
             return (await agent.RequestChoiceFromPhilosopher(characters.ToOptions().Prepend(new PassOption()).ToList())).GetCharacterOptional();

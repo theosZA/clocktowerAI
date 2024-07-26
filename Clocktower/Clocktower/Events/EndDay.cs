@@ -44,6 +44,16 @@ namespace Clocktower.Events
                 return false;
             }
 
+            if (executedPlayer.Tokens.HasHealthyToken(Token.ProtectedByDevilsAdvocate))
+            {
+                if (executedPlayer.HasHealthyAbility(Character.Tinker))
+                {
+                    return await storyteller.ShouldKillTinker(executedPlayer);
+                }
+
+                return false;
+            }
+
             if (executedPlayer.CanRegisterAsGood && grimoire.PlayersWithHealthyAbility(Character.Pacifist).Any())
             {
                 return !await storyteller.ShouldSaveWithPacifist(grimoire.PlayersWithHealthyAbility(Character.Pacifist).First(), executedPlayer);

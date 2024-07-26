@@ -23,18 +23,28 @@ namespace Clocktower.Events
         {
             foreach (var tinker in grimoire.PlayersWithHealthyAbility(Character.Tinker))
             {
-                if (await storyteller.ShouldKillTinker(tinker))
+                await RunTinker(tinker);
+            }
+        }
+
+        public async Task RunTinker(Player tinker)
+        {
+            if (duringDay && grimoire.PlayerToBeExecuted == tinker)
+            {   // The Tinker is due to die to execution, so there's no need to prompt now.
+                return;
+            }
+
+            if (await storyteller.ShouldKillTinker(tinker))
+            {
+                var kills = new Kills(storyteller, grimoire);
+                if (duringDay)
                 {
-                    var kills = new Kills(storyteller, grimoire);
-                    if (duringDay)
-                    {
-                        await kills.DayKill(tinker, killer: null);
-                        await observers.PlayerDies(tinker);
-                    }
-                    else
-                    {
-                        await kills.NightKill(tinker, killer: null);
-                    }
+                    await kills.DayKill(tinker, killer: null);
+                    await observers.PlayerDies(tinker);
+                }
+                else
+                {
+                    await kills.NightKill(tinker, killer: null);
                 }
             }
         }

@@ -35,6 +35,11 @@
             tokens.RemoveAll(pair => pair.token == token);
         }
 
+        public void Remove(Token token, Player assigningPlayer)
+        {
+            tokens.RemoveAll(pair => pair.token == token && pair.player == assigningPlayer);
+        }
+
         public void ClearTokensForEndOfDay()
         {
             tokens.RemoveAll(pair => IsTokenThatExpiresAtEndOfDay(pair.token));
@@ -111,6 +116,7 @@
         {
             return token == Token.PoisonedByPoisoner
                 || token == Token.CursedByWitch
+                || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler;
         }
@@ -128,6 +134,8 @@
                 || token == Token.NoDashiiPoisoned
                 || token == Token.PoisonedByPoisoner
                 || token == Token.CursedByWitch
+                || token == Token.PickedByDevilsAdvocate
+                || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler
                 || token == Token.JugglerBeforeFirstDay
@@ -156,6 +164,7 @@
                 Token.NoDashiiPoisoned => "poisoned by the No Dashii",
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
                 Token.CursedByWitch => "cursed by the Witch",
+                Token.ProtectedByDevilsAdvocate => "protected by the Devil's Advocate",
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",
                 Token.GodfatherKillsTonight => "Godfather kills tonight",
                 Token.ProtectedByMonk => "protected by the Monk",

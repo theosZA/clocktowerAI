@@ -250,6 +250,12 @@ namespace Clocktower.Agent
             return await PopulateOptions(options);
         }
 
+        public async Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options)
+        {
+            outputText.AppendFormattedText("As the %c please choose a player to protect from execution.", Character.Devils_Advocate);
+            return await PopulateOptions(options);
+        }
+
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
             outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a character whose ability you wish to acquire...\n", Character.Philosopher);

@@ -13,6 +13,7 @@
         NoDashiiPoisoned,
         PoisonedByPoisoner,
         CursedByWitch,
+        ProtectedByDevilsAdvocate,
         FortuneTellerRedHerring,
         GodfatherKillsTonight,
         ProtectedByMonk,
@@ -30,7 +31,8 @@
         // Not real tokens, just used here for tracking stuff needed for this implementation.
         Executed = 4000,
         PhilosopherUsedAbilityTonight,
-        NeverBluffingShenanigans,    // a player may opt out of future "Shenanigans" phases unless they gain an ability which can be used then
+        PickedByDevilsAdvocate,     // tracks separately from the Devil's Advocate protection because they may be poisoned/drunk but are still restricted in their choice the next day
+        NeverBluffingShenanigans,   // a player may opt out of future "Shenanigans" phases unless they gain an ability which can be used then
         JugglerBeforeFirstDay,
         JugglerFirstDay
     }

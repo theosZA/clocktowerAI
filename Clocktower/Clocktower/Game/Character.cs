@@ -63,6 +63,7 @@ namespace Clocktower.Game
         Spy,
         Witch,
         Organ_Grinder,
+        Devils_Advocate,
 
         // Demons
         Imp = 3000,

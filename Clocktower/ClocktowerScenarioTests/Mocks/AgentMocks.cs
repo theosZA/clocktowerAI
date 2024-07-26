@@ -64,6 +64,11 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromWitch(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
         }
 
+        public static void MockDevilsAdvocate(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromDevilsAdvocate(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static void MockPhilosopher(this IAgent agent, Character characterAbility)
         {
             agent.RequestChoiceFromPhilosopher(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(characterAbility);

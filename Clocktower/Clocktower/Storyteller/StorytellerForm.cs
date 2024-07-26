@@ -484,6 +484,11 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText("%p has chosen to kill %p.\n", godfather, target, StorytellerView);
         }
 
+        public void ChoiceFromDevilsAdvocate(Player devilsAdvocate, Player target)
+        {
+            outputText.AppendFormattedText("%p has chosen to protect %p.\n", devilsAdvocate, target, StorytellerView);
+        }
+
         public void ChoiceFromMonk(Player monk, Player target)
         {
             outputText.AppendFormattedText("%p has chosen to protect %p.\n", monk, target, StorytellerView);
