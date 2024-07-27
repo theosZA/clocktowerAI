@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
+using static System.Windows.Forms.Design.AxImporter;
 
 namespace Clocktower.Agent
 {
@@ -60,7 +61,34 @@ namespace Clocktower.Agent
             return null;
         }
 
+        public static IOption ReadVoteOptionFromText(string text, IReadOnlyCollection<IOption> options)
+        {
+            var passOption = CleanUpText(ref text, options);
+            if (passOption != null)
+            {
+                return passOption;
+            }
+
+            // Whichever of the two words "pass" or "execute" appears later in the text is the option we'll go with.
+            int passPos = text.LastIndexOf("pass", StringComparison.InvariantCultureIgnoreCase);
+            int executePos = text.LastIndexOf("execute", StringComparison.InvariantCultureIgnoreCase);
+            return executePos <= passPos ? options.First(option => option is PassOption)
+                                         : options.First(option => option is VoteOption);
+        }
+
         public static IOption ReadShenaniganOptionFromText(string text, IReadOnlyCollection<IOption> options)
+        {
+            var passOption = CleanUpText(ref text, options);
+            if (passOption != null)
+            {
+                return passOption;
+            }
+
+            // For each of our options, we're going to score it based on how closely the AI response matches what it's looking for.
+            return options.Select(option => (option, Score(option, text))).MaxBy(pair => pair.Item2).option;
+        }
+
+        private static IOption? CleanUpText(ref string text, IReadOnlyCollection<IOption> options)
         {
             text = text.Trim();
 
@@ -82,8 +110,7 @@ namespace Clocktower.Agent
                 text = text[..^1];
             }
 
-            // For each of our options, we're going to score it based on how closely the AI response matches what it's looking for.
-            return options.Select(option => (option, Score(option, text))).MaxBy(pair => pair.Item2).option;
+            return null;
         }
 
         private static int Score(IOption option, string text)

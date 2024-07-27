@@ -110,6 +110,12 @@ namespace Clocktower.Agent.RobotAgent
             return dialogue;
         }
 
+        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        {
+            var choiceAsText = await Request(prompt, objects);
+            return TextParser.ReadVoteOptionFromText(choiceAsText, options);
+        }
+
         public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
             // This is for a case where there is a variety of different options and we are going to try our best to figure out which one the AI is trying to choose.
@@ -212,7 +218,6 @@ namespace Clocktower.Agent.RobotAgent
             {
                 AlwaysPassOption _ => choiceAsText.StartsWith("always", StringComparison.InvariantCultureIgnoreCase),
                 PassOption _ => choiceAsText.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase),
-                VoteOption _ => choiceAsText.StartsWith("execute", StringComparison.InvariantCultureIgnoreCase),
                 TwoPlayersOption twoPlayersOption => MatchesTwoPlayers(choiceAsText, twoPlayersOption.PlayerA.Name, twoPlayersOption.PlayerB.Name),
                 _ => choiceAsText.StartsWith(option.Name, StringComparison.InvariantCultureIgnoreCase),
             };
@@ -224,7 +229,6 @@ namespace Clocktower.Agent.RobotAgent
             {
                 AlwaysPassOption _ => choiceAsText.Contains("always", StringComparison.InvariantCultureIgnoreCase),
                 PassOption _ => choiceAsText.Contains("pass", StringComparison.InvariantCultureIgnoreCase),
-                VoteOption _ => choiceAsText.Contains("execute", StringComparison.InvariantCultureIgnoreCase),
                 TwoPlayersOption twoPlayersOption => choiceAsText.Contains(twoPlayersOption.PlayerA.Name) && choiceAsText.Contains(twoPlayersOption.PlayerB.Name),
                 _ => choiceAsText.Contains(option.Name, StringComparison.InvariantCultureIgnoreCase),
             };

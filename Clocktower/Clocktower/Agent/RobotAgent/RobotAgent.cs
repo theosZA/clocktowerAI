@@ -130,9 +130,27 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
-            var voteOption = (VoteOption)options.First(option => option is VoteOption);
-            return await clocktowerChat.RequestChoice(options, "If you wish, you may vote for executing %p. %nSay EXECUTE to execute them or PASS if you don't wish to execute them.", voteOption.Nominee,
-                                                        ghostVote ? "(Note that because you are dead, you may only vote to execute once more for the rest of the game.) " : string.Empty);
+            var nominee = ((VoteOption)options.First(option => option is VoteOption)).Nominee;
+
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("If you wish, you may vote for executing %p.", nominee);
+            if (ghostVote)
+            {
+                sb.Append(" (Note that because you are dead, you may only vote to execute once more for the rest of the game.)");
+            }
+            sb.AppendFormattedText(" Please provide your reasoning as an internal monologue, considering the evidence surrounding their information and character, and pros and cons for executing %p,"
+                                 + " before concluding with either EXECUTE to execute them or PASS if you don't wish to execute them."
+                                 + " Some factors to keep in mind: If you're good then executing other good players early on isn't a terrible idea as it can help some characters learn some information,"
+                                 + " but as you get closer to the end of the game you really need to be executing evil players, and especially in the final 3 or 4, you *must* be executing the demon."
+                                 + " If you're evil then you want to be executing valuable good players, and *not* the Demon, but at the same time you still need to look like your votes are helping the good players.",
+                                 nominee);
+            if (ghostVote)
+            {
+                sb.Append(" And since you only have one more vote available for the rest of the game, you need to decide whether or not this is the best time to spend that vote.");
+            }
+            var prompt = sb.ToString();
+
+            return await clocktowerChat.RequestVote(options, prompt);
         }
 
         public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
