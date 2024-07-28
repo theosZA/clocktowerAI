@@ -159,6 +159,33 @@ namespace ClocktowerScenarioTests.Tests
         [TestCase(Character.Poisoner)]
         [TestCase(Character.Butler)]
         [TestCase(Character.Ravenkeeper)]
+        public async Task Ravenkeeper_IsTheMarionette(Character characterToSee)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Ravenkeeper,Saint,Baron,Soldier,Undertaker,Mayor")
+                            .WithMarionette(Character.Ravenkeeper)
+                            .Build();
+
+            setup.Agent(Character.Imp).MockDemonKill(Character.Ravenkeeper);
+            setup.Agent(Character.Ravenkeeper).MockRavenkeeperChoice(Character.Mayor);
+            setup.Storyteller.MockGetCharacterForRavenkeeper(characterToSee);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Ravenkeeper).Received().YouAreDead();
+            await setup.Agent(Character.Ravenkeeper).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), characterToSee);
+        }
+
+        [TestCase(Character.Imp)]
+        [TestCase(Character.Poisoner)]
+        [TestCase(Character.Butler)]
+        [TestCase(Character.Ravenkeeper)]
         public async Task Ravenkeeper_Poisoned(Character characterToSee)
         {
             // Arrange

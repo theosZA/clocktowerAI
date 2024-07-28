@@ -192,6 +192,50 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Juggler_IsTheDrunk()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Juggler,Baron,Saint,Soldier,Fisherman,Mayor")
+                            .WithDrunk(Character.Juggler)
+                            .Build();
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var jugglerNumbers = setup.Storyteller.MockGetJugglerNumber(3);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(jugglerNumbers, Is.EquivalentTo(new[] { 0, 1, 2, 3, 4, 5 }));
+            await setup.Agent(Character.Juggler).Received().NotifyJuggler(3);
+        }
+
+        [Test]
+        public async Task Juggler_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Juggler,Baron,Saint,Soldier,Fisherman,Mayor")
+                            .WithMarionette(Character.Juggler)
+                            .Build();
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var jugglerNumbers = setup.Storyteller.MockGetJugglerNumber(3);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(jugglerNumbers, Is.EquivalentTo(new[] { 0, 1, 2, 3, 4, 5 }));
+            await setup.Agent(Character.Juggler).Received().NotifyJuggler(3);
+        }
+
+        [Test]
         public async Task Juggler_Poisoned()
         {
             // Arrange

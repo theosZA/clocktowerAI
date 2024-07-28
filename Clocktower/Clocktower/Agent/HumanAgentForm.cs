@@ -83,7 +83,21 @@ namespace Clocktower.Agent
 
         public Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            outputText.AppendFormattedText($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.\n", minions, notInPlayCharacters);
+            outputText.AppendText("As the demon, you learn that ");
+
+            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
+            if (nonMarionetteMinions.Count > 0)
+            {
+                outputText.AppendFormattedText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
+            }
+
+            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
+            if (marionette != null)
+            {
+                outputText.AppendFormattedText("%p is your %c, ", marionette, Character.Marionette);
+            }
+
+            outputText.AppendFormattedText("and that the following characters are not in play: %C.\n", notInPlayCharacters);
 
             autoClaim = notInPlayCharacters.ToList().RandomPick(random);
 

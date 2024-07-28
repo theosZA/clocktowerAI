@@ -123,6 +123,37 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Investigator_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Investigator,Imp,Baron,Saint,Soldier,Fisherman,Mayor")
+                            .WithMarionette(Character.Investigator)
+                            .Build();
+
+            const Character investigatorPing = Character.Saint;
+            const Character investigatorWrong = Character.Soldier;
+            const Character pingCharacter = Character.Poisoner;
+            var investigatorPingOptions = setup.Storyteller.MockGetInvestigatorPing(investigatorPing, investigatorWrong, pingCharacter);
+            var receivedInvestigatorPing = setup.Agent(Character.Investigator).MockNotifyInvestigator(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(investigatorPingOptions, Does.Contain((investigatorPing, investigatorWrong, pingCharacter)));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(investigatorPing).Or.EqualTo(investigatorWrong));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
         public async Task Investigator_Poisoned()
         {
             // Arrange

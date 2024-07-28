@@ -124,6 +124,28 @@ namespace ClocktowerScenarioTests.Tests
 
         [TestCase(Direction.Clockwise)]
         [TestCase(Direction.Counterclockwise)]
+        public async Task Shugenja_IsTheMarionette(Direction direction)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Shugenja,Mayor,Baron,Saint,Soldier,Fisherman") // should be clockwise
+                            .WithMarionette(Character.Shugenja)
+                            .Build();
+
+            setup.Storyteller.MockGetShugenjaDirection(direction);
+            var receivedShugenjaDirection = setup.Agent(Character.Shugenja).MockNotifyShugenja(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedShugenjaDirection.Value, Is.EqualTo(direction));
+        }
+
+        [TestCase(Direction.Clockwise)]
+        [TestCase(Direction.Counterclockwise)]
         public async Task Shugenja_Poisoned(Direction direction)
         {
             // Arrange

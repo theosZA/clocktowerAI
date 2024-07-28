@@ -3,7 +3,6 @@ using Clocktower.Game;
 using Clocktower.Options;
 using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
-using NSubstitute;
 
 namespace ClocktowerScenarioTests
 {
@@ -79,6 +78,13 @@ namespace ClocktowerScenarioTests
         {
             Setup.IsCharacterSelected(Character.Drunk).Returns(true);
             Storyteller.MockGetDrunk(character);
+            return this;
+        }
+
+        public ClocktowerGameBuilder WithMarionette(Character character)
+        {
+            Setup.IsCharacterSelected(Character.Marionette).Returns(true);
+            Storyteller.MockGetMarionette(character);
             return this;
         }
 

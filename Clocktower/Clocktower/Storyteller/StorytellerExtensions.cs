@@ -5,6 +5,11 @@ namespace Clocktower.Storyteller
 {
     internal static class StorytellerExtensions
     {
+        public static async Task<Player> GetMarionette(this IStoryteller storyteller, IReadOnlyCollection<Player> marionetteCandidates)
+        {
+            return (await storyteller.GetMarionette(marionetteCandidates.ToOptions())).GetPlayer();
+        }
+
         public static async Task<IEnumerable<Character>> GetDemonBluffs(this IStoryteller storyteller, Player demon, IReadOnlyCollection<Character> availableBluffs)
         {
             return (await storyteller.GetDemonBluffs(demon, availableBluffs.ToThreeCharactersOptions())).GetThreeCharacters();

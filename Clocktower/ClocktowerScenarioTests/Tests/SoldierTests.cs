@@ -43,6 +43,26 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Soldier_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Soldier,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithMarionette(Character.Soldier)
+                            .Build();
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Soldier).Received().YouAreDead();
+        }
+
+        [Test]
         public async Task Soldier_Poisoned()
         {
             // Arrange

@@ -4,7 +4,7 @@
     {
         public Character? Character => tokens.Select(pair => TokenToCharacter(pair.token)).FirstOrDefault(character => character != null);
 
-        public bool DrunkOrPoisoned => HasDrunkOrPoisonToken() || NoDashiiPoisoned(out _);
+        public bool DrunkOrPoisoned => HasDrunkOrPoisonToken() || HasToken(Token.IsTheMarionette) || NoDashiiPoisoned(out _);
 
         public TokensOnPlayer(Grimoire grimoire, Player player)
         {
@@ -99,6 +99,7 @@
             return token switch
             {
                 Token.IsTheDrunk => (Character?)Game.Character.Drunk,
+                Token.IsTheMarionette => (Character?)Game.Character.Marionette,
                 Token.IsThePhilosopher or Token.IsTheBadPhilosopher => (Character?)Game.Character.Philosopher,
                 _ => null,
             };
@@ -156,6 +157,7 @@
             return token switch
             {
                 Token.IsTheDrunk => "is the Drunk",
+                Token.IsTheMarionette => "is the Marionette",
                 Token.IsThePhilosopher => "is the Philosopher",
                 Token.IsTheBadPhilosopher => "is the Philosopher (drunk/posioned when used)",
                 Token.UsedOncePerGameAbility => "has used their once-per-game ability",

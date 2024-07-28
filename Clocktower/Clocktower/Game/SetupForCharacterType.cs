@@ -154,6 +154,10 @@ namespace Clocktower.Game
                 {
                     ++townsfolkCount;
                 }
+                if (isCharacterSelected(Character.Marionette))
+                {
+                    ++townsfolkCount;
+                }
 
                 yield return townsfolkCount;
             }

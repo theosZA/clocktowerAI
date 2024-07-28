@@ -183,6 +183,33 @@ namespace ClocktowerScenarioTests.Tests
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
+        public async Task Empath_IsTheMarionette(int empathNumber)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Empath,Mayor,Saint,Baron,Soldier,Fisherman")
+                            .WithMarionette(Character.Empath)
+                            .Build();
+
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(empathNumber);
+            var receivedEmpathNumber = setup.Agent(Character.Empath).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(empathNumbers, Is.EquivalentTo(new[] { 0, 1, 2 }));
+                Assert.That(receivedEmpathNumber.Value, Is.EqualTo(empathNumber));
+            });
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
         public async Task Empath_Poisoned(int empathNumber)
         {
             // Arrange

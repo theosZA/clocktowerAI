@@ -211,6 +211,37 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Librarian_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Librarian,Imp,Baron,Ravenkeeper,Soldier,Fisherman,Mayor")
+                            .WithMarionette(Character.Librarian)
+                            .Build();
+
+            const Character librarianPing = Character.Imp;
+            const Character librarianWrong = Character.Soldier;
+            const Character pingCharacter = Character.Recluse;
+            var librarianPingOptions = setup.Storyteller.MockGetLibrarianPing(librarianPing, librarianWrong, pingCharacter);
+            var receivedlibrarianPing = setup.Agent(Character.Librarian).MockNotifyLibrarian(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(librarianPingOptions, Does.Contain((librarianPing, librarianWrong, pingCharacter)));
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerB, Is.EqualTo(librarianPing).Or.EqualTo(librarianWrong));
+                Assert.That(receivedlibrarianPing.Value.playerA, Is.Not.EqualTo(receivedlibrarianPing.Value.playerB));
+                Assert.That(receivedlibrarianPing.Value.seenCharacter, Is.EqualTo(pingCharacter));
+            });
+        }
+
+        [Test]
         public async Task Librarian_IsTheDrunkAndSeesNoOutsiders()
         {
             // Arrange

@@ -138,6 +138,25 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Virgin_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Virgin,Baron,Soldier,Ravenkeeper,Fisherman,Saint")
+                            .WithMarionette(Character.Virgin)
+                            .Build();
+            setup.Agent(Character.Soldier).MockNomination(Character.Virgin);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
+        }
+
+        [Test]
         public async Task Virgin_Poisoned()
         {
             // Arrange

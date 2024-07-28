@@ -4,6 +4,7 @@
     {
         // Character modifying tokens - these should be shown first to anyone viewing the Grimoire.
         IsTheDrunk = 1,
+        IsTheMarionette,
         IsThePhilosopher,
         IsTheBadPhilosopher,
         // Normal tokens

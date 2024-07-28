@@ -160,6 +160,10 @@ namespace Clocktower
             }
 
             var currentCharacterInfo = new List<Character>();
+            if (player.Tokens.HasToken(Token.IsTheMarionette))
+            {
+                currentCharacterInfo.Add(Character.Marionette);
+            }
             if (player.Tokens.HasToken(Token.IsTheDrunk))
             {
                 currentCharacterInfo.Add(Character.Drunk);

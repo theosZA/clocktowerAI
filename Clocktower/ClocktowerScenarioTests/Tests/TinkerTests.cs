@@ -95,6 +95,24 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Tinker_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Tinker,Ravenkeeper,Soldier,Baron,Mayor,Saint")
+                            .WithMarionette(Character.Tinker)
+                            .Build();
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Storyteller.DidNotReceive().ShouldKillTinker(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
+        }
+
+        [Test]
         public async Task Tinker_Poisoned()
         {
             // Arrange

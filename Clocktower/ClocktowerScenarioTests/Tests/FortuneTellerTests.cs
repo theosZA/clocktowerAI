@@ -156,6 +156,30 @@ namespace ClocktowerScenarioTests.Tests
 
         [TestCase(true)]
         [TestCase(false)]
+        public async Task FortuneTeller_IsTheMarionette(bool reading)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Fortune_Teller,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithMarionette(Character.Fortune_Teller)
+                            .Build();
+
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Saint);
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Mayor);
+            setup.Storyteller.MockFortuneTellerReading(reading: reading);
+            var fortuneTellerReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
         public async Task FortuneTeller_Poisoned(bool reading)
         {
             // Arrange

@@ -50,5 +50,34 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(scarletWomanBluffs, Is.EquivalentTo(new[] { Character.Librarian, Character.Investigator, Character.Washerwoman }));
             });
         }
+
+        [Test]
+        public async Task Snitch_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Snitch,Baron,Ravenkeeper,Soldier,Slayer,Scarlet_Woman")
+                            .WithMarionette(Character.Snitch)
+                            .Build();
+
+            var baronBluffs = new List<Character>();
+            var scarletWomanBluffs = new List<Character>();
+            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+                .Do(args => baronBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
+            setup.Agent(Character.Scarlet_Woman).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+                .Do(args => scarletWomanBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(baronBluffs, Is.Empty);
+                Assert.That(scarletWomanBluffs, Is.Empty);
+            });
+        }
     }
 }

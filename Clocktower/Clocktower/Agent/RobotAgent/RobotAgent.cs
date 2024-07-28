@@ -62,7 +62,26 @@ namespace Clocktower.Agent.RobotAgent
         public Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             this.minions = minions;
-            clocktowerChat.AddFormattedMessage($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.", minions, notInPlayCharacters);
+
+            var sb = new StringBuilder();
+
+            sb.Append("As the demon, you learn that ");
+
+            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Game.Character.Marionette).ToList();
+            if (nonMarionetteMinions.Count > 0)
+            {
+                sb.AppendFormattedMarkupText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
+            }
+
+            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Game.Character.Marionette);
+            if (marionette != null)
+            {
+                sb.AppendFormattedMarkupText("%p is your %c, ", marionette, Game.Character.Marionette);
+            }
+
+            sb.AppendFormattedMarkupText("and that the following characters are not in play: %C.", notInPlayCharacters);
+            clocktowerChat.AddMessage(sb.ToString());
+
             return Task.CompletedTask;
         }
 

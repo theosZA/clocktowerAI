@@ -98,6 +98,30 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [TestCase(Character.Imp)]
+        [TestCase(Character.Baron)]
+        [TestCase(Character.Saint)]
+        [TestCase(Character.Soldier)]
+        public async Task Steward_IsTheMarionette(Character stewardPing)
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Steward,Imp,Baron,Saint,Soldier,Fisherman,Mayor")
+                            .WithMarionette(Character.Steward)
+                            .Build();
+
+            setup.Storyteller.MockGetStewardPing(stewardPing);
+            var receivedStewardPing = setup.Agent(Character.Steward).MockNotifySteward(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedStewardPing.Value, Is.EqualTo(stewardPing));
+        }
+
+        [TestCase(Character.Imp)]
         [TestCase(Character.Poisoner)]
         [TestCase(Character.Saint)]
         [TestCase(Character.Soldier)]

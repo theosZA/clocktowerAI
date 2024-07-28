@@ -96,6 +96,29 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Fisherman_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Fisherman,Ravenkeeper,Saint,Baron,Soldier,Mayor")
+                            .WithMarionette(Character.Fisherman)
+                            .Build();
+
+            setup.Agent(Character.Fisherman).MockFishermanOption(getAdvice: true);
+            const string expectedAdvice = "Sample advice (which is drunk)";
+            setup.Storyteller.MockFishermanAdvice(expectedAdvice);
+            var actualAdvice = setup.Agent(Character.Fisherman).MockFishermanAdvice(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(actualAdvice.Value, Is.EqualTo(expectedAdvice));
+        }
+
+        [Test]
         public async Task Fisherman_Poisoned()
         {
             // Arrange

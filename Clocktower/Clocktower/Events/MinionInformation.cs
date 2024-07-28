@@ -15,7 +15,8 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion).ToList();
+            var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion && player.RealCharacter != Character.Marionette)
+                                          .ToList();
             var demon = grimoire.Players.First(player => player.CharacterType == CharacterType.Demon);
             foreach (var minion in minions)
             {

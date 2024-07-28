@@ -11,6 +11,11 @@ namespace ClocktowerScenarioTests.Mocks
             storyteller.GetDrunk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(drunkCharacter);
         }
 
+        public static void MockGetMarionette(this IStoryteller storyteller, Character marionetteCharacter)
+        {
+            storyteller.GetMarionette(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(marionetteCharacter);
+        }
+
         public static void MockGetSweetheartDrunk(this IStoryteller storyteller, Character sweetheartDrunk)
         {
             storyteller.GetSweetheartDrunk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(sweetheartDrunk);

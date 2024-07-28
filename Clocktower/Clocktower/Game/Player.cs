@@ -24,7 +24,7 @@ namespace Clocktower.Game
         /// <summary>
         /// The player's real alignment. The player may believe differently, e.g. if they're a Marionette or Lunatic.
         /// </summary>
-        public Alignment Alignment { get; private set; }
+        public Alignment Alignment { get; set; }
 
         /// <summary>
         /// The player's real character. The player may believe differently, e.g. if they're a Drunk or Lunatic.

@@ -64,6 +64,7 @@ namespace Clocktower.Game
         Witch,
         Organ_Grinder,
         Devils_Advocate,
+        Marionette,
 
         // Demons
         Imp = 3000,

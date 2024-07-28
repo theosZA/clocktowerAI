@@ -127,6 +127,27 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Slayer_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Slayer,Baron,Ravenkeeper,Saint,Soldier,Mayor")
+                            .WithMarionette(Character.Slayer)
+                            .Build();
+
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Imp).DidNotReceive().YouAreDead();
+            Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
         public async Task Slayer_PoisonedTargetingImp()
         {
             // Arrange

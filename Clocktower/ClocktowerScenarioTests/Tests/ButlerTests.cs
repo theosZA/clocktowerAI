@@ -120,5 +120,25 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(masterOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Soldier, Character.Ravenkeeper, Character.Baron, Character.Fisherman, Character.Mayor }));  // excludes Philo-Butler
             await setup.Agent(Character.Philosopher).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>());
         }
+
+        [Test]
+        public async Task Butler_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Butler,Mayor,Saint,Baron,Soldier,Fisherman")
+                            .WithMarionette(Character.Butler)
+                            .Build();
+            setup.Agent(Character.Butler).MockButlerChoice(Character.Mayor);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Butler).DidNotReceive().GetVote(Arg.Any<IReadOnlyCollection<IOption>>(), false);    // Butler restriction doesn't turn off if the Marionette
+        }
     }
 }

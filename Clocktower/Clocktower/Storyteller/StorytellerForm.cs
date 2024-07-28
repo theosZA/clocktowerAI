@@ -37,6 +37,13 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText($"%p to %p: %n\n", speaker, listener, message, StorytellerView);
         }
 
+        public async Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates)
+        {
+            outputText.AppendFormattedText("Choose one good player who will instead be the %c...\n", Character.Marionette);
+
+            return await PopulateOptions(marionetteCandidates);
+        }
+
         public async Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions)
         {
             outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the demon, %p...\n", demon, StorytellerView);
@@ -351,7 +358,18 @@ namespace Clocktower.Storyteller
 
         public void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            outputText.AppendFormattedText($"%p learns that %P {(minions.Count > 1 ? "are their minions" : "is their minion")}, and that the following characters are not in play: %C.\n", demon, minions, notInPlayCharacters, StorytellerView);
+            outputText.AppendFormattedText("%p learn that ", demon, StorytellerView);
+
+            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
+            outputText.AppendFormattedText($"%P {(nonMarionetteMinions.Count > 1 ? "are their minions" : "is their minion")}, ", nonMarionetteMinions, StorytellerView);
+
+            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
+            if (marionette != null)
+            {
+                outputText.AppendFormattedText("%p is their %c, ", marionette, Character.Marionette, StorytellerView);
+            }
+
+            outputText.AppendFormattedText("and that the following characters are not in play: %C.\n", notInPlayCharacters, StorytellerView);
         }
 
         public void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders)

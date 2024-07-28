@@ -1,4 +1,6 @@
-﻿if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
+﻿if Setup.IsCharacterSelected(Clocktower.Game.Character.Marionette):
+  AssignMarionette
+if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
   AssignDrunk
 StartNight
 FortuneTellerRedHerring

@@ -12,6 +12,7 @@ namespace Clocktower.Storyteller
 
         void PrivateChatMessage(Player speaker, Player listener, string message);
 
+        Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates);
         Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions);
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);

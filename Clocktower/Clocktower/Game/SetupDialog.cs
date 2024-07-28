@@ -99,6 +99,10 @@
             {
                 ++requiredPlayers;
             }
+            if (IsCharacterSelected(Character.Marionette))
+            {
+                ++requiredPlayers;
+            }
             return requiredPlayers;
         }
 
@@ -126,7 +130,7 @@
         private void StartGame(object sender, EventArgs e)
         {
             var bag = setupForCharacterType.SelectMany(setup => setup.Value.SelectedCharacters)
-                                           .Where(character => character != Character.Drunk)
+                                           .Where(character => character != Character.Drunk && character != Character.Marionette)
                                            .ToList();
             var characters = new Character?[bag.Count];
 
@@ -160,13 +164,45 @@
                 }
             }
 
-            // Assign the remaining characters randomly.
-            var remainingCharacters = charactersByAlignment.SelectMany(pair => pair.Value).ToList();
-            remainingCharacters.Shuffle(random);
-            var remainingCharactersQueue = new Queue<Character>(remainingCharacters);
-            Characters = characters.Select(character => character ?? remainingCharactersQueue.Dequeue()).ToArray();
+            do
+            {
+                // Assign the remaining characters randomly.
+                var remainingCharacters = charactersByAlignment.SelectMany(pair => pair.Value).ToList();
+                remainingCharacters.Shuffle(random);
+                var remainingCharactersQueue = new Queue<Character>(remainingCharacters);
+                Characters = characters.Select(character => character ?? remainingCharactersQueue.Dequeue()).ToArray();
+            }
+            while (!IsSetupOk());
 
             DialogResult = DialogResult.OK;
+        }
+
+        private bool IsSetupOk()
+        {
+            if (!setupForCharacterType[CharacterType.Minion].SelectedCharacters.Contains(Character.Marionette))
+            {
+                return true;
+            }
+
+            // Marionette can replace a Townsfolk or Outsider adjacent to the Demon.
+            for (int i = 0; i < Characters.Length; ++i)
+            {
+                if (Characters[i].CharacterType() == CharacterType.Demon || Characters[i] == Character.Recluse)
+                {
+                    var neighbourA = Characters[(i + 1) % Characters.Length];
+                    if (neighbourA.CharacterType() == CharacterType.Townsfolk || neighbourA.CharacterType() == CharacterType.Outsider)
+                    {
+                        return true;
+                    }
+                    var neighbourB = Characters[(i + Characters.Length - 1) % Characters.Length];
+                    if (neighbourB.CharacterType() == CharacterType.Townsfolk || neighbourB.CharacterType() == CharacterType.Outsider)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private readonly Random random;

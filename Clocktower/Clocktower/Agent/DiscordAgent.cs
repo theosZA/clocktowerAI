@@ -69,7 +69,25 @@ namespace Clocktower.Agent
 
         public async Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            await observer.SendMessage($"As a demon, you learn that %P {(minions.Count > 1 ? "are your minions" : "is your minion")}, and that the following characters are not in play: %C.", minions, notInPlayCharacters);
+            var sb = new StringBuilder();
+
+            sb.Append("As the demon, you learn that ");
+
+            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
+            if (nonMarionetteMinions.Count > 0)
+            {
+                sb.AppendFormattedMarkupText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
+            }
+
+            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
+            if (marionette != null)
+            {
+                sb.AppendFormattedMarkupText("%p is your %c, ", marionette, Character.Marionette);
+            }
+
+            sb.AppendFormattedMarkupText("and that the following characters are not in play: %C.", notInPlayCharacters);
+
+            await observer.SendMessage(sb.ToString());
         }
 
         public async Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)

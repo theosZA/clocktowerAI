@@ -95,6 +95,28 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task Monk_IsTheMarionette()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Monk,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithMarionette(Character.Monk)
+                            .Build();
+
+            setup.Agent(Character.Monk).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+        }
+
+        [Test]
         public async Task Monk_Poisoned()
         {
             // Arrange
