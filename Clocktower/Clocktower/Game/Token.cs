@@ -26,6 +26,7 @@
         InvestigatorPing,
         InvestigatorWrong,
         StewardPing,
+        NoblePing,
         JuggledCorrectly,
         // Special marker (not actually represented by a token in the real game).
         DiedAtNight = 3000,

@@ -156,6 +156,15 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(stewardPingCandidates);
         }
 
+        public async Task<IOption> GetNobleInformation(Player noble, IReadOnlyCollection<IOption> nobleInformationOptions)
+        {
+            outputText.AppendFormattedText("Choose one evil player and two good players for %p to see.", noble, StorytellerView);
+            OutputDrunkDisclaimer(noble);
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(nobleInformationOptions);
+        }
+
         public async Task<IOption> GetChefNumber(Player chef, IEnumerable<Player> playersThatCanMisregister, IReadOnlyCollection<IOption> chefOptions)
         {
             outputText.AppendFormattedText("Choose what number to show to %p.", chef, StorytellerView);
@@ -415,6 +424,11 @@ namespace Clocktower.Storyteller
             outputText.AppendFormattedText($"%p learns that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.\n", chef, evilPairCount, StorytellerView);
         }
 
+        public void NotifyNoble(Player noble, IReadOnlyCollection<Player> nobleInformation)
+        {
+            outputText.AppendFormattedText("%p learns that there is exactly 1 evil player among %P", noble, nobleInformation, StorytellerView);
+        }
+
         public void NotifySteward(Player steward, Player goodPlayer)
         {
             outputText.AppendFormattedText("%p learns that %p is a good player.\n", steward, goodPlayer, StorytellerView);
@@ -457,7 +471,7 @@ namespace Clocktower.Storyteller
 
         public void ShowGrimoireToSpy(Player spy, Grimoire grimoire)
         {
-            outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}", spy, StorytellerView);
+            outputText.AppendFormattedText($"%p now has a chance to look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}\n", spy, StorytellerView);
         }
 
         public void ChoiceFromDemon(Player demon, Player target)

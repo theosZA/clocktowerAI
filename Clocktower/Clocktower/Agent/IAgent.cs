@@ -25,6 +25,7 @@ namespace Clocktower.Agent
         Task NotifyInvestigator(Player playerA, Player playerB, Character character);
         Task NotifyChef(int evilPairCount);
         Task NotifySteward(Player goodPlayer);
+        Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation);
         Task NotifyShugenja(Direction direction);
 
         Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);

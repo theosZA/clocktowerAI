@@ -34,7 +34,7 @@ namespace Clocktower.Events
                 return grimoire.Players.Where(player => player != steward);
             }
 
-            return grimoire.Players.Where(player => player.CanRegisterAsGood);
+            return grimoire.Players.Where(player => player != steward && player.CanRegisterAsGood);
         }
 
         private readonly IStoryteller storyteller;

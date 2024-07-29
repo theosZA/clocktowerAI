@@ -178,6 +178,7 @@
                 Token.InvestigatorPing => "seen by the Investigator",
                 Token.InvestigatorWrong => "incorrectly seen by the Investigator",
                 Token.StewardPing => "seen by the Steward",
+                Token.NoblePing => "seen by the Noble",
                 Token.JuggledCorrectly => "juggled correctly by the Juggler",
                 _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
             };

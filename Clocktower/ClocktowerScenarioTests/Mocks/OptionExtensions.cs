@@ -91,6 +91,10 @@ namespace ClocktowerScenarioTests.Mocks
             {
                 return (threeCharactersOption.CharacterA, threeCharactersOption.CharacterB, threeCharactersOption.CharacterC);
             }
+            else if (option is ThreePlayersOption threePlayersOption)
+            {
+                return (threePlayersOption.PlayerA.Character, threePlayersOption.PlayerB.Character, threePlayersOption.PlayerC.Character);
+            }
 
             var current = (CharacterForTwoPlayersOption)option;
             return (current.PlayerA.Character, current.PlayerB.Character, current.Character);

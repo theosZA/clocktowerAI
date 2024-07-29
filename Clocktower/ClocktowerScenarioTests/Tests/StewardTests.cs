@@ -23,7 +23,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Steward, Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor }));
+                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor }));
                 Assert.That(receivedStewardPing.Value, Is.EqualTo(stewardPing));
             });
         }
@@ -183,7 +183,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Steward, Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor }));
+                Assert.That(stewardPingOptions, Is.EquivalentTo(new[] { Character.Saint, Character.Soldier, Character.Fisherman, Character.Mayor }));
                 Assert.That(receivedStewardPing.Value, Is.EqualTo(stewardPing));
             });
         }

@@ -270,6 +270,12 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
+        {
+            clocktowerChat.AddFormattedMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyUndertaker(Player executedPlayer, Character character)
         {
             clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", executedPlayer, character);

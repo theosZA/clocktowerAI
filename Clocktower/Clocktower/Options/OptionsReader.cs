@@ -53,6 +53,14 @@ namespace Clocktower.Options
             yield return threeCharactersOption.CharacterC;
         }
 
+        public static IEnumerable<Player> GetThreePlayers(this IOption option)
+        {
+            var threePlayersOption = (ThreePlayersOption)option;
+            yield return threePlayersOption.PlayerA;
+            yield return threePlayersOption.PlayerB;
+            yield return threePlayersOption.PlayerC;
+        }
+
         public static (Player? target, bool alwaysPass) GetSlayerTargetOptional(this IOption option)
         {
             return option switch

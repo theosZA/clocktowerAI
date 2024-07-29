@@ -50,6 +50,16 @@ namespace Clocktower.Options
                     select new ThreeCharactersOption(characterA, characterB, characterC)).ToList();
         }
 
+        public static IReadOnlyCollection<IOption> ToThreePlayersOptions(this (IEnumerable<Player> playersA, IEnumerable<Player> playersB, IEnumerable<Player> playersC) playerSets)
+        {
+            return (from playerA in playerSets.playersA
+                    from playerB in playerSets.playersB
+                    where playerA != playerB
+                    from playerC in playerSets.playersC
+                    where playerA != playerC && playerB != playerC
+                    select new ThreePlayersOption(playerA, playerB, playerC)).ToList();
+        }
+
         public static IReadOnlyCollection<IOption> ToAllPossibleSubsetsAsOptions(this IEnumerable<Player> players)
         {
             return SubsetsOf(players).Select(playerSet => playerSet.ToList())

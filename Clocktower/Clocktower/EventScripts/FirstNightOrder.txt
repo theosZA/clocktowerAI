@@ -19,6 +19,7 @@ Empath
 FortuneTeller
 Butler
 Steward
+Noble
 Shugenja
 Spy
 EndNight

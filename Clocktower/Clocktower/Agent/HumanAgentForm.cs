@@ -123,6 +123,12 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
+        {
+            outputText.AppendFormattedText("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            return Task.CompletedTask;
+        }
+
         public Task NotifyShugenja(Direction direction)
         {
             outputText.AppendFormattedText("You learn that the nearest %a to you is in the %b direction.\n", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");

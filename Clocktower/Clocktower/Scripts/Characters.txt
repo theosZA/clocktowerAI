@@ -18,6 +18,7 @@ Chef: You start knowing how many pairs of evil players there are. (A pair is two
 Mayor: If only 3 players live and no execution occurs, your team wins. If you die at night, another player might die instead.
 Juggler: On your 1st day, publicly guess up to 5 players' characters. That night, you learn how many you got correct.
 Pacifist: Executed good players might not die.
+Noble: You start knowing 3 players, 1 and only 1 of which is evil.
 
 // Outsiders
 Tinker: You might die at any time.

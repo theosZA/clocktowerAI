@@ -82,6 +82,18 @@ namespace ClocktowerScenarioTests.Mocks
             return receivedStewardPing;
         }
 
+        public static List<Character> MockNotifyNoble(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            List<Character> noblePings = new();
+            agent.When(agent => agent.NotifyNoble(Arg.Any<IReadOnlyCollection<Player>>()))
+                    .Do(args => 
+                    {
+                        noblePings.AddRange(args.ArgAt<IReadOnlyCollection<Player>>(0).Select(player => player.Character));
+                        gameToEnd?.EndGame(Alignment.Good);
+                    });
+            return noblePings;
+        }
+
         public static Wrapper<(Character playerA, Character playerB, Character seenCharacter)> MockNotifyInvestigator(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<(Character playerA, Character playerB, Character seenCharacter)> receivedInvestigatorPing = new();

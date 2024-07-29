@@ -29,6 +29,12 @@ namespace ClocktowerScenarioTests.Mocks
             return stewardPingOptions;
         }
 
+        public static void MockGetNobleInformation(this IStoryteller storyteller, Character playerA, Character playerB, Character playerC)
+        {
+            storyteller.GetNobleInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg((playerA, playerB, playerC), argIndex: 1);
+        }
+
         public static List<(Character playerA, Character playerB, Character character)> MockGetInvestigatorPing(this IStoryteller storyteller, Character investigatorPing, Character investigatorWrong, Character asCharacter)
         {
             List<(Character playerA, Character playerB, Character character)> investigatorPingOptions = new();

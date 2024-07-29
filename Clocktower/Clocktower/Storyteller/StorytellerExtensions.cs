@@ -60,6 +60,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetStewardPing(steward, stewardPingCandidates.ToOptions())).GetPlayer();
         }
 
+        public static async Task<IEnumerable<Player>> GetNobleInformation(this IStoryteller storyteller, Player noble, IEnumerable<Player> possibleEvilPlayers, IEnumerable<Player> possibleGoodPlayers)
+        {
+            return (await storyteller.GetNobleInformation(noble, (possibleEvilPlayers, possibleGoodPlayers, possibleGoodPlayers).ToThreePlayersOptions())).GetThreePlayers();
+        }
+
         public static async Task<int> GetChefNumber(this IStoryteller storyteller, Player chef, IEnumerable<Player> playersThatCanMisregister, IEnumerable<int> chefOptions)
         {
             return (await storyteller.GetChefNumber(chef, playersThatCanMisregister, chefOptions.ToOptions())).GetNumber();

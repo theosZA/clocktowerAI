@@ -132,6 +132,11 @@ namespace Clocktower.Agent
             await observer.SendMessage("You learn that %p is a good player.", goodPlayer);
         }
 
+        public async Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
+        {
+            await observer.SendMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+        }
+
         public async Task NotifyShugenja(Direction direction)
         {
             await observer.SendMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");

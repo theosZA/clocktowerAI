@@ -24,6 +24,10 @@ namespace Clocktower.Events
                         await new NotifySteward(storyteller, grimoire).RunEvent(philosopher);
                         break;
 
+                    case Character.Noble:
+                        await new NotifyNoble(storyteller, grimoire).RunEvent(philosopher);
+                        break;
+
                     case Character.Investigator:
                         await new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
                         break;
