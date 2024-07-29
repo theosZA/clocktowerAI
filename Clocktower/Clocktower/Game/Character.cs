@@ -19,6 +19,7 @@
 //    - Cases for then the character has been poisoned.
 //    - Cases for when the character dies and their effect on the game should end.
 //    - Cases for when this character ability is chosen by the Philosopher.
+// 7. Add jinxes. These include adding the descriptions to Jinxes.txt, scenario tests to cover the jinxes, and implementations for the jinxes.
 
 namespace Clocktower.Game
 {

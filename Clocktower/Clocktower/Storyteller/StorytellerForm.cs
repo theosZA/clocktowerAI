@@ -46,14 +46,22 @@ namespace Clocktower.Storyteller
 
         public async Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions)
         {
-            outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the demon, %p...\n", demon, StorytellerView);
+            outputText.AppendFormattedText("Choose 3 out-of-play characters to show to the demon, %p...\n", demon, StorytellerView);
+
+            return await PopulateOptions(demonBluffOptions);
+        }
+
+        public async Task<IOption> GetAdditionalDemonBluffs(Player demon, Player snitch, IReadOnlyCollection<IOption> demonBluffOptions)
+        {
+            outputText.AppendFormattedText("Because %p has a %c while %p is the %c, they are shown 3 additional out-of-play characters. Choose 3 more out-of-play characters to show to the demon, %p...\n",
+                                            demon, Character.Marionette, snitch, Character.Snitch, demon, StorytellerView);
 
             return await PopulateOptions(demonBluffOptions);
         }
 
         public async Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions)
         {
-            outputText.AppendFormattedText("Choose 3 out-of-player characters to show to the minion, %p...\n", minion, StorytellerView);
+            outputText.AppendFormattedText("Choose 3 out-of-play characters to show to the minion, %p...\n", minion, StorytellerView);
 
             return await PopulateOptions(minionBluffOptions);
         }

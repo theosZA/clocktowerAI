@@ -124,5 +124,35 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(seenMinions, Is.EquivalentTo(new[] { Character.Scarlet_Woman, Character.Baron, Character.Slayer }));    // Demon should see all minions.
             Assert.That(fellowMinions, Is.EquivalentTo(new[] { Character.Scarlet_Woman }));  // Baron should see the Scarlet Woman but NOT the Marionette
         }
+
+        [Test]
+        public async Task Marionette_Snitch_Jinx_DemonGetsSixBluffs()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Slayer,Ravenkeeper,Soldier,Baron,Mayor,Snitch")
+                            .WithMarionette(Character.Slayer)
+                            .Build();
+            setup.Storyteller.GetMinionBluffs(Arg.Is<Player>(minion => minion.Character == Character.Baron), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Chef, Character.Butler, Character.Monk), argIndex: 1));
+            setup.Storyteller.GetDemonBluffs(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).
+                Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Chef, Character.Butler, Character.Monk), argIndex: 1));
+            setup.Storyteller.GetAdditionalDemonBluffs(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).
+                Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Librarian, Character.Washerwoman, Character.Investigator), argIndex: 2));
+            var bluffs = new List<Character>();
+            setup.Agent(Character.Imp).When(agent => agent.DemonInformation(Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+                .Do(args =>
+                {
+                    bluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(1));
+                });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(bluffs, Is.EquivalentTo(new[] { Character.Chef, Character.Butler, Character.Monk, Character.Librarian, Character.Washerwoman, Character.Investigator }));
+        }
     }
 }

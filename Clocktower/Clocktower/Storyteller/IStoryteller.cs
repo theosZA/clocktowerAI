@@ -14,6 +14,7 @@ namespace Clocktower.Storyteller
 
         Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates);
         Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
+        Task<IOption> GetAdditionalDemonBluffs(Player demon, Player snitch, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions);
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetOjoVictims(Player ojo, Character targetCharacter, IReadOnlyCollection<IOption> victimOptions);
