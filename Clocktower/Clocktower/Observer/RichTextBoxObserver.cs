@@ -147,7 +147,7 @@ namespace Clocktower.Observer
             }
             else
             {
-                outputText.AppendFormattedText("%p does not vote.\n", voter, nominee, StorytellerView);
+                outputText.AppendFormattedText("%p does not vote.\n", voter, StorytellerView);
             }
 
             return Task.CompletedTask;

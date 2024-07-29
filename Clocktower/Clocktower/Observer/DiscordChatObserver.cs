@@ -71,7 +71,7 @@ namespace Clocktower.Observer
             }
             else
             {
-                QueueMessage("%p does not vote.", voter, nominee);
+                QueueMessage("%p does not vote.", voter);
             }
 
             return Task.CompletedTask;

@@ -156,7 +156,7 @@ namespace Clocktower.Observer
             }
             else
             {
-                clocktowerChat.AddFormattedMessage("%p does not vote.", voter, nominee);
+                clocktowerChat.AddFormattedMessage("%p does not vote.", voter);
             }
 
             return Task.CompletedTask;
