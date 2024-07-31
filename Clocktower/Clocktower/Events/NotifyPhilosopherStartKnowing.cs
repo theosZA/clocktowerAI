@@ -20,6 +20,10 @@ namespace Clocktower.Events
             {
                 switch (philosopher.Character)
                 {
+                    case Character.Chef:
+                        await new NotifyChef(storyteller, grimoire).RunEvent(philosopher);
+                        break;
+
                     case Character.Steward:
                         await new NotifySteward(storyteller, grimoire).RunEvent(philosopher);
                         break;

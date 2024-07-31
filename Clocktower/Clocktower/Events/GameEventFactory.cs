@@ -13,6 +13,7 @@ namespace Clocktower.Events
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = new Kills(storyteller, grimoire, setup.Script);
             this.observers = observers;
             this.setup = setup;
             this.random = random;
@@ -31,18 +32,18 @@ namespace Clocktower.Events
 
                 // Storyteller announcements / game progression
                 case "StartDay":                    return new StartDay(grimoire, observers, dayNumber);
-                case "EndDay":                      return new EndDay(storyteller, grimoire, observers);
+                case "EndDay":                      return new EndDay(storyteller, grimoire, kills, observers);
                 case "StartNight":                  return new StartNight(grimoire, observers, dayNumber);
                 case "EndNight":                    return new EndNight(grimoire);
 
                 // Day activities
-                case "Nominations":                 return new Nominations(storyteller, grimoire, observers, setup.Script, random);
+                case "Nominations":                 return new Nominations(storyteller, grimoire, kills, observers, setup.Script, random);
                 case "PrivateChats":                return new PrivateChats(storyteller, grimoire, observers, random, dayNumber, setup.PlayerCount);
                 case "MorningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: true);
                 case "EveningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: false);
                 case "FinalPublicStatements":       return new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true };
                 case "RollCall":                    return new RollCall(grimoire, observers);
-                case "Shenanigans":                 return new Shenanigans(storyteller, grimoire, observers, setup.Script, random, dayNumber);
+                case "Shenanigans":                 return new Shenanigans(storyteller, grimoire, kills, observers, setup.Script, random, dayNumber);
 
                 // Townsfolk
                 case "Chef":                        return new NotifyChef(storyteller, grimoire);
@@ -54,7 +55,7 @@ namespace Clocktower.Events
                 case "Monk":                        return new ChoiceFromMonk(storyteller, grimoire);
                 case "Philosopher":                 return new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script);
                 case "PhilosopherInformation":      return new NotifyPhilosopherStartKnowing(storyteller, grimoire, setup.Script, random);
-                case "Ravenkeeper":                 return new ChoiceFromRavenkeeper(storyteller, grimoire, setup.Script);
+                case "CannibalInformation":         return new NotifyCannibalStartKnowing(storyteller, grimoire, setup.Script, random);
                 case "Shugenja":                    return new NotifyShugenja(storyteller, grimoire);
                 case "Steward":                     return new NotifySteward(storyteller, grimoire);
                 case "Noble":                       return new NotifyNoble(storyteller, grimoire);
@@ -63,12 +64,12 @@ namespace Clocktower.Events
                 case "Juggler":                     return new NotifyJuggler(storyteller, grimoire);
 
                 // Outsiders
-                case "Tinker":                      return new TinkerOption(storyteller, grimoire, observers, duringDay);
+                case "Tinker":                      return new TinkerOption(storyteller, grimoire, kills, observers, duringDay);
                 case "Butler":                      return new ChoiceFromButler(storyteller, grimoire);
 
                 // Minions
-                case "Assassin":                    return new ChoiceFromAssassin(storyteller, grimoire);
-                case "Godfather":                   return new ChoiceFromGodfather(storyteller, grimoire);
+                case "Assassin":                    return new ChoiceFromAssassin(storyteller, grimoire, kills);
+                case "Godfather":                   return new ChoiceFromGodfather(storyteller, grimoire, kills);
                 case "GodfatherInformation":        return new NotifyGodfather(storyteller, grimoire);
                 case "Poisoner":                    return new ChoiceFromPoisoner(storyteller, grimoire);
                 case "Witch":                       return new ChoiceFromWitch(storyteller, grimoire);
@@ -76,9 +77,9 @@ namespace Clocktower.Events
                 case "DevilsAdvocate":              return new ChoiceFromDevilsAdvocate(storyteller, grimoire);
 
                 // Demons
-                case "Imp":                         return new ChoiceFromDemon(Character.Imp, storyteller, grimoire);
-                case "NoDashii":                    return new ChoiceFromDemon(Character.No_Dashii, storyteller, grimoire);
-                case "Ojo":                         return new ChoiceFromOjo(storyteller, grimoire, setup.Script);
+                case "Imp":                         return new ChoiceFromDemon(Character.Imp, storyteller, grimoire, kills);
+                case "NoDashii":                    return new ChoiceFromDemon(Character.No_Dashii, storyteller, grimoire, kills);
+                case "Ojo":                         return new ChoiceFromOjo(storyteller, grimoire, kills, setup.Script);
 
                 default: throw new Exception($"Unknown event name \"{name}\"");
             }
@@ -132,6 +133,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IGameObserver observers;
         private readonly IGameSetup setup;
         private readonly Random random;

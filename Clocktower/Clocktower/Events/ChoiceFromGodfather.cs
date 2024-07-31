@@ -6,10 +6,11 @@ namespace Clocktower.Events
 {
     internal class ChoiceFromGodfather : IGameEvent
     {
-        public ChoiceFromGodfather(IStoryteller storyteller, Grimoire grimoire)
+        public ChoiceFromGodfather(IStoryteller storyteller, Grimoire grimoire, Kills kills)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
         }
 
         public async Task RunEvent()
@@ -22,12 +23,13 @@ namespace Clocktower.Events
                 godfather.Tokens.Remove(Token.GodfatherKillsTonight);
                 if (!godfather.DrunkOrPoisoned && target.Alive)
                 {
-                    await new Kills(storyteller, grimoire).NightKill(target, godfather);
+                    await kills.NightKill(target, godfather);
                 }
             }
         }
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
     }
 }

@@ -24,36 +24,22 @@ namespace ClocktowerScenarioTests.Tests
         [Test]
         public async Task Tinker_CanDieNightTwo()
         {
-            // Arrange
-            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Tinker,Soldier,Slayer,Mayor");
-
-            bool shouldKill = false;
-            setup.Storyteller.ShouldKillTinker(Arg.Is<Player>(player => player.Character == Character.Tinker), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    return args.GetYesNoOptionFromArg(shouldKill, argIndex: 1);
-                });
-
-            // - Tinker should trigger between Imp kill and Ravenkeeper choice.
-            setup.Agent(Character.Imp).RequestChoiceFromDemon(Arg.Any<Character>(), Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    shouldKill = true;
-                    return args.GetOptionForCharacterFromArg(Character.Ravenkeeper, argIndex: 1);
-                });
-            setup.Agent(Character.Ravenkeeper).RequestChoiceFromRavenkeeper(Arg.Any<IReadOnlyCollection<IOption>>())
-                .Returns(args =>
-                {
-                    shouldKill = false;
-                    return args.GetOptionForCharacterFromArg(Character.Ravenkeeper);
-                });
-
-            // Act
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Empath,Tinker,Soldier,Slayer,Mayor");
             await game.StartGame();
-            await game.RunNightAndDay();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockShouldKillTinker(false);
+            
             await game.RunNightAndDay();
 
-            // Assert
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockShouldKillTinker(true);
+            setup.Agent(Character.Imp).Observer.When(observer => observer.AnnounceLivingPlayers(Arg.Any<IReadOnlyCollection<Player>>()))
+                .Do(_ => { game.EndGame(Alignment.Good); });
+            
+            await game.RunNightAndDay();
+
             await setup.Agent(Character.Tinker).Received().YouAreDead();
         }
 

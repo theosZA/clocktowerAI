@@ -41,6 +41,7 @@ namespace Clocktower.Storyteller
         Task<IOption> ShouldExecuteWithVirgin(Player virgin, Player nominator, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldRegisterForJuggle(Player juggler, Player juggledPlayer, Character juggledCharacter, IReadOnlyCollection<IOption> yesOrNo);
         Task<string> GetFishermanAdvice(Player fisherman);
+        Task<IOption> ChooseFakeCannibalAbility(Player cannibal, Player executedPlayer, IReadOnlyCollection<IOption> characterAbilityOptions);
 
         void AssignCharacter(Player player);
 

@@ -6,10 +6,11 @@ namespace Clocktower.Events
 {
     internal class EndDay : IGameEvent
     {
-        public EndDay(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers)
+        public EndDay(IStoryteller storyteller, Grimoire grimoire, Kills kills, IGameObserver observers)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
             this.observers = observers;
         }
 
@@ -26,7 +27,7 @@ namespace Clocktower.Events
                 await observers.PlayerIsExecuted(grimoire.PlayerToBeExecuted, playerDies);
                 if (playerDies)
                 {
-                    await new Kills(storyteller, grimoire).Execute(grimoire.PlayerToBeExecuted);
+                    await kills.Execute(grimoire.PlayerToBeExecuted);
                 }
                 grimoire.PlayerToBeExecuted = null;
             }
@@ -83,6 +84,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IGameObserver observers;
     }
 }

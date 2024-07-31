@@ -110,7 +110,8 @@
             return token == Token.IsTheDrunk
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
-                || token == Token.PoisonedByPoisoner;
+                || token == Token.PoisonedByPoisoner
+                || token == Token.CannibalPoisoned;
         }
 
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
@@ -126,7 +127,8 @@
         {
             return token == Token.Executed
                 || token == Token.PhilosopherUsedAbilityTonight
-                || token == Token.JuggledCorrectly;
+                || token == Token.JuggledCorrectly
+                || token == Token.CannibalFirstNightWithAbility;
         }
 
         private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
@@ -140,7 +142,9 @@
                 || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler
                 || token == Token.JugglerBeforeFirstDay
-                || token == Token.JugglerFirstDay;
+                || token == Token.JugglerFirstDay
+                || token == Token.CannibalEaten
+                || token == Token.CannibalPoisoned;
         }
 
         private string TokenPairToText(Token token, Player assigningPlayer)
@@ -165,6 +169,7 @@
                 Token.PhilosopherDrunk => "Philosopher drunk",
                 Token.NoDashiiPoisoned => "poisoned by the No Dashii",
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
+                Token.CannibalPoisoned => "poisoned from a bad meal",
                 Token.CursedByWitch => "cursed by the Witch",
                 Token.ProtectedByDevilsAdvocate => "protected by the Devil's Advocate",
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",
@@ -180,6 +185,7 @@
                 Token.StewardPing => "seen by the Steward",
                 Token.NoblePing => "seen by the Noble",
                 Token.JuggledCorrectly => "juggled correctly by the Juggler",
+                Token.CannibalEaten => "has ability as Cannibal",
                 _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
             };
         }

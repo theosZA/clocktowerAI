@@ -80,6 +80,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetJugglerNumber(juggler, realJugglerNumber, Enumerable.Range(0, 6).ToOptions())).GetNumber();
         }
 
+        public static async Task<Character> ChooseFakeCannibalAbility(this IStoryteller storyteller, Player cannibal, Player executedPlayer, IEnumerable<Character> cannibalAbilityOptions)
+        {
+            return (await storyteller.ChooseFakeCannibalAbility(cannibal, executedPlayer, cannibalAbilityOptions.ToOptions())).GetCharacter();
+        }
+
         public static async Task<bool> GetFortuneTellerReading(this IStoryteller storyteller, Player fortuneTeller, Player targetA, Player targetB)
         {
             return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;

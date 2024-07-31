@@ -13,10 +13,11 @@ namespace Clocktower.Events
     /// </summary>
     internal class Shenanigans : IGameEvent
     {
-        public Shenanigans(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random, int dayNumber)
+        public Shenanigans(IStoryteller storyteller, Grimoire grimoire, Kills kills, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random, int dayNumber)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
             this.observers = observers;
             this.scriptCharacters = scriptCharacters;
             this.random = random;
@@ -123,7 +124,7 @@ namespace Clocktower.Events
 
             if (success)
             {
-                await new Kills(storyteller, grimoire).DayKill(target, slayer);
+                await kills.DayKill(target, slayer);
             }
         }
 
@@ -175,6 +176,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IGameObserver observers;
         private readonly IReadOnlyCollection<Character> scriptCharacters;
         private readonly Random random;

@@ -1,37 +1,34 @@
-﻿using Clocktower.Storyteller;
+﻿using Clocktower.Agent;
+using Clocktower.Events;
+using Clocktower.Storyteller;
 
 namespace Clocktower.Game
 {
     internal class Kills
     {
-        public Kills(IStoryteller storyteller, Grimoire grimoire)
+        public Kills(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> scriptCharacters)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.scriptCharacters = scriptCharacters;
         }
 
         public async Task Execute(Player player)
         {
             player.Tokens.Add(Token.Executed, player);
-            await DayKill(player, killer: null);
-
-            if (player.Character == Character.Saint && !player.DrunkOrPoisoned)
-            {
-                grimoire.EndGame(player.Alignment == Alignment.Good ? Alignment.Evil : Alignment.Good);
-            }
+            grimoire.MostRecentlyExecutedPlayerToDie = player;
+            await DayKill(player, execution: true);
         }
 
-        public async Task DayKill(Player player, Player? killer)
+        public async Task DayKill(Player player, Player? killer = null, bool execution = false)
         {
-            await HandleDayDeath(player, killer);
+            await HandleDayDeath(player, killer, execution);
             player.Kill();
         }
 
         public async Task NightKill(Player player, Player? killer)
         {
-            if (player.Character == Character.Mayor
-                && !player.DrunkOrPoisoned 
-                && player.Alive
+            if (player.HasHealthyAbility(Character.Mayor)
                 && !(killer?.CharacterType == CharacterType.Demon && player.ProtectedFromDemonKill)
                 && killer?.Character != Character.Assassin)
             {
@@ -47,21 +44,28 @@ namespace Clocktower.Game
             player.Tokens.Add(Token.DiedAtNight, killer ?? player);
         }
 
-        private async Task HandleDayDeath(Player dyingPlayer, Player? killer)
+        private async Task HandleDayDeath(Player dyingPlayer, Player? killer, bool execution)
         {
+            await ProcessDayDeathTriggers(dyingPlayer, execution);
+            await ProcessDeathTriggers(dyingPlayer, killer);
             grimoire.ClearTokensOnPlayerDeath(dyingPlayer);
-            ProcessDayTriggersForOtherCharacters(dyingPlayer);
-            await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
         private async Task HandleNightDeath(Player dyingPlayer, Player? killer)
         {
+            await ProcessNightDeathTriggers(dyingPlayer, killer);
+            await ProcessDeathTriggers(dyingPlayer, killer);
             grimoire.ClearTokensOnPlayerDeath(dyingPlayer);
-            await ProcessTriggersForOtherCharacters(dyingPlayer, killer);
         }
 
-        private void ProcessDayTriggersForOtherCharacters(Player dyingPlayer)
+        private async Task ProcessDayDeathTriggers(Player dyingPlayer, bool execution)
         {
+            // Saint
+            if (execution && dyingPlayer.HasHealthyAbility(Character.Saint))
+            {
+                grimoire.EndGame(dyingPlayer.Alignment == Alignment.Good ? Alignment.Evil : Alignment.Good);
+            }
+
             // Godfather
             if (dyingPlayer.CharacterType == CharacterType.Outsider)
             {
@@ -70,9 +74,50 @@ namespace Clocktower.Game
                     godfather.Tokens.Add(Token.GodfatherKillsTonight, dyingPlayer);
                 }
             }
+
+            // Cannibal
+            if (execution)
+            {
+                foreach (var cannibal in grimoire.PlayersForWhomWeShouldRunAbility(Character.Cannibal))
+                {
+                    foreach (var player in grimoire.Players)
+                    {
+                        player.Tokens.Remove(Token.CannibalEaten, cannibal);
+                    }
+                    dyingPlayer.Tokens.Add(Token.CannibalEaten, cannibal);
+                    cannibal.Tokens.Add(Token.CannibalFirstNightWithAbility, cannibal);
+                    cannibal.Tokens.Remove(Token.CannibalPoisoned);
+                    if (dyingPlayer.Alignment == Alignment.Evil || dyingPlayer.RealCharacter == Character.Drunk)
+                    {
+                        cannibal.Tokens.Add(Token.CannibalPoisoned, cannibal);
+                        var fakeCannibalAbility = await storyteller.ChooseFakeCannibalAbility(cannibal, dyingPlayer, scriptCharacters.Where(character => character.Alignment() == Alignment.Good));
+                        cannibal.CannibalAbility = fakeCannibalAbility;
+                    }
+                    else
+                    {
+                        cannibal.CannibalAbility = dyingPlayer.RealCharacter;
+                        if (cannibal.CannibalAbility == Character.Fortune_Teller)
+                        {
+                            await new AssignFortuneTellerRedHerring(storyteller, grimoire).AssignRedHerring(fortuneTeller: cannibal);
+                        }
+                    }
+                }
+            }
         }
 
-        private async Task ProcessTriggersForOtherCharacters(Player dyingPlayer, Player? killer)
+        private async Task ProcessNightDeathTriggers(Player dyingPlayer, Player? killer)
+        {
+            // Ravenkeeper
+            if (dyingPlayer.ShouldRunAbility(Character.Ravenkeeper))
+            {
+                var target = await dyingPlayer.Agent.RequestChoiceFromRavenkeeper(grimoire.Players);
+                var character = await GetCharacterSeenByRavenkeeper(dyingPlayer, target);
+                storyteller.ChoiceFromRavenkeeper(dyingPlayer, target, character);
+                await dyingPlayer.Agent.NotifyRavenkeeper(target, character);
+            }
+        }
+
+        private async Task ProcessDeathTriggers(Player dyingPlayer, Player? killer)
         {
             // Scarlet Woman
             bool scarletWomanTriggered = false;
@@ -115,7 +160,59 @@ namespace Clocktower.Game
             };
         }
 
+        private async Task<Character> GetCharacterSeenByRavenkeeper(Player ravenkeeper, Player target)
+        {
+            if (ravenkeeper.DrunkOrPoisoned)
+            {   // Any on-script character is possible.
+                return await GetCharacterSeenByRavenkeeperFromList(ravenkeeper, target, scriptCharacters);
+            }
+
+            List<Character> characters = new() { target.RealCharacter };
+
+            if (target.CanRegisterAsDemon && target.CharacterType != CharacterType.Demon)
+            {
+                foreach (var demon in scriptCharacters.OfCharacterType(CharacterType.Demon))
+                {
+                    characters.Add(demon);
+                }
+            }
+            if (target.CanRegisterAsMinion && target.CharacterType != CharacterType.Minion)
+            {
+                foreach (var minion in scriptCharacters.OfCharacterType(CharacterType.Minion))
+                {
+                    characters.Add(minion);
+                }
+            }
+            if (target.CanRegisterAsOutsider && target.CharacterType != CharacterType.Outsider)
+            {
+                foreach (var outsider in scriptCharacters.OfCharacterType(CharacterType.Outsider))
+                {
+                    characters.Add(outsider);
+                }
+            }
+            if (target.CanRegisterAsTownsfolk && target.CharacterType != CharacterType.Townsfolk)
+            {
+                foreach (var townsfolk in scriptCharacters.OfCharacterType(CharacterType.Townsfolk))
+                {
+                    characters.Add(townsfolk);
+                }
+            }
+
+            return await GetCharacterSeenByRavenkeeperFromList(ravenkeeper, target, characters);
+        }
+
+        private async Task<Character> GetCharacterSeenByRavenkeeperFromList(Player ravenkeeper, Player target, IReadOnlyCollection<Character> characters)
+        {
+            if (characters.Count == 1)
+            {
+                return characters.First();
+            }
+
+            return await storyteller.GetCharacterForRavenkeeper(ravenkeeper, target, characters);
+        }
+
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly IReadOnlyCollection<Character> scriptCharacters;
     }
 }

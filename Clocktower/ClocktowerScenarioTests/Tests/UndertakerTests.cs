@@ -300,5 +300,41 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Philosopher).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
         }
+
+        [Test]
+        public async Task CannibalUndertaker()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Cannibal,Undertaker");
+            setup.Agent(Character.Imp).MockNomination(Character.Undertaker);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Cannibal).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Undertaker), Character.Undertaker);
+        }
+
+        [Test]
+        public async Task CannibalUndertaker_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Cannibal,Scarlet_Woman");
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Storyteller.MockCannibalChoice(Character.Undertaker);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetCharacterForUndertaker(Character.Investigator);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Cannibal).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Scarlet_Woman), Character.Investigator);
+        }
     }
 }

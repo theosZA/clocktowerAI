@@ -237,5 +237,60 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(investigatorPing));
             });
         }
+
+        [Test]
+        public async Task CannibalInvestigator()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Investigator,Scarlet_Woman");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockGetInvestigatorPing(Character.Baron, Character.Saint, Character.Baron);
+            setup.Agent(Character.Imp).MockNomination(Character.Investigator);
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetInvestigatorPing(Character.Scarlet_Woman, Character.Saint, Character.Scarlet_Woman);
+            var receivedInvestigatorPing = setup.Agent(Character.Cannibal).MockNotifyInvestigator(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(Character.Scarlet_Woman).Or.EqualTo(Character.Saint));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(Character.Scarlet_Woman).Or.EqualTo(Character.Saint));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(Character.Scarlet_Woman));
+            });
+        }
+
+        [Test]
+        public async Task CannibalInvestigator_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Storyteller.MockCannibalChoice(Character.Investigator);
+            setup.Storyteller.MockGetInvestigatorPing(Character.Soldier, Character.Saint, Character.Scarlet_Woman);
+            var receivedInvestigatorPing = setup.Agent(Character.Cannibal).MockNotifyInvestigator(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.EqualTo(Character.Soldier).Or.EqualTo(Character.Saint));
+                Assert.That(receivedInvestigatorPing.Value.playerB, Is.EqualTo(Character.Soldier).Or.EqualTo(Character.Saint));
+                Assert.That(receivedInvestigatorPing.Value.playerA, Is.Not.EqualTo(receivedInvestigatorPing.Value.playerB));
+                Assert.That(receivedInvestigatorPing.Value.seenCharacter, Is.EqualTo(Character.Scarlet_Woman));
+            });
+        }
     }
 }

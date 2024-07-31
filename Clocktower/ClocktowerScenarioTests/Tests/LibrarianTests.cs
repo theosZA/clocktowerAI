@@ -384,5 +384,77 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedLibrarianPing.Value.seenCharacter, Is.EqualTo(librarianPing));
             });
         }
+
+        [Test]
+        public async Task CannibalLibrarian()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Recluse,Librarian");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockGetLibrarianPing(Character.Saint, Character.Imp, Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Librarian);
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetLibrarianPing(Character.Recluse, Character.Soldier, Character.Recluse);
+            var receivedLibrarianPing = setup.Agent(Character.Cannibal).MockNotifyLibrarian(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.EqualTo(Character.Recluse).Or.EqualTo(Character.Soldier));
+                Assert.That(receivedLibrarianPing.Value.playerB, Is.EqualTo(Character.Recluse).Or.EqualTo(Character.Soldier));
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.Not.EqualTo(receivedLibrarianPing.Value.playerB));
+                Assert.That(receivedLibrarianPing.Value.seenCharacter, Is.EqualTo(Character.Recluse));
+            });
+        }
+
+        [Test]
+        public async Task CannibalLibrarian_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Librarian);
+            setup.Storyteller.MockGetLibrarianPing(Character.Imp, Character.Soldier, Character.Recluse);
+            var receivedLibrarianPing = setup.Agent(Character.Cannibal).MockNotifyLibrarian(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.EqualTo(Character.Imp).Or.EqualTo(Character.Soldier));
+                Assert.That(receivedLibrarianPing.Value.playerB, Is.EqualTo(Character.Imp).Or.EqualTo(Character.Soldier));
+                Assert.That(receivedLibrarianPing.Value.playerA, Is.Not.EqualTo(receivedLibrarianPing.Value.playerB));
+                Assert.That(receivedLibrarianPing.Value.seenCharacter, Is.EqualTo(Character.Recluse));
+            });
+        }
+
+        [Test]
+        public async Task CannibalLibrarian_Poisoned_SeesNoOutsiders()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Librarian);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Cannibal).Received().NotifyLibrarianNoOutsiders();
+        }
     }
 }

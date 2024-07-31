@@ -15,10 +15,15 @@ namespace Clocktower.Events
         {
             foreach (var chef in grimoire.PlayersForWhomWeShouldRunAbility(Character.Chef))
             {
-                int chefCount = await GetChefNumber(chef);
-                await chef.Agent.NotifyChef(chefCount);
-                storyteller.NotifyChef(chef, chefCount);
+                await RunEvent(chef);
             }
+        }
+
+        public async Task RunEvent(Player chef)
+        {
+            int chefCount = await GetChefNumber(chef);
+            await chef.Agent.NotifyChef(chefCount);
+            storyteller.NotifyChef(chef, chefCount);
         }
 
         private async Task<int> GetChefNumber(Player chef)

@@ -192,19 +192,37 @@ namespace Clocktower.Agent.RobotAgent
 
         public Task NotifyChef(int evilPairCount)
         {
-            clocktowerChat.AddFormattedMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", evilPairCount);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            clocktowerChat.AddFormattedMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", evilCount);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
-            if (reading)
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", reading ? "Yes" : "No");
+            }
+            else if (reading)
             {
                 clocktowerChat.AddFormattedMessage("Yes, one of %p or %p is the demon.", targetA, targetB);
             }
@@ -236,7 +254,14 @@ namespace Clocktower.Agent.RobotAgent
 
         public Task NotifyJuggler(int jugglerCount)
         {
-            clocktowerChat.AddFormattedMessage("You learn that %b of your juggles were correct.", jugglerCount);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", jugglerCount);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that %b of your juggles were correct.", jugglerCount);
+            }
             return Task.CompletedTask;
         }
 
@@ -248,37 +273,80 @@ namespace Clocktower.Agent.RobotAgent
 
         public Task NotifyLibrarianNoOutsiders()
         {
-            clocktowerChat.AddFormattedMessage("You learn that there are no outsiders in play.");
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", 0);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that there are no outsiders in play.");
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyRavenkeeper(Player target, Character character)
         {
-            clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", target, character);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %c", character);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", target, character);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyShugenja(Direction direction)
         {
-            clocktowerChat.AddFormattedMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");
+            var directionText = direction == Direction.Clockwise ? "clockwise" : "counter-clockwise";
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %b", directionText);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, directionText);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifySteward(Player goodPlayer)
         {
-            clocktowerChat.AddFormattedMessage("You learn that %p is a good player.", goodPlayer);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %p", goodPlayer);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that %p is a good player.", goodPlayer);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
         {
-            clocktowerChat.AddFormattedMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %P", nobleInformation);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyUndertaker(Player executedPlayer, Character character)
         {
-            clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", executedPlayer, character);
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage($"You learn: %c", character);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", executedPlayer, character);
+            }
             return Task.CompletedTask;
         }
 
@@ -351,6 +419,10 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
+            if (Character == Game.Character.Cannibal)
+            {
+                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose two players. Please format your response as: PLAYER1 and PLAYER2", Game.Character.Cannibal);
+            }
             return await clocktowerChat.RequestChoice(options, "As the %c please choose two players. Please format your response as: PLAYER1 and PLAYER2", Game.Character.Fortune_Teller);
         }
 
@@ -376,11 +448,25 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
+            if (Character == Game.Character.Cannibal)
+            {
+                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.", Game.Character.Cannibal);
+            }
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to protect from the demon tonight. Respond with the name of the player you wish to protect.", Game.Character.Monk);
         }
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
+            if (Character == Game.Character.Cannibal)
+            {
+                bool useAbility = await clocktowerChat.RequestChoice(OptionsBuilder.YesOrNo, "Do you wish to use the ability you have gained as the %c tonight?", Game.Character.Cannibal) is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                return await clocktowerChat.RequestChoice(options.Where(option => option is not PassOption).ToList(), "For the ability you have gained as the %c, please choose a Townsfolk or Outsider character.");
+            }
+
             return await clocktowerChat.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Game.Character.Philosopher);
         }
 
@@ -396,11 +482,20 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
+            if (Character == Game.Character.Cannibal)
+            {
+                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.");
+            }
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);
         }
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
+            if (Character == Game.Character.Cannibal)
+            {
+                return await clocktowerChat.RequestChoice(options, "As the %c you have gained the ability of the %c. Please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.",
+                                                          Game.Character.Cannibal, Game.Character.Butler);
+            }
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Game.Character.Butler);
         }
 

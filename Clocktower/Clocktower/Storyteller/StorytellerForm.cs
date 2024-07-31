@@ -344,6 +344,12 @@ namespace Clocktower.Storyteller
             return await GetTextResponse();
         }
 
+        public async Task<IOption> ChooseFakeCannibalAbility(Player cannibal, Player executedPlayer, IReadOnlyCollection<IOption> characterAbilityOptions)
+        {
+            outputText.AppendFormattedText("%p has been executed and died. What ability should %p believe they gained as the %c?", executedPlayer, cannibal, Character.Cannibal, StorytellerView);
+            return await PopulateOptions(characterAbilityOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Character != player.RealCharacter)
@@ -426,7 +432,7 @@ namespace Clocktower.Storyteller
 
         public void NotifyNoble(Player noble, IReadOnlyCollection<Player> nobleInformation)
         {
-            outputText.AppendFormattedText("%p learns that there is exactly 1 evil player among %P", noble, nobleInformation, StorytellerView);
+            outputText.AppendFormattedText("%p learns that there is exactly 1 evil player among %P\n", noble, nobleInformation, StorytellerView);
         }
 
         public void NotifySteward(Player steward, Player goodPlayer)

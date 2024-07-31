@@ -234,5 +234,50 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(receivedChefNumber.Value, Is.EqualTo(1));
         }
+
+        [Test]
+        public async Task CannibalChef()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Cannibal,Saint,Mayor,Soldier,Chef");
+            setup.Agent(Character.Imp).MockNomination(Character.Chef);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var receivedChefNumber = setup.Agent(Character.Cannibal).MockNotifyChef(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedChefNumber.Value, Is.EqualTo(1));
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(7)]
+        public async Task CannibalChef_Poisoned(int chefNumber)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Cannibal,Saint,Mayor,Soldier,Fisherman");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Chef);
+            var chefNumbers = setup.Storyteller.MockGetChefNumber(chefNumber);
+            var receivedChefNumber = setup.Agent(Character.Cannibal).MockNotifyChef(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(chefNumbers, Is.EquivalentTo(new[] { 0, 1, 2, 3, 4, 5, 6, 7 }));    // 7 is the largest possible value, even if patently absurd.
+                Assert.That(receivedChefNumber.Value, Is.EqualTo(chefNumber));
+            });
+        }
     }
 }

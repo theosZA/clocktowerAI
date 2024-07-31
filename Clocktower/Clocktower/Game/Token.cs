@@ -13,6 +13,7 @@
         PhilosopherDrunk,
         NoDashiiPoisoned,
         PoisonedByPoisoner,
+        CannibalPoisoned,
         CursedByWitch,
         ProtectedByDevilsAdvocate,
         FortuneTellerRedHerring,
@@ -28,6 +29,7 @@
         StewardPing,
         NoblePing,
         JuggledCorrectly,
+        CannibalEaten,
         // Special marker (not actually represented by a token in the real game).
         DiedAtNight = 3000,
         // Not real tokens, just used here for tracking stuff needed for this implementation.
@@ -36,6 +38,7 @@
         PickedByDevilsAdvocate,     // tracks separately from the Devil's Advocate protection because they may be poisoned/drunk but are still restricted in their choice the next day
         NeverBluffingShenanigans,   // a player may opt out of future "Shenanigans" phases unless they gain an ability which can be used then
         JugglerBeforeFirstDay,
-        JugglerFirstDay
+        JugglerFirstDay,
+        CannibalFirstNightWithAbility
     }
 }

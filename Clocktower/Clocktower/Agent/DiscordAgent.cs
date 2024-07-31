@@ -114,6 +114,11 @@ namespace Clocktower.Agent
 
         public async Task NotifyLibrarianNoOutsiders()
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", 0);
+                return;
+            }
             await observer.SendMessage("You learn that there are no outsiders in play.");
         }
 
@@ -124,53 +129,100 @@ namespace Clocktower.Agent
 
         public async Task NotifyChef(int evilPairCount)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", evilPairCount);
+                return;
+            }
             await observer.SendMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
         }
 
         public async Task NotifySteward(Player goodPlayer)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %p.", goodPlayer);
+                return;
+            }
             await observer.SendMessage("You learn that %p is a good player.", goodPlayer);
         }
 
         public async Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %P.", nobleInformation);
+                return;
+            }
             await observer.SendMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
         }
 
         public async Task NotifyShugenja(Direction direction)
         {
-            await observer.SendMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");
+            var directionText = direction == Direction.Clockwise ? "clockwise" : "counter-clockwise";
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", directionText);
+                return;
+            }
+            await observer.SendMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, directionText);
         }
 
         public async Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", evilCount);
+                return;
+            }
             await observer.SendMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
         }
 
         public async Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", reading ? "Yes" : "No");
+                return;
+            }
+
             if (reading)
             {
-                await observer.SendMessage("Yes, one of %p or %p is the demon.", targetA, targetB);
+                await observer.SendMessage("**Yes**, one of %p or %p is the demon.", targetA, targetB);
             }
             else
             {
-                await observer.SendMessage("No, neither of %p or %p is the demon.", targetA, targetB);
+                await observer.SendMessage("**No**, neither of %p or %p is the demon.", targetA, targetB);
             }
         }
 
         public async Task NotifyRavenkeeper(Player target, Character character)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %c.", character);
+                return;
+            }
             await observer.SendMessage("You learn that %p is the %c.", target, character);
         }
 
         public async Task NotifyUndertaker(Player executedPlayer, Character character)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %c.", character);
+                return;
+            }
             await observer.SendMessage("You learn that %p is the %c.", executedPlayer, character);
         }
 
         public async Task NotifyJuggler(int jugglerCount)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %b.", jugglerCount);
+                return;
+            }
             await observer.SendMessage("You learn that %b of your juggles were correct.", jugglerCount);
         }
 
@@ -227,21 +279,46 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                bool useAbility = await prompter.RequestChoice(OptionsBuilder.YesOrNo, "Do you wish to use your ability tonight?") is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                return await prompter.RequestChoice(options.Where(option => option is not PassOption).ToList(), "Please choose a Townsfolk or Outsider character...");
+            }
+
             return await prompter.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or `PASS` if you want to save your ability for later.", Character.Philosopher);
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                return await prompter.RequestChoice(options, "Please choose two players. Respond in the form: *PLAYER1* and *PLAYER2*");
+            }
+
             return await prompter.RequestChoice(options, "As the %c please choose two players. Respond in the form: *PLAYER1* and *PLAYER2*", Character.Fortune_Teller);
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                return await prompter.RequestChoice(options, "Please choose a player.");
+            }
+
             return await prompter.RequestChoice(options, "As the %c please choose a player to protect from the demon tonight.", Character.Monk);
         }
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
+            if (characterAbility == Character.Cannibal)
+            {
+                return await prompter.RequestChoice(options, "Please choose a player.");
+            }
+
             return await prompter.RequestChoice(options, "As the %c please choose a player whose character you wish to learn.", Character.Ravenkeeper);
         }
 

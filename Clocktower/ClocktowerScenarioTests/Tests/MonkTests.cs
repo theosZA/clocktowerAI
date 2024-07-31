@@ -191,5 +191,43 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(monkOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Mayor }));  // not Philosopher or Monk
             await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
         }
+
+        [Test]
+        public async Task CannibalMonk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Monk");
+            setup.Agent(Character.Imp).MockNomination(Character.Monk);
+            var monkOptions = setup.Agent(Character.Cannibal).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(monkOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Monk }));  // not Cannibal
+            await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
+        }
+
+        [Test]
+        public async Task CannibalMonk_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Scarlet_Woman");
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Storyteller.MockCannibalChoice(Character.Monk);
+            setup.Agent(Character.Cannibal).MockMonkChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Saint).Received().YouAreDead();
+        }
     }
 }

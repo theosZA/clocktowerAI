@@ -294,5 +294,49 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(receivedEmpathNumber.Value, Is.EqualTo(1));
         }
+
+        [Test]
+        public async Task CannibalEmpath()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Cannibal,Baron,Saint,Soldier,Empath");
+            setup.Agent(Character.Imp).MockNomination(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var receivedEmpathNumber = setup.Agent(Character.Cannibal).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedEmpathNumber.Value, Is.EqualTo(1));
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task CannibalEmpath_Poisoned(int empathNumber)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Cannibal,Baron,Saint,Soldier,Fisherman");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Empath);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(empathNumber);
+            var receivedEmpathNumber = setup.Agent(Character.Cannibal).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(empathNumbers, Is.EquivalentTo(new[] { 0, 1, 2 }));
+                Assert.That(receivedEmpathNumber.Value, Is.EqualTo(empathNumber));
+            });
+        }
     }
 }

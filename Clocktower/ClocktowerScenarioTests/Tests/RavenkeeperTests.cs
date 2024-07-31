@@ -271,5 +271,47 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Philosopher).Received().YouAreDead();
             await setup.Agent(Character.Philosopher).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
         }
+
+        [Test]
+        public async Task CannibalRavenkeeper()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Cannibal,Soldier,Ravenkeeper,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Ravenkeeper);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Cannibal);
+            var ravenkeeperOptions = setup.Agent(Character.Cannibal).MockRavenkeeperChoice(Character.Mayor);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(ravenkeeperOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron, Character.Saint, Character.Cannibal, Character.Soldier, Character.Ravenkeeper, Character.Mayor }));
+            await setup.Agent(Character.Cannibal).Received().YouAreDead();
+            await setup.Agent(Character.Cannibal).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
+        }
+
+        [Test]
+        public async Task CannibalRavenkeeper_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Cannibal,Soldier,Scarlet_Woman,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Cannibal);
+            setup.Storyteller.MockCannibalChoice(Character.Ravenkeeper);
+            var ravenkeeperOptions = setup.Agent(Character.Cannibal).MockRavenkeeperChoice(Character.Mayor);
+            setup.Storyteller.MockGetCharacterForRavenkeeper(Character.Imp);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(ravenkeeperOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron, Character.Saint, Character.Cannibal, Character.Soldier, Character.Scarlet_Woman, Character.Mayor }));
+            await setup.Agent(Character.Cannibal).Received().YouAreDead();
+            await setup.Agent(Character.Cannibal).Received().NotifyRavenkeeper(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Imp);
+        }
     }
 }

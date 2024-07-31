@@ -13,7 +13,8 @@ Godfather
 // Sweetheart - this is their theoretical place in the night order, but they actually drunk someone immediately on death
 Tinker
 PhilosopherInformation // If the Philosopher chooses a "start knowing" character, this is when they will learn that information
-Ravenkeeper
+CannibalInformation    // If the Cannibal gains the ability of a "start knowing" character, this is when they will learn that information
+// Ravenkeeper -  this is their theoretical place in the night order, but we actually run them immediately on death
 Empath
 FortuneTeller
 Undertaker

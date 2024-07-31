@@ -55,6 +55,8 @@ namespace Clocktower.Game
 
         public bool ProtectedFromDemonKill => (Character == Character.Soldier && !DrunkOrPoisoned) || Tokens.HasHealthyToken(Token.ProtectedByMonk);
 
+        public Character? CannibalAbility { get; set; }
+
         public Player(Grimoire grimoire, IAgent agent, Character character, Alignment alignment)
         {
             Agent = agent;
@@ -159,7 +161,7 @@ namespace Clocktower.Game
         /// <returns>True if we should treat the player like they have the ability, whether they really have the ability or not.</returns>
         public bool ShouldRunAbility(Character characterAbility)
         {
-            if (Character != characterAbility)
+            if (!(Character == characterAbility || (Character == Character.Cannibal && CannibalAbility == characterAbility)))
             {
                 return false;
             }

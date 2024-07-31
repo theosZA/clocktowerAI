@@ -230,5 +230,59 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(washerwomanPing));
             });
         }
+
+        [Test]
+        public async Task CannibalWasherwoman()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Fisherman,Washerwoman");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockGetWasherwomanPing(Character.Cannibal, Character.Imp, Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Washerwoman);
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetWasherwomanPing(Character.Soldier, Character.Baron, Character.Soldier);
+            var receivedWasherwomanPing = setup.Agent(Character.Cannibal).MockNotifyWasherwoman(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(Character.Soldier).Or.EqualTo(Character.Baron));
+                Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(Character.Soldier).Or.EqualTo(Character.Baron));
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
+                Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(Character.Soldier));
+            });
+        }
+
+        [Test]
+        public async Task CannibalWasherwoman_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Cannibal,Imp,Baron,Saint,Soldier,Fisherman,Scarlet_Woman");
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Washerwoman);
+            setup.Storyteller.MockGetWasherwomanPing(Character.Imp, Character.Saint, Character.Mayor);
+            var receivedWasherwomanPing = setup.Agent(Character.Cannibal).MockNotifyWasherwoman(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.EqualTo(Character.Imp).Or.EqualTo(Character.Saint));
+                Assert.That(receivedWasherwomanPing.Value.playerB, Is.EqualTo(Character.Imp).Or.EqualTo(Character.Saint));
+                Assert.That(receivedWasherwomanPing.Value.playerA, Is.Not.EqualTo(receivedWasherwomanPing.Value.playerB));
+                Assert.That(receivedWasherwomanPing.Value.seenCharacter, Is.EqualTo(Character.Mayor));
+            });
+        }
     }
 }

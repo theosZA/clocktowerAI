@@ -170,5 +170,80 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Philosopher).DidNotReceive().YouAreDead();
             await setup.Agent(Character.Fisherman).Received().YouAreDead();
         }
+
+        [Test]
+        public async Task CannibalMayor_SafeFromImp()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Cannibal);
+            setup.Storyteller.MockGetMayorBounce(Character.Fisherman);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Cannibal).DidNotReceive().YouAreDead();
+            await setup.Agent(Character.Fisherman).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task CannibalMayor_WinsGame()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Mayor).MockNomination(Character.Mayor);
+            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
+            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { Character.Saint, Character.Baron, Character.Fisherman });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
+
+        [Test]
+        public async Task CannibalMayor_Poisoned_NotSafeFromImp()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Soldier");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Storyteller.MockCannibalChoice(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Cannibal);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Cannibal).Received().YouAreDead();
+        }
+
+        [Test]
+        public async Task CannibalMayor_Poisoned_DoesNotWinGame()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Scarlet_Woman");
+            setup.Agent(Character.Scarlet_Woman).MockNomination(Character.Scarlet_Woman);
+            setup.Storyteller.MockCannibalChoice(Character.Mayor);
+            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
+            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { Character.Saint, Character.Baron, Character.Fisherman });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.False);
+        }
     }
 }

@@ -6,10 +6,11 @@ namespace Clocktower.Events
 {
     internal class ChoiceFromOjo : IGameEvent
     {
-        public ChoiceFromOjo(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> scriptCharacters)
+        public ChoiceFromOjo(IStoryteller storyteller, Grimoire grimoire, Kills kills, IReadOnlyCollection<Character> scriptCharacters)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
             this.scriptCharacters = scriptCharacters;
         }
 
@@ -28,7 +29,7 @@ namespace Clocktower.Events
             storyteller.ChoiceFromOjo(ojo, targetCharacter, ojoVictims);
             foreach (var victim in ojoVictims)
             {
-                await new Kills(storyteller, grimoire).NightKill(victim, ojo);
+                await kills.NightKill(victim, ojo);
             }
         }
 
@@ -63,6 +64,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IReadOnlyCollection<Character> scriptCharacters;
     }
 }

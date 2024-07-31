@@ -7,10 +7,11 @@ namespace Clocktower.Events
 {
     internal class Nominations : IGameEvent
     {
-        public Nominations(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random)
+        public Nominations(IStoryteller storyteller, Grimoire grimoire, Kills kills, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
             this.observers = observers;
             this.scriptCharacters = scriptCharacters;
             this.random = random;
@@ -319,7 +320,7 @@ namespace Clocktower.Events
             }
 
             await observers.AnnounceNomination(nominator, nominee, votesToTie: null, votesToPutOnBlock: null);
-            var earlyEndDay = new EndDay(storyteller, grimoire, observers);
+            var earlyEndDay = new EndDay(storyteller, grimoire, kills, observers);
             grimoire.PlayerToBeExecuted = nominator;
             await earlyEndDay.RunEvent();
             grimoire.PhaseShouldEndImmediately = true;
@@ -338,14 +339,14 @@ namespace Clocktower.Events
             {
                 var witch = nominator.Tokens.GetAssigningPlayerForToken(Token.CursedByWitch);
                 await observers.PlayerDies(nominator);
-                await new Kills(storyteller, grimoire).DayKill(nominator, witch);
+                await kills.DayKill(nominator, witch);
             }
             else if (scriptCharacters.Contains(Character.Witch) && nominator.HasHealthyAbility(Character.Tinker))
             {   // The Tinker can die at any time, so doesn't need to actually be cursed by the Witch.
                 if (await storyteller.ShouldKillTinker(nominator))
                 {
                     await observers.PlayerDies(nominator);
-                    await new Kills(storyteller, grimoire).DayKill(nominator, killer: null);
+                    await kills.DayKill(nominator, killer: null);
                 }
             }
         }
@@ -357,6 +358,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IGameObserver observers;
         private readonly IReadOnlyCollection<Character> scriptCharacters;
         private readonly Random random;

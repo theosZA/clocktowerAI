@@ -6,10 +6,11 @@ namespace Clocktower.Events
 {
     internal class TinkerOption : IGameEvent
     {
-        public TinkerOption(IStoryteller storyteller, Grimoire grimoire, IGameObserver observers, bool duringDay)
+        public TinkerOption(IStoryteller storyteller, Grimoire grimoire, Kills kills, IGameObserver observers, bool duringDay)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
             this.observers = observers;
             this.duringDay = duringDay;
         }
@@ -36,7 +37,6 @@ namespace Clocktower.Events
 
             if (await storyteller.ShouldKillTinker(tinker))
             {
-                var kills = new Kills(storyteller, grimoire);
                 if (duringDay)
                 {
                     await kills.DayKill(tinker, killer: null);
@@ -51,6 +51,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
         private readonly IGameObserver observers;
         private readonly bool duringDay;
     }

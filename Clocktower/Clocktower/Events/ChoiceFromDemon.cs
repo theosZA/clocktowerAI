@@ -6,11 +6,12 @@ namespace Clocktower.Events
 {
     internal class ChoiceFromDemon : IGameEvent
     {
-        public ChoiceFromDemon(Character demonCharacter, IStoryteller storyteller, Grimoire grimoire)
+        public ChoiceFromDemon(Character demonCharacter, IStoryteller storyteller, Grimoire grimoire, Kills kills)
         {
             this.demonCharacter = demonCharacter;
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.kills = kills;
         }
 
         public async Task RunEvent()
@@ -23,7 +24,7 @@ namespace Clocktower.Events
                 storyteller.ChoiceFromDemon(demon, target);
                 if (!demon.DrunkOrPoisoned && target.Alive)
                 {
-                    await new Kills(storyteller, grimoire).NightKill(target, demon);
+                    await kills.NightKill(target, demon);
                 }
             }
         }
@@ -31,5 +32,6 @@ namespace Clocktower.Events
         private readonly Character demonCharacter;
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Kills kills;
     }
 }

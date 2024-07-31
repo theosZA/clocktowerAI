@@ -97,6 +97,12 @@ namespace ClocktowerScenarioTests.Mocks
             return chefNumbers;
         }
 
+        public static void MockCannibalChoice(this IStoryteller storyteller, Character fakeCharacterAbility)
+        {
+            storyteller.ChooseFakeCannibalAbility(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(fakeCharacterAbility, argIndex: 2);
+        }
+
         public static List<Character> MockGetNewImp(this IStoryteller storyteller, Character starPassTarget)
         {
             List<Character> starPassTargets = new();

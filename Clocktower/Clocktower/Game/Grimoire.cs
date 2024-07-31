@@ -39,6 +39,8 @@ namespace Clocktower.Game
         public IReadOnlyCollection<Player> Players => players;
 
         public Player? PlayerToBeExecuted { get; set; }
+        
+        public Player? MostRecentlyExecutedPlayerToDie { get; set; }
 
         public bool PhaseShouldEndImmediately { get; set; }
 

@@ -306,5 +306,104 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.True);
         }
+
+        [Test]
+        public async Task CannibalFortuneTeller_ValidRedHerringOptions()
+        {
+            // Arrange 
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Soldier,Recluse,Spy,Fortune_Teller,Baron");
+
+            var redHerringOptions = new List<Character>();
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Cannibal), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, redHerringOptions, argIndex: 1));
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, argIndex: 1));
+
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Fortune_Teller);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            // Options should include Recluse (a poor choice, but allowed), Spy (since they can register as good), but not any others on the evil team.
+            Assert.That(redHerringOptions, Is.EquivalentTo(new[] { Character.Cannibal, Character.Soldier, Character.Recluse, Character.Spy, Character.Fortune_Teller }));
+        }
+
+        [Test]
+        public async Task CannibalFortuneTeller_ChoosesImp()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Soldier,Recluse,Spy,Fortune_Teller,Baron");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Soldier, argIndex: 1));
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Fortune_Teller);
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Cannibal), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, argIndex: 1));
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Cannibal).MockFortuneTellerChoice(Character.Baron, Character.Imp);
+            var fortuneTellerReading = setup.Agent(Character.Cannibal).MockNotifyFortuneTeller(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.That(fortuneTellerReading.Value, Is.True);
+        }
+
+        [Test]
+        public async Task CannibalFortuneTeller_ChoosesRedHerring()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Soldier,Recluse,Spy,Fortune_Teller,Baron");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Fortune_Teller), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Soldier, argIndex: 1));
+            setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Fortune_Teller);
+            setup.Storyteller.GetFortuneTellerRedHerring(Arg.Is<Player>(player => player.Character == Character.Cannibal), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetMatchingOptionFromOptionsArg(Character.Fortune_Teller, argIndex: 1));
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Cannibal).MockFortuneTellerChoice(Character.Baron, Character.Fortune_Teller);
+            var fortuneTellerReading = setup.Agent(Character.Cannibal).MockNotifyFortuneTeller(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.True);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task CannibalFortuneTeller_Poisoned(bool reading)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Cannibal,Soldier,Recluse,Spy,Fisherman,Baron");
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Storyteller.MockCannibalChoice(Character.Fortune_Teller);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Cannibal).MockFortuneTellerChoice(Character.Imp, Character.Cannibal);
+            setup.Storyteller.MockFortuneTellerReading(reading: reading);
+            var fortuneTellerReading = setup.Agent(Character.Cannibal).MockNotifyFortuneTeller(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+        }
     }
 }

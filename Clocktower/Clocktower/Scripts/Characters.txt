@@ -19,6 +19,7 @@ Mayor: If only 3 players live and no execution occurs, your team wins. If you di
 Juggler: On your 1st day, publicly guess up to 5 players' characters. That night, you learn how many you got correct.
 Pacifist: Executed good players might not die.
 Noble: You start knowing 3 players, 1 and only 1 of which is evil.
+Cannibal: You have the ability of the recently killed executee. If they are evil, you are poisoned until a good player dies by execution.
 
 // Outsiders
 Tinker: You might die at any time.

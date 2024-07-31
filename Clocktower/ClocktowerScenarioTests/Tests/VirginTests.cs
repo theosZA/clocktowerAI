@@ -224,5 +224,46 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Storyteller.Observer.Received().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), true);
         }
+
+        [Test]
+        public async Task CannibalVirgin()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Cannibal,Soldier,Ravenkeeper,Virgin,Saint");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Virgin).MockNomination(Character.Virgin);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Soldier).MockNomination(Character.Cannibal);
+
+            await game.RunNightAndDay();
+
+            await setup.Storyteller.Observer.Received().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), true);
+        }
+
+        [Test]
+        public async Task CannibalVirgin_Poisoned()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Cannibal,Soldier,Ravenkeeper,Scarlet_Woman,Saint");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Storyteller.MockCannibalChoice(Character.Virgin);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Soldier).MockNomination(Character.Cannibal);
+
+            await game.RunNightAndDay();
+
+            await setup.Storyteller.Observer.DidNotReceive().PlayerIsExecuted(Arg.Is<Player>(player => player.Character == Character.Soldier), Arg.Any<bool>());
+        }
     }
 }

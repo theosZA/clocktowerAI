@@ -119,19 +119,41 @@ namespace Clocktower.Agent
 
         public Task NotifySteward(Player goodPlayer)
         {
-            outputText.AppendFormattedText("You learn that %p is a good player.\n", goodPlayer);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %p\n", goodPlayer);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that %p is a good player.\n", goodPlayer);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
         {
-            outputText.AppendFormattedText("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %P\n", nobleInformation);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that there is exactly 1 evil player among %P\n", nobleInformation);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyShugenja(Direction direction)
         {
-            outputText.AppendFormattedText("You learn that the nearest %a to you is in the %b direction.\n", Alignment.Evil, direction == Direction.Clockwise ? "clockwise" : "counter-clockwise");
+            var directionText = direction == Direction.Clockwise ? "clockwise" : "counter-clockwise";
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", directionText);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that the nearest %a to you is in the %b direction.\n", Alignment.Evil, directionText);
+            }
             return Task.CompletedTask;
         }
 
@@ -149,7 +171,14 @@ namespace Clocktower.Agent
 
         public Task NotifyLibrarianNoOutsiders()
         {
-            outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", 0);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
+            }
             return Task.CompletedTask;
         }
 
@@ -161,13 +190,24 @@ namespace Clocktower.Agent
 
         public Task NotifyChef(int evilPairCount)
         {
-            outputText.AppendFormattedText($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", evilPairCount);
+            }
+            else
+            {
+                outputText.AppendFormattedText($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.\n", evilPairCount);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
-            if (reading)
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", reading ? "Yes" : "No");
+            }
+            else if (reading)
             {
                 outputText.AppendBoldText("Yes");
                 outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB);
@@ -182,25 +222,53 @@ namespace Clocktower.Agent
 
         public Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            outputText.AppendFormattedText($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", evilCount, neighbourA, neighbourB);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", evilCount);
+            }
+            else
+            {
+                outputText.AppendFormattedText($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", evilCount, neighbourA, neighbourB);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyRavenkeeper(Player target, Character character)
         {
-            outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %c\n", character);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyUndertaker(Player executedPlayer, Character character)
         {
-            outputText.AppendFormattedText("You learn that %p is the %c.\n", executedPlayer, character);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %c\n", character);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that %p is the %c.\n", executedPlayer, character);
+            }
             return Task.CompletedTask;
         }
 
         public Task NotifyJuggler(int jugglerCount)
         {
-            outputText.AppendFormattedText("You learn that %b of your juggles were correct.\n", jugglerCount);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %b\n", jugglerCount);
+            }
+            else
+            {
+                outputText.AppendFormattedText("You learn that %b of your juggles were correct.\n", jugglerCount);
+            }
             return Task.CompletedTask;
         }
 
@@ -272,37 +340,72 @@ namespace Clocktower.Agent
 
         public async Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a player to protect from execution.", Character.Devils_Advocate);
+            outputText.AppendFormattedText("As the %c please choose a player to protect from execution.\n", Character.Devils_Advocate);
             return await PopulateOptions(options);
         }
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a character whose ability you wish to acquire...\n", Character.Philosopher);
-            return await PopulateOptions(options);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendText("Do you wish to use your ability tonight?\n");
+                bool useAbility = await PopulateOptions(OptionsBuilder.YesOrNo) is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                outputText.AppendText("Please choose a Townsfolk or Outsider character...\n");
+                return await PopulateOptions(options.Where(option => option is not PassOption).ToList());
+            }
+            else
+            {
+                outputText.AppendFormattedText("As the %c, if you wish to use your ability tonight, please choose a Townsfolk or Outsider character whose ability you wish to acquire...\n", Character.Philosopher);
+                return await PopulateOptions(options);
+            }
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose two players...\n", Character.Fortune_Teller);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendText("Please choose two players...\n");
+            }
+            else
+            {
+                outputText.AppendFormattedText("As the %c please choose two players...\n", Character.Fortune_Teller);
+            }
             return await PopulateOptions(options);
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a player to protect...\n", Character.Monk);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendText("Please choose a player...\n");
+            }
+            else
+            {
+                outputText.AppendFormattedText("As the %c, please choose a player to protect...\n", Character.Monk);
+            }
             return await PopulateOptions(options);
         }
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendText("Please choose a player...\n");
+            }
+            else
+            {
+                outputText.AppendFormattedText("As the %c, please choose a player whose character you wish to learn...\n", Character.Ravenkeeper);
+            }
             return await PopulateOptions(options);
         }
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
-            outputText.AppendFormattedText("As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.\n", Character.Butler);
+            outputText.AppendFormattedText("As the %c, please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.\n", Character.Butler);
             return await PopulateOptions(options);
         }
 

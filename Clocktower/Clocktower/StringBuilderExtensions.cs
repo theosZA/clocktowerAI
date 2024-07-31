@@ -211,8 +211,12 @@ namespace Clocktower
                 currentCharacterInfo.Add(Character.Philosopher);
             }
             currentCharacterInfo.Add(player.Character);
+            if (player.ShouldRunAbility(Character.Cannibal) && player.CannibalAbility.HasValue)
+            {
+                currentCharacterInfo.Add(player.CannibalAbility.Value);
+            }
             sb.AppendCharacterSequence(currentCharacterInfo, enableBoldMarkup);
-            if (player.Tokens.HasToken(Token.IsTheBadPhilosopher))
+            if (player.Tokens.HasToken(Token.IsTheBadPhilosopher) || player.Tokens.HasToken(Token.CannibalPoisoned))
             {
                 sb.Append('*');    // We use the asterisk here to denote that they never really gained that ability.
             }
