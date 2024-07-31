@@ -59,7 +59,7 @@ namespace Clocktower.Events
                 case "CannibalInformation":         return new NotifyCannibalStartKnowing(storyteller, grimoire, setup.Script, random);
                 case "Shugenja":                    return new NotifyShugenja(storyteller, grimoire);
                 case "Steward":                     return new NotifySteward(storyteller, grimoire);
-                case "Noble":                       return new NotifyNoble(storyteller, grimoire);
+                case "Noble":                       return new NotifyNoble(storyteller, grimoire, random);
                 case "Undertaker":                  return new NotifyUndertaker(storyteller, grimoire, setup.Script);
                 case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
                 case "Juggler":                     return new NotifyJuggler(storyteller, grimoire);

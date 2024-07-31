@@ -29,7 +29,7 @@ namespace Clocktower.Events
                         break;
 
                     case Character.Noble:
-                        await new NotifyNoble(storyteller, grimoire).RunEvent(cannibal);
+                        await new NotifyNoble(storyteller, grimoire, random).RunEvent(cannibal);
                         break;
 
                     case Character.Investigator:

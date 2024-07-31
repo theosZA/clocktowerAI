@@ -5,10 +5,11 @@ namespace Clocktower.Events
 {
     internal class NotifyNoble : IGameEvent
     {
-        public NotifyNoble(IStoryteller storyteller, Grimoire grimoire)
+        public NotifyNoble(IStoryteller storyteller, Grimoire grimoire, Random random)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
+            this.random = random;
         }
 
         public async Task RunEvent()
@@ -26,6 +27,7 @@ namespace Clocktower.Events
             {
                 noblePing.Tokens.Add(Token.NoblePing, noble);
             }
+            nobleInfo.Shuffle(random);
             await noble.Agent.NotifyNoble(nobleInfo);
             storyteller.NotifyNoble(noble, nobleInfo);
         }
@@ -52,5 +54,6 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
+        private readonly Random random;
     }
 }
