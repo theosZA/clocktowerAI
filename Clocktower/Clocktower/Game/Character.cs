@@ -11,15 +11,17 @@
 //       - Tokens - Add a new entry to the Token enum.
 //                - Check methods in the TokensOnPlayer class for token behaviour, especially when they should be removed and what should be shown to the Spy.
 //    b. Add the event to the GameEventFactory.
-// 5. Some characters will have abilities that can't be run on an event. You will need to add the functionality in the relevant place,
+// 5. For characters that interact with deaths or executions, add an implementation of IDeathTrigger in the Triggers folder, and add it to the Deaths class.
+// 6. Some characters will have abilities that can't be run on an event or death trigger. You will need to add the functionality in the relevant place,
 //    e.g. within the Nominations event if it's an ability based on nominations, or in the Player class if it's a character that can misregister.
-// 6. Add scenario tests for the character. These tests may include the following:
+// 7. Add scenario tests for the character. These tests may include the following:
 //    - Regular postive and negative test cases.
 //    - Cases for when the character is really the Drunk or otherwise drunk.
 //    - Cases for then the character has been poisoned.
 //    - Cases for when the character dies and their effect on the game should end.
 //    - Cases for when this character ability is chosen by the Philosopher.
-// 7. Add jinxes. These include adding the descriptions to Jinxes.txt, scenario tests to cover the jinxes, and implementations for the jinxes.
+//    - Cases for when this character ability is gained by the Cannibal or poisoned Cannibal.
+// 8. Add jinxes. These include adding the descriptions to Jinxes.txt, scenario tests to cover the jinxes, and implementations for the jinxes.
 
 namespace Clocktower.Game
 {

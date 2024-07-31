@@ -464,7 +464,7 @@ namespace Clocktower.Agent.RobotAgent
                 {
                     return options.First(option => option is PassOption);
                 }
-                return await clocktowerChat.RequestChoice(options.Where(option => option is not PassOption).ToList(), "For the ability you have gained as the %c, please choose a Townsfolk or Outsider character.");
+                return await clocktowerChat.RequestChoice(options.Where(option => option is not PassOption).ToList(), "For the ability you have gained as the %c, please choose a Townsfolk or Outsider character.", Game.Character.Cannibal);
             }
 
             return await clocktowerChat.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Game.Character.Philosopher);
@@ -484,7 +484,7 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (Character == Game.Character.Cannibal)
             {
-                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.");
+                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.", Game.Character.Cannibal);
             }
             return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);
         }

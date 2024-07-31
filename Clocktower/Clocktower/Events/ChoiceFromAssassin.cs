@@ -1,16 +1,17 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Storyteller;
+using Clocktower.Triggers;
 
 namespace Clocktower.Events
 {
     internal class ChoiceFromAssassin : IGameEvent
     {
-        public ChoiceFromAssassin(IStoryteller storyteller, Grimoire grimoire, Kills kills)
+        public ChoiceFromAssassin(IStoryteller storyteller, Grimoire grimoire, Deaths deaths)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
-            this.kills = kills;
+            this.deaths = deaths;
         }
 
         public async Task RunEvent()
@@ -25,7 +26,7 @@ namespace Clocktower.Events
                     assassin.Tokens.Add(Token.UsedOncePerGameAbility, assassin);
                     if (!assassin.DrunkOrPoisoned && target.Alive)
                     {
-                        await kills.NightKill(target, assassin);
+                        await deaths.NightKill(target, assassin);
                     }
                 }
             }
@@ -33,6 +34,6 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
-        private readonly Kills kills;
+        private readonly Deaths deaths;
     }
 }

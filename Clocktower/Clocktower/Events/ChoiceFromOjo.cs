@@ -1,16 +1,17 @@
 ﻿using Clocktower.Game;
 using Clocktower.Storyteller;
 using Clocktower.Agent;
+using Clocktower.Triggers;
 
 namespace Clocktower.Events
 {
     internal class ChoiceFromOjo : IGameEvent
     {
-        public ChoiceFromOjo(IStoryteller storyteller, Grimoire grimoire, Kills kills, IReadOnlyCollection<Character> scriptCharacters)
+        public ChoiceFromOjo(IStoryteller storyteller, Grimoire grimoire, Deaths deaths, IReadOnlyCollection<Character> scriptCharacters)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
-            this.kills = kills;
+            this.deaths = deaths;
             this.scriptCharacters = scriptCharacters;
         }
 
@@ -29,7 +30,7 @@ namespace Clocktower.Events
             storyteller.ChoiceFromOjo(ojo, targetCharacter, ojoVictims);
             foreach (var victim in ojoVictims)
             {
-                await kills.NightKill(victim, ojo);
+                await deaths.NightKill(victim, ojo);
             }
         }
 
@@ -64,7 +65,7 @@ namespace Clocktower.Events
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
-        private readonly Kills kills;
+        private readonly Deaths deaths;
         private readonly IReadOnlyCollection<Character> scriptCharacters;
     }
 }
