@@ -111,7 +111,8 @@
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
                 || token == Token.PoisonedByPoisoner
-                || token == Token.CannibalPoisoned;
+                || token == Token.CannibalPoisoned
+                || token == Token.CannibalDrunk;
         }
 
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
@@ -144,7 +145,8 @@
                 || token == Token.JugglerBeforeFirstDay
                 || token == Token.JugglerFirstDay
                 || token == Token.CannibalEaten
-                || token == Token.CannibalPoisoned;
+                || token == Token.CannibalPoisoned
+                || token == Token.CannibalDrunk;
         }
 
         private string TokenPairToText(Token token, Player assigningPlayer)

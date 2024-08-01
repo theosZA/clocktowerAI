@@ -33,12 +33,21 @@ namespace Clocktower.Triggers
                 player.Tokens.Remove(Token.CannibalEaten, cannibal);
             }
             dyingPlayer.Tokens.Add(Token.CannibalEaten, cannibal);
-            cannibal.Tokens.Add(Token.CannibalFirstNightWithAbility, cannibal);
+
             cannibal.Tokens.Remove(Token.CannibalPoisoned);
-            if (dyingPlayer.Alignment == Alignment.Evil || dyingPlayer.RealCharacter == Character.Drunk)
+            cannibal.Tokens.Remove(Token.CannibalDrunk);
+            cannibal.Tokens.Add(Token.CannibalFirstNightWithAbility, cannibal);
+
+            if (dyingPlayer.Alignment == Alignment.Evil)
             {
                 cannibal.Tokens.Add(Token.CannibalPoisoned, cannibal);
-                var fakeCannibalAbility = await storyteller.ChooseFakeCannibalAbility(cannibal, dyingPlayer, scriptCharacters.Where(character => character.Alignment() == Alignment.Good));
+                var fakeCannibalAbility = await storyteller.ChooseFakeCannibalAbility(cannibal, dyingPlayer, scriptCharacters.Where(character => character.Alignment() == Alignment.Good && character != Character.Drunk));
+                cannibal.CannibalAbility = fakeCannibalAbility;
+            }
+            else if (dyingPlayer.RealCharacter == Character.Drunk)
+            {
+                cannibal.Tokens.Add(Token.CannibalDrunk, cannibal);
+                var fakeCannibalAbility = await storyteller.ChooseFakeCannibalAbility(cannibal, dyingPlayer, scriptCharacters.Where(character => character.CharacterType() == CharacterType.Townsfolk));
                 cannibal.CannibalAbility = fakeCannibalAbility;
             }
             else
