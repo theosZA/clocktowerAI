@@ -128,13 +128,32 @@ namespace ClocktowerScenarioTests.Tests
 
         [TestCase(Character.Spy)]
         [TestCase(Character.Fisherman)]
-        public async Task Ojo_Spy(Character victim)
+        public async Task Ojo_Spy_OjoHit(Character victim)
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Fisherman,Ravenkeeper,Saint,Spy,Soldier,Mayor");
 
             setup.Agent(Character.Ojo).MockOjo(Character.Fisherman);
             setup.Storyteller.MockGetOjoVictims(Character.Fisherman, new[] { victim });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(victim).Received().YouAreDead();
+        }
+
+        [TestCase(Character.Spy)]
+        [TestCase(Character.Saint)]
+        public async Task Ojo_Spy_OjoMiss(Character victim)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Fisherman,Ravenkeeper,Saint,Spy,Soldier,Mayor");
+
+            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
+            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { victim });
 
             // Act
             await game.StartGame();

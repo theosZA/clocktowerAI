@@ -17,7 +17,8 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var ojo in grimoire.PlayersForWhomWeShouldRunAbility(Character.Ojo))
+            var ojos = grimoire.PlayersForWhomWeShouldRunAbility(Character.Ojo).ToList();   // Fix the demons first, so that any demons created during this process don't get a kill.
+            foreach (var ojo in ojos)
             {
                 await RunOjo(ojo);
             }

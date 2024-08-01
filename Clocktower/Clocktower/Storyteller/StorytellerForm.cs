@@ -570,7 +570,7 @@ namespace Clocktower.Storyteller
 
         public void ScarletWomanTrigger(Player demon, Player scarletWoman)
         {
-            outputText.AppendFormattedText("%p has died and so %p becomes the new %c.\n", demon, scarletWoman, Character.Imp, StorytellerView);
+            outputText.AppendFormattedText("%p has died and so %p becomes the new %c.\n", demon, scarletWoman, demon.RealCharacter, StorytellerView);
         }
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
