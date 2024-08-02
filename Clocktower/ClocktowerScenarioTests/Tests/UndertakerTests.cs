@@ -302,6 +302,26 @@ namespace ClocktowerScenarioTests.Tests
         }
 
         [Test]
+        public async Task PhilosopherUndertaker_GainsAbilityAfterExecution()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Ravenkeeper,Soldier,Philosopher,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Undertaker);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Philosopher).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Mayor), Character.Mayor);
+        }
+
+        [Test]
         public async Task CannibalUndertaker()
         {
             // Arrange

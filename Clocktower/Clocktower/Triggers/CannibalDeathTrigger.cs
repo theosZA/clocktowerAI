@@ -30,7 +30,8 @@ namespace Clocktower.Triggers
         {
             foreach (var player in grimoire.Players)
             {
-                player.Tokens.Remove(Token.CannibalEaten, cannibal);
+                // The Cannibal isn't dead, but loses all relevant tokens associated with the previous character.
+                player.Tokens.ClearTokensOnPlayerDeath(cannibal);
             }
             dyingPlayer.Tokens.Add(Token.CannibalEaten, cannibal);
 

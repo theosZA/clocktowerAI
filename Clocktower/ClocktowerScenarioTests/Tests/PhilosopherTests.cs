@@ -132,6 +132,142 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Philosopher).DidNotReceive().NotifyEmpath(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<int>()); // And so the Philosopher should not wake tonight.
         }
 
+        [Test]
+        public async Task CannibalPhilosopher()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Philosopher,Ravenkeeper,Baron,Soldier,Cannibal");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockPhilosopher(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var empathReading = setup.Agent(Character.Cannibal).MockNotifyEmpath(gameToEnd: game);
+            setup.Agent(Character.Imp).MockNomination(Character.Soldier);
+
+            await game.RunNightAndDay();
+
+            Assert.That(empathReading.Value, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task CannibalPhilosopher_DrunksExistingCharacter()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Philosopher,Empath,Baron,Soldier,Cannibal");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
+            var realEmpathReading = setup.Agent(Character.Empath).MockNotifyEmpath();
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            await game.RunNightAndDay();
+
+            Assert.That(realEmpathReading.Value, Is.EqualTo(1), "Real Empath should get a reading of 1 on night 1");
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockPhilosopher(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetEmpathNumber(2);   // for the philo-drunk Empath
+            var cannibalPhilosopherEmpathReading = setup.Agent(Character.Cannibal).MockNotifyEmpath();
+            setup.Agent(Character.Imp).MockNomination(Character.Soldier);
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(realEmpathReading.Value, Is.EqualTo(2), "Real Empath should get a reading of 2 on night 2 (philo-drunk)");
+                Assert.That(cannibalPhilosopherEmpathReading.Value, Is.EqualTo(1), "Cannibal-Philosopher-Empath should get a reading of 1 on night 2");
+            });
+
+            // Night 3 & Day 3 - since the Soldier was executed, the Cannibal no longer has the Philosopher ability, undrunking the real Empath.
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            cannibalPhilosopherEmpathReading.Value = -1;
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(realEmpathReading.Value, Is.EqualTo(1), "Real Empath should get a reading of 1 on night 3");
+                Assert.That(cannibalPhilosopherEmpathReading.Value, Is.EqualTo(-1), "Cannibal should not get a reading on night 3");
+            });
+        }
+
+        [Test]
+        public async Task CannibalPhilosopher_Poisoned()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Mayor,Empath,Baron,Soldier,Cannibal");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            var realEmpathReading = setup.Agent(Character.Empath).MockNotifyEmpath();
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Storyteller.MockCannibalChoice(Character.Philosopher);
+
+            await game.RunNightAndDay();
+
+            Assert.That(realEmpathReading.Value, Is.EqualTo(1), "Real Empath should get a reading of 1 on night 1");
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockPhilosopher(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockGetEmpathNumber(2);   // for the poisoned Cannibal-Philo-Empath
+            var cannibalPhilosopherEmpathReading = setup.Agent(Character.Cannibal).MockNotifyEmpath();
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(realEmpathReading.Value, Is.EqualTo(0), "Real Empath should get a reading of 0 on night 2 (Baron is dead)");
+                Assert.That(cannibalPhilosopherEmpathReading.Value, Is.EqualTo(2), "Poisoned Cannibal-Philosopher-Empath should get a reading of 2 on night 2");
+            });
+        }
+
+        [Test]
+        public async Task PhilosopherCannibal()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Philosopher,Baron,Saint,Soldier,Empath");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var receivedEmpathNumber = setup.Agent(Character.Philosopher).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedEmpathNumber.Value, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task PhilosopherCannibal_Poisoned()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Philosopher,Baron,Saint,Soldier,Fisherman");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Storyteller.MockCannibalChoice(Character.Empath);
+            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(2);
+            var receivedEmpathNumber = setup.Agent(Character.Philosopher).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(receivedEmpathNumber.Value, Is.EqualTo(2));
+        }
+
         // Other Philosopher test cases will be in the test classes for the character ability that they choose.
     }
 }

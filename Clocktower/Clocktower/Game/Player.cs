@@ -95,12 +95,19 @@ namespace Clocktower.Game
 
         public void GainCharacterAbility(Character newCharacter)
         {
-            if (Character == Character.Philosopher)
+            if (ShouldRunAbility(Character.Philosopher))
             {
                 Tokens.Add(Token.IsThePhilosopher, this);
             }
 
-            Character = newCharacter;
+            if (ShouldRunAbility(Character.Cannibal) && ShouldRunAbility(Character.Philosopher))
+            {
+                CannibalAbility = newCharacter;
+            }
+            else
+            {
+                Character = newCharacter;
+            }
             Agent.GainCharacterAbility(newCharacter);
 
             if (newCharacter == Character.Juggler)
