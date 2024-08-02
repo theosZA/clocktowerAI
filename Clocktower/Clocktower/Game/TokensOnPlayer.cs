@@ -100,6 +100,7 @@
             {
                 Token.IsTheDrunk => (Character?)Game.Character.Drunk,
                 Token.IsTheMarionette => (Character?)Game.Character.Marionette,
+                Token.IsTheCannibalPhilosopher => (Character?)Game.Character.Cannibal,
                 Token.IsThePhilosopher or Token.IsTheBadPhilosopher => (Character?)Game.Character.Philosopher,
                 _ => null,
             };
@@ -165,6 +166,7 @@
                 Token.IsTheDrunk => "is the Drunk",
                 Token.IsTheMarionette => "is the Marionette",
                 Token.IsThePhilosopher => "is the Philosopher",
+                Token.IsTheCannibalPhilosopher => "is the (Cannibal) Philosopher",
                 Token.IsTheBadPhilosopher => "is the Philosopher (drunk/posioned when used)",
                 Token.UsedOncePerGameAbility => "has used their once-per-game ability",
                 Token.SweetheartDrunk => "Sweetheart drunk",

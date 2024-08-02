@@ -356,5 +356,86 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Cannibal).Received().NotifyUndertaker(Arg.Is<Player>(player => player.Character == Character.Scarlet_Woman), Character.Investigator);
         }
+
+        [Test]
+        public async Task Undertaker_SeesPhilosopher()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Philosopher,Undertaker,Baron,Soldier,Ravenkeeper");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var undertakerResult = setup.Agent(Character.Undertaker).MockNotifyUndertaker(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(undertakerResult.Value, Is.EqualTo(Character.Philosopher));
+        }
+
+        [Test]
+        public async Task Undertaker_SeesPhilosopherCannibal()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Philosopher,Undertaker,Baron,Soldier,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Cannibal);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var undertakerResult = setup.Agent(Character.Undertaker).MockNotifyUndertaker();
+            setup.Agent(Character.Imp).MockNomination(Character.Cannibal);
+
+            await game.RunNightAndDay();
+
+            Assert.That(undertakerResult.Value, Is.EqualTo(Character.Mayor));
+            undertakerResult.Value = (Character)(-1);
+
+            // Night 3 & Day 3
+            await game.RunNightAndDay();
+
+            Assert.That(undertakerResult.Value, Is.EqualTo(Character.Philosopher));
+        }
+
+        [Test]
+        public async Task Undertaker_SeesCannibalPhilosopher()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Fisherman,Philosopher,Undertaker,Baron,Soldier,Cannibal");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Mayor);
+            setup.Agent(Character.Imp).MockNomination(Character.Mayor);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockPhilosopher(Character.Empath);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var empathReading = setup.Agent(Character.Cannibal).MockNotifyEmpath();
+            var undertakerResult = setup.Agent(Character.Undertaker).MockNotifyUndertaker();
+            setup.Agent(Character.Imp).MockNomination(Character.Cannibal);
+
+            await game.RunNightAndDay();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(empathReading.Value, Is.EqualTo(1));
+                Assert.That(undertakerResult.Value, Is.EqualTo(Character.Philosopher));
+            });
+            undertakerResult.Value = (Character)(-1);
+
+            // Night 3 & Day 3
+            await game.RunNightAndDay();
+
+            Assert.That(undertakerResult.Value, Is.EqualTo(Character.Cannibal));
+        }
     }
 }

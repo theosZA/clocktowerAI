@@ -6,6 +6,7 @@
         IsTheDrunk = 1,
         IsTheMarionette,
         IsThePhilosopher,
+        IsTheCannibalPhilosopher,   // needed to disambiguate from the Philo-Cannibal
         IsTheBadPhilosopher,
         // Normal tokens
         UsedOncePerGameAbility = 1000,

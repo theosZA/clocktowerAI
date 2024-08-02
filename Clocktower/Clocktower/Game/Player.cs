@@ -95,7 +95,11 @@ namespace Clocktower.Game
 
         public void GainCharacterAbility(Character newCharacter)
         {
-            if (ShouldRunAbility(Character.Philosopher))
+            if (CannibalAbility == Character.Philosopher)
+            {
+                Tokens.Add(Token.IsTheCannibalPhilosopher, this);
+            }
+            else if (ShouldRunAbility(Character.Philosopher))
             {
                 Tokens.Add(Token.IsThePhilosopher, this);
             }

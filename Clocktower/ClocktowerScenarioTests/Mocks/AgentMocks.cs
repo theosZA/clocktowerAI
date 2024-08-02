@@ -134,6 +134,14 @@ namespace ClocktowerScenarioTests.Mocks
             return receivedEmpathNumber;
         }
 
+        public static Wrapper<Character> MockNotifyUndertaker(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<Character> receivedCharacter = new();
+            agent.When(agent => agent.NotifyUndertaker(Arg.Any<Player>(), Arg.Any<Character>()))
+                .Do(args => args.PopulateFromArg(receivedCharacter, argIndex: 1, gameToEnd: gameToEnd));
+            return receivedCharacter;
+        }
+
         public static Wrapper<int> MockNotifyChef(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<int> receivedChefNumber = new();
