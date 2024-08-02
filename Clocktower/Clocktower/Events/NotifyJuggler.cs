@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Storyteller;
+using System.Numerics;
 
 namespace Clocktower.Events
 {
@@ -17,19 +18,56 @@ namespace Clocktower.Events
             {
                 await RunJuggler(juggler);
             }
+
+            // Special handling for Cannibals who gain the Juggler ability.
+            foreach (var cannibal in grimoire.PlayersForWhomWeShouldRunAbility(Character.Cannibal).Where(player => player.CannibalAbility == Character.Juggler))
+            {
+                var executedJuggler = grimoire.Players.First(player => player.Tokens.HasTokenForPlayer(Token.CannibalEaten, cannibal));
+                await RunCannibalJuggler(cannibal, executedJuggler);
+            }
+
+            foreach (var deadJuggler in grimoire.Players.Where(player => !player.Alive && player.Tokens.HasToken(Token.JugglerFirstDay)))
+            {
+                deadJuggler.Tokens.Remove(Token.JugglerFirstDay);
+            }
         }
 
         private async Task RunJuggler(Player juggler)
         {
             juggler.Tokens.Remove(Token.JugglerFirstDay);
+            await RunJuggler(juggler, juggler);
+        }
 
-            int jugglerCount = grimoire.Players.Sum(player => player.Tokens.CountTokensForPlayer(Token.JuggledCorrectly, juggler));
-            if (juggler.DrunkOrPoisoned)
+        private async Task RunCannibalJuggler(Player cannibal, Player executedJuggler)
+        {
+            // Jinx - Cannibal / Juggler: If the Juggler guesses on their first day and dies by execution, tonight the living Cannibal learns how many guesses the Juggler got correct.
+            if (executedJuggler.Tokens.HasToken(Token.JugglerFirstDay))
             {
-                jugglerCount = await storyteller.GetJugglerNumber(juggler, jugglerCount);
+                executedJuggler.Tokens.Remove(Token.JugglerFirstDay);
+                await RunJuggler(executedJuggler, cannibal);                
             }
-            await juggler.Agent.NotifyJuggler(jugglerCount);
-            storyteller.NotifyJuggler(juggler, jugglerCount);
+
+            // Is this the Cannibal's first night with Cannibal ability? If so, tomorrow is their "first day" for the purpose of being the Juggler.
+            if (cannibal.Tokens.HasToken(Token.CannibalFirstNightWithAbility))
+            {
+                cannibal.Tokens.Add(Token.JugglerFirstDay, cannibal);
+            }
+        }
+
+        private async Task RunJuggler(Player playerWhoMadeJuggles, Player playerToReceiveJuggleNumber)
+        {
+            int jugglerCount = GetRealJugglerCount(playerWhoMadeJuggles);
+            if (playerToReceiveJuggleNumber.DrunkOrPoisoned)
+            {
+                jugglerCount = await storyteller.GetJugglerNumber(playerToReceiveJuggleNumber, jugglerCount);
+            }
+            await playerToReceiveJuggleNumber.Agent.NotifyJuggler(jugglerCount);
+            storyteller.NotifyJuggler(playerToReceiveJuggleNumber, jugglerCount);
+        }
+
+        private int GetRealJugglerCount(Player juggler)
+        {
+            return grimoire.Players.Sum(player => player.Tokens.CountTokensForPlayer(Token.JuggledCorrectly, juggler));
         }
 
         private readonly IStoryteller storyteller;

@@ -144,7 +144,6 @@
                 || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler
                 || token == Token.JugglerBeforeFirstDay
-                || token == Token.JugglerFirstDay
                 || token == Token.CannibalEaten
                 || token == Token.CannibalPoisoned
                 || token == Token.CannibalDrunk;
