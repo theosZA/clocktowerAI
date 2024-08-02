@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Storyteller;
+using Clocktower.Triggers;
 
 namespace Clocktower.Events
 {
@@ -54,9 +55,18 @@ namespace Clocktower.Events
         private async Task ApplyImmediateEffectsOfCharacter(Player philosopher, Character character)
         {
             philosopher.Tokens.Add(Token.PhilosopherUsedAbilityTonight, philosopher);    // Any start-knowing information will be provided later tonight as indicated by this token.
-            if (character == Character.Fortune_Teller)
+            switch (character)
             {
-                await new AssignFortuneTellerRedHerring(storyteller, grimoire).AssignRedHerring(fortuneTeller: philosopher);
+                case Character.Fortune_Teller:
+                    await new AssignFortuneTellerRedHerring(storyteller, grimoire).AssignRedHerring(fortuneTeller: philosopher);
+                    break;
+
+                case Character.Cannibal:
+                    if (grimoire.MostRecentlyExecutedPlayerToDie != null)
+                    {
+                        await new CannibalDeathTrigger(storyteller, grimoire, scriptCharacters).RunCannibal(grimoire.MostRecentlyExecutedPlayerToDie, philosopher);
+                    }
+                    break;
             }
         }
 

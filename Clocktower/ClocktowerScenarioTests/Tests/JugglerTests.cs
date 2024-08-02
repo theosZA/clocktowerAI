@@ -406,5 +406,40 @@ namespace ClocktowerScenarioTests.Tests
 
             await setup.Agent(Character.Cannibal).DidNotReceive().NotifyJuggler(Arg.Any<int>());    // The Cannibal-Juggler should not get any more results.
         }
+
+        [Test]
+        public async Task PhilosopherCannibalJuggler_JugglerExecutedDayOne_PhiloGainsCannibalAbilityNightTwo()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Saint,Juggler,Soldier,Philosopher,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Juggler).MockJugglerOption(new[] { (Character.Imp, Character.Imp) });
+            setup.Agent(Character.Imp).MockNomination(Character.Juggler);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Cannibal);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Philosopher).MockJugglerOption(new[] { (Character.Juggler, Character.Juggler), (Character.Cannibal, Character.Philosopher) });    // The "Cannibal" is really the Philosopher.
+
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Juggler).DidNotReceive().NotifyJuggler(Arg.Any<int>());
+            await setup.Agent(Character.Philosopher).Received().NotifyJuggler(1);  // By the Cannibal-Juggler jinx, with the Cannibal ability, they receive the result from the acutal Juggler's guesses on night 2.
+            setup.Agent(Character.Philosopher).ClearReceivedCalls();
+
+            // Night 3 & Day 3
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Philosopher).Received().NotifyJuggler(2);  // The Philo-Cannibal-Juggler should now get the result from their day 2 guesses.
+            setup.Agent(Character.Philosopher).ClearReceivedCalls();
+
+            // Night 4 & Day 4
+            await game.RunNightAndDay();
+
+            await setup.Agent(Character.Philosopher).DidNotReceive().NotifyJuggler(Arg.Any<int>());    // The Philo-Cannibal-Juggler should not get any more results.
+        }
     }
 }

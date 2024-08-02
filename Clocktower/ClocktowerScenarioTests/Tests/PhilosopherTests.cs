@@ -256,7 +256,7 @@ namespace ClocktowerScenarioTests.Tests
             setup.Agent(Character.Imp).MockNomination(Character.Baron);
             setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
             setup.Storyteller.MockCannibalChoice(Character.Empath);
-            var empathNumbers = setup.Storyteller.MockGetEmpathNumber(2);
+            setup.Storyteller.MockGetEmpathNumber(2);
             var receivedEmpathNumber = setup.Agent(Character.Philosopher).MockNotifyEmpath(gameToEnd: game);
 
             // Act
@@ -266,6 +266,27 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(receivedEmpathNumber.Value, Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task PhilosopherCannibal_GainAbilityAfterExecution()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Mayor,Philosopher,Baron,Saint,Soldier,Empath");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Empath);
+
+            await game.RunNightAndDay();
+
+            // Night 2
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Cannibal);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            var receivedEmpathNumber = setup.Agent(Character.Philosopher).MockNotifyEmpath(gameToEnd: game);
+
+            await game.RunNightAndDay();
+
+            Assert.That(receivedEmpathNumber.Value, Is.EqualTo(1));
         }
 
         // Other Philosopher test cases will be in the test classes for the character ability that they choose.

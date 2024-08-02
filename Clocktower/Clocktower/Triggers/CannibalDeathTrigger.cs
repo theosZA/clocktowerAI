@@ -26,7 +26,7 @@ namespace Clocktower.Triggers
             }
         }
 
-        private async Task RunCannibal(Player dyingPlayer, Player cannibal)
+        public async Task RunCannibal(Player dyingPlayer, Player cannibal)
         {
             foreach (var player in grimoire.Players)
             {
