@@ -1,4 +1,4 @@
-﻿using Clocktower.Game;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
@@ -108,12 +108,14 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> GetEveningPublicStatement()
         {
-            return await clocktowerChat.RequestDialogue("Before nominations are opened, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("Before nominations are opened, say anything that you want to publicly. This is a good chance to share speculation about what you think is happening in the game, " +
+                                                        "who you think may be evil, and who would be a good player to execute today. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            return await clocktowerChat.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. (Respond with just the single word PASS if you don't wish to say anything.)");
+            return await clocktowerChat.RequestDialogue("Before the group breaks off for private conversations, say anything that you want to publicly. There's no need to waste time encouraging collaboration and transparency - " +
+                                                        "instead this is a chance to share information (or misinformation) that you want to publicly share. (Respond with just the single word PASS if you don't wish to say anything.)");
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
