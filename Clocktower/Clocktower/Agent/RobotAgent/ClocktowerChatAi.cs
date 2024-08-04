@@ -110,10 +110,10 @@ namespace Clocktower.Agent.RobotAgent
             return dialogue;
         }
 
-        public async Task<IOption> RequestNomination(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestChoiceAfterReasoning(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
             var choiceAsText = await Request(prompt, objects);
-            return TextParser.ReadNominationOptionFromText(choiceAsText, options);
+            return TextParser.ReadSelectedOptionFromText(choiceAsText, options);
         }
 
         public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)

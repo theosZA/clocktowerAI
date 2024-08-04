@@ -133,24 +133,10 @@ namespace Clocktower.Agent.RobotAgent
             sb.AppendFormattedText("Conclude with the name of the player to nominate or PASS. The players you can nominate are: %P.", potentialNominees);
             if (potentialNominees.Any(player => !player.Alive))
             {
-                var aliveCandidates = potentialNominees.Where(player => player.Alive).ToList();
-                switch (aliveCandidates.Count)
-                {
-                    case 0:
-                        sb.Append(" Of these players, none are still alive.");
-                        break;
-
-                    case 1:
-                        sb.AppendFormattedText(" Of these players, %P is still alive.", aliveCandidates);
-                        break;
-
-                    default:
-                        sb.AppendFormattedText(" Of these players, %P are still alive.", aliveCandidates);
-                        break;
-                }
+                AppendAliveSubsetOfPlayers(sb, potentialNominees);
             }
 
-            return await clocktowerChat.RequestNomination(options, sb.ToString());
+            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -195,8 +181,8 @@ namespace Clocktower.Agent.RobotAgent
                 sb.Append(" (Note that because you are dead, you may only vote to execute once more for the rest of the game.)");
             }
             sb.AppendLine();
-            sb.AppendFormattedText(" Please provide your reasoning as an internal monologue, considering the evidence surrounding their information and character, and pros and cons for executing %p." +
-                                   " Some factors to keep in mind: If you're good then executing other good players early on isn't a terrible idea as it can help some characters learn some information," +
+            sb.AppendFormattedText("Please provide your reasoning as an internal monologue, considering the evidence surrounding their information and character, and pros and cons for executing %p." +
+                                   " Some factors to keep in mind: If you're good, then executing other good players early on isn't a terrible idea as it can help some characters learn some information," +
                                    " but as you get closer to the end of the game you really need to be executing evil players, and especially in the final 3 or 4, you *must* be executing the demon." +
                                    " (If you're evil then you want to be executing valuable good players, and *not* the Demon, but at the same time you still need to look like your votes are helping the good players.)" +
                                    " It is not generally expected that you vote on yourself, and if there are already enough votes for the execution to pass, you may wish to hold off on over-voting " +
@@ -205,7 +191,7 @@ namespace Clocktower.Agent.RobotAgent
             if (ghostVote)
             {
                 sb.AppendLine();
-                sb.Append(" And since you only have one more vote available for the rest of the game, you need to decide whether or not this is the best time to spend that vote." +
+                sb.Append("And since you only have one more vote available for the rest of the game, you need to decide whether or not this is the best time to spend that vote." +
                           " (Most commonly, ghost votes are kept until the last day when there are just 3 or 4 players left alive.)");
             }
             sb.AppendLine();
@@ -481,12 +467,30 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to kill. Respond with the name of a player you wish to kill tonight.", demonCharacter);
+            var potentialKills = options.Select(option => ((PlayerOption)option).Player).ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c please choose a player to kill. Please provide your reasoning as an internal monologue, considering at least a few possible players to kill, " +
+                                   "as well as the possibility of sinking a kill by targeting a dead player. Conclude with the name of the player to kill. The players you can kill are: %P.",
+                                   demonCharacter, potentialKills);
+            sb.AppendFormattedText("Conclude with the name of the player to kill. The players you can target are: %P.", potentialKills);
+            if (potentialKills.Any(player => !player.Alive))
+            {
+                AppendAliveSubsetOfPlayers(sb, potentialKills);
+            }
+
+            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
         }
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a character to kill. Respond with just the specific character from the script.", Game.Character.Ojo);
+            var potentialKills = options.Select(option => ((CharacterOption)option).Character).ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c please choose a *character* to kill. Please provide your reasoning as an internal monologue, considering which characters would be most dangerous, " +
+                                   "or which players would be good to kill and what character you think they are. If you choose a character that isn't actually in play, the Storyteller will decide " +
+                                   "the kills tonight, and rarely will that be to your benefit. Conclude, not with the player, but with the specific character from the script you wish to kill.", Game.Character.Ojo);
+            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
@@ -659,6 +663,25 @@ namespace Clocktower.Agent.RobotAgent
             else // Alignment is Good
             {
                 await clocktowerChat.Request("This may be the last day for nominations. Which of the living player do you thing is the demon, and why? How do you think you can convince the rest of your fellow good players to vote to execute them?");
+            }
+        }
+
+        private static void AppendAliveSubsetOfPlayers(StringBuilder stringBuilder, IEnumerable<Player> players)
+        {
+            var aliveSubset = players.Where(player => player.Alive).ToList();
+            switch (aliveSubset.Count)
+            {
+                case 0:
+                    stringBuilder.Append(" Of these players, none are still alive.");
+                    break;
+
+                case 1:
+                    stringBuilder.AppendFormattedText(" Of these players, %P is still alive.", aliveSubset);
+                    break;
+
+                default:
+                    stringBuilder.AppendFormattedText(" Of these players, %P are still alive.", aliveSubset);
+                    break;
             }
         }
 

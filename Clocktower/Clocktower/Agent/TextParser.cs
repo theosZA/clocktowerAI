@@ -61,7 +61,7 @@ namespace Clocktower.Agent
             return null;
         }
 
-        public static IOption ReadNominationOptionFromText(string text, IReadOnlyCollection<IOption> options)
+        public static IOption ReadSelectedOptionFromText(string text, IReadOnlyCollection<IOption> options)
         {
             var passOption = CleanUpText(ref text, options);
             if (passOption != null)
@@ -108,7 +108,7 @@ namespace Clocktower.Agent
 
             if (string.IsNullOrEmpty(text))
             {
-                return options.First(option => option is PassOption);   // There should always be a Pass option available here.
+                return options.FirstOrDefault(option => option is PassOption);
             }
 
             // If the response includes quote marks, we assume the actual choice is within the quote marks.
