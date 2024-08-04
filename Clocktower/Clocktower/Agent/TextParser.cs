@@ -61,6 +61,20 @@ namespace Clocktower.Agent
             return null;
         }
 
+        public static IOption ReadNominationOptionFromText(string text, IReadOnlyCollection<IOption> options)
+        {
+            var passOption = CleanUpText(ref text, options);
+            if (passOption != null)
+            {
+                return passOption;
+            }
+
+            // Whichever of "pass" or a player's name appears later in the text is the option we'll go with.
+            return options.Select(option => (option, text.LastIndexOf(option.Name, StringComparison.InvariantCultureIgnoreCase)))
+                          .MaxBy(optionPos => optionPos.Item2)
+                          .option;
+        }
+
         public static IOption ReadVoteOptionFromText(string text, IReadOnlyCollection<IOption> options)
         {
             var passOption = CleanUpText(ref text, options);

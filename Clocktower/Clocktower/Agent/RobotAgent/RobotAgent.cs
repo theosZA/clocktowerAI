@@ -1,4 +1,4 @@
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
@@ -120,9 +120,14 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "You may nominate a player. Either provide the name of the player (with no extra text) or respond with PASS. The players you can nominate are: %P.",
-                                                      options.Where(option => option is PlayerOption)
-                                                             .Select(option => ((PlayerOption)option).Player));
+            var potentialNominees = options.Where(option => option is PlayerOption)
+                                           .Select(option => ((PlayerOption)option).Player);
+            return await clocktowerChat.RequestNomination(options, "You may nominate a player. Please provide your reasoning as an internal monologue, considering at least a few possible candidates for execution " +
+                                                                   "as well as the possibility of not nominating anyone. Normally you want to be nominating players you suspect are evil, especially the Demon. " +
+                                                                   "(If you're evil, then you want to be nominating players that you can frame as evil.) Though sometimes strategic considerations might make you " +
+                                                                   "want to nominate a good player instead. Also keep in mind how many votes will be required and whether you think that it's possible you'll get " +
+                                                                   "the needed votes for execution from your fellow players. Conclude with the name of the player to nominate or PASS. The players you can nominate are: %P.",
+                                                        potentialNominees);
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
