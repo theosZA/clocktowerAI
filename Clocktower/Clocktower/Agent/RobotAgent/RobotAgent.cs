@@ -121,13 +121,36 @@ namespace Clocktower.Agent.RobotAgent
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
             var potentialNominees = options.Where(option => option is PlayerOption)
-                                           .Select(option => ((PlayerOption)option).Player);
-            return await clocktowerChat.RequestNomination(options, "You may nominate a player. Please provide your reasoning as an internal monologue, considering at least a few possible candidates for execution " +
-                                                                   "as well as the possibility of not nominating anyone. Normally you want to be nominating players you suspect are evil, especially the Demon. " +
-                                                                   "(If you're evil, then you want to be nominating players that you can frame as evil.) Though sometimes strategic considerations might make you " +
-                                                                   "want to nominate a good player instead. Also keep in mind how many votes will be required and whether you think that it's possible you'll get " +
-                                                                   "the needed votes for execution from your fellow players. Conclude with the name of the player to nominate or PASS. The players you can nominate are: %P.",
-                                                        potentialNominees);
+                                           .Select(option => ((PlayerOption)option).Player)
+                                           .ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("You may nominate a player. Please provide your reasoning as an internal monologue, considering at least a few possible candidates for execution " +
+                          "as well as the possibility of not nominating anyone. Normally you want to be nominating players you suspect are evil, especially the Demon. " +
+                          "(If you're evil, then you want to be nominating players that you can frame as evil.) Though sometimes strategic considerations might make you " +
+                          "want to nominate a good player instead. Also keep in mind how many votes will be required and whether you think that it's possible you'll get " +
+                          "the needed votes for execution from your fellow players.");
+            sb.AppendFormattedText("Conclude with the name of the player to nominate or PASS. The players you can nominate are: %P.", potentialNominees);
+            if (potentialNominees.Any(player => !player.Alive))
+            {
+                var aliveCandidates = potentialNominees.Where(player => player.Alive).ToList();
+                switch (aliveCandidates.Count)
+                {
+                    case 0:
+                        sb.Append(" Of these players, none are still alive.");
+                        break;
+
+                    case 1:
+                        sb.AppendFormattedText(" Of these players, %P is still alive.", aliveCandidates);
+                        break;
+
+                    default:
+                        sb.AppendFormattedText(" Of these players, %P are still alive.", aliveCandidates);
+                        break;
+                }
+            }
+
+            return await clocktowerChat.RequestNomination(options, sb.ToString());
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -159,21 +182,34 @@ namespace Clocktower.Agent.RobotAgent
             var nominee = ((VoteOption)options.First(option => option is VoteOption)).Nominee;
 
             var sb = new StringBuilder();
-            sb.AppendFormattedText("If you wish, you may vote for executing %p.", nominee);
+            if (nominee.Agent == this)
+            {
+                sb.AppendFormattedText("If you wish, you may vote for executing yourself.");
+            }
+            else
+            {
+                sb.AppendFormattedText("If you wish, you may vote for executing %p.", nominee);
+            }
             if (ghostVote)
             {
                 sb.Append(" (Note that because you are dead, you may only vote to execute once more for the rest of the game.)");
             }
-            sb.AppendFormattedText(" Please provide your reasoning as an internal monologue, considering the evidence surrounding their information and character, and pros and cons for executing %p,"
-                                 + " before concluding with either EXECUTE to execute them or PASS if you don't wish to execute them."
-                                 + " Some factors to keep in mind: If you're good then executing other good players early on isn't a terrible idea as it can help some characters learn some information,"
-                                 + " but as you get closer to the end of the game you really need to be executing evil players, and especially in the final 3 or 4, you *must* be executing the demon."
-                                 + " If you're evil then you want to be executing valuable good players, and *not* the Demon, but at the same time you still need to look like your votes are helping the good players.",
+            sb.AppendLine();
+            sb.AppendFormattedText(" Please provide your reasoning as an internal monologue, considering the evidence surrounding their information and character, and pros and cons for executing %p." +
+                                   " Some factors to keep in mind: If you're good then executing other good players early on isn't a terrible idea as it can help some characters learn some information," +
+                                   " but as you get closer to the end of the game you really need to be executing evil players, and especially in the final 3 or 4, you *must* be executing the demon." +
+                                   " (If you're evil then you want to be executing valuable good players, and *not* the Demon, but at the same time you still need to look like your votes are helping the good players.)" +
+                                   " It is not generally expected that you vote on yourself, and if there are already enough votes for the execution to pass, you may wish to hold off on over-voting " +
+                                   " to give town the possibility for considering another nomination.",
                                  nominee);
             if (ghostVote)
             {
-                sb.Append(" And since you only have one more vote available for the rest of the game, you need to decide whether or not this is the best time to spend that vote.");
+                sb.AppendLine();
+                sb.Append(" And since you only have one more vote available for the rest of the game, you need to decide whether or not this is the best time to spend that vote." +
+                          " (Most commonly, ghost votes are kept until the last day when there are just 3 or 4 players left alive.)");
             }
+            sb.AppendLine();
+            sb.AppendFormattedText("Conclude with either EXECUTE to execute %p or PASS if you don't wish to execute them.", nominee);
             var prompt = sb.ToString();
 
             return await clocktowerChat.RequestVote(options, prompt);
