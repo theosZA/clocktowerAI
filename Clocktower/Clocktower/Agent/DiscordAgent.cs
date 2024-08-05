@@ -216,6 +216,16 @@ namespace Clocktower.Agent
             await observer.SendMessage("You learn that %p is the %c.", executedPlayer, character);
         }
 
+        public async Task NotifyBalloonist(Player newPlayer)
+        {
+            if (characterAbility == Character.Cannibal)
+            {
+                await observer.SendMessage("You learn: %p.", newPlayer);
+                return;
+            }
+            await observer.SendMessage("As the %c, the next player you learn is %p.", Character.Balloonist, newPlayer);
+        }
+
         public async Task NotifyJuggler(int jugglerCount)
         {
             if (characterAbility == Character.Cannibal)

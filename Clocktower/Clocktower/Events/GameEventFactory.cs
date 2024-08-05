@@ -63,6 +63,7 @@ namespace Clocktower.Events
                 case "Undertaker":                  return new NotifyUndertaker(storyteller, grimoire, setup.Script);
                 case "Washerwoman":                 return new NotifyWasherwoman(storyteller, grimoire, setup.Script, random);
                 case "Juggler":                     return new NotifyJuggler(storyteller, grimoire);
+                case "Balloonist":                  return new NotifyBalloonist(storyteller, grimoire);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

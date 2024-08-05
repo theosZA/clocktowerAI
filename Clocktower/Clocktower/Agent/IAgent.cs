@@ -32,6 +32,7 @@ namespace Clocktower.Agent
         Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         Task NotifyRavenkeeper(Player target, Character character);
         Task NotifyUndertaker(Player executedPlayer, Character character);
+        Task NotifyBalloonist(Player newPlayer);
         Task NotifyJuggler(int jugglerCount);
 
         Task ShowGrimoireToSpy(Grimoire grimoire);

@@ -20,6 +20,7 @@ FortuneTeller
 Butler
 Steward
 Noble
+Balloonist
 Shugenja
 Spy
 EndNight

@@ -105,6 +105,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, undertakerOptions.ToOptions())).GetCharacter();
         }
 
+        public static async Task<Player> GetPlayerForBalloonist(this IStoryteller storyteller, Player balloonist, Player? previousPlayerSeenByBalloonist, IReadOnlyCollection<Player> balloonistOptions)
+        {
+            return (await storyteller.GetPlayerForBalloonist(balloonist, previousPlayerSeenByBalloonist, balloonistOptions.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> GetMayorBounce(this IStoryteller storyteller, Player mayor, Player? killer, IEnumerable<Player> mayorOptions)
         {
             return (await storyteller.GetMayorBounce(mayor, killer, mayorOptions.ToOptions())).GetPlayer();

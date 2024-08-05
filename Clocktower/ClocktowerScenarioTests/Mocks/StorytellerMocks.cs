@@ -75,6 +75,14 @@ namespace ClocktowerScenarioTests.Mocks
             return empathNumbers;
         }
 
+        public static List<Character> MockGetPlayerForBalloonist(this IStoryteller storyteller, Character seenPlayer)
+        {
+            List<Character> possiblePlayers = new();
+            storyteller.GetPlayerForBalloonist(Arg.Any<Player>(), Arg.Any<Player?>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(seenPlayer, possiblePlayers, argIndex: 2);
+            return possiblePlayers;
+        }
+
         public static List<int> MockGetJugglerNumber(this IStoryteller storyteller, int jugglerNumber)
         {
             List<int> jugglerNumbers = new();

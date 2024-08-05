@@ -19,6 +19,7 @@ Empath
 FortuneTeller
 Undertaker
 Juggler
+Balloonist
 Butler
 Spy
 EndNight

@@ -34,6 +34,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
         Task<IOption> GetCharacterForRavenkeeper(Player ravenkeeper, Player target, IReadOnlyCollection<IOption> ravenkeeperOptions);
         Task<IOption> GetCharacterForUndertaker(Player undertaker, Player executedPlayer, IReadOnlyCollection<IOption> undertakerOptions);
+        Task<IOption> GetPlayerForBalloonist(Player balloonist, Player? previousPlayerSeenByBalloonist, IReadOnlyCollection<IOption> balloonistOptions);
         Task<IOption> GetMayorBounce(Player mayor, Player? killer, IReadOnlyCollection<IOption> mayorOptions);
         Task<IOption> ShouldKillTinker(Player tinker, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldKillWithSlayer(Player slayer, Player target, IReadOnlyCollection<IOption> yesOrNo);
@@ -60,6 +61,7 @@ namespace Clocktower.Storyteller
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
         void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading);
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
+        void NotifyBalloonist(Player balloonist, Player newPlayer);
         void NotifyJuggler(Player juggler, int jugglerCount);
         void ShowGrimoireToSpy(Player spy, Grimoire grimoire);
 

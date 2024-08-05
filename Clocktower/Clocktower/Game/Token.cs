@@ -29,6 +29,7 @@
         InvestigatorWrong,
         StewardPing,
         NoblePing,
+        BalloonistPing,
         JuggledCorrectly,
         CannibalEaten,
         // Special marker (not actually represented by a token in the real game).

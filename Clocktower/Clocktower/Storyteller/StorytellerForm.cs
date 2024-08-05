@@ -289,6 +289,19 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(undertakerOptions);
         }
 
+        public async Task<IOption> GetPlayerForBalloonist(Player balloonist, Player? previousPlayerSeenByBalloonist, IReadOnlyCollection<IOption> balloonistOptions)
+        {
+            outputText.AppendFormattedText("Who should %p see as the %c today?", balloonist, Character.Balloonist, StorytellerView);
+            if (previousPlayerSeenByBalloonist != null)
+            {
+                outputText.AppendFormattedText(" Last night they saw %p.", previousPlayerSeenByBalloonist, StorytellerView);
+            }
+            OutputDrunkDisclaimer(balloonist);
+            outputText.AppendText("\n");
+
+            return await PopulateOptions(balloonistOptions);
+        }
+
         public async Task<IOption> GetMayorBounce(Player mayor, Player? killer, IReadOnlyCollection<IOption> mayorOptions)
         {
             if (killer == null)
@@ -468,6 +481,11 @@ namespace Clocktower.Storyteller
         public void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter)
         {
             outputText.AppendFormattedText($"%p learns that the recently executed %p is the %c.\n", undertaker, executedPlayer, executedCharacter, StorytellerView);
+        }
+
+        public void NotifyBalloonist(Player balloonist, Player newPlayer)
+        {
+            outputText.AppendFormattedText("The next player that %p learns is %p.\n", balloonist, newPlayer, StorytellerView);
         }
 
         public void NotifyJuggler(Player juggler, int jugglerCount)

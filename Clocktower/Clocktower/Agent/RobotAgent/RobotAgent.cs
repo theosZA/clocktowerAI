@@ -357,11 +357,11 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (Character == Game.Character.Cannibal)
             {
-                clocktowerChat.AddFormattedMessage($"You learn: %P", nobleInformation);
+                clocktowerChat.AddFormattedMessage("You learn: %P.", nobleInformation);
             }
             else
             {
-                clocktowerChat.AddFormattedMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+                clocktowerChat.AddFormattedMessage("You learn that there is exactly 1 evil player among %P.", nobleInformation);
             }
             return Task.CompletedTask;
         }
@@ -370,11 +370,24 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (Character == Game.Character.Cannibal)
             {
-                clocktowerChat.AddFormattedMessage($"You learn: %c", character);
+                clocktowerChat.AddFormattedMessage("You learn: %c.", character);
             }
             else
             {
                 clocktowerChat.AddFormattedMessage("You learn that %p is the %c.", executedPlayer, character);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task NotifyBalloonist(Player newPlayer)
+        {
+            if (Character == Game.Character.Cannibal)
+            {
+                clocktowerChat.AddFormattedMessage("You learn: %p.", newPlayer);
+            }
+            else
+            {
+                clocktowerChat.AddFormattedMessage("As the %c, the next player you learn is %p.", Game.Character.Balloonist, newPlayer);
             }
             return Task.CompletedTask;
         }

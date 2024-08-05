@@ -49,6 +49,7 @@ namespace Clocktower.Game
         Pacifist,
         Noble,
         Cannibal,
+        Balloonist,
 
         // Outsiders
         Tinker = 1000,

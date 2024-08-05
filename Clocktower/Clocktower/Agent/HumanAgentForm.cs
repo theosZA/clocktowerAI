@@ -259,6 +259,19 @@ namespace Clocktower.Agent
             return Task.CompletedTask;
         }
 
+        public Task NotifyBalloonist(Player newPlayer)
+        {
+            if (character == Character.Cannibal)
+            {
+                outputText.AppendFormattedText("You learn: %p.", newPlayer);
+            }
+            else
+            {
+                outputText.AppendFormattedText("As the %c, the next player you learn is %p.", Character.Balloonist, newPlayer);
+            }
+            return Task.CompletedTask;
+        }
+
         public Task NotifyJuggler(int jugglerCount)
         {
             if (character == Character.Cannibal)
