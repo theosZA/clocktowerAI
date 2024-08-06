@@ -1,4 +1,5 @@
 ﻿using Clocktower.Game;
+using Clocktower.Setup;
 
 namespace Clocktower.EventScripts
 {

@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Setup;
 using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
 
@@ -67,7 +68,6 @@ namespace ClocktowerScenarioTests
             return WithCharacters(ReadCharactersFromCommaSeparatedList(charactersCommaSeparatedList).ToList());
         }
 
-
         public ClocktowerGameBuilder WithCharacters(IReadOnlyCollection<Character> characters)
         {
             Setup.Characters.Returns(characters.ToArray());
@@ -77,6 +77,7 @@ namespace ClocktowerScenarioTests
         public ClocktowerGameBuilder WithDrunk(Character character)
         {
             Setup.IsCharacterSelected(Character.Drunk).Returns(true);
+            Setup.CanCharacterBeTheDrunk(character).Returns(true);
             Storyteller.MockGetDrunk(character);
             return this;
         }

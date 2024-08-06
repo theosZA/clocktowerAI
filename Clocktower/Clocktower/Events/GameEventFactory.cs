@@ -1,6 +1,7 @@
 ﻿using Clocktower.EventScripts;
 using Clocktower.Game;
 using Clocktower.Observer;
+using Clocktower.Setup;
 using Clocktower.Storyteller;
 using Clocktower.Triggers;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -26,7 +27,7 @@ namespace Clocktower.Events
             {
                 // Set-up events
                 case "AssignMarionette":            return new AssignMarionette(storyteller, grimoire);
-                case "AssignDrunk":                 return new AssignDrunk(storyteller, grimoire);
+                case "AssignDrunk":                 return new AssignDrunk(storyteller, setup, grimoire);
                 case "FortuneTellerRedHerring":     return new AssignFortuneTellerRedHerring(storyteller, grimoire);
                 case "DemonInformation":            return new DemonInformation(storyteller, grimoire, setup.Script, random);
                 case "MinionInformation":           return new MinionInformation(storyteller, grimoire, setup.Script, random);

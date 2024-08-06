@@ -1,4 +1,6 @@
-﻿namespace Clocktower.Game
+﻿using Clocktower.Game;
+
+namespace Clocktower.Setup
 {
     public interface IGameSetup
     {
@@ -28,5 +30,12 @@
         /// <param name="character">Character to check if it is to be included in the game.</param>
         /// <returns>True if the given character is to be included in the game.</returns>
         bool IsCharacterSelected(Character character);
+
+        /// <summary>
+        /// Checks if it's possible for the specified character to actually be the Drunk without breaking the modifications to the Outsider count.
+        /// </summary>
+        /// <param name="character">Character to check if they could be the Drunk instead.</param>
+        /// <returns>True if this character can be turned into the Drunk.</returns>
+        bool CanCharacterBeTheDrunk(Character character);
     }
 }

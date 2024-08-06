@@ -1,4 +1,6 @@
-﻿namespace Clocktower.Game
+﻿using Clocktower.Setup;
+
+namespace Clocktower.Game
 {
     public partial class SetupDialog : Form, IGameSetup
     {
@@ -44,11 +46,13 @@
             this.forcedAlignments = forcedAlignments;
             this.forcedCharacters = forcedCharacters;
 
+            characterTypeDistribution = new(random, Script, IsCharacterSelected);
+
             // Populate grid with script characters.
             for (int column = 0; column < characterTypes.Length; column++)
             {
                 var characterType = characterTypes[column];
-                var setup = new SetupForCharacterType(characterType, Script.OfCharacterType(characterType), IsCharacterSelected, UpdateCounters);
+                var setup = new SetupForCharacterType(characterType, Script.OfCharacterType(characterType), characterTypeDistribution, UpdateCounters);
                 setupForCharacterType.Add(characterType, setup);
 
                 charactersPanel.Controls.Add(setup.Heading, column, 0);
@@ -59,15 +63,7 @@
                 }
             }
 
-            // Toggle forced characters.
-            foreach (var character in forcedCharacters)
-            {
-                if (character.HasValue)
-                {
-                    setupForCharacterType[character.Value.CharacterType()].ForceCheck(character.Value);
-                }
-            }
-
+            SetRequiredCharacters();
             UpdateCounters();
         }
 
@@ -79,6 +75,37 @@
         public bool IsCharacterSelected(Character character)
         {
             return setupForCharacterType.Any(setup => setup.Value.SelectedCharacters.Contains(character));
+        }
+
+        /// <summary>
+        /// Checks if it's possible for the specified character to actually be the Drunk without breaking the modifications to the Outsider count.
+        /// </summary>
+        /// <param name="character">Character to check if they could be the Drunk instead.</param>
+        /// <returns>True if this character can be turned into the Drunk.</returns>
+        public bool CanCharacterBeTheDrunk(Character character)
+        {
+            if (character.CharacterType() != CharacterType.Townsfolk)
+            {
+                return false;
+            }
+
+            if (character != Character.Balloonist)
+            {
+                return true;
+            }
+
+            // Is the current Outsider count possible without the Balloonist modification to Outsider count?
+            var possibleOutsiderCounts = characterTypeDistribution.GetPossibleOutsiderCountsExcludingCharacter(PlayerCount, Character.Balloonist);
+            return possibleOutsiderCounts.Contains(setupForCharacterType[CharacterType.Outsider].SelectedCount);
+        }
+
+        private void SetRequiredCharacters()
+        {
+            var actualForcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character!.Value).ToList();
+            foreach (var characterType in characterTypes)
+            {
+                setupForCharacterType[characterType].SetRequiredCharacters(actualForcedCharacters);
+            }
         }
 
         private void UpdateCounters()
@@ -108,21 +135,47 @@
 
         private void UpdateCounters(object? sender, EventArgs e)
         {
+            SetRequiredCharacters();
             UpdateCounters();
         }
 
         private void RandomizeBag(object sender, EventArgs e)
         {
-            // Maximize the outsider count 90% of the time.
-            bool maximizeOutsiders = random.Next(10) > 0;
-            bool maximizeTownsfolk = !maximizeOutsiders;
+            foreach (var characterType in characterTypes)
+            {
+                setupForCharacterType[characterType].Clear();
+            }
 
-            // We need to randomize the characters in this specific order to ensure the counts are correct.
             var forcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character!.Value).ToList();
-            setupForCharacterType[CharacterType.Demon].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
-            setupForCharacterType[CharacterType.Minion].RandomizeSelection(PlayerCount, maximizeCount: true, random, forcedCharacters);
-            setupForCharacterType[CharacterType.Outsider].RandomizeSelection(PlayerCount, maximizeOutsiders, random, forcedCharacters);
-            setupForCharacterType[CharacterType.Townsfolk].RandomizeSelection(PlayerCount, maximizeTownsfolk, random, forcedCharacters);
+
+            int demonCount = 1;
+            setupForCharacterType[CharacterType.Demon].RandomizeSelection(demonCount, random, forcedCharacters);
+
+            int minionCount = characterTypeDistribution.GetMinionCount(PlayerCount);
+            setupForCharacterType[CharacterType.Minion].RandomizeSelection(minionCount, random, forcedCharacters);
+
+            // At this point we need to determine the distribution between Townsfolk and Outsiders. This is complicated by the fact that one Townsfolk (Balloonist) can
+            // change the Outsider count (if they aren't the Drunk). What we'll do is assume for the moment that there will be no modifications to the Outsider count
+            // from Townsfolk and see what Townsfolk characters are drawn. If one of them is the Balloonist then we'll randomly determine if they are applying a +0 or +1
+            // to the Outsider count, and if it's a +1 modification then we'll remove a random non-Balloonist Townsfolk.
+
+            int outsiderModification = characterTypeDistribution.GetRandomOutsiderModificationByEvil();
+            int townsfolkCount = characterTypeDistribution.GetTownsfolkCount(PlayerCount, outsiderModification);
+            setupForCharacterType[CharacterType.Townsfolk].RandomizeSelection(townsfolkCount, random, forcedCharacters);
+
+            outsiderModification += characterTypeDistribution.GetRandomOutsiderModificationByGood();
+            int outsiderCount = characterTypeDistribution.GetOutsiderCount(PlayerCount, outsiderModification);
+            setupForCharacterType[CharacterType.Outsider].RandomizeSelection(outsiderCount, random, forcedCharacters);
+
+            int newTownsfolkCount = characterTypeDistribution.GetTownsfolkCount(PlayerCount, outsiderModification);
+            while (newTownsfolkCount < setupForCharacterType[CharacterType.Townsfolk].SelectedCount)
+            {   // Remove townsfolk (other than Balloonist).
+                setupForCharacterType[CharacterType.Townsfolk].RemoveRandomCharacter(random, new[] { Character.Balloonist });
+            }
+            while (newTownsfolkCount > setupForCharacterType[CharacterType.Townsfolk].SelectedCount)
+            {   // Add townsfolk (other than Balloonist).
+                setupForCharacterType[CharacterType.Townsfolk].AddRandomCharacter(random, new[] { Character.Balloonist });
+            }
 
             UpdateCounters();
         }
@@ -211,6 +264,7 @@
 
         private readonly CharacterType[] characterTypes = new[] { CharacterType.Townsfolk, CharacterType.Outsider, CharacterType.Minion, CharacterType.Demon };
 
+        private readonly CharacterTypeDistribution characterTypeDistribution;
         private readonly Dictionary<CharacterType, SetupForCharacterType> setupForCharacterType = new();
     }
 }

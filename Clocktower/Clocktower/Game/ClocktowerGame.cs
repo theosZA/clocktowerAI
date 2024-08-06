@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Events;
 using Clocktower.Observer;
+using Clocktower.Setup;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Game

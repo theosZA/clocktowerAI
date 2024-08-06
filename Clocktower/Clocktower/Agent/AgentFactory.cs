@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent.Config;
 using Clocktower.Game;
+using Clocktower.Setup;
 using DiscordChatBot;
 using System.Configuration;
 
