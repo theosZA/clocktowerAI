@@ -7,14 +7,17 @@ namespace Clocktower.Agent.Notifier
     {
         public Chat? Chat { get; private set; }
 
-        public DiscordNotifier(ChatClient chatClient)
+        public DiscordNotifier(ChatClient chatClient, Func<Chat, Task> onChatStart)
         {
             this.chatClient = chatClient;
+            this.onChatStart = onChatStart;
         }
 
         public async Task Start(string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
             Chat = await chatClient.CreateChat(playerName);
+
+            await onChatStart(Chat);
 
             await Chat.SendMessage($"Welcome {playerName} to a game of Blood on the Clocktower.");
             await Chat.SendMessage(TextBuilder.ScriptToText(scriptName, script, markup: true));
@@ -35,11 +38,6 @@ namespace Clocktower.Agent.Notifier
             }
         }
 
-        public void QueueNotify(string markupText)
-        {
-            Chat?.QueueMessage(markupText);
-        }
-
         public async Task NotifyWithImage(string markupText, string imageFileName)
         {
             if (Chat != null)
@@ -49,5 +47,6 @@ namespace Clocktower.Agent.Notifier
         }
 
         private readonly ChatClient chatClient;
+        private readonly Func<Chat, Task> onChatStart;
     }
 }

@@ -1,6 +1,9 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.Notifier;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
+using System.Reactive;
+using System.Text;
 
 namespace Clocktower.Agent
 {
@@ -16,7 +19,7 @@ namespace Clocktower.Agent
             set => autoCheckbox.Checked = value;
         }
 
-        public HumanAgentForm(string playerName, IEnumerable<Character> script, Random random)
+        public HumanAgentForm(string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script, Random random)
         {
             InitializeComponent();
 
@@ -27,293 +30,146 @@ namespace Clocktower.Agent
             Text = playerName;
 
             Observer = new RichTextBoxObserver(outputText);
+
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, new RichTextBoxNotifier(outputText));
         }
 
-        public Task StartGame()
+        public async Task StartGame()
         {
             Show();
-            return Task.CompletedTask;
+            await textAgent.StartGame();
         }
 
-        public Task AssignCharacter(Character character, Alignment alignment)
+        public async Task AssignCharacter(Character character, Alignment alignment)
         {
             this.character = character;
 
             SetTitleText();
 
-            outputText.AppendFormattedText("You are the %c. You are %a.\n", character, alignment);
+            await textAgent.AssignCharacter(character, alignment);
 
             autoClaim = character;
             if (autoClaim.Value.Alignment() == Alignment.Evil)
             {
                 autoClaim = script.OfAlignment(Alignment.Good).ToList().RandomPick(random);
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task YouAreDead()
+        public async Task YouAreDead()
         {
             alive = false;
 
             SetTitleText();
 
-            outputText.AppendBoldText("You are dead and are now a ghost. You may only vote one more time.\n");
-
-            return Task.CompletedTask;
+            await textAgent.YouAreDead();
         }
 
-        public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            if (fellowMinions.Any())
-            {
-                outputText.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.\n", demon, fellowMinions);
-            }
-            else
-            {
-                outputText.AppendFormattedText("As a minion, you learn that %p is your demon.\n", demon);
-            }
-            if (notInPlayCharacters.Any())
-            {
-                outputText.AppendFormattedText("You also learn that the following characters are not in play: %C.\n", notInPlayCharacters);
-            }
-
-            return Task.CompletedTask;
+            await textAgent.MinionInformation(demon, fellowMinions, notInPlayCharacters);
         }
 
-        public Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public async Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            outputText.AppendText("As the demon, you learn that ");
-
-            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
-            if (nonMarionetteMinions.Count > 0)
-            {
-                outputText.AppendFormattedText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
-            }
-
-            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
-            if (marionette != null)
-            {
-                outputText.AppendFormattedText("%p is your %c, ", marionette, Character.Marionette);
-            }
-
-            outputText.AppendFormattedText("and that the following characters are not in play: %C.\n", notInPlayCharacters);
-
             autoClaim = notInPlayCharacters.ToList().RandomPick(random);
 
-            return Task.CompletedTask;
+            await textAgent.DemonInformation(minions, notInPlayCharacters);
         }
 
-        public Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
+        public async Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
         {
-            if (outsiders.Count == 0)
-            {
-                outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that the following outsiders are in play: %C.\n", outsiders);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyGodfather(outsiders);
         }
 
-        public Task NotifySteward(Player goodPlayer)
+        public async Task NotifySteward(Player goodPlayer)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %p\n", goodPlayer);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that %p is a good player.\n", goodPlayer);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifySteward(goodPlayer);
         }
 
-        public Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
+        public async Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %P\n", nobleInformation);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that there is exactly 1 evil player among %P\n", nobleInformation);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyNoble(nobleInformation);
         }
 
-        public Task NotifyShugenja(Direction direction)
+        public async Task NotifyShugenja(Direction direction)
         {
-            var directionText = direction == Direction.Clockwise ? "clockwise" : "counter-clockwise";
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", directionText);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that the nearest %a to you is in the %b direction.\n", Alignment.Evil, directionText);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyShugenja(direction);
         }
 
-        public Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
+        public async Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
         {
-            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
-            return Task.CompletedTask;
+            await textAgent.NotifyWasherwoman(playerA, playerB, character);
         }
 
-        public Task NotifyLibrarian(Player playerA, Player playerB, Character character)
+        public async Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
-            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
-            return Task.CompletedTask;
+            await textAgent.NotifyLibrarian(playerA, playerB, character);
         }
 
-        public Task NotifyLibrarianNoOutsiders()
+        public async Task NotifyLibrarianNoOutsiders()
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", 0);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that there are no outsiders in play.\n");
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyLibrarianNoOutsiders();
         }
 
-        public Task NotifyInvestigator(Player playerA, Player playerB, Character character)
+        public async Task NotifyInvestigator(Player playerA, Player playerB, Character character)
         {
-            outputText.AppendFormattedText("You learn that either %p or %p is the %c.\n", playerA, playerB, character);
-            return Task.CompletedTask;
+            await textAgent.NotifyInvestigator(playerA, playerB, character);
         }
 
-        public Task NotifyChef(int evilPairCount)
+        public async Task NotifyChef(int evilPairCount)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", evilPairCount);
-            }
-            else
-            {
-                outputText.AppendFormattedText($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.\n", evilPairCount);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyChef(evilPairCount);
         }
 
-        public Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
+        public async Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", reading ? "Yes" : "No");
-            }
-            else if (reading)
-            {
-                outputText.AppendBoldText("Yes");
-                outputText.AppendFormattedText($", one of %p or %p is the demon.\n", targetA, targetB);
-            }
-            else
-            {
-                outputText.AppendBoldText("No");
-                outputText.AppendFormattedText($", neither of %p or %p is the demon.\n", targetA, targetB);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyFortuneTeller(targetA, targetB, reading);
         }
 
-        public Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
+        public async Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", evilCount);
-            }
-            else
-            {
-                outputText.AppendFormattedText($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.\n", evilCount, neighbourA, neighbourB);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
-        public Task NotifyRavenkeeper(Player target, Character character)
+        public async Task NotifyRavenkeeper(Player target, Character character)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %c\n", character);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that %p is the %c.\n", target, character);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyRavenkeeper(target, character);
         }
 
-        public Task NotifyUndertaker(Player executedPlayer, Character character)
+        public async Task NotifyUndertaker(Player executedPlayer, Character character)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %c\n", character);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that %p is the %c.\n", executedPlayer, character);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyUndertaker(executedPlayer, character);
         }
 
-        public Task NotifyBalloonist(Player newPlayer)
+        public async Task NotifyBalloonist(Player newPlayer)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %p.", newPlayer);
-            }
-            else
-            {
-                outputText.AppendFormattedText("As the %c, the next player you learn is %p.", Character.Balloonist, newPlayer);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyBalloonist(newPlayer);
         }
 
-        public Task NotifyJuggler(int jugglerCount)
+        public async Task NotifyJuggler(int jugglerCount)
         {
-            if (character == Character.Cannibal)
-            {
-                outputText.AppendFormattedText("You learn: %b\n", jugglerCount);
-            }
-            else
-            {
-                outputText.AppendFormattedText("You learn that %b of your juggles were correct.\n", jugglerCount);
-            }
-            return Task.CompletedTask;
+            await textAgent.NotifyJuggler(jugglerCount);
         }
 
-        public Task ShowGrimoireToSpy(Grimoire grimoire)
+        public async Task ShowGrimoireToSpy(Grimoire grimoire)
         {
-            outputText.AppendFormattedText($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire)}\n", Character.Spy);
-            return Task.CompletedTask;
+            await textAgent.ShowGrimoireToSpy(grimoire);
         }
 
-        public Task ResponseForFisherman(string advice)
+        public async Task ResponseForFisherman(string advice)
         {
-            outputText.AppendBoldText("Storyteller: ", Color.Purple);
-            outputText.AppendText(advice);
-            if (!advice.EndsWith("\n"))
-            {
-                outputText.AppendText("\n");
-            }
-            return Task.CompletedTask;
+            await textAgent.ResponseForFisherman(advice);
         }
 
-        public Task GainCharacterAbility(Character character)
+        public async Task GainCharacterAbility(Character character)
         {
-            outputText.AppendFormattedText("You now have the ability of the %c.\n", character);
-
             originalCharacter = this.character;
             this.character = character;
 
             SetTitleText();
 
-            return Task.CompletedTask;
+            await textAgent.GainCharacterAbility(character);
         }
-
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
@@ -536,11 +392,10 @@ namespace Clocktower.Agent
             return await GetSpeech(autoActText: "There are reasons for me to be executed now. Trust me.");
         }
 
-        public Task StartPrivateChat(Player otherPlayer)
+        public async Task StartPrivateChat(Player otherPlayer)
         {
-            outputText.AppendFormattedText("You have begun a private chat with %p.\n", otherPlayer);
             firstMessageInChat = true;
-            return Task.CompletedTask;
+            await textAgent.StartPrivateChat(otherPlayer);
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -555,16 +410,14 @@ namespace Clocktower.Agent
             return (speech, false);
         }
 
-        public Task PrivateChatMessage(Player speaker, string message)
+        public async Task PrivateChatMessage(Player speaker, string message)
         {
-            outputText.AppendFormattedText($"%p: %n\n", speaker, message);
-            return Task.CompletedTask;
+            await textAgent.PrivateChatMessage(speaker, message);
         }
 
-        public Task EndPrivateChat(Player otherPlayer)
+        public async Task EndPrivateChat(Player otherPlayer)
         {
-            outputText.AppendFormattedText("The private chat with %p is over.\n", otherPlayer);
-            return Task.CompletedTask;
+            await textAgent.EndPrivateChat(otherPlayer);
         }
 
         private Task<IOption> PopulateOptions(IReadOnlyCollection<IOption> options)
@@ -739,6 +592,8 @@ namespace Clocktower.Agent
 
             OnText?.Invoke(text);
         }
+
+        private readonly IAgent textAgent;
 
         private readonly List<Character> script;
         private readonly Random random;

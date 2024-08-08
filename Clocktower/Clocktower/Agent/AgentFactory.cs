@@ -22,8 +22,8 @@ namespace Clocktower.Agent
         {
             return agentType switch
             {
-                "Auto" => new HumanAgentForm(name, script, random) { AutoAct = true },
-                "Human" => new HumanAgentForm(name, script, random),
+                "Auto" => new HumanAgentForm(name, playerNames, scriptName, script, random) { AutoAct = true },
+                "Human" => new HumanAgentForm(name, playerNames, scriptName, script, random),
                 "Discord" => new DiscordAgent(await GetDiscordChatClient(), name, playerNames, scriptName, script),
                 "Robot" => new RobotAgentForm(string.IsNullOrEmpty(model) ? DefaultModel : model, name, personality, playerNames, scriptName, script).Agent,
                 _ => throw new ArgumentException($"Unknown agent type: {agentType}"),
