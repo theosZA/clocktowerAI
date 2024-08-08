@@ -15,240 +15,128 @@ namespace Clocktower.Agent
 
         public DiscordAgent(ChatClient chatClient, string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
+            textAgent = new TextAgent(playerName, players, scriptName, script, observer, new DiscordNotifier(chatClient, OnStartGame));
             prompter = new(playerName);
             PlayerName = playerName;
             this.players = players;
             this.scriptName = scriptName;
             this.script = script;
-            notifier = new DiscordNotifier(chatClient);
         }
 
         public async Task StartGame()
         {
-            await notifier.Start(PlayerName, players, scriptName, script);
-
-            if (notifier.Chat != null)
-            {
-                observer.Start(notifier.Chat);
-                prompter.SendMessageAndGetResponse = (async (message) => await notifier.Chat.SendMessageAndGetResponse(message));
-            }
+            await textAgent.StartGame();
         }
 
         public async Task AssignCharacter(Character character, Alignment alignment)
         {
-            this.characterAbility = character;
-            await SendMessage("You are the %c. You are %a.", character, alignment);
+            await textAgent.AssignCharacter(character, alignment);
         }
 
         public async Task YouAreDead()
         {
-            await SendMessage("You are dead and are now a ghost. You may only vote one more time.");
+            await textAgent.YouAreDead();
         }
 
         public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            var sb = new StringBuilder();
-
-            if (fellowMinions.Any())
-            {
-                sb.AppendFormattedMarkupText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.", demon, fellowMinions);
-            }
-            else
-            {
-                sb.AppendFormattedMarkupText("As a minion, you learn that %p is your demon.", demon);
-            }
-            if (notInPlayCharacters.Any())
-            {
-                sb.AppendFormattedMarkupText("You also learn that the following characters are not in play: %C.", notInPlayCharacters);
-            }
-
-            await SendMessage(sb);
+            await textAgent.MinionInformation(demon, fellowMinions, notInPlayCharacters);
         }
 
         public async Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
-            var sb = new StringBuilder();
-
-            sb.Append("As the demon, you learn that ");
-
-            var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
-            if (nonMarionetteMinions.Count > 0)
-            {
-                sb.AppendFormattedMarkupText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
-            }
-
-            var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
-            if (marionette != null)
-            {
-                sb.AppendFormattedMarkupText("%p is your %c, ", marionette, Character.Marionette);
-            }
-
-            sb.AppendFormattedMarkupText("and that the following characters are not in play: %C.", notInPlayCharacters);
-
-            await SendMessage(sb);
+            await textAgent.DemonInformation(minions, notInPlayCharacters);
         }
 
         public async Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
         {
-            if (outsiders.Count == 0)
-            {
-                await SendMessage("You learn that there are no outsiders in play.");
-            }
-            else
-            {
-                await SendMessage("You learn that the following outsiders are in play: %C.", outsiders);
-            }
+            await textAgent.NotifyGodfather(outsiders);
         }
 
         public async Task NotifyWasherwoman(Player playerA, Player playerB, Character character)
         {
-            await SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            await textAgent.NotifyWasherwoman(playerA, playerB, character);
         }
 
         public async Task NotifyLibrarian(Player playerA, Player playerB, Character character)
         {
-            await SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            await textAgent.NotifyLibrarian(playerA, playerB, character);
         }
 
         public async Task NotifyLibrarianNoOutsiders()
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(0);
-                return;
-            }
-            await SendMessage("You learn that there are no outsiders in play.");
+            await textAgent.NotifyLibrarianNoOutsiders();
         }
 
         public async Task NotifyInvestigator(Player playerA, Player playerB, Character character)
         {
-            await SendMessage("You learn that either %p or %p is the %c.", playerA, playerB, character);
+            await textAgent.NotifyInvestigator(playerA, playerB, character);
         }
 
         public async Task NotifyChef(int evilPairCount)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(evilPairCount);
-                return;
-            }
-            await SendMessage($"You learn that there {(evilPairCount == 1 ? "is %b pair" : "are %b pairs")} of evil players.", evilPairCount);
+            await textAgent.NotifyChef(evilPairCount);
         }
 
         public async Task NotifySteward(Player goodPlayer)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(goodPlayer);
-                return;
-            }
-            await SendMessage("You learn that %p is a good player.", goodPlayer);
+            await textAgent.NotifySteward(goodPlayer);
         }
 
         public async Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(nobleInformation);
-                return;
-            }
-            await SendMessage("You learn that there is exactly 1 evil player among %P", nobleInformation);
+            await textAgent.NotifyNoble(nobleInformation);
         }
 
         public async Task NotifyShugenja(Direction direction)
         {
-            var directionText = direction == Direction.Clockwise ? "clockwise" : "counter-clockwise";
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(directionText);
-                return;
-            }
-            await SendMessage("You learn that the nearest %a to you is in the %b direction.", Alignment.Evil, directionText);
+            await textAgent.NotifyShugenja(direction);
         }
 
         public async Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(evilCount);
-                return;
-            }
-            await SendMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
+            await textAgent.NotifyEmpath(neighbourA, neighbourB, evilCount);
         }
 
         public async Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
         {
-            var readingText = reading ? "Yes" : "No";
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(readingText);
-                return;
-            }
-
-            if (reading)
-            {
-                await SendMessage("%b, one of %p or %p is the demon.", readingText, targetA, targetB);
-            }
-            else
-            {
-                await SendMessage("%b, neither of %p or %p is the demon.", readingText, targetA, targetB);
-            }
+            await textAgent.NotifyFortuneTeller(targetA, targetB, reading);
         }
 
         public async Task NotifyRavenkeeper(Player target, Character character)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(character);
-                return;
-            }
-            await SendMessage("You learn that %p is the %c.", target, character);
+            await textAgent.NotifyRavenkeeper(target, character);
         }
 
         public async Task NotifyUndertaker(Player executedPlayer, Character character)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(character);
-                return;
-            }
-            await SendMessage("You learn that %p is the %c.", executedPlayer, character);
+            await textAgent.NotifyUndertaker(executedPlayer, character);
         }
 
         public async Task NotifyBalloonist(Player newPlayer)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(newPlayer);
-                return;
-            }
-            await SendMessage("As the %c, the next player you learn is %p.", Character.Balloonist, newPlayer);
+            await textAgent.NotifyBalloonist(newPlayer);
         }
 
         public async Task NotifyJuggler(int jugglerCount)
         {
-            if (characterAbility == Character.Cannibal)
-            {
-                await Learn(jugglerCount);
-                return;
-            }
-            await SendMessage("You learn that %b of your juggles were correct.", jugglerCount);
+            await textAgent.NotifyJuggler(jugglerCount);
         }
 
         public async Task ShowGrimoireToSpy(Grimoire grimoire)
         {
-            await SendMessage($"As the %c, you can now look over the Grimoire...\n{TextBuilder.GrimoireToText(grimoire, markup: true)}", Character.Spy);
+            await textAgent.ShowGrimoireToSpy(grimoire);
         }
 
         public async Task ResponseForFisherman(string advice)
         {
-            await SendMessage("%b: %n", "Storyteller", advice.Trim());
+            await textAgent.ResponseForFisherman(advice);
         }
 
-        public Task GainCharacterAbility(Character character)
+        public async Task GainCharacterAbility(Character character)
         {
             this.characterAbility = character;
-            return Task.CompletedTask;
+            await textAgent.GainCharacterAbility(character);
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
@@ -432,8 +320,7 @@ namespace Clocktower.Agent
 
         public async Task StartPrivateChat(Player otherPlayer)
         {
-            var imageFileName = Path.Combine("Images", otherPlayer.Name + ".jpg");
-            await SendMessageWithImage(imageFileName, "You have begun a private chat with %p.", otherPlayer);
+            await textAgent.StartPrivateChat(otherPlayer);
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -443,69 +330,24 @@ namespace Clocktower.Agent
 
         public async Task PrivateChatMessage(Player speaker, string message)
         {
-            await SendMessage($"%p:\n>>> %n", speaker, message);
+            await textAgent.PrivateChatMessage(speaker, message);
         }
 
         public async Task EndPrivateChat(Player otherPlayer)
         {
-            await SendMessage("The private chat with %p is over.", otherPlayer);
+            await textAgent.EndPrivateChat(otherPlayer);
         }
 
-        private async Task Learn(IEnumerable<Player> players)
+        private Task OnStartGame(Chat chat)
         {
-            await SendMessage("You learn: %P.", players);
+            observer.Start(chat);
+            prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
+
+            return Task.CompletedTask;
+
         }
 
-        private async Task Learn(Player player)
-        {
-            await SendMessage("You learn: %p.", player);
-        }
-
-        private async Task Learn(Character character)
-        {
-            await SendMessage("You learn: %c.", character);
-        }
-
-        private async Task Learn(int number)
-        {
-            await SendMessage("You learn: %b.", number);
-        }
-
-        private async Task Learn(string text)
-        {
-            await SendMessage("You learn: %b.", text);
-        }
-
-        private async Task SendMessage(StringBuilder stringBuilder)
-        {
-            await notifier.Notify(stringBuilder.ToString());
-        }
-
-        private async Task SendMessage(string text)
-        {
-            await notifier.Notify(text);
-        }
-
-        private async Task SendMessage(string text, params object[] objects)
-        {
-            await notifier.Notify(TextUtilities.FormatMarkupText(text, objects));
-        }
-
-        private void QueueMessage(string text)
-        {
-            notifier.QueueNotify(text);
-        }
-
-        private void QueueMessage(string text, params object[] objects)
-        {
-            notifier.QueueNotify(TextUtilities.FormatMarkupText(text, objects));
-        }
-
-        private async Task SendMessageWithImage(string imageFileName, string text, params object[] objects)
-        {
-            await notifier.NotifyWithImage(TextUtilities.FormatMarkupText(text, objects), imageFileName);
-        }
-
+        private readonly IAgent textAgent;
         private readonly DiscordChatObserver observer = new();
         private readonly TextPlayerPrompter prompter;
 
@@ -513,7 +355,5 @@ namespace Clocktower.Agent
         private readonly string scriptName;
         private readonly IReadOnlyCollection<Character> script;
         private Character? characterAbility;
-
-        private readonly DiscordNotifier notifier;
     }
 }
