@@ -29,7 +29,7 @@ namespace Clocktower.Game
             InitializeComponent();
 
             if (scriptFileName == null)
-            {   // If no script name is passed in we use "Whale Bucket", the script that includes all characters.
+            {   // If no script name is passed in, we use "Whale Bucket", the script that includes all characters.
                 ScriptName = "Whale Bucket";
                 Script = Enum.GetValues<Character>().OrderBy(character => character.ToString()).ToList();
             }
@@ -101,6 +101,12 @@ namespace Clocktower.Game
 
         private void SetRequiredCharacters()
         {
+            var possibleDemons = Script.OfCharacterType(CharacterType.Demon).ToList();
+            if (possibleDemons.Count == 1)
+            {
+                setupForCharacterType[CharacterType.Demon].ForceCheck(possibleDemons[0]);
+            }
+
             var actualForcedCharacters = this.forcedCharacters.Take(PlayerCount).Where(character => character.HasValue).Select(character => character!.Value).ToList();
             foreach (var characterType in characterTypes)
             {

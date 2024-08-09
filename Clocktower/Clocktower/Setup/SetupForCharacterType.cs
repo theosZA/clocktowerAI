@@ -36,13 +36,6 @@ namespace Clocktower.Setup
 
                 checkBoxes.Add(character, checkbox);
             }
-
-            if (characterType == CharacterType.Demon && checkBoxes.Count == 1)
-            {
-                var singleDemonCheckBox = checkBoxes.First().Value;
-                singleDemonCheckBox.Checked = true;
-                singleDemonCheckBox.Enabled = false;
-            }
         }
 
         public void Clear()
