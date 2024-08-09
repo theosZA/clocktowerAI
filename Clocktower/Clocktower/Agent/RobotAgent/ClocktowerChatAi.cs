@@ -1,4 +1,5 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.RobotAgent.Model;
+using Clocktower.Game;
 using Clocktower.Options;
 using OpenAi;
 
@@ -72,10 +73,20 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (string.IsNullOrEmpty(prompt))
             {
-                return await gameChat.Request(prompt: null);
+                return await gameChat.Request<string>(prompt: null) ?? string.Empty;
             }
 
-            return await gameChat.Request(TextUtilities.FormatText(prompt, objects));
+            return await gameChat.Request<string>(TextUtilities.FormatText(prompt, objects)) ?? string.Empty;
+        }
+
+        public async Task<T?> RequestObject<T>(string? prompt = null, params object[] objects)
+        {
+            if (string.IsNullOrEmpty(prompt))
+            {
+                return await gameChat.Request<T>(prompt: null);
+            }
+
+            return await gameChat.Request<T>(TextUtilities.FormatText(prompt, objects));
         }
 
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
@@ -116,10 +127,25 @@ namespace Clocktower.Agent.RobotAgent
             return TextParser.ReadSelectedOptionFromText(choiceAsText, options);
         }
 
-        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string prompt)
         {
-            var choiceAsText = await Request(prompt, objects);
-            return TextParser.ReadVoteOptionFromText(choiceAsText, options);
+            for (int retry = 0; retry < 3; retry++)
+            {
+                var nomination = await RequestObject<PlayerSelection>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PlayerSelection).Name} object");
+                var result = nomination.PickOption(options);
+                if (result != null)
+                {
+                    return result;
+                }
+                prompt = nomination.NoMatchingOptionPrompt(options);
+            }
+            return options.First(option => option is PassOption);
+        }
+
+        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string prompt)
+        {
+            var vote = await RequestObject<Vote>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(Vote).Name} object");
+            return vote.PickOption(options);
         }
 
         public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)

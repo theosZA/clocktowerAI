@@ -53,9 +53,9 @@ namespace OpenAi
             subChats.Last().AddMessage(Role.User, message);
         }
 
-        public async Task<string> GetAssistantResponse()
+        public async Task<T?> GetAssistantResponse<T>()
         {
-            return await subChats.Last().GetAssistantResponse(subChats.SkipLast(1));
+            return await subChats.Last().GetAssistantResponse<T>(subChats.SkipLast(1));
         }
 
         public async Task StartNewSubChat(string name, string? summarizePrompt = null)

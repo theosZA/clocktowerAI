@@ -1,4 +1,5 @@
-﻿using Clocktower.Game;
+﻿using Clocktower.Agent.RobotAgent.Model;
+using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
@@ -130,13 +131,14 @@ namespace Clocktower.Agent.RobotAgent
                           "(If you're evil, then you want to be nominating players that you can frame as evil.) Though sometimes strategic considerations might make you " +
                           "want to nominate a good player instead. Also keep in mind how many votes will be required and whether you think that it's possible you'll get " +
                           "the needed votes for execution from your fellow players.");
-            sb.AppendFormattedText("Conclude with the name of the player to nominate or PASS. The players you can nominate are: %P.", potentialNominees);
+            sb.AppendFormattedText("Then either provide the name of the player to nominate or don't provide the name of player if you don't wish to nominate at this time. " +
+                                   "The players you can nominate are: %P.", potentialNominees);
             if (potentialNominees.Any(player => !player.Alive))
             {
                 AppendAliveSubsetOfPlayers(sb, potentialNominees);
             }
 
-            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
+            return await clocktowerChat.RequestPlayerSelection(options, sb.ToString());
         }
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
@@ -195,10 +197,9 @@ namespace Clocktower.Agent.RobotAgent
                           " (Most commonly, ghost votes are kept until the last day when there are just 3 or 4 players left alive.)");
             }
             sb.AppendLine();
-            sb.AppendFormattedText("Conclude with either EXECUTE to execute %p or PASS if you don't wish to execute them.", nominee);
-            var prompt = sb.ToString();
+            sb.AppendFormattedText("Then decide whether you wish to execute %p or not.", nominee);
 
-            return await clocktowerChat.RequestVote(options, prompt);
+            return await clocktowerChat.RequestVote(options, sb.ToString());
         }
 
         public Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)

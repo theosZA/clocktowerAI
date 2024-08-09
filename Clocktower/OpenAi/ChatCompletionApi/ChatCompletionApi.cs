@@ -19,9 +19,9 @@ namespace OpenAi.ChatCompletionApi
             this.model = model;
         }
 
-        public async Task<(string response, int promptTokens, int completionTokens, int totalTokens)> RequestChatCompletion(IEnumerable<(Role role, string message)> messages)
+        public async Task<(string response, int promptTokens, int completionTokens, int totalTokens)> RequestChatCompletion<T>(IEnumerable<(Role role, string message)> messages)
         {
-            var request = BuildChatCompletionRequest(messages);
+            var request = BuildChatCompletionRequest<T>(messages);
             using var response = await RequestChatCompletion(request);
             var chatResponse = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>() ?? throw new Exception("No chat completion received from Open API");
             var usage = chatResponse.Usage;
@@ -47,13 +47,18 @@ namespace OpenAi.ChatCompletionApi
             });
         }
 
-        private ChatCompletionRequest BuildChatCompletionRequest(IEnumerable<(Role role, string message)> messages)
+        private ChatCompletionRequest BuildChatCompletionRequest<T>(IEnumerable<(Role role, string message)> messages)
         {
-            return new ChatCompletionRequest
+            var request = new ChatCompletionRequest
             {
                 Model = model,
                 Messages = messages.Select(pair => BuildChatMessage(pair.role, pair.message)).ToList()
             };
+            if (typeof(T) != typeof(string))
+            {
+                request.ResponseFormat = ResponseFormat.ResponseFormatFromType<T>();
+            }
+            return request;
         }
 
         private static ChatMessage BuildChatMessage(Role role, string message)
@@ -79,7 +84,7 @@ namespace OpenAi.ChatCompletionApi
         private static readonly JsonSerializerOptions jsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull 
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
     }
 }
