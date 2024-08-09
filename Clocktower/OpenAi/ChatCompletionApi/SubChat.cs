@@ -1,4 +1,6 @@
-﻿namespace OpenAi.ChatCompletionApi
+﻿using Newtonsoft.Json;
+
+namespace OpenAi.ChatCompletionApi
 {
     internal class SubChat
     {
@@ -30,16 +32,16 @@
             OnChatMessageAdded?.Invoke(subChatName, role, message);
         }
 
-        public async Task<string> GetAssistantResponse(IEnumerable<SubChat> previousSubChats)
+        public async Task<T?> GetAssistantResponse<T>(IEnumerable<SubChat> previousSubChats)
         {
             var messagesToSend = previousSubChats.SelectMany(subChat => subChat.Messages)
                                                  .Concat(messages)
                                                  .ToList();
-            var (response, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion(messagesToSend);
+            var (response, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion<T>(messagesToSend);
             OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: false, messagesToSend, response, promptTokens, completionTokens, totalTokens);
 
             AddMessage(Role.Assistant, response);
-            return response;
+            return StringToType<T>(response);
         }
 
         public async Task Summarize(IEnumerable<SubChat> previousSubChats)
@@ -52,7 +54,7 @@
                                                  .Concat(messages)
                                                  .Append((Role.User, summarizePrompt))
                                                  .ToList();
-            var (summaryResponse, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion(messagesToSend);
+            var (summaryResponse, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion<string>(messagesToSend);
             OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: true, messagesToSend, summaryResponse, promptTokens, completionTokens, totalTokens);
 
             if (!summaryResponse.StartsWith(subChatName))
@@ -68,6 +70,15 @@
             int startIndex = messages.Count - count;
             messages.RemoveRange(startIndex, count);
             OnChatMessagesRemoved?.Invoke(subChatName, startIndex, count);
+        }
+
+        private static T? StringToType<T>(string response)
+        {
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)response;
+            }
+            return JsonConvert.DeserializeObject<T>(response);
         }
 
         private readonly List<(Role role, string message)> messages = new();

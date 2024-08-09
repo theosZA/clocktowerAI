@@ -61,8 +61,9 @@
         /// Provides the full chat (with sub-chats summarized if possible) to the Chat assistant and asynchronously returns an assistant message.
         /// This message is also added to the current sub-chat.
         /// </summary>
+        /// <typeparam name="T">If the type is not <see cref="string"/>, then the response is provided in the form of an object of type T.</typeparam>
         /// <returns>The resulting assistant message.</returns>
-        Task<string> GetAssistantResponse();
+        Task<T?> GetAssistantResponse<T>();
 
         /// <summary>
         /// Removes the last few messages from the current sub-chat. Useful when you don't want valueless messages cluttering up the chat history.

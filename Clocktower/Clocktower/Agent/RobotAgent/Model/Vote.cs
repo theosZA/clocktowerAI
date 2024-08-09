@@ -1,0 +1,16 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Clocktower.Agent.RobotAgent.Model
+{
+    /// <summary>
+    /// Robot agent model for specifying a vote to execute or to pass.
+    /// </summary>
+    internal class Vote
+    {
+        [Required(AllowEmptyStrings = true)]
+        public string Reasoning { get; set; } = string.Empty;
+
+        [Required]
+        public bool VoteForExecution { get; set; }
+    }
+}

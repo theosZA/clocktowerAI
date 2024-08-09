@@ -53,7 +53,7 @@ namespace ChatApplication
                 return;
             }
             IChat chat = new OpenAiChat(model, chatHistory.Select(chatMessage => (chatMessage.Role, chatMessage.Message)));
-            var response = await chat.GetAssistantResponse();
+            var response = await chat.GetAssistantResponse<string>();
             if (!string.IsNullOrEmpty(response))
             {
                 chatHistory.Add(new() { Role = Role.Assistant, Message = response.ReplaceLineEndings() });

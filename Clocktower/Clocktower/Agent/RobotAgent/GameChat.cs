@@ -56,13 +56,13 @@ namespace Clocktower.Agent.RobotAgent
             openAiChat.AddUserMessage(message);
         }
 
-        public async Task<string> Request(string? prompt)
+        public async Task<T?> Request<T>(string? prompt)
         {
             if (!string.IsNullOrEmpty(prompt))
             {
                 AddMessage(prompt);
             }
-            return await openAiChat.GetAssistantResponse();
+            return await openAiChat.GetAssistantResponse<T>();
         }
 
         /// <summary>

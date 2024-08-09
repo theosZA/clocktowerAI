@@ -65,5 +65,11 @@ namespace OpenAi.ChatCompletionApi.Model
         /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
         /// </summary>
         public string? User { get; set; }
+
+        /// <summary>
+        /// An object specifying the format that the model must output. Use <see cref="ResponseFormat.ResponseFormatFromType"/> to populate based on any type.
+        /// </summary>
+        [JsonPropertyName("response_format")]
+        public ResponseFormat? ResponseFormat { get; set; }
     }
 }
