@@ -1,5 +1,4 @@
-﻿using Clocktower.Agent.RobotAgent.Model;
-using Clocktower.Game;
+﻿using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
 using OpenAi;
@@ -457,7 +456,8 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with the name of a player to use the ability, or PASS if you want to save your ability for later.", Game.Character.Assassin);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, you may use your once-per-game ability tonight to kill a player. Respond with your reasoning and then either provide " +
+                                                                        "the name of the player to kill or don't provide the name of player if you want to save your ability for later.", Game.Character.Assassin);
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
@@ -471,12 +471,12 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to kill. Respond with the name of a player you wish to kill tonight.", Game.Character.Godfather);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, please choose a player to kill. Respond with your reasoning and the name of the player you wish to kill tonight.", Game.Character.Godfather);
         }
 
         public async Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to protect from execution.", Game.Character.Devils_Advocate);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, please choose a player to protect from execution. Respond with your reasoning and the name of the player to protect.", Game.Character.Devils_Advocate);
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
@@ -484,16 +484,15 @@ namespace Clocktower.Agent.RobotAgent
             var potentialKills = options.Select(option => ((PlayerOption)option).Player).ToList();
 
             var sb = new StringBuilder();
-            sb.AppendFormattedText("As the %c please choose a player to kill. Please provide your reasoning as an internal monologue, considering at least a few possible players to kill, " +
-                                   "as well as the possibility of sinking a kill by targeting a dead player. Conclude with the name of the player to kill. The players you can kill are: %P.",
+            sb.AppendFormattedText("As the %c, please choose a player to kill. Please provide your reasoning as an internal monologue, considering at least a few possible players to kill, " +
+                                   "as well as the possibility of sinking a kill by targeting a dead player. Conclude with the name of the player to kill. The players you can target are: %P.",
                                    demonCharacter, potentialKills);
-            sb.AppendFormattedText("Conclude with the name of the player to kill. The players you can target are: %P.", potentialKills);
             if (potentialKills.Any(player => !player.Alive))
             {
                 AppendAliveSubsetOfPlayers(sb, potentialKills);
             }
 
-            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
+            return await clocktowerChat.RequestPlayerSelection(options, sb.ToString());
         }
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
@@ -511,9 +510,9 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (Character == Game.Character.Cannibal)
             {
-                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.", Game.Character.Cannibal);
+                return await CannibalRequestPlayerSelection(options);
             }
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to protect from the demon tonight. Respond with the name of the player you wish to protect.", Game.Character.Monk);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, please choose a player to protect from the demon tonight. Respond with your reasoning and the name of the player you wish to protect.", Game.Character.Monk);
         }
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
@@ -533,31 +532,31 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to poison. Respond with the name of the player you wish to poison.", Game.Character.Poisoner);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c please choose a player to poison. Respond with your reasoning and the name of the player you wish to poison.", Game.Character.Poisoner);
         }
 
         public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player to curse. Respond with the name of the player on whom you wish to use your character ability.", Game.Character.Witch);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, please choose a player to curse. Respond with your reasoning and the name of the player on whom you wish to use your character ability.", Game.Character.Witch);
         }
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             if (Character == Game.Character.Cannibal)
             {
-                return await clocktowerChat.RequestChoice(options, "For the ability you have gained as the %c, please choose a player. Respond with the name of a player.", Game.Character.Cannibal);
+                return await CannibalRequestPlayerSelection(options);
             }
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player whose character you wish to learn. Respond with the name of a player.", Game.Character.Ravenkeeper);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c, please choose a player whose character you wish to learn. Respond with your reasoning and the name of a player.", Game.Character.Ravenkeeper);
         }
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
             if (Character == Game.Character.Cannibal)
             {
-                return await clocktowerChat.RequestChoice(options, "As the %c you have gained the ability of the %c. Please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.",
-                                                          Game.Character.Cannibal, Game.Character.Butler);
+                return await clocktowerChat.RequestPlayerSelection(options, "As the %c, you have gained the ability of the %c. Please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.",
+                                                                   Game.Character.Cannibal, Game.Character.Butler);
             }
-            return await clocktowerChat.RequestChoice(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Game.Character.Butler);
+            return await clocktowerChat.RequestPlayerSelection(options, "As the %c please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Game.Character.Butler);
         }
 
         public Task ResponseForFisherman(string advice)
@@ -697,6 +696,12 @@ namespace Clocktower.Agent.RobotAgent
                     stringBuilder.AppendFormattedText(" Of these players, %P are still alive.", aliveSubset);
                     break;
             }
+        }
+
+        public async Task<IOption> CannibalRequestPlayerSelection(IReadOnlyCollection<IOption> options)
+        {
+            return await clocktowerChat.RequestPlayerSelection(options, "For the ability you have gained as the %c, please choose a player. Respond with your reasoning, especially considering what ability you " +
+                                                                        "believe that you've gained, and conclude with the name of a player.", Game.Character.Cannibal);
         }
 
         private void InternalOnChatMessage(Role role, string message)

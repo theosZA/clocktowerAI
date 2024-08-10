@@ -127,8 +127,12 @@ namespace Clocktower.Agent.RobotAgent
             return TextParser.ReadSelectedOptionFromText(choiceAsText, options);
         }
 
-        public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string prompt)
+        public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
+            if (prompt != null)
+            {
+                prompt = TextUtilities.FormatMarkupText(prompt, objects);
+            }
             for (int retry = 0; retry < 3; retry++)
             {
                 var nomination = await RequestObject<PlayerSelection>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PlayerSelection).Name} object");
