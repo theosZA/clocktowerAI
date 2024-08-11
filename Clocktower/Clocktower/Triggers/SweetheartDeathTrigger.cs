@@ -13,7 +13,7 @@ namespace Clocktower.Triggers
 
         public async Task RunTrigger(DeathInformation deathInformation)
         {
-            if (deathInformation.dyingPlayer.ShouldRunAbility(Character.Sweetheart))
+            if (deathInformation.dyingPlayer.HasHealthyAbility(Character.Sweetheart))
             {
                 var sweetheartDrunk = await storyteller.GetSweetheartDrunk(grimoire.Players);
                 sweetheartDrunk.Tokens.Add(Token.SweetheartDrunk, deathInformation.dyingPlayer);
