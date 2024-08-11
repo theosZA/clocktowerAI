@@ -153,10 +153,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
-            // This is for a case where there is a variety of different options and we are going to try our best to figure out which one the AI is trying to choose.
-
-            var choiceAsText = await Request(prompt, objects);
-            return TextParser.ReadShenaniganOptionFromText(choiceAsText, options);
+            return await RequestOptionFromJson<PublicAction>(options, prompt, objects);
         }
 
         public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)

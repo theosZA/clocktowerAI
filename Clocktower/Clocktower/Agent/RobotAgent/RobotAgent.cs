@@ -429,29 +429,29 @@ namespace Clocktower.Agent.RobotAgent
         public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
         {
             var sb = new StringBuilder();
-            var objects = new List<object>();
 
-            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day. You can explain your reasoning but your response should conclude with exactly one of the following options.");
-            if (options.Any(option => option is SlayerShotOption))
-            {
-                sb.AppendLine("- SLAYER: PLAYER_NAME if you wish to claim %c and target the specified player.");
-                objects.Add(Game.Character.Slayer);
-            }
+            sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day. You can explain your reasoning but should include one of the following options.");
             if (options.Any(option => option is JugglerOption))
             {
-                sb.AppendLine("- JUGGLER: PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ... with up to 5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated");
-                objects.Add(Game.Character.Juggler);
+                sb.AppendFormattedMarkupText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
+                                             $"5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated", Game.Character.Juggler);
+                sb.AppendLine();
+            }
+            if (options.Any(option => option is SlayerShotOption))
+            {
+                sb.AppendFormattedMarkupText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Slayer)}\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim %c and target the specified player.", Game.Character.Slayer);
+                sb.AppendLine();
             }
             if (options.Any(option => option is PassOption))
             {
-                sb.AppendLine("- PASS if you don't wish to use or bluff any of these abilities.");
+                sb.AppendLine("- `\"TakeAction\"=false` if you don't wish to use or bluff any of these abilities.");
             }
             if (options.Any(option => option is AlwaysPassOption))
             {
-                sb.AppendLine("- ALWAYS PASS if you aren't bluffing any of these characters and so will skip this prompt in the future (unless you do have an ability you can use).");
+                sb.AppendLine("- `\"TakeAction\"=false, \"AlwaysPassInFuture\"=true` if you aren't bluffing any of these characters and so will skip this prompt in the future (unless you do have an ability you can use).");
             }
 
-            return await clocktowerChat.RequestShenanigans(options, sb.ToString(), objects);
+            return await clocktowerChat.RequestShenanigans(options, sb.ToString());
         }
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
