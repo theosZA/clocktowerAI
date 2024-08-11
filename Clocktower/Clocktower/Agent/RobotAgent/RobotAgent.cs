@@ -423,7 +423,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
-            return await clocktowerChat.RequestChoice(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later? Respond with YES or NO only.", Game.Character.Fisherman);
+            return await clocktowerChat.RequestUseAbility(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Game.Character.Fisherman);
         }
 
         public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
@@ -503,7 +503,7 @@ namespace Clocktower.Agent.RobotAgent
             sb.AppendFormattedText("As the %c please choose a *character* to kill. Please provide your reasoning as an internal monologue, considering which characters would be most dangerous, " +
                                    "or which players would be good to kill and what character you think they are. If you choose a character that isn't actually in play, the Storyteller will decide " +
                                    "the kills tonight, and rarely will that be to your benefit. Conclude, not with the player, but with the specific character from the script you wish to kill.", Game.Character.Ojo);
-            return await clocktowerChat.RequestChoiceAfterReasoning(options, sb.ToString());
+            return await clocktowerChat.RequestCharacterSelection(options, sb.ToString());
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
@@ -519,15 +519,15 @@ namespace Clocktower.Agent.RobotAgent
         {
             if (Character == Game.Character.Cannibal)
             {
-                bool useAbility = await clocktowerChat.RequestChoice(OptionsBuilder.YesOrNo, "Do you wish to use the ability you have gained as the %c tonight?", Game.Character.Cannibal) is YesOption;
+                bool useAbility = await CannibalRequestUseAbility(OptionsBuilder.YesOrNo) is YesOption;
                 if (!useAbility)
                 {
                     return options.First(option => option is PassOption);
                 }
-                return await clocktowerChat.RequestChoice(options.Where(option => option is not PassOption).ToList(), "For the ability you have gained as the %c, please choose a Townsfolk or Outsider character.", Game.Character.Cannibal);
+                return await CannibalRequestCharacterSelection(options.Where(option => option is not PassOption).ToList());
             }
 
-            return await clocktowerChat.RequestChoice(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Game.Character.Philosopher);
+            return await clocktowerChat.RequestCharacterSelection(options, "As the %c, do you wish to use your ability tonight? Respond with the Townsfolk or Outsider character whose ability you wish to acquire, or PASS if you want to save your ability for later.", Game.Character.Philosopher);
         }
 
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
@@ -702,6 +702,18 @@ namespace Clocktower.Agent.RobotAgent
         {
             return await clocktowerChat.RequestPlayerSelection(options, "For the ability you have gained as the %c, please choose a player. Respond with your reasoning, especially considering what ability you " +
                                                                         "believe that you've gained, and conclude with the name of a player.", Game.Character.Cannibal);
+        }
+
+        public async Task<IOption> CannibalRequestCharacterSelection(IReadOnlyCollection<IOption> options)
+        {
+            return await clocktowerChat.RequestCharacterSelection(options, "For the ability you have gained as the %c, please choose a character from the script. Respond with your reasoning, especially considering " +
+                                                                           "what ability you believe that you've gained, and conclude with the character from the script.", Game.Character.Cannibal);
+        }
+
+        public async Task<IOption> CannibalRequestUseAbility(IReadOnlyCollection<IOption> options)
+        {
+            return await clocktowerChat.RequestUseAbility(options, "For the ability you have gained as the %c, please choose whether you wish to use the ability now. " +
+                                                                   "Respond with your reasoning, especially considering what ability you believe that you've gained.", Game.Character.Cannibal);
         }
 
         private void InternalOnChatMessage(Role role, string message)

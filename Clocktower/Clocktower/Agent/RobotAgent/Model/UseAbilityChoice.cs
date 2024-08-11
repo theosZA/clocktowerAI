@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations;
 namespace Clocktower.Agent.RobotAgent.Model
 {
     /// <summary>
-    /// Robot agent model for specifying a vote to execute or to pass.
+    /// Robot agent model for specifying whether or not to use the player's character ability.
     /// </summary>
-    internal class Vote : IOptionSelection
+    internal class UseAbilityChoice : IOptionSelection
     {
         [Required(AllowEmptyStrings = true)]
         public string Reasoning { get; set; } = string.Empty;
 
         [Required]
-        public bool VoteForExecution { get; set; }
+        public bool UseAbility { get; set; }
 
         public IOption? PickOption(IReadOnlyCollection<IOption> options)
         {
-            if (VoteForExecution)
+            if (UseAbility)
             {
-                return options.First(option => option is VoteOption);
+                return options.First(option => option is YesOption);
             }
             return options.First(option => option is PassOption);
         }

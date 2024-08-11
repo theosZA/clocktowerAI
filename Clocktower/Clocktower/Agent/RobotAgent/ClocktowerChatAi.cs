@@ -89,6 +89,16 @@ namespace Clocktower.Agent.RobotAgent
             return await gameChat.Request<T>(TextUtilities.FormatText(prompt, objects));
         }
 
+        public async Task<T?> RequestObjectWithRetries<T>(string? prompt = null, params object[] objects)
+        {
+            if (string.IsNullOrEmpty(prompt))
+            {
+                return await gameChat.Request<T>(prompt: null);
+            }
+
+            return await gameChat.Request<T>(TextUtilities.FormatText(prompt, objects));
+        }
+
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
         {
             var dialogue = await RequestDialogue(prompt, objects);
@@ -121,35 +131,24 @@ namespace Clocktower.Agent.RobotAgent
             return dialogue;
         }
 
-        public async Task<IOption> RequestChoiceAfterReasoning(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
-            var choiceAsText = await Request(prompt, objects);
-            return TextParser.ReadSelectedOptionFromText(choiceAsText, options);
+            return await RequestOptionFromJson<UseAbilityChoice>(options, prompt, objects);
         }
 
         public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
-            if (prompt != null)
-            {
-                prompt = TextUtilities.FormatMarkupText(prompt, objects);
-            }
-            for (int retry = 0; retry < 3; retry++)
-            {
-                var nomination = await RequestObject<PlayerSelection>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PlayerSelection).Name} object");
-                var result = nomination.PickOption(options);
-                if (result != null)
-                {
-                    return result;
-                }
-                prompt = nomination.NoMatchingOptionPrompt(options);
-            }
-            return options.First(option => option is PassOption);
+            return await RequestOptionFromJson<PlayerSelection>(options, prompt, objects);
         }
 
-        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string prompt)
+        public async Task<IOption> RequestCharacterSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
-            var vote = await RequestObject<Vote>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(Vote).Name} object");
-            return vote.PickOption(options);
+            return await RequestOptionFromJson<CharacterSelection>(options, prompt, objects);
+        }
+
+        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        {
+            return await RequestOptionFromJson<Vote>(options, prompt, objects);
         }
 
         public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
@@ -202,6 +201,25 @@ namespace Clocktower.Agent.RobotAgent
                 return passOption;    
             }
             return options.First();
+        }
+
+        private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects) where T: IOptionSelection
+        {
+            if (prompt != null)
+            {
+                prompt = TextUtilities.FormatMarkupText(prompt, objects);
+            }
+            for (int retry = 0; retry < 3; retry++)
+            {
+                var response = await RequestObject<T>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(T).Name} object");
+                var result = response.PickOption(options);
+                if (result != null)
+                {
+                    return result;
+                }
+                prompt = response.NoMatchingOptionPrompt(options);
+            }
+            return options.First(option => option is PassOption);
         }
 
         private static string CleanResponse(string? textFromAi)
