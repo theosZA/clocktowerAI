@@ -36,7 +36,7 @@ namespace Clocktower
         public static string FormatMarkupText(string text, params object[] objects)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedMarkupText(text, objects);
+            sb.AppendFormattedText(text, objects);
             return sb.ToString();
         }
     }

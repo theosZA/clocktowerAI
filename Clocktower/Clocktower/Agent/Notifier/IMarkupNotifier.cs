@@ -4,6 +4,10 @@ namespace Clocktower.Agent.Notifier
 {
     /// <summary>
     /// Responsible for sending notifications (in markup form) to a platform for display (for humans) or processing (for AI).
+    /// The following markup can be explicitly used, though not all markup will necessarily be supported by all platforms.
+    /// **text** for bold
+    /// >>> text for quoted sections
+    /// [color:green]text[/color] for colour
     /// </summary>
     internal interface IMarkupNotifier
     {
@@ -14,7 +18,7 @@ namespace Clocktower.Agent.Notifier
         Task Start(string name, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script);
 
         /// <summary>
-        /// Sends a notification in markup form. Not all markup will necessarily be supported by the platform receiving the notification.
+        /// Sends a notification in markup form.
         /// </summary>
         /// <param name="markupText">A notification in markup form.</param>
         Task Notify(string markupText);

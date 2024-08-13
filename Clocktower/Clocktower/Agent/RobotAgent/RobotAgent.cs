@@ -70,16 +70,16 @@ namespace Clocktower.Agent.RobotAgent
             var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Game.Character.Marionette).ToList();
             if (nonMarionetteMinions.Count > 0)
             {
-                sb.AppendFormattedMarkupText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
+                sb.AppendFormattedText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
             }
 
             var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Game.Character.Marionette);
             if (marionette != null)
             {
-                sb.AppendFormattedMarkupText("%p is your %c, ", marionette, Game.Character.Marionette);
+                sb.AppendFormattedText("%p is your %c, ", marionette, Game.Character.Marionette);
             }
 
-            sb.AppendFormattedMarkupText("and that the following characters are not in play: %C.", notInPlayCharacters);
+            sb.AppendFormattedText("and that the following characters are not in play: %C.", notInPlayCharacters);
             clocktowerChat.AddMessage(sb.ToString());
 
             return Task.CompletedTask;
@@ -433,13 +433,13 @@ namespace Clocktower.Agent.RobotAgent
             sb.AppendLine("You have the option now to use or bluff any abilities that are to be publicly used during the day. You can explain your reasoning but should include one of the following options.");
             if (options.Any(option => option is JugglerOption))
             {
-                sb.AppendFormattedMarkupText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
+                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
                                              $"5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated", Game.Character.Juggler);
                 sb.AppendLine();
             }
             if (options.Any(option => option is SlayerShotOption))
             {
-                sb.AppendFormattedMarkupText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Slayer)}\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim %c and target the specified player.", Game.Character.Slayer);
+                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Slayer)}\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim %c and target the specified player.", Game.Character.Slayer);
                 sb.AppendLine();
             }
             if (options.Any(option => option is PassOption))

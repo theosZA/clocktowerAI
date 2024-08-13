@@ -120,13 +120,13 @@ namespace Clocktower.Agent.RobotAgent.Model
             {
                 case JugglerOption _:
                     sb.Append($"\"{Target}\" is not a valid juggle. ");
-                    sb.AppendFormattedMarkupText("If you wish to claim %c, make sure to provide \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to 5 player-character pairs.",
+                    sb.AppendFormattedText("If you wish to claim %c, make sure to provide \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to 5 player-character pairs.",
                                                  Character.Juggler);
                     break;
 
                 case SlayerShotOption _:
                     sb.Append($"\"{Target}\" is not a valid Slayer-shot target. ");
-                    sb.AppendFormattedMarkupText("If you wish to claim %c, make sure to provide \"Target\"=\"PLAYER_NAME\"` with the name of the player you wish to target.", Character.Slayer);
+                    sb.AppendFormattedText("If you wish to claim %c, make sure to provide \"Target\"=\"PLAYER_NAME\"` with the name of the player you wish to target.", Character.Slayer);
                     break;
             }
 

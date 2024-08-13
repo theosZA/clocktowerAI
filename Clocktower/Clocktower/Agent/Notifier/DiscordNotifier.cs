@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using DiscordChatBot;
+using System.Text.RegularExpressions;
 
 namespace Clocktower.Agent.Notifier
 {
@@ -34,7 +35,7 @@ namespace Clocktower.Agent.Notifier
         {
             if (Chat != null)
             {
-                await Chat.SendMessage(markupText);
+                await Chat.SendMessage(CleanMarkupText(markupText));
             }
         }
 
@@ -42,8 +43,15 @@ namespace Clocktower.Agent.Notifier
         {
             if (Chat != null)
             {
-                await Chat.SendMessage(markupText, imageFileName);
+                await Chat.SendMessage(CleanMarkupText(markupText), imageFileName);
             }
+        }
+
+        private static string CleanMarkupText(string markupText)
+        {
+            // Replace coloured text with bold text since Discord doesn't support colours.
+            string pattern = @"(\[color:[^\]]+\])|(\[\/color\])";
+            return Regex.Replace(markupText, pattern, "**");
         }
 
         private readonly ChatClient chatClient;

@@ -35,18 +35,18 @@ namespace Clocktower.Observer
         public async Task AnnounceNomination(Player nominator, Player nominee, int? votesToTie, int? votesToPutOnBlock)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedMarkupText("%p nominates %p. ", nominator, nominee);
+            sb.AppendFormattedText("%p nominates %p. ", nominator, nominee);
             if (votesToTie.HasValue && votesToPutOnBlock.HasValue)
             {
-                sb.AppendFormattedMarkupText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
+                sb.AppendFormattedText("%b votes to tie, %b votes to put them on the block.", votesToTie.Value, votesToPutOnBlock.Value);
             }
             else if (votesToTie.HasValue)
             {
-                sb.AppendFormattedMarkupText("%b votes to tie.", votesToTie.Value);
+                sb.AppendFormattedText("%b votes to tie.", votesToTie.Value);
             }
             else if (votesToPutOnBlock.HasValue)
             {
-                sb.AppendFormattedMarkupText("%b votes to put them on the block.", votesToPutOnBlock.Value);
+                sb.AppendFormattedText("%b votes to put them on the block.", votesToPutOnBlock.Value);
             }
             await SendMessage(sb.ToString());
         }
@@ -99,10 +99,10 @@ namespace Clocktower.Observer
         public async Task AnnounceSlayerShot(Player slayer, Player target, bool success)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedMarkupText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target);
+            sb.AppendFormattedText("%p claims %c and takes a shot at %p. ", slayer, Character.Slayer, target);
             if (success)
             {
-                sb.AppendFormattedMarkupText("%p dies.\n", target);
+                sb.AppendFormattedText("%p dies.\n", target);
             }
             else
             {
@@ -114,7 +114,7 @@ namespace Clocktower.Observer
         public async Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedMarkupText("%p claims %c and guesses the following characters: ", juggler, Character.Juggler);
+            sb.AppendFormattedText("%p claims %c and guesses the following characters: ", juggler, Character.Juggler);
             bool firstJuggle = true;
             foreach (var juggle in juggles)
             {
@@ -122,7 +122,7 @@ namespace Clocktower.Observer
                 {
                     sb.Append(", ");
                 }
-                sb.AppendFormattedMarkupText("%p as the %c", juggle.player, juggle.character);
+                sb.AppendFormattedText("%p as the %c", juggle.player, juggle.character);
                 firstJuggle = false;
             }
             sb.Append('.');
@@ -161,12 +161,12 @@ namespace Clocktower.Observer
             {
                 if (player.Alive)
                 {
-                    sb.AppendFormattedMarkupText("%p", player);
+                    sb.AppendFormattedText("%p", player);
                     sb.AppendLine();
                 }
                 else
                 {
-                    sb.AppendFormattedText("👻 %p 👻", player);   // dead players will not be bolded
+                    sb.AppendFormattedText("👻 %n 👻", player.Name);   // dead players will not be bolded
                     if (player.HasGhostVote)
                     {
                         sb.AppendLine(" (ghost vote available)");

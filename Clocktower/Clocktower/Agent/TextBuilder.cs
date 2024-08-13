@@ -60,7 +60,7 @@ namespace Clocktower.Agent
                 {
                     if (markup)
                     {
-                        sb.AppendFormattedMarkupText($"- %c / %c: {jinx.jinx}", jinx.character1, jinx.character2);
+                        sb.AppendFormattedText($"- %c / %c: {jinx.jinx}", jinx.character1, jinx.character2);
                     }
                     else
                     {
@@ -138,7 +138,7 @@ namespace Clocktower.Agent
                                                                             : "Dead";
                 if (markup)
                 {
-                    sb.AppendFormattedMarkupText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
+                    sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace Clocktower.Agent
 
             if (markup)
             {
-                sb.AppendFormattedMarkupText("The characters not in play shown to the demon: %C", grimoire.DemonBluffs);
+                sb.AppendFormattedText("The characters not in play shown to the demon: %C", grimoire.DemonBluffs);
             }
             else
             {

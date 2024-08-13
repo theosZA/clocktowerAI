@@ -45,15 +45,15 @@ namespace Clocktower.Agent
 
             if (fellowMinions.Any())
             {
-                sb.AppendFormattedMarkupText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.", demon, fellowMinions);
+                sb.AppendFormattedText($"As a minion, you learn that %p is your demon and your fellow {(fellowMinions.Count > 1 ? "minions are" : "minion is")} %P.", demon, fellowMinions);
             }
             else
             {
-                sb.AppendFormattedMarkupText("As a minion, you learn that %p is your demon.", demon);
+                sb.AppendFormattedText("As a minion, you learn that %p is your demon.", demon);
             }
             if (notInPlayCharacters.Any())
             {
-                sb.AppendFormattedMarkupText(" You also learn that the following characters are not in play: %C.", notInPlayCharacters);
+                sb.AppendFormattedText(" You also learn that the following characters are not in play: %C.", notInPlayCharacters);
             }
 
             await SendMessage(sb);
@@ -68,16 +68,16 @@ namespace Clocktower.Agent
             var nonMarionetteMinions = minions.Where(minion => minion.RealCharacter != Character.Marionette).ToList();
             if (nonMarionetteMinions.Count > 0)
             {
-                sb.AppendFormattedMarkupText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
+                sb.AppendFormattedText($"%P {(nonMarionetteMinions.Count > 1 ? "are your minions" : "is your minion")}, ", nonMarionetteMinions);
             }
 
             var marionette = minions.FirstOrDefault(minion => minion.RealCharacter == Character.Marionette);
             if (marionette != null)
             {
-                sb.AppendFormattedMarkupText("%p is your %c, ", marionette, Character.Marionette);
+                sb.AppendFormattedText("%p is your %c, ", marionette, Character.Marionette);
             }
 
-            sb.AppendFormattedMarkupText("and that the following characters are not in play: %C.", notInPlayCharacters);
+            sb.AppendFormattedText("and that the following characters are not in play: %C.", notInPlayCharacters);
 
             await SendMessage(sb);
         }
@@ -233,7 +233,7 @@ namespace Clocktower.Agent
         {
             var sb = new StringBuilder();
 
-            sb.AppendFormattedMarkupText("As the %c, you can now look over the Grimoire...", Character.Spy);
+            sb.AppendFormattedText("As the %c, you can now look over the Grimoire...", Character.Spy);
             sb.AppendLine();
             sb.Append(TextBuilder.GrimoireToText(grimoire, markup: true));
 

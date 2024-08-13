@@ -76,6 +76,18 @@ namespace Clocktower
             return text[(position + precedingText.Length)..];
         }
 
+        public static int FirstIndexOfAnyText(this string text, IEnumerable<string> textsToFind, int startIndex = 0)
+        {
+            var positions = textsToFind.Select(textToFind => text.IndexOf(textToFind, startIndex))
+                                       .Where(index => index >= 0)
+                                       .ToList();
+            if (positions.Count == 0)
+            {
+                return -1;
+            }
+            return positions.Min();
+        }
+
         public static bool ContainsWhitespace(this string text)
         {
             return text.IndexOfAny(new[] { ' ', '\t', '\r', '\n' }) != -1;
