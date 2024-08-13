@@ -11,11 +11,11 @@ namespace Clocktower.Agent
         public IGameObserver Observer => robot.Observer;
         public IAgent Agent => robot;
 
-        public RobotAgentForm(string model, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        public RobotAgentForm(string model, string playerName, string personality, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
             InitializeComponent();
 
-            robot = new(model, playerName, personality, playerNames, scriptName, script, onStart: Show, onStatusChange: SetTitle);
+            robot = new(model, playerName, personality, players, scriptName, script, onStart: Show, onStatusChange: SetTitle);
             robot.OnChatMessage += OnChatMessage;
             robot.OnDaySummary += OnDaySummary;
             robot.OnTokenCount += OnTokenCount;
