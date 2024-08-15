@@ -11,7 +11,7 @@ namespace Clocktower.Agent
     {
         public string PlayerName { get; private set; }
 
-        public IGameObserver Observer { get; private set; }
+        public IGameObserver Observer { get; private init; }
 
         public bool AutoAct
         {
@@ -29,9 +29,9 @@ namespace Clocktower.Agent
             PlayerName = playerName;
             Text = playerName;
 
-            Observer = new RichTextBoxObserver(outputText);
-
-            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, new RichTextBoxNotifier(outputText));
+            var notifier = new RichTextBoxNotifier(outputText);
+            Observer = new TextObserver(notifier);
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, notifier);
         }
 
         public async Task StartGame()

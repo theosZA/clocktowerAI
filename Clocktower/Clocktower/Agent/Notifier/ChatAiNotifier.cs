@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Clocktower.Agent.Notifier
@@ -29,11 +30,35 @@ namespace Clocktower.Agent.Notifier
             await Notify(markupText);
         }
 
+        public string CreatePlayerRoll(IReadOnlyCollection<Player> players, bool storytellerView)
+        {
+            var sb = new StringBuilder();
+
+            bool firstPlayer = true;
+            foreach (var player in players)
+            {
+                if (!firstPlayer)
+                {
+                    sb.Append(", ");
+                }
+                sb.AppendFormattedText($"%p - {(player.Alive ? "ALIVE" : "DEAD")}", player, storytellerView);
+                firstPlayer = false;
+            }
+
+            return sb.ToString();
+        }
+
         private static string CleanMarkupText(string markupText)
         {
             // Remove coloured text as the AI won't necessarily understand how to interpret the codes.
-            string pattern = @"(\[color:[^\]]+\])|(\[\/color\])";
-            return Regex.Replace(markupText, pattern, string.Empty);
+            string colourPattern = @"(\[color:[^\]]+\])|(\[\/color\])";
+            markupText = Regex.Replace(markupText, colourPattern, string.Empty);
+
+            // Remove quote blocks.
+            string quotePattern = @">>>\s?";
+            markupText = Regex.Replace(markupText, quotePattern, string.Empty);
+
+            return markupText;
         }
 
         private readonly ClocktowerChatAi chat;

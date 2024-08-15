@@ -11,11 +11,13 @@ namespace Clocktower.Agent
     {
         public string PlayerName { get; private init; }
 
-        public IGameObserver Observer => observer;
+        public IGameObserver Observer { get; private init; }
 
         public DiscordAgent(ChatClient chatClient, string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
-            textAgent = new TextAgent(playerName, players, scriptName, script, observer, new DiscordNotifier(chatClient, OnStartGame));
+            var discordNotifier = new DiscordNotifier(chatClient, OnStartGame);
+            Observer = new TextObserver(discordNotifier);
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, discordNotifier);
             prompter = new(playerName);
             PlayerName = playerName;
             this.players = players;
@@ -340,7 +342,6 @@ namespace Clocktower.Agent
 
         private Task OnStartGame(Chat chat)
         {
-            observer.Start(chat);
             prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
 
             return Task.CompletedTask;
@@ -348,7 +349,6 @@ namespace Clocktower.Agent
         }
 
         private readonly IAgent textAgent;
-        private readonly DiscordChatObserver observer = new();
         private readonly TextPlayerPrompter prompter;
 
         private readonly IReadOnlyCollection<string> players;

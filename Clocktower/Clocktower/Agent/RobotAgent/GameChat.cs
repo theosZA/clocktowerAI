@@ -48,7 +48,6 @@ namespace Clocktower.Agent.RobotAgent
                                                         "For example: * Zeke - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely)."
                                                      : null;
             await openAiChat.StartNewSubChat(phaseName, summarizePrompt);
-            openAiChat.AddUserMessage(phaseName);
         }
 
         public void AddMessage(string message)

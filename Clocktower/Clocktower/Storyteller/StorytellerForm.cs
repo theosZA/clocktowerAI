@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent;
+using Clocktower.Agent.Notifier;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
@@ -7,7 +8,7 @@ namespace Clocktower.Storyteller
 {
     public partial class StorytellerForm : Form, IStoryteller
     {
-        public IGameObserver Observer { get; private set; }
+        public IGameObserver Observer { get; private init; }
 
         public bool AutoAct
         {
@@ -21,10 +22,8 @@ namespace Clocktower.Storyteller
 
             this.random = random;
 
-            Observer = new RichTextBoxObserver(outputText)
-            {
-                StorytellerView = true
-            };
+            var notifier = new RichTextBoxNotifier(outputText);
+            Observer = new TextObserver(notifier, storytellerView: true);
         }
 
         public void Start()

@@ -5,6 +5,7 @@ namespace Clocktower.Agent.Notifier
     /// <summary>
     /// Responsible for sending notifications (in markup form) to a platform for display (for humans) or processing (for AI).
     /// The following markup can be explicitly used, though not all markup will necessarily be supported by all platforms.
+    /// ## text for headings
     /// **text** for bold
     /// >>> text for quoted sections
     /// [color:green]text[/color] for colour
@@ -29,5 +30,13 @@ namespace Clocktower.Agent.Notifier
         /// <param name="markupText">A notification in markup form.</param>
         /// <param name="imageFileName">The name of the image file to send.</param>
         Task NotifyWithImage(string markupText, string imageFileName);
+
+        /// <summary>
+        /// Creates a text reprentation of the players in the game, indicating which of them are alive or dead, and which dead players still have their ghost vote.
+        /// </summary>
+        /// <param name="players">The players to include in the roll.</param>
+        /// <param name="storytellerView">Whether to include private information in the text representation.</param>
+        /// <remarks>This is present as a separate method to allow this roll to be provided in a format best suited for display on the implementation's platform.</remarks>
+        string CreatePlayerRoll(IReadOnlyCollection<Player> players, bool storytellerView);
     }
 }

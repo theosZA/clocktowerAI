@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using DiscordChatBot;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Clocktower.Agent.Notifier
@@ -45,6 +46,36 @@ namespace Clocktower.Agent.Notifier
             {
                 await Chat.SendMessage(CleanMarkupText(markupText), imageFileName);
             }
+        }
+
+        public string CreatePlayerRoll(IReadOnlyCollection<Player> players, bool storytellerView)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var player in players)
+            {
+                if (player.Alive)
+                {
+                    sb.AppendFormattedText("%p", player, storytellerView);
+                    sb.AppendLine();
+                }
+                else
+                {
+                    var playerText = new StringBuilder();
+                    playerText.AppendFormattedText("%p", player, storytellerView);
+                    sb.AppendFormattedText("👻 %n 👻", playerText.Replace("**", string.Empty).ToString());   // dead players will not be bolded
+                    if (player.HasGhostVote)
+                    {
+                        sb.AppendLine(" (ghost vote available)");
+                    }
+                    else
+                    {
+                        sb.AppendLine();
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static string CleanMarkupText(string markupText)

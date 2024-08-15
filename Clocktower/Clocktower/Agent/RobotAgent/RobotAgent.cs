@@ -32,7 +32,7 @@ namespace Clocktower.Agent.RobotAgent
 
         public bool Alive { get; private set; } = true;
 
-        public IGameObserver Observer => chatAiObserver;
+        public IGameObserver Observer { get; private init; }
 
         public RobotAgent(string model, string playerName, string personality, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script, Action onStart, Action onStatusChange)
         {
@@ -43,9 +43,15 @@ namespace Clocktower.Agent.RobotAgent
             clocktowerChat.OnDaySummary += InternalOnDaySummary;
             clocktowerChat.OnTokenCount += InternalOnTokenCount;
 
-            chatAiObserver = new(clocktowerChat, this);
+            var chatAiNotifier = new ChatAiNotifier(clocktowerChat);
 
-            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, new ChatAiNotifier(clocktowerChat));
+            var observer = new TextObserver(chatAiNotifier);
+            observer.OnDay += OnDay;
+            observer.OnNight += OnNight;
+            observer.OnNominationsStart += OnNominationStart;
+            Observer = observer;
+
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, chatAiNotifier);
 
             this.onStart = onStart;
             this.onStatusChange = onStatusChange;
@@ -596,9 +602,31 @@ namespace Clocktower.Agent.RobotAgent
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
+        private async Task OnDay(int dayNumber)
+        {
+            if (dayNumber == 1)
+            {
+                await PromptForBluff();
+            }
+            await clocktowerChat.Day(dayNumber);
+        }
+
+        private async Task OnNight(int nightNumber)
+        {
+            await clocktowerChat.Night(nightNumber);
+        }
+
+        private async Task OnNominationStart(int numberOfLivingPlayers)
+        {
+            await PromptForOverview();
+            if (numberOfLivingPlayers <= 4)
+            {   // Down to what may well be the final round of nominations, we want our AI to express who it thinks is the demon, and so encourage it to try sway the rest of town and hopefully vote that way if they still have a vote left.
+                await PromptForDemonGuess();
+            }
+        }
+
         private readonly IAgent textAgent;
         private readonly ClocktowerChatAi clocktowerChat;
-        private readonly ChatAiObserver chatAiObserver;
         private readonly Action onStart;
         private readonly Action onStatusChange;
 
