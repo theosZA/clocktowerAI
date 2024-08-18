@@ -16,15 +16,20 @@ namespace Clocktower.Agent.Notifier
             return Task.CompletedTask;
         }
 
-        public Task Notify(string markupText)
+        public void AddToTextBox(string markupText)
         {
             var textSegments = SplitText(markupText);
             foreach ((string segment, bool bold, Color? color) in textSegments)
             {
-                Append(segment, bold, color);
+                Append(richTextBox, segment, bold, color);
             }
 
             richTextBox.AppendText("\n");
+        }
+
+        public Task Notify(string markupText)
+        {
+            AddToTextBox(markupText);
             return Task.CompletedTask;
         }
 
@@ -64,7 +69,7 @@ namespace Clocktower.Agent.Notifier
             return sb.ToString();
         }
 
-        private void Append(string text, bool bold, Color? color)
+        private static void Append(RichTextBox richTextBox, string text, bool bold, Color? color)
         {
             text = text.Replace(">>>", "» ");   // Quote box can't be replicated in a RichTextBox, so just use a quote symbol.
 
