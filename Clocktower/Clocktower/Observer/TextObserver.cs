@@ -9,6 +9,7 @@ namespace Clocktower.Observer
         public Func<int, Task>? OnNight { get; set;}
         public Func<int, Task>? OnDay { get; set; }
         public Func<int, Task>? OnNominationsStart { get; set; }
+        public Func<Player, Player, Task>? OnPrivateChatStart { get; set; }
 
         public TextObserver(IMarkupNotifier notifier, bool storytellerView = false)
         {
@@ -225,6 +226,11 @@ namespace Clocktower.Observer
         public async Task PrivateChatStarts(Player playerA, Player playerB)
         {
             await SendMessage("%p goes for a private chat with %p.", playerA, playerB, storytellerView);
+            
+            if (OnPrivateChatStart != null)
+            {
+                await OnPrivateChatStart(playerA, playerB);
+            }
         }
 
         public async Task StartRollCall(int playersAlive)
