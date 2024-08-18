@@ -17,7 +17,7 @@ namespace Clocktower.Agent
         {
             var discordNotifier = new DiscordNotifier(chatClient, OnStartGame);
             Observer = new TextObserver(discordNotifier);
-            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, discordNotifier);
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, discordNotifier, null);
             prompter = new(playerName);
             PlayerName = playerName;
             this.players = players;
@@ -135,10 +135,10 @@ namespace Clocktower.Agent
             await textAgent.ResponseForFisherman(advice);
         }
 
-        public async Task GainCharacterAbility(Character character)
+        public async Task OnGainCharacterAbility(Character character)
         {
             this.characterAbility = character;
-            await textAgent.GainCharacterAbility(character);
+            await textAgent.OnGainCharacterAbility(character);
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)

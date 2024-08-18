@@ -1,5 +1,9 @@
 ﻿using Clocktower.Agent.Config;
+using Clocktower.Agent.Notifier;
+using Clocktower.Agent.Requester;
+using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
+using Clocktower.Observer;
 using Clocktower.Setup;
 using DiscordChatBot;
 using System.Configuration;
@@ -25,9 +29,40 @@ namespace Clocktower.Agent
                 "Auto" => new HumanAgentForm(name, playerNames, scriptName, script, random) { AutoAct = true },
                 "Human" => new HumanAgentForm(name, playerNames, scriptName, script, random),
                 "Discord" => new DiscordAgent(await GetDiscordChatClient(), name, playerNames, scriptName, script),
-                "Robot" => new RobotAgentForm(string.IsNullOrEmpty(model) ? DefaultModel : model, name, personality, playerNames, scriptName, script).Agent,
+                "Robot" => CreateRobotAgent(string.IsNullOrEmpty(model) ? DefaultModel : model, name, personality, playerNames, scriptName, script),
                 _ => throw new ArgumentException($"Unknown agent type: {agentType}"),
             };
+        }
+
+        private static IAgent CreateRobotAgent(string model, string name, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        {
+            var chatAi = new ClocktowerChatAi(model, name, personality, playerNames, scriptName, script);
+            var chatAiNotifier = new ChatAiNotifier(chatAi);
+            var chatAiRequester = new ChatAiRequester(chatAi);
+            var observer = new TextObserver(chatAiNotifier);
+            var agent = new TextAgent(name, playerNames, scriptName, script, observer, chatAiNotifier, chatAiRequester);
+
+            var robotTriggers = new RobotTriggers(name, chatAi);
+            observer.OnDay += robotTriggers.OnDay;
+            observer.OnNight += robotTriggers.OnNight;
+            observer.OnNominationsStart += robotTriggers.OnNominationStart;
+            agent.OnInitialCharacter += robotTriggers.OnInitialCharacter;
+            agent.OnGainingCharacterAbility += robotTriggers.OnGainingCharacterAbility;
+            agent.OnDead += robotTriggers.OnDead;
+            agent.YourDemonIs += robotTriggers.YourDemonIs;
+            agent.YourMinionsAre += robotTriggers.YourMinionsAre;
+
+            var form = new RobotAgentForm(robotTriggers);
+            chatAi.OnChatMessage += form.OnChatMessage;
+            chatAi.OnDaySummary += form.OnDaySummary;
+            chatAi.OnTokenCount += form.OnTokenCount;
+            agent.OnStartGame += () =>
+            {
+                form.Show();
+                return Task.CompletedTask;
+            };
+
+            return agent;
         }
 
         private static async Task<ChatClient> GetDiscordChatClient()

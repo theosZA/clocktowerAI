@@ -1,50 +1,27 @@
-﻿using Clocktower.Game;
-using Clocktower.Observer;
+﻿using Clocktower.Agent.Notifier;
+using Clocktower.Agent.RobotAgent;
 using OpenAi;
 
 namespace Clocktower.Agent
 {
     public partial class RobotAgentForm : Form
     {
-        public string PlayerName => robot.PlayerName;
+        public string PlayerName => robotTriggers.PlayerName;
 
-        public IGameObserver Observer => robot.Observer;
-        public IAgent Agent => robot;
-
-        public RobotAgentForm(string model, string playerName, string personality, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
+        public RobotAgentForm(RobotTriggers robotTriggers)
         {
             InitializeComponent();
 
-            robot = new(model, playerName, personality, players, scriptName, script, onStart: Show, onStatusChange: SetTitle);
-            robot.OnChatMessage += OnChatMessage;
-            robot.OnDaySummary += OnDaySummary;
-            robot.OnTokenCount += OnTokenCount;
+            this.robotTriggers = robotTriggers;
+            this.robotTriggers.OnStatusChange += SetTitle;
+
+            display = new RichTextBoxNotifier(chatTextBox);
 
             SetTitle();
         }
 
-        private void SetTitle()
+        public void OnChatMessage(Role role, string message)
         {
-            Text = PlayerName;
-            if (robot.Character != null)
-            {
-                Text += " (";
-                if (robot.OriginalCharacter != null)
-                {
-                    Text += $"{TextUtilities.CharacterToText(robot.OriginalCharacter.Value)}-";
-                }
-                Text += $"{TextUtilities.CharacterToText(robot.Character.Value)})";
-            }
-            if (!robot.Alive)
-            {
-                Text += " GHOST";
-            }
-        }
-
-        private void OnChatMessage(Role role, string message)
-        {
-            string messageToDisplay = message.Trim() + "\n";
-
             switch (role)
             {
                 case Role.System:
@@ -52,22 +29,23 @@ namespace Clocktower.Agent
                     break;
 
                 case Role.User:
-                    chatTextBox.AppendText(messageToDisplay);
+                    display.Notify(message);
                     break;
 
                 case Role.Assistant:
+                    string messageToDisplay = message.Trim() + "\n";
                     chatTextBox.AppendBoldText(messageToDisplay, Color.Green);
                     break;
             }
         }
 
-        private void OnDaySummary(int dayNumber, string summary)
+        public void OnDaySummary(int dayNumber, string summary)
         {
             summaryTextBox.AppendBoldText($"Day {dayNumber}\n");
             summaryTextBox.AppendText(summary.Trim() + "\n\n");
         }
 
-        private void OnTokenCount(int promptTokens, int completionTokens, int totalTokens)
+        public void OnTokenCount(int promptTokens, int completionTokens, int totalTokens)
         {
             this.promptTokens += promptTokens;
             this.completionTokens += completionTokens;
@@ -76,7 +54,26 @@ namespace Clocktower.Agent
             usageStatusLabel.Text = $"Usage: {this.totalTokens} = {this.promptTokens} + {this.completionTokens}, Latest: {totalTokens} = {promptTokens} + {completionTokens}";
         }
 
-        private readonly RobotAgent.RobotAgent robot;
+        private void SetTitle()
+        {
+            Text = PlayerName;
+            if (robotTriggers.Character != null)
+            {
+                Text += " (";
+                if (robotTriggers.OriginalCharacter != null)
+                {
+                    Text += $"{TextUtilities.CharacterToText(robotTriggers.OriginalCharacter.Value)}-";
+                }
+                Text += $"{TextUtilities.CharacterToText(robotTriggers.Character.Value)})";
+            }
+            if (!robotTriggers.Alive)
+            {
+                Text += " GHOST";
+            }
+        }
+
+        private readonly RobotTriggers robotTriggers;
+        private readonly IMarkupNotifier display;
 
         private int promptTokens;
         private int completionTokens;

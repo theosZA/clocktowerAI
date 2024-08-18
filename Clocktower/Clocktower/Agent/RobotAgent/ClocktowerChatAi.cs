@@ -9,7 +9,7 @@ namespace Clocktower.Agent.RobotAgent
     /// For sending chat to and receiving responses from an Open AI Chat API within the context of a Clocktower game.
     /// Allows you to send chat to the AI with AddMessage() or AddFormattedMessage(), and request chat responses with Request(), RequestDialogue() and RequestChoice().
     /// </summary>
-    internal class ClocktowerChatAi
+    public class ClocktowerChatAi
     {
         /// <summary>
         /// Event is triggered whenever a new message is added to the chat. Note that this will include all
@@ -101,11 +101,12 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
         {
-            var dialogue = await RequestDialogue(prompt, objects);
-            var endChat = (dialogue.EndsWith("goodbye", StringComparison.InvariantCultureIgnoreCase) ||
-                           dialogue.EndsWith("goodbye.", StringComparison.InvariantCultureIgnoreCase) ||
-                           dialogue.EndsWith("goodbye!", StringComparison.InvariantCultureIgnoreCase));
-            return (dialogue, endChat);
+            if (prompt != null)
+            {
+                prompt = TextUtilities.FormatMarkupText(prompt, objects);
+            }
+            var response = await RequestObject<PrivateDialogue>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PrivateDialogue).Name} object");
+            return (response.Dialogue, response.TerminateConversation);
         }
 
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
@@ -139,6 +140,11 @@ namespace Clocktower.Agent.RobotAgent
         public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
         {
             return await RequestOptionFromJson<PlayerSelection>(options, prompt, objects);
+        }
+
+        public async Task<IOption> RequestTwoPlayersSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        {
+            return await RequestOptionFromJson<TwoPlayerSelection>(options, prompt, objects);
         }
 
         public async Task<IOption> RequestCharacterSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)

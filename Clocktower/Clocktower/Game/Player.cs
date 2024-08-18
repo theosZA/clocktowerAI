@@ -112,7 +112,7 @@ namespace Clocktower.Game
             {
                 Character = newCharacter;
             }
-            Agent.GainCharacterAbility(newCharacter);
+            Agent.OnGainCharacterAbility(newCharacter);
 
             if (newCharacter == Character.Juggler)
             {

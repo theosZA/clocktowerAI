@@ -2,8 +2,6 @@
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
-using System.Reactive;
-using System.Text;
 
 namespace Clocktower.Agent
 {
@@ -31,7 +29,7 @@ namespace Clocktower.Agent
 
             var notifier = new RichTextBoxNotifier(outputText);
             Observer = new TextObserver(notifier);
-            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, notifier);
+            textAgent = new TextAgent(playerName, players, scriptName, script, Observer, notifier, null);
         }
 
         public async Task StartGame()
@@ -161,14 +159,14 @@ namespace Clocktower.Agent
             await textAgent.ResponseForFisherman(advice);
         }
 
-        public async Task GainCharacterAbility(Character character)
+        public async Task OnGainCharacterAbility(Character character)
         {
             originalCharacter = this.character;
             this.character = character;
 
             SetTitleText();
 
-            await textAgent.GainCharacterAbility(character);
+            await textAgent.OnGainCharacterAbility(character);
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)

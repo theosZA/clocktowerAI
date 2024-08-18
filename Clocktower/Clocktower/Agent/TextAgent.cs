@@ -1,4 +1,5 @@
 ﻿using Clocktower.Agent.Notifier;
+using Clocktower.Agent.Requester;
 using Clocktower.Game;
 using Clocktower.Observer;
 using Clocktower.Options;
@@ -8,12 +9,14 @@ namespace Clocktower.Agent
 {
     internal class TextAgent : IAgent
     {
-        public TextAgent(string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script, IGameObserver observer, IMarkupNotifier notifier)
+        public TextAgent(string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script, IGameObserver observer, IMarkupNotifier notifier, IMarkupRequester requester)
         {
             PlayerName = playerName;
             Observer = observer;
 
             this.notifier = notifier;
+            this.requester = requester;
+
             this.players = players;
             this.scriptName = scriptName;
             this.script = script;
@@ -23,8 +26,20 @@ namespace Clocktower.Agent
 
         public IGameObserver Observer { get; }
 
+        public Func<Task>? OnStartGame { get; set; }
+        public Func<Character, Alignment, Task>? OnInitialCharacter { get; set; }
+        public Func<Character, Task>? OnGainingCharacterAbility { get; set; }
+        public Func<Task>? OnDead { get; set; }
+        public Func<Player, Task>? YourDemonIs { get; set; }
+        public Func<IReadOnlyCollection<Player>, Task>? YourMinionsAre { get; set; }
+
         public async Task StartGame()
         {
+            if (OnStartGame != null)
+            {
+                await OnStartGame();
+            }
+
             await notifier.Start(PlayerName, players, scriptName, script);
         }
 
@@ -32,11 +47,21 @@ namespace Clocktower.Agent
         {
             this.character = character;
             await SendMessage("You are the %c. You are %a.", character, alignment);
+
+            if (OnInitialCharacter != null)
+            {
+                await OnInitialCharacter(character, alignment);
+            }
         }
 
         public async Task YouAreDead()
         {
             await SendMessage("You are dead and are now a ghost. You may only vote one more time.");
+
+            if (OnDead != null)
+            {
+                await OnDead();
+            }
         }
 
         public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -57,6 +82,11 @@ namespace Clocktower.Agent
             }
 
             await SendMessage(sb);
+
+            if (YourDemonIs != null)
+            {
+                await YourDemonIs(demon);
+            }
         }
 
         public async Task DemonInformation(IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters)
@@ -80,6 +110,11 @@ namespace Clocktower.Agent
             sb.AppendFormattedText("and that the following characters are not in play: %C.", notInPlayCharacters);
 
             await SendMessage(sb);
+
+            if (YourMinionsAre != null)
+            {
+                await YourMinionsAre(minions);
+            }
         }
 
         public async Task NotifyGodfather(IReadOnlyCollection<Character> outsiders)
@@ -245,125 +280,186 @@ namespace Clocktower.Agent
             await SendMessage("%b: %n", "Storyteller", advice.Trim());
         }
 
-        public Task GainCharacterAbility(Character character)
+        public async Task OnGainCharacterAbility(Character character)
         {
             this.character = character;
-            return Task.CompletedTask;
+            
+            if (OnGainingCharacterAbility != null)
+            {
+                await OnGainingCharacterAbility(character);
+            }
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c, please choose a player to kill.", demonCharacter);
+            return await requester.RequestPlayerForDemonKill(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c please choose a *character* to kill.", Character.Ojo);
+            return await requester.RequestCharacterForDemonKill(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestPlayer(options, "As the %c, please choose a player to poison.", Character.Poisoner);
         }
 
         public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestPlayer(options, "As the %c, please choose a player to curse.", Character.Witch);
         }
 
         public async Task<IOption> RequestChoiceFromAssassin(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestPlayer(options, "As the %c, you may use your once-per-game ability tonight to kill a player.", Character.Assassin);
         }
 
         public async Task<IOption> RequestChoiceFromGodfather(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestPlayer(options, "As the %c, please choose a player to kill.", Character.Godfather);
         }
 
         public async Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestPlayer(options, "As the %c, please choose a player to protect from execution.", Character.Devils_Advocate);
         }
 
         public async Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (character == Character.Cannibal)
+            {
+                bool useAbility = await CannibalRequestUseAbility(OptionsBuilder.YesOrNo) is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                return await CannibalRequestCharacter(options.Where(option => option is not PassOption).ToList());
+            }
+
+            return await RequestCharacter(options, "As the %c, you may use your once-per-game ability tonight to gain the ability of a Townsfolk or Outsider character.", Character.Philosopher);
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestTwoPlayers(options);
+            }
+            return await RequestTwoPlayers(options, "As the %c, please choose two players to learn about tonight.", Character.Fortune_Teller);
         }
 
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestPlayer(options);
+            }
+            return await RequestPlayer(options, "As the %c, please choose a player to protect from the demon tonight.", Character.Monk);
         }
 
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestPlayer(options);
+            }
+            return await RequestPlayer(options, "As the %c, please choose a player whose character you wish to learn.", Character.Ravenkeeper);
         }
 
         public async Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            if (character == Character.Cannibal)
+            {
+                return await RequestPlayer(options,
+                                           "As the %c, you have gained the ability of the %c. Please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.",
+                                           Character.Cannibal, Character.Butler);
+            }
+            return await RequestPlayer(options, "As the %c, please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Character.Butler);
         }
 
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await RequestUseAbility(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Character.Fisherman);
         }
 
         public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await requester.RequestShenanigans("You have the option now to use or bluff any abilities that are to be publicly used during the day.", options);
         }
 
         public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            return await requester.RequestNomination("You may nominate a player.", options);
         }
 
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)
         {
-            throw new NotImplementedException();
+            var nominee = ((VoteOption)options.First(option => option is VoteOption)).Nominee;
+
+            var sb = new StringBuilder();
+            if (nominee.Agent == this)
+            {
+                sb.AppendFormattedText("If you wish, you may vote for executing yourself.");
+            }
+            else
+            {
+                sb.AppendFormattedText("If you wish, you may vote for executing %p.", nominee);
+            }
+            if (ghostVote)
+            {
+                sb.Append(" (Note that because you are dead, you may only vote to execute once more for the rest of the game.)");
+            }
+
+            return await requester.RequestVote(sb.ToString(), ghostVote, options);
         }
 
         public async Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options)
         {
-            throw new NotImplementedException();
+            var canPass = options.Any(option => option is PassOption);
+            if (canPass)
+            {
+                return await requester.RequestPlayerForChat("Is there someone you wish to speak to privately as a priority?", options);
+            }
+            else
+            {
+                return await requester.RequestPlayerForChat("Who will you speak with privately?", options);
+            }
         }
 
         public async Task<string> GetRollCallStatement()
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement("For this roll call, you may provide your public statement about your character (or bluff) and possibly elaborate on what you learned or how you used your character ability.",
+                                                    IMarkupRequester.Statement.RollCall);
         }
 
         public async Task<string> GetMorningPublicStatement()
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement("Before the group breaks off for private conversations, you have the option to say anything that you want to publicly.", IMarkupRequester.Statement.Morning);
         }
 
         public async Task<string> GetEveningPublicStatement()
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement("Before nominations are opened, say anything that you want to publicly.", IMarkupRequester.Statement.Evening);
         }
 
         public async Task<string> GetProsecution(Player nominee)
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement(TextUtilities.FormatMarkupText("You have nominated %p. Present the case to have them executed.", nominee), IMarkupRequester.Statement.Prosection);
         }
 
         public async Task<string> GetDefence(Player nominator)
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement(TextUtilities.FormatMarkupText("You have been nominated by %p. Present the case for your defence.", nominator), IMarkupRequester.Statement.Defence);
         }
 
         public async Task<string> GetReasonForSelfNomination()
         {
-            throw new NotImplementedException();
+            return await requester.RequestStatement("You have nominated yourself. You may present your reason now", IMarkupRequester.Statement.SelfNomination);
         }
 
         public async Task StartPrivateChat(Player otherPlayer)
@@ -374,7 +470,7 @@ namespace Clocktower.Agent
 
         public async Task<(string message, bool endChat)> GetPrivateChat(Player listener)
         {
-            throw new NotImplementedException();
+            return await requester.RequestMessageForChat(TextUtilities.FormatMarkupText("What will you say to %p?", listener));
         }
 
         public async Task PrivateChatMessage(Player speaker, string message)
@@ -386,7 +482,6 @@ namespace Clocktower.Agent
         {
             await SendMessage("The private chat with %p is over.", otherPlayer);
         }
-
 
         private async Task Learn(IEnumerable<Player> players)
         {
@@ -433,7 +528,48 @@ namespace Clocktower.Agent
             await notifier.NotifyWithImage(TextUtilities.FormatMarkupText(text, objects), imageFileName);
         }
 
+        private async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string text, params object[] objects)
+        {
+            return await requester.RequestUseAbility(TextUtilities.FormatMarkupText(text, objects), options);
+        }
+
+        private async Task<IOption> RequestCharacter(IReadOnlyCollection<IOption> options, string text, params object[] objects)
+        {
+            return await requester.RequestCharacter(TextUtilities.FormatMarkupText(text, objects), options);
+        }
+
+        private async Task<IOption> RequestPlayer(IReadOnlyCollection<IOption> options, string text, params object[] objects)
+        {
+            return await requester.RequestPlayerTarget(TextUtilities.FormatMarkupText(text, objects), options);
+        }
+
+        private async Task<IOption> RequestTwoPlayers(IReadOnlyCollection<IOption> options, string text, params object[] objects)
+        {
+            return await requester.RequestTwoPlayersTarget(TextUtilities.FormatMarkupText(text, objects), options);
+        }
+
+        private async Task<IOption> CannibalRequestUseAbility(IReadOnlyCollection<IOption> options)
+        {
+            return await RequestUseAbility(options, "For the ability you have gained as the %c, please choose whether you wish to use the ability now.", Character.Cannibal);
+        }
+
+        private async Task<IOption> CannibalRequestCharacter(IReadOnlyCollection<IOption> options)
+        {
+            return await RequestCharacter(options, "For the ability you have gained as the %c, please choose a character.", Character.Cannibal);
+        }
+
+        private async Task<IOption> CannibalRequestPlayer(IReadOnlyCollection<IOption> options)
+        {
+            return await RequestPlayer(options, "For the ability you have gained as the %c, please choose a player.", Character.Cannibal);
+        }
+
+        private async Task<IOption> CannibalRequestTwoPlayers(IReadOnlyCollection<IOption> options)
+        {
+            return await RequestTwoPlayers(options, "For the ability you have gained as the %c, please choose two players.", Character.Cannibal);
+        }
+
         private readonly IMarkupNotifier notifier;
+        private readonly IMarkupRequester requester;
 
         private readonly IReadOnlyCollection<string> players;
         private readonly string scriptName;

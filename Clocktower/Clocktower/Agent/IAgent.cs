@@ -37,7 +37,7 @@ namespace Clocktower.Agent
 
         Task ShowGrimoireToSpy(Grimoire grimoire);
         Task ResponseForFisherman(string advice);
-        Task GainCharacterAbility(Character character);
+        Task OnGainCharacterAbility(Character character);
 
         Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);
