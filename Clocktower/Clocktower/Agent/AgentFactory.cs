@@ -1,9 +1,9 @@
 ﻿using Clocktower.Agent.Config;
 using Clocktower.Agent.Notifier;
+using Clocktower.Agent.Observer;
 using Clocktower.Agent.Requester;
 using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
-using Clocktower.Observer;
 using Clocktower.Setup;
 using DiscordChatBot;
 using System.Configuration;

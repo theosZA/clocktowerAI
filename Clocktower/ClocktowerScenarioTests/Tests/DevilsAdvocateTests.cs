@@ -1,5 +1,5 @@
+using Clocktower.Agent.Observer;
 using Clocktower.Game;
-using Clocktower.Observer;
 using Clocktower.Options;
 using ClocktowerScenarioTests.Mocks;
 

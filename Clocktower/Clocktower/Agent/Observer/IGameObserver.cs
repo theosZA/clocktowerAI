@@ -1,6 +1,6 @@
 ﻿using Clocktower.Game;
 
-namespace Clocktower.Observer
+namespace Clocktower.Agent.Observer
 {
     /// <summary>
     /// An observer sees public information such as public changes to the game state.

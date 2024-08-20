@@ -2,11 +2,11 @@
 using Clocktower.Game;
 using System.Text;
 
-namespace Clocktower.Observer
+namespace Clocktower.Agent.Observer
 {
     internal class TextObserver : IGameObserver
     {
-        public Func<int, Task>? OnNight { get; set;}
+        public Func<int, Task>? OnNight { get; set; }
         public Func<int, Task>? OnDay { get; set; }
         public Func<int, Task>? OnNominationsStart { get; set; }
         public Func<Player, Player, Task>? OnPrivateChatStart { get; set; }
@@ -27,7 +27,7 @@ namespace Clocktower.Observer
             sb.AppendLine();
             sb.AppendFormattedText("- Winning with the %a team are: %P.", winner, winners, forceStorytellerView);
             sb.AppendLine();
-            sb.AppendFormattedText("- Losing with the %a team are: %P.", (winner == Alignment.Good ? Alignment.Evil : Alignment.Good), losers, forceStorytellerView);
+            sb.AppendFormattedText("- Losing with the %a team are: %P.", winner == Alignment.Good ? Alignment.Evil : Alignment.Good, losers, forceStorytellerView);
 
             await SendMessage(sb);
         }
@@ -226,7 +226,7 @@ namespace Clocktower.Observer
         public async Task PrivateChatStarts(Player playerA, Player playerB)
         {
             await SendMessage("%p goes for a private chat with %p.", playerA, playerB, storytellerView);
-            
+
             if (OnPrivateChatStart != null)
             {
                 await OnPrivateChatStart(playerA, playerB);

@@ -1,7 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Agent.Notifier;
+using Clocktower.Agent.Observer;
 using Clocktower.Game;
-using Clocktower.Observer;
 using Clocktower.Options;
 using System.Text;
 

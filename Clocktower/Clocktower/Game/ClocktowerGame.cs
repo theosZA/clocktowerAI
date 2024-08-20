@@ -1,6 +1,6 @@
 ﻿using Clocktower.Agent;
+using Clocktower.Agent.Observer;
 using Clocktower.Events;
-using Clocktower.Observer;
 using Clocktower.Setup;
 using Clocktower.Storyteller;
 

@@ -1,4 +1,4 @@
-﻿namespace Clocktower.Observer
+﻿namespace Clocktower.Agent.Observer
 {
     public enum VoteResult
     {

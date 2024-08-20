@@ -1,6 +1,6 @@
-﻿using Clocktower.EventScripts;
+﻿using Clocktower.Agent.Observer;
+using Clocktower.EventScripts;
 using Clocktower.Game;
-using Clocktower.Observer;
 using Clocktower.Setup;
 using Clocktower.Storyteller;
 using Clocktower.Triggers;
