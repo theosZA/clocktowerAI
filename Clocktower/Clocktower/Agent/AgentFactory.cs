@@ -26,9 +26,9 @@ namespace Clocktower.Agent
         {
             return agentType switch
             {
-                "Auto" => CreateHumanAgent(name, playerNames, scriptName, script, random, autoAct: true),
-                "Human" => CreateHumanAgent(name, playerNames, scriptName, script, random),
-                "Discord" => new DiscordAgent(await GetDiscordChatClient(), name, playerNames, scriptName, script),
+                "Auto" => CreateLocalHumanAgent(name, playerNames, scriptName, script, random, autoAct: true),
+                "Human" => CreateLocalHumanAgent(name, playerNames, scriptName, script, random),
+                "Discord" => await CreateDiscordHumanAgent(name, playerNames, scriptName, script),
                 "Robot" => CreateRobotAgent(string.IsNullOrEmpty(model) ? DefaultModel : model, name, personality, playerNames, scriptName, script),
                 _ => throw new ArgumentException($"Unknown agent type: {agentType}"),
             };
@@ -65,7 +65,7 @@ namespace Clocktower.Agent
             return agent;
         }
 
-        private static IAgent CreateHumanAgent(string name, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script, Random random, bool autoAct = false)
+        private static IAgent CreateLocalHumanAgent(string name, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script, Random random, bool autoAct = false)
         {
             var form = new HumanAgentForm(name, script, random)
             {
@@ -88,6 +88,21 @@ namespace Clocktower.Agent
             agent.OnDead += form.YouAreDead;
 
             return agent;
+        }
+
+        private static async Task<IAgent> CreateDiscordHumanAgent(string name, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        {
+            var chatClient = await GetDiscordChatClient();
+            var prompter = new TextPlayerPrompter(name);
+            var notifier = new DiscordNotifier(chatClient, (Chat chat) => 
+            {
+                prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
+                return Task.CompletedTask;
+            });
+            var observer = new TextObserver(notifier);
+            var requester = new DiscordRequester(name, prompter);
+
+            return new TextAgent(name, playerNames, scriptName, script, observer, notifier, requester);
         }
 
         private static async Task<ChatClient> GetDiscordChatClient()

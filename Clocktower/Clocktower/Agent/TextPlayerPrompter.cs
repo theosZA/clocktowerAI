@@ -1,5 +1,4 @@
 ﻿using Clocktower.Options;
-using System.Text;
 
 namespace Clocktower.Agent
 {
@@ -12,9 +11,9 @@ namespace Clocktower.Agent
             this.playerName = playerName;
         }
 
-        public async Task<string> RequestDialogue(string prompt, params object[] objects)
+        public async Task<string> RequestDialogue(string prompt)
         {
-            var response = await Request(prompt, objects);
+            var response = await Request(prompt);
             if (string.Equals("PASS", response, StringComparison.InvariantCultureIgnoreCase))
             {
                 return string.Empty;
@@ -22,28 +21,28 @@ namespace Clocktower.Agent
             return response;
         }
 
-        public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string prompt, params object[] objects)
+        public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string prompt)
         {
-            var dialogue = await RequestDialogue(prompt, objects);
+            var dialogue = await RequestDialogue(prompt);
             var endChat = (dialogue.EndsWith("goodbye", StringComparison.InvariantCultureIgnoreCase) ||
                            dialogue.EndsWith("goodbye.", StringComparison.InvariantCultureIgnoreCase) ||
                            dialogue.EndsWith("goodbye!", StringComparison.InvariantCultureIgnoreCase));
             return (dialogue, endChat);
         }
 
-        public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string prompt, params object[] objects)
+        public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string prompt)
         {
             // This is for a case where there is a variety of different options and we are going to try our best to figure out which one the AI is trying to choose.
 
-            var choiceAsText = await Request(prompt, objects);
+            var choiceAsText = await Request(prompt);
             return TextParser.ReadShenaniganOptionFromText(choiceAsText, options);
         }
 
-        public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string prompt, params object[] objects)
+        public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string prompt)
         {
             // Note that the prompt should be specific on how to choose from the options available.
 
-            var choiceAsText = (await Request(prompt, objects)).Trim();
+            var choiceAsText = (await Request(prompt)).Trim();
 
             if (string.IsNullOrEmpty(choiceAsText))
             {
@@ -66,20 +65,13 @@ namespace Clocktower.Agent
             return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
         }
 
-        private async Task<string> Request(string prompt, params object[] objects)
+        private async Task<string> Request(string prompt)
         {
             if (SendMessageAndGetResponse == null)
             {
                 throw new Exception($"Prompt requested for {playerName} but no handler has been configured for this player");
             }
-            return await SendMessageAndGetResponse(FormatText(prompt, objects));
-        }
-
-        private static string FormatText(string text, params object[] objects)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormattedText(text, objects);
-            return sb.ToString();
+            return await SendMessageAndGetResponse(prompt);
         }
 
         private static IOption? GetMatchingOption(IReadOnlyCollection<IOption> options, string choiceAsText)

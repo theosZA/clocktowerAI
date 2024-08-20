@@ -1,5 +1,4 @@
 ﻿using Clocktower.Options;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Clocktower.Agent.Requester
 {
