@@ -7,44 +7,39 @@ namespace Clocktower.Agent.Notifier
 {
     internal class DiscordNotifier : IMarkupNotifier
     {
-        public Chat? Chat { get; private set; }
-
-        public DiscordNotifier(ChatClient chatClient, Func<Chat, Task> onChatStart)
+        public DiscordNotifier(ChatClient chatClient)
         {
             this.chatClient = chatClient;
-            this.onChatStart = onChatStart;
         }
 
         public async Task Start(string playerName, IReadOnlyCollection<string> players, string scriptName, IReadOnlyCollection<Character> script)
         {
-            Chat = await chatClient.CreateChat(playerName);
+            chat = await chatClient.CreateChat(playerName);
 
-            await onChatStart(Chat);
-
-            await Chat.SendMessage($"Welcome {playerName} to a game of Blood on the Clocktower.");
-            await Chat.SendMessage(TextBuilder.ScriptToText(scriptName, script, markup: true));
+            await Notify($"Welcome {playerName} to a game of Blood on the Clocktower.");
+            await Notify(TextBuilder.ScriptToText(scriptName, script));
             var scriptPdf = $"Scripts/{scriptName}.pdf";
             if (File.Exists(scriptPdf))
             {
-                await Chat.SendFile(scriptPdf);
+                await chat.SendFile(scriptPdf);
             }
-            await Chat.SendMessage(TextBuilder.SetupToText(players.Count, script));
-            await Chat.SendMessage(TextBuilder.PlayersToText(players, markup: true));
+            await Notify(TextBuilder.SetupToText(players.Count, script));
+            await Notify(TextBuilder.PlayersToText(players));
         }
 
         public async Task Notify(string markupText)
         {
-            if (Chat != null)
+            if (chat != null)
             {
-                await Chat.SendMessage(CleanMarkupText(markupText));
+                await chat.SendMessage(CleanMarkupText(markupText));
             }
         }
 
         public async Task NotifyWithImage(string markupText, string imageFileName)
         {
-            if (Chat != null)
+            if (chat != null)
             {
-                await Chat.SendMessage(CleanMarkupText(markupText), imageFileName);
+                await chat.SendMessage(CleanMarkupText(markupText), imageFileName);
             }
         }
 
@@ -78,6 +73,16 @@ namespace Clocktower.Agent.Notifier
             return sb.ToString();
         }
 
+        public async Task<string> SendMessageAndGetResponse(string markupText)
+        {
+            if (chat == null)
+            {
+                return string.Empty;
+            }
+
+            return await chat.SendMessageAndGetResponse(CleanMarkupText(markupText));
+        }
+
         private static string CleanMarkupText(string markupText)
         {
             // Replace coloured text with bold text since Discord doesn't support colours.
@@ -86,6 +91,6 @@ namespace Clocktower.Agent.Notifier
         }
 
         private readonly ChatClient chatClient;
-        private readonly Func<Chat, Task> onChatStart;
+        private Chat? chat;
     }
 }

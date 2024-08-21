@@ -93,13 +93,11 @@ namespace Clocktower.Agent
         private static async Task<IAgent> CreateDiscordHumanAgent(string name, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
             var chatClient = await GetDiscordChatClient();
-            var prompter = new TextPlayerPrompter(name);
-            var notifier = new DiscordNotifier(chatClient, (Chat chat) => 
-            {
-                prompter.SendMessageAndGetResponse = (async (message) => await chat.SendMessageAndGetResponse(message));
-                return Task.CompletedTask;
-            });
+            var notifier = new DiscordNotifier(chatClient);
             var observer = new TextObserver(notifier);
+
+            var prompter = new TextPlayerPrompter(name);
+            prompter.SendMessageAndGetResponse += notifier.SendMessageAndGetResponse;
             var requester = new DiscordRequester(name, prompter);
 
             return new TextAgent(name, playerNames, scriptName, script, observer, notifier, requester);

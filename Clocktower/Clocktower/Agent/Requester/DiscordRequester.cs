@@ -49,11 +49,13 @@ namespace Clocktower.Agent.Requester
             if (options.Any(option => option is SlayerShotOption))
             {
                 sb.AppendFormattedText("- `Slayer: player_name` if you wish to claim %c and target the specified player.", Character.Slayer);
+                sb.AppendLine();
             }
             if (options.Any(option => option is JugglerOption))
             {
-                sb.AppendFormattedText("- `Juggler: player_name as character, player_name as character, ...` with up to 5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated",
+                sb.AppendFormattedText("- `Juggler: player_name as character, player_name as character, ...` with up to 5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated.)",
                                        Character.Juggler);
+                sb.AppendLine();
             }
             if (options.Any(option => option is PassOption))
             {

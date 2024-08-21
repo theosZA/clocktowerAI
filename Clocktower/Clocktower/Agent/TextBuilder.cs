@@ -10,62 +10,45 @@ namespace Clocktower.Agent
     /// </summary>
     internal static class TextBuilder
     {
-        public static string ScriptToText(string scriptName, IReadOnlyCollection<Character> script, bool markup = false)
+        public static string ScriptToText(string scriptName, IReadOnlyCollection<Character> script)
         {
             var characterDescriptions = ReadCharacterDescriptionsFromFile("Scripts\\Characters.txt");
 
             var sb = new StringBuilder();
 
-            if (markup)
-            {
-                sb.AppendLine($"# {scriptName}");
-                sb.AppendLine("The following characters are available in this game...");
-            }
-            else
-            {
-                sb.AppendLine($"This game will use a script called '{scriptName}' which includes the following characters...");
-            }
+            sb.AppendLine($"# {scriptName}");
+            sb.AppendLine("The following characters are available in this game...");
 
-            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Townsfolk, Alignment.Good, markup));
+            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Townsfolk, Alignment.Good));
             foreach (var townsfolk in script.Where(character => character.CharacterType() == CharacterType.Townsfolk))
             {
-                sb.AppendLine(CharacterToText(townsfolk, characterDescriptions, markup));
+                sb.AppendLine(CharacterToText(townsfolk, characterDescriptions));
             }
-            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Outsider, Alignment.Good, markup));
+            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Outsider, Alignment.Good));
             foreach (var outsider in script.Where(character => character.CharacterType() == CharacterType.Outsider))
             {
-                sb.AppendLine(CharacterToText(outsider, characterDescriptions, markup));
+                sb.AppendLine(CharacterToText(outsider, characterDescriptions));
             }
-            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Minion, Alignment.Evil, markup));
+            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Minion, Alignment.Evil));
             foreach (var minion in script.Where(character => character.CharacterType() == CharacterType.Minion))
             {
-                sb.AppendLine(CharacterToText(minion, characterDescriptions, markup));
+                sb.AppendLine(CharacterToText(minion, characterDescriptions));
             }
-            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Demon, Alignment.Evil, markup));
+            sb.AppendLine(CharacterTypeHeadingToText(CharacterType.Demon, Alignment.Evil));
             foreach (var demon in script.Where(character => character.CharacterType() == CharacterType.Demon))
             {
-                sb.AppendLine(CharacterToText(demon, characterDescriptions, markup));
+                sb.AppendLine(CharacterToText(demon, characterDescriptions));
             }
 
             var jinxes = ReadJinxesFromFile("Scripts\\Jinxes.txt").Where(jinx => script.Contains(jinx.character1) && script.Contains(jinx.character2)).ToList();
             if (jinxes.Any())
             {
-                if (markup)
-                {
-                    sb.Append("## ");
-                }
-                sb.AppendLine("Jinxes");
+                sb.AppendLine("## Jinxes");
                 sb.AppendLine("There are special rules that govern how the following pairs of characters interact when they are both on the same script.");
-                foreach (var jinx  in jinxes)
+                foreach (var jinx in jinxes)
                 {
-                    if (markup)
-                    {
-                        sb.AppendFormattedText($"- %c / %c: {jinx.jinx}", jinx.character1, jinx.character2);
-                    }
-                    else
-                    {
-                        sb.AppendFormattedText($"- %c / %c: {jinx.jinx}", jinx.character1, jinx.character2);
-                    }
+                    sb.AppendFormattedText($"- %c / %c: {jinx.jinx}", jinx.character1, jinx.character2);
+                    sb.AppendLine();
                 }
             }
             return sb.ToString();
@@ -95,39 +78,12 @@ namespace Clocktower.Agent
             return sb.ToString();
         }
 
-        public static string PlayersToText(IReadOnlyCollection<string> playerNames, bool markup = false)
+        public static string PlayersToText(IReadOnlyCollection<string> playerNames)
         {
-            var sb = new StringBuilder();
-
-            sb.Append("In this game we have the following players, going clockwise around town: ");
-            foreach (var name in playerNames.SkipLast(1))
-            {
-                if (markup)
-                {
-                    sb.Append("**");
-                }
-                sb.Append(name);
-                if (markup)
-                {
-                    sb.Append("**");
-                }
-                sb.Append(", ");
-            }
-            if (markup)
-            {
-                sb.Append("**");
-            }
-            sb.Append(playerNames.Last());
-            if (markup)
-            {
-                sb.Append("**");
-            }
-            sb.AppendLine(". ");
-
-            return sb.ToString();
+            return ($"In this game we have the following players, going clockwise around town: {string.Join(", ", playerNames.Select(name => $"**{name}**"))}.\n");
         }
 
-        public static string GrimoireToText(Grimoire grimoire, bool markup = false)
+        public static string GrimoireToText(Grimoire grimoire)
         {
             var sb = new StringBuilder();
 
@@ -136,40 +92,18 @@ namespace Clocktower.Agent
                 var aliveStatus = player.Tokens.HasToken(Token.DiedAtNight) ? "Died tonight"
                                                              : player.Alive ? "Alive" 
                                                                             : "Dead";
-                if (markup)
-                {
-                    sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
-                }
-                else
-                {
-                    sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
-                }
+                sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
                 sb.AppendLine();
             }
 
-            if (markup)
-            {
-                sb.AppendFormattedText("The characters not in play shown to the demon: %C", grimoire.DemonBluffs);
-            }
-            else
-            {
-                sb.AppendFormattedText("The characters not in play shown to the demon: %C", grimoire.DemonBluffs);
-            }
+            sb.AppendFormattedText("The characters not in play shown to the demon: %C", grimoire.DemonBluffs);
 
             return sb.ToString();
         }
 
-        private static string CharacterTypeHeadingToText(CharacterType characterType, Alignment alignment, bool markup)
+        private static string CharacterTypeHeadingToText(CharacterType characterType, Alignment alignment)
         {
-            var sb = new StringBuilder();
-
-            if (markup)
-            {
-                sb.Append("## ");
-            }
-            sb.Append($"{characterType} ({alignment}):");
-
-            return sb.ToString();
+            return $"## {characterType} ({alignment}):";
         }
 
         private static string CharacterTypeCountToText(CharacterType characterType, int playerCount)
@@ -192,14 +126,13 @@ namespace Clocktower.Agent
             return $"{count} {name}";
         }
 
-        private static string CharacterToText(Character character, IDictionary<Character, string> characterDescriptions, bool markup)
+        private static string CharacterToText(Character character, IDictionary<Character, string> characterDescriptions)
         {
             if (!characterDescriptions.TryGetValue(character, out var description))
             {
                 throw new InvalidEnumArgumentException(nameof(character));
             }
-            var boldFormatting = markup ? "**" : string.Empty;
-            return $"- {boldFormatting}{TextUtilities.CharacterToText(character)}{boldFormatting}: {description}";
+            return $"- **{TextUtilities.CharacterToText(character)}**: {description}";
         }
 
         private static IDictionary<Character, string> ReadCharacterDescriptionsFromFile(string fileName)

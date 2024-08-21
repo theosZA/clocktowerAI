@@ -270,7 +270,7 @@ namespace Clocktower.Agent
 
             sb.AppendFormattedText("As the %c, you can now look over the Grimoire...", Character.Spy);
             sb.AppendLine();
-            sb.Append(TextBuilder.GrimoireToText(grimoire, markup: true));
+            sb.Append(TextBuilder.GrimoireToText(grimoire));
 
             await SendMessage(sb);
         }

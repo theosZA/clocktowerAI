@@ -94,7 +94,7 @@ namespace Clocktower.Agent.Requester
             if (options.Any(option => option is JugglerOption))
             {
                 sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
-                                             $"5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated", Game.Character.Juggler);
+                                             $"5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated.)", Game.Character.Juggler);
                 sb.AppendLine();
             }
             if (options.Any(option => option is SlayerShotOption))
