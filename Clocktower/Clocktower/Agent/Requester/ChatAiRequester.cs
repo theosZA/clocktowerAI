@@ -129,7 +129,7 @@ namespace Clocktower.Agent.Requester
                     break;
             }
 
-            sb.Append(" (Respond with just the single word PASS if you don't wish to say anything.)");
+            sb.Append(" (You may always choose to say nothing. You should provide your reasoning as an internal monologue for what you want to say, if anything.)");
 
             return await ai.RequestDialogue(sb.ToString());
         }

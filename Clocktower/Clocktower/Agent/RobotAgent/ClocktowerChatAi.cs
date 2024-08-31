@@ -111,25 +111,12 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
         {
-            var dialogue = CleanResponse(await Request(prompt, objects));
-            if (IsPass(dialogue))
+            if (prompt != null)
             {
-                gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
-                return string.Empty;
+                prompt = TextUtilities.FormatMarkupText(prompt, objects);
             }
-
-            // Sometimes the AI likes to add an explanation before and after the actual dialogue.
-            // In some cases the actual dialogue is between quotes.
-            var quotedDialogue = dialogue.TextBetween('"', '"');
-            if (!string.IsNullOrEmpty(quotedDialogue) && quotedDialogue.ContainsWhitespace())
-            {
-                return quotedDialogue;
-            }
-            // In other cases the actual dialogue is preceeded by their own name, sometimes emphasized.
-            dialogue = dialogue.TextAfter($"{playerName}: ")
-                               .TextAfter($"**{playerName}**: ");
-
-            return dialogue;
+            var response = await RequestObject<PublicDialogue>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PublicDialogue).Name} object");
+            return response.Dialogue;
         }
 
         public async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
