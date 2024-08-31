@@ -98,7 +98,7 @@ namespace Clocktower.Agent
 
             var prompter = new TextPlayerPrompter(name);
             prompter.SendMessageAndGetResponse += notifier.SendMessageAndGetResponse;
-            var requester = new DiscordRequester(name, prompter);
+            var requester = new DiscordRequester(prompter);
 
             return new TextAgent(name, playerNames, scriptName, script, observer, notifier, requester);
         }

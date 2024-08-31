@@ -6,7 +6,7 @@ namespace Clocktower.Agent.Requester
 {
     internal class DiscordRequester : IMarkupRequester
     {
-        public DiscordRequester(string playerName, TextPlayerPrompter prompter)
+        public DiscordRequester(TextPlayerPrompter prompter)
         {
             this.prompter = prompter;
         }
@@ -23,7 +23,10 @@ namespace Clocktower.Agent.Requester
 
         public async Task<IOption> RequestUseAbility(string prompt, IReadOnlyCollection<IOption> options)
         {
-            return await RequestOption(prompt, options);
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" Respond with `YES` or `NO`.");
+
+            return await RequestOption(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestCharacter(string prompt, IReadOnlyCollection<IOption> options)
@@ -38,7 +41,10 @@ namespace Clocktower.Agent.Requester
 
         public async Task<IOption> RequestTwoPlayersTarget(string prompt, IReadOnlyCollection<IOption> options)
         {
-            return await RequestOption(prompt, options);
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" Respond with the names of two players formatted like: `player_1 AND player_2`.");
+
+            return await RequestOption(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestShenanigans(string prompt, IReadOnlyCollection<IOption> options)
@@ -71,22 +77,42 @@ namespace Clocktower.Agent.Requester
 
         public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
         {
-            return await prompter.RequestDialogue(prompt);
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" You may respond with `PASS` if you don't want to say anything.");
+
+            return await prompter.RequestDialogue(sb.ToString());
         }
 
         public async Task<IOption> RequestNomination(string prompt, IReadOnlyCollection<IOption> options)
         {
-            return await RequestOption(prompt, options);
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" Respond with the name of the player to nominate, or `PASS` if you don't wish to nominate anyone.");
+
+            return await RequestOption(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestVote(string prompt, bool ghostVote, IReadOnlyCollection<IOption> options)
         {
-            return await RequestOption(prompt, options);
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" Respond with `EXECUTE` or `PASS`.");
+
+            return await RequestOption(sb.ToString(), options);
         }
 
         public async Task<IOption> RequestPlayerForChat(string prompt, IReadOnlyCollection<IOption> options)
         {
-            return await RequestOption(prompt, options);
+            var sb = new StringBuilder(prompt);
+
+            if (options.Any(option => option is PassOption))
+            {
+                sb.AppendLine(" Respond with the name of the player to chat to, or `PASS` if you want to wait to see who wants to talk to you.");
+            }
+            else
+            {
+                sb.AppendLine(" Respond with the name of the player to chat to.");
+            }
+
+            return await RequestOption(sb.ToString(), options);
         }
 
         public async Task<(string dialogue, bool endChat)> RequestMessageForChat(string prompt)
