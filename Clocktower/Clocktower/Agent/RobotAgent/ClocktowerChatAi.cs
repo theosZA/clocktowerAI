@@ -29,7 +29,6 @@ namespace Clocktower.Agent.RobotAgent
 
         public ClocktowerChatAi(string model, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
-            this.playerName = playerName;
             gameChat = new GameChat(model, playerName, personality, playerNames, scriptName, script);
             gameChat.OnChatMessage += InternalOnChatMessage;
             gameChat.OnDaySummary += InternalOnDaySummary;
@@ -79,85 +78,52 @@ namespace Clocktower.Agent.RobotAgent
             return await gameChat.Request<string>(TextUtilities.FormatText(prompt, objects)) ?? string.Empty;
         }
 
-        public async Task<T?> RequestObject<T>(string? prompt = null, params object[] objects)
+        public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string prompt)
         {
-            if (string.IsNullOrEmpty(prompt))
-            {
-                return await gameChat.Request<T>(prompt: null);
-            }
-
-            return await gameChat.Request<T>(TextUtilities.FormatText(prompt, objects));
-        }
-
-        public async Task<T?> RequestObjectWithRetries<T>(string? prompt = null, params object[] objects)
-        {
-            if (string.IsNullOrEmpty(prompt))
-            {
-                return await gameChat.Request<T>(prompt: null);
-            }
-
-            return await gameChat.Request<T>(TextUtilities.FormatText(prompt, objects));
-        }
-
-        public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string? prompt = null, params object[] objects)
-        {
-            if (prompt != null)
-            {
-                prompt = TextUtilities.FormatMarkupText(prompt, objects);
-            }
-            var response = await RequestObject<PrivateDialogue>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PrivateDialogue).Name} object");
+            var response = await RequestObject<PrivateDialogue>(prompt);
             return (response.Dialogue, response.TerminateConversation);
         }
 
-        public async Task<string> RequestDialogue(string? prompt = null, params object[] objects)
+        public async Task<string> RequestDialogue(string prompt)
         {
-            if (prompt != null)
-            {
-                prompt = TextUtilities.FormatMarkupText(prompt, objects);
-            }
-            var response = await RequestObject<PublicDialogue>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(PublicDialogue).Name} object");
-            return response.Dialogue;
+            return (await RequestObject<PublicDialogue>(prompt)).Dialogue;
         }
 
-        public async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<UseAbilityChoice>(options, prompt, objects);
+            return await RequestOptionFromJson<UseAbilityChoice>(options, prompt);
         }
 
-        public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestPlayerSelection(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<PlayerSelection>(options, prompt, objects);
+            return await RequestOptionFromJson<PlayerSelection>(options, prompt);
         }
 
-        public async Task<IOption> RequestTwoPlayersSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestTwoPlayersSelection(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<TwoPlayerSelection>(options, prompt, objects);
+            return await RequestOptionFromJson<TwoPlayerSelection>(options, prompt);
         }
 
-        public async Task<IOption> RequestCharacterSelection(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestCharacterSelection(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<CharacterSelection>(options, prompt, objects);
+            return await RequestOptionFromJson<CharacterSelection>(options, prompt);
         }
 
-        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestVote(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<Vote>(options, prompt, objects);
+            return await RequestOptionFromJson<Vote>(options, prompt);
         }
 
-        public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
+        public async Task<IOption> RequestShenanigans(IReadOnlyCollection<IOption> options, string prompt)
         {
-            return await RequestOptionFromJson<PublicAction>(options, prompt, objects);
+            return await RequestOptionFromJson<PublicAction>(options, prompt);
         }
 
-        private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects) where T: IOptionSelection
+        private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string prompt) where T: IOptionSelection
         {
-            if (prompt != null)
-            {
-                prompt = TextUtilities.FormatMarkupText(prompt, objects);
-            }
             for (int retry = 0; retry < 3; retry++)
             {
-                var response = await RequestObject<T>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(T).Name} object");
+                var response = await RequestObject<T>(prompt);
                 var result = response.PickOption(options);
                 if (result != null)
                 {
@@ -168,77 +134,9 @@ namespace Clocktower.Agent.RobotAgent
             return options.First(option => option is PassOption);
         }
 
-        private static string CleanResponse(string? textFromAi)
+        private async Task<T> RequestObject<T>(string prompt)
         {
-            if (string.IsNullOrEmpty(textFromAi))
-            {
-                return string.Empty;
-            }
-
-            var text = textFromAi.Trim();
-            if (string.IsNullOrEmpty(text))
-            {
-                return string.Empty;
-            }
-
-            // Straighten all speech marks to make it easier for us to determine what the AI considers its actual dialogue.
-            text = text.Replace('“', '"').Replace('”', '"');
-
-            // If there's a colon before the second word, it means the player has presumably prepended a speaker name (which may or may not be correct).
-            if (text.IndexOf(':') < text.IndexOf(' '))
-            {
-                text = text[(text.IndexOf(':') + 1)..].TrimStart();
-
-                if (string.IsNullOrEmpty(text))
-                {
-                    return string.Empty;
-                }
-            }
-
-            return text;
-        }
-
-        private static bool IsPass(string dialogue)
-        {
-            return dialogue.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
-                   dialogue.EndsWith("pass", StringComparison.InvariantCultureIgnoreCase) ||
-                   dialogue.EndsWith("pass.", StringComparison.InvariantCultureIgnoreCase) ||
-                   dialogue.EndsWith("(pass)", StringComparison.InvariantCultureIgnoreCase) ||
-                   dialogue.StartsWith("goodbye", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private static IOption? GetMatchingOption(IReadOnlyCollection<IOption> options, string choiceAsText)
-        {
-            return options.FirstOrDefault(option => MatchesOption(choiceAsText, option)) ?? options.FirstOrDefault(option => MatchesOptionRelaxed(choiceAsText, option));
-        }
-
-        private static bool MatchesOption(string choiceAsText, IOption option)
-        {
-            return option switch
-            {
-                AlwaysPassOption _ => choiceAsText.StartsWith("always", StringComparison.InvariantCultureIgnoreCase),
-                PassOption _ => choiceAsText.StartsWith("pass", StringComparison.InvariantCultureIgnoreCase),
-                TwoPlayersOption twoPlayersOption => MatchesTwoPlayers(choiceAsText, twoPlayersOption.PlayerA.Name, twoPlayersOption.PlayerB.Name),
-                _ => choiceAsText.StartsWith(option.Name, StringComparison.InvariantCultureIgnoreCase),
-            };
-        }
-
-        private static bool MatchesOptionRelaxed(string choiceAsText, IOption option)
-        {
-            return option switch
-            {
-                AlwaysPassOption _ => choiceAsText.Contains("always", StringComparison.InvariantCultureIgnoreCase),
-                PassOption _ => choiceAsText.Contains("pass", StringComparison.InvariantCultureIgnoreCase),
-                TwoPlayersOption twoPlayersOption => choiceAsText.Contains(twoPlayersOption.PlayerA.Name) && choiceAsText.Contains(twoPlayersOption.PlayerB.Name),
-                _ => choiceAsText.Contains(option.Name, StringComparison.InvariantCultureIgnoreCase),
-            };
-        }
-
-        private static bool MatchesTwoPlayers(string choiceAsText, string player1, string player2)
-        {
-            int splitIndex = choiceAsText.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
-            return string.Equals(choiceAsText[..splitIndex].Trim(), player1, StringComparison.InvariantCultureIgnoreCase)
-                && string.Equals(choiceAsText[(splitIndex + 5)..].Trim(), player2, StringComparison.InvariantCultureIgnoreCase);
+            return await gameChat.Request<T>(prompt) ?? throw new InvalidDataException($"Robot agent did not respond with a valid {typeof(T).Name} object");
         }
 
         private void InternalOnChatMessage(Role role, string message)
@@ -256,7 +154,6 @@ namespace Clocktower.Agent.RobotAgent
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
-        private readonly string playerName;
         private readonly GameChat gameChat;
     }
 }

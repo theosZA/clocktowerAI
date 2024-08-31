@@ -195,7 +195,7 @@ namespace Clocktower.Agent.Requester
             var availablePlayers = options.Where(option => option is PlayerOption)
                                           .Select(option => ((PlayerOption)option).Player);
             sb.AppendFormattedText("The players you can talk to are: %P.", availablePlayers);
-            return await ai.RequestChoice(options, sb.ToString());
+            return await ai.RequestPlayerSelection(options, sb.ToString());
         }
 
         public async Task<(string dialogue, bool endChat)> RequestMessageForChat(string prompt)
