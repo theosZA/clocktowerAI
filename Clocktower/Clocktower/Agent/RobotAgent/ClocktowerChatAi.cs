@@ -149,50 +149,6 @@ namespace Clocktower.Agent.RobotAgent
             return await RequestOptionFromJson<PublicAction>(options, prompt, objects);
         }
 
-        public async Task<IOption> RequestChoice(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects)
-        {
-            // Note that the prompt should be specific on how to choose from the options available.
-
-            var choiceAsText = (await Request(prompt, objects)).Trim();
-
-            if (string.IsNullOrEmpty(choiceAsText))
-            {
-                return options.FirstOrDefault(option => option is PassOption) ?? await RetryRequestChoice(options);
-            }
-
-            var choice = GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
-            if (choice is AlwaysPassOption || choice is PassOption && !options.Any(option => option is VoteOption))
-            {   // Trim passes from our chat log.
-                gameChat.Trim(string.IsNullOrEmpty(prompt) ? 1 : 2);
-            }
-
-            return choice;
-        }
-
-        private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)
-        {
-            string prompt = "That is not a valid option. Please choose one of the following options: " + string.Join(", ", options.Select(option => option.Name));
-            var choiceAsText = (await Request(prompt)).Trim();
-
-            if (string.IsNullOrEmpty(choiceAsText))
-            {
-                return options.FirstOrDefault(option => option is PassOption) ?? throw new Exception($"{playerName} chose to pass but there is no Pass option");
-            }
-
-            var option = GetMatchingOption(options, choiceAsText);
-            if (option != null)
-            {
-                return option;
-            }
-            // AI failed to pick a valid option - default to PASS or the first listed option.
-            var passOption = options.FirstOrDefault(option => option is PassOption);
-            if (passOption != null)
-            {
-                return passOption;    
-            }
-            return options.First();
-        }
-
         private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string? prompt = null, params object[] objects) where T: IOptionSelection
         {
             if (prompt != null)

@@ -186,11 +186,11 @@ namespace Clocktower.Agent.Requester
             var canPass = options.Any(option => option is PassOption);
             if (canPass)
             {
-                sb.Append(" Either provide the name of the player (with no extra text) or respond with PASS if you want to wait and see if anyone wants to speak with you first. ");
+                sb.Append(" You may include some reasoning considering the merits of talking to particular players, and then either choose one player to talk to or leave the player choice blank to wait to see if someone else wants to talk to you. ");
             }
             else
             {
-                sb.Append(" Provide the name of the player (with no extra text). ");
+                sb.Append(" You may include some reasoning considering the merits of talking to particular players, but then you must choose one player to talk to. ");
             }
             var availablePlayers = options.Where(option => option is PlayerOption)
                                           .Select(option => ((PlayerOption)option).Player);
