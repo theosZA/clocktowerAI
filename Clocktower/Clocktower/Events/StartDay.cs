@@ -33,6 +33,9 @@ namespace Clocktower.Events
                     newlyDeadPlayer.Tokens.Remove(Token.DiedAtNight);
                     newlyDeadPlayer.Kill();
                 }
+            }
+            if (dayNumber > 1)
+            {
                 await observers.AnnounceLivingPlayers(grimoire.Players);
             }
         }
