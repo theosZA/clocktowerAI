@@ -209,7 +209,8 @@ namespace Clocktower.Agent
         private static IEnumerable<Character> GetCharactersThatCanAlterSetupCounts(IReadOnlyCollection<Character> script)
         {
             return script.Where(character => character == Character.Godfather
-                                          || character == Character.Baron);
+                                          || character == Character.Baron
+                                          || character == Character.Balloonist);
         }
 
         private static readonly Regex descriptionRegex = new(@"^([\w\s]+):(.+)$");
