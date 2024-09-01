@@ -92,7 +92,13 @@ namespace Clocktower.Agent
                 var aliveStatus = player.Tokens.HasToken(Token.DiedAtNight) ? "Died tonight"
                                                              : player.Alive ? "Alive" 
                                                                             : "Dead";
-                sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c - {player.Tokens}", player, player.Alignment, player.Character);
+                sb.AppendFormattedText($"- %p - {aliveStatus} - %a - %c", player, player.Alignment, player.Character);
+                var tokensText = player.Tokens.ToString();
+                if (!string.IsNullOrEmpty(tokensText))
+                {
+                    sb.Append(" - ");
+                    sb.Append(tokensText);
+                }
                 sb.AppendLine();
             }
 
