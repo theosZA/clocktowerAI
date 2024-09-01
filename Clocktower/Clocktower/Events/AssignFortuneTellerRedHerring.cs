@@ -13,7 +13,9 @@ namespace Clocktower.Events
 
         public async Task RunEvent()
         {
-            foreach (var player in grimoire.Players.WithCharacter(Character.Fortune_Teller))
+            // We only check for the real Fortune Teller here - anyone else who gains the Fortune Teller ability
+            // should call the AssignRedHerring() public method directly.
+            foreach (var player in grimoire.Players.Where(player => player.RealCharacter == Character.Fortune_Teller))
             {
                 await AssignRedHerring(player);
             }

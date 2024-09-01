@@ -1,5 +1,6 @@
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Storyteller;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -141,7 +142,7 @@ namespace ClocktowerScenarioTests.Tests
                             .WithDrunk(Character.Fortune_Teller)
                             .Build();
 
-            setup.Storyteller.MockFortuneTellerRedHerring(Character.Fortune_Teller);
+            setup.Storyteller.MockFortuneTellerRedHerring(Character.Fortune_Teller);    // Should not be called for the Drunk.
             setup.Agent(Character.Fortune_Teller).MockFortuneTellerChoice(Character.Imp, Character.Mayor);
             setup.Storyteller.MockFortuneTellerReading(reading: reading);
             var fortuneTellerReading = setup.Agent(Character.Fortune_Teller).MockNotifyFortuneTeller(gameToEnd: game);
@@ -152,6 +153,7 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(fortuneTellerReading.Value, Is.EqualTo(reading));
+            await setup.Storyteller.DidNotReceiveWithAnyArgs().GetFortuneTellerRedHerring(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>());
         }
 
         [TestCase(true)]
