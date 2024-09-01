@@ -44,7 +44,11 @@ namespace Clocktower.Events
                 return (targetCharacter, Array.Empty<Player>());
             }
 
-            var matchingPlayers = grimoire.Players.Where(player => player.CanRegisterAs(targetCharacter)).ToList();
+            var matchingPlayers = grimoire.Players.Where(player => player.RealCharacter == targetCharacter).ToList();
+            if (matchingPlayers.Any())
+            {
+                matchingPlayers = grimoire.Players.Where(player => player.CanRegisterAs(targetCharacter)).ToList();
+            }
             return matchingPlayers.Count switch
             {
                 0 => (targetCharacter, await storyteller.GetOjoVictims(ojo, targetCharacter, grimoire.Players.Where(player => player.Alive))),

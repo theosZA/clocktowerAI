@@ -152,8 +152,8 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Fisherman,Ravenkeeper,Saint,Spy,Soldier,Mayor");
 
-            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
-            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { victim });
+            setup.Agent(Character.Ojo).MockOjo(Character.Librarian);
+            setup.Storyteller.MockGetOjoVictims(Character.Librarian, new[] { victim });
 
             // Act
             await game.StartGame();
@@ -166,13 +166,32 @@ namespace ClocktowerScenarioTests.Tests
 
         [TestCase(Character.Recluse)]
         [TestCase(Character.Baron)]
-        public async Task Ojo_Recluse(Character victim)
+        public async Task Ojo_Recluse_OjoHit(Character victim)
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Fisherman,Ravenkeeper,Recluse,Baron,Soldier,Mayor");
 
             setup.Agent(Character.Ojo).MockOjo(Character.Baron);
             setup.Storyteller.MockGetOjoVictims(Character.Baron, new[] { victim });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(victim).Received().YouAreDead();
+        }
+
+        [TestCase(Character.Recluse)]
+        [TestCase(Character.Fisherman)]
+        public async Task Ojo_Recluse_OjoMiss(Character victim)
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Fisherman,Ravenkeeper,Recluse,Baron,Soldier,Mayor");
+
+            setup.Agent(Character.Ojo).MockOjo(Character.Poisoner);
+            setup.Storyteller.MockGetOjoVictims(Character.Poisoner, new[] { victim });
 
             // Act
             await game.StartGame();
