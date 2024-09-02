@@ -223,6 +223,11 @@ namespace ClocktowerScenarioTests.Mocks
             agent.PromptFishermanAdvice(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(getAdvice);
         }
 
+        public static void MockNightwatchmanOption(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromNightwatchman(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static Wrapper<string> MockFishermanAdvice(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<string> advice = new();

@@ -21,6 +21,7 @@ Pacifist: Executed good players might not die.
 Noble: You start knowing 3 players, 1 and only 1 of which is evil.
 Cannibal: You have the ability of the recently killed executee. If they are evil, you are poisoned until a good player dies by execution.
 Balloonist: Each night, you learn a player of a different character type than last night. [+0 or +1 Outsider]
+Nightwatchman: Once per game, at night, choose a player: they learn who you are.
 
 // Outsiders
 Tinker: You might die at any time.

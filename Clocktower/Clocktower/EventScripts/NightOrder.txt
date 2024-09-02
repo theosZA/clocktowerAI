@@ -20,6 +20,7 @@ FortuneTeller
 Undertaker
 Juggler
 Balloonist
+Nightwatchman
 Butler
 Spy
 EndNight

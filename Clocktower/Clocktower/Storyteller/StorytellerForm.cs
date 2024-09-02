@@ -520,9 +520,20 @@ namespace Clocktower.Storyteller
         public void ShowGrimoireToSpy(Player spy, Grimoire grimoire)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText($"%p now has a chance to look over the Grimoire...", spy, StorytellerView);
+            sb.AppendFormattedText("%p now has a chance to look over the Grimoire...", spy, StorytellerView);
             sb.AppendLine();
             sb.Append(TextBuilder.GrimoireToText(grimoire));
+            AddMarkupText(sb.ToString());
+        }
+
+        public void ShowNightwatchman(Player nightwatchman, Player target, bool shown)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("%p has chosen for %p to learn that they are the %c.", nightwatchman, target, Character.Nightwatchman, StorytellerView);
+            if (!shown)
+            {
+                sb.Append(" There is no effect.");
+            }
             AddMarkupText(sb.ToString());
         }
 

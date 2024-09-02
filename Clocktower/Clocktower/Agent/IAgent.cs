@@ -36,6 +36,7 @@ namespace Clocktower.Agent
         Task NotifyJuggler(int jugglerCount);
 
         Task ShowGrimoireToSpy(Grimoire grimoire);
+        Task ShowNightwatchman(Player nightwatchman);
         Task ResponseForFisherman(string advice);
         Task OnGainCharacterAbility(Character character);
 
@@ -48,6 +49,7 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceFromDevilsAdvocate(IReadOnlyCollection<IOption> options);
 
         Task<IOption> RequestChoiceFromPhilosopher(IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromNightwatchman(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);

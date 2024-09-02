@@ -275,6 +275,13 @@ namespace Clocktower.Agent
             await SendMessage(sb);
         }
 
+        public async Task ShowNightwatchman(Player nightwatchman)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("You learn that %p is the %c.", nightwatchman, Character.Nightwatchman);
+            await SendMessage(sb);
+        }
+
         public async Task ResponseForFisherman(string advice)
         {
             await SendMessage("%b: %n", "Storyteller", advice.Trim());
@@ -342,6 +349,21 @@ namespace Clocktower.Agent
             }
 
             return await RequestCharacter(options, "As the %c, you may use your once-per-game ability tonight to gain the ability of a Townsfolk or Outsider character.", Character.Philosopher);
+        }
+
+        public async Task<IOption> RequestChoiceFromNightwatchman(IReadOnlyCollection<IOption> options)
+        {
+            if (character == Character.Cannibal)
+            {
+                bool useAbility = await CannibalRequestUseAbility(OptionsBuilder.YesOrNo) is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                return await CannibalRequestPlayer(options.Where(option => option is not PassOption).ToList());
+            }
+
+            return await RequestPlayer(options, "As the %c, you may use your once-per-game ability tonight so that one player will learn who you are.", Character.Nightwatchman);
         }
 
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)

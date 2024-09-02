@@ -10,12 +10,14 @@
 //       - Notifications - add a NotifyXXX method to IStoryteller, IAgent and/or IObserver (and implementations) as appropriate.
 //       - Tokens - Add a new entry to the Token enum.
 //                - Check methods in the TokensOnPlayer class for token behaviour, especially when they should be removed and what should be shown to the Spy.
+//       - When we should run an ability is controlled in Player.ShouldRunAbility(); e.g. once-per-game abilities can be checked here if they've been used or not.
 //    b. Add the event to the GameEventFactory.
 // 5. For characters that interact with deaths or executions, add an implementation of IDeathTrigger in the Triggers folder, and add it to the Deaths class.
 // 6. Some characters will have abilities that can't be run on an event or death trigger. You will need to add the functionality in the relevant place,
 //    e.g. within the Nominations event if it's an ability based on nominations, or in the Player class if it's a character that can misregister.
 // 7. Add scenario tests for the character. These tests may include the following:
 //    - Regular postive and negative test cases.
+//    - Ensure once-per-game abilities can only be used once.
 //    - Cases for when the character is really the Drunk or otherwise drunk.
 //    - Cases for then the character has been poisoned.
 //    - Cases for when the character dies and their effect on the game should end.
@@ -50,6 +52,7 @@ namespace Clocktower.Game
         Noble,
         Cannibal,
         Balloonist,
+        Nightwatchman,
 
         // Outsiders
         Tinker = 1000,

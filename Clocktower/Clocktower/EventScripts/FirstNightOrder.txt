@@ -22,5 +22,6 @@ Steward
 Noble
 Balloonist
 Shugenja
+Nightwatchman
 Spy
 EndNight

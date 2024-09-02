@@ -63,7 +63,9 @@ namespace Clocktower.Storyteller
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
         void NotifyBalloonist(Player balloonist, Player newPlayer);
         void NotifyJuggler(Player juggler, int jugglerCount);
+
         void ShowGrimoireToSpy(Player spy, Grimoire grimoire);
+        void ShowNightwatchman(Player nightwatchman, Player target, bool shown);
 
         void ChoiceFromDemon(Player demon, Player target);
         void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims);
