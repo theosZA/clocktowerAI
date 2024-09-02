@@ -70,5 +70,12 @@ namespace Clocktower.Options
                 _ => (null, false)
             };
         }
+
+        public static IEnumerable<Player> GetPlayers(this IEnumerable<IOption> options)
+        {
+            return options.Select(option => option.GetPlayerOptional())
+                          .Where(player => player != null)
+                          .Select(player => player!);
+        }
     }
 }

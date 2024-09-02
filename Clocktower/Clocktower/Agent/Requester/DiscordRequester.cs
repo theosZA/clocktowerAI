@@ -86,7 +86,9 @@ namespace Clocktower.Agent.Requester
         public async Task<IOption> RequestNomination(string prompt, IReadOnlyCollection<IOption> options)
         {
             var sb = new StringBuilder(prompt);
-            sb.AppendLine(" Respond with the name of the player to nominate, or `PASS` if you don't wish to nominate anyone.");
+
+            sb.AppendFormattedText(" Respond with the name of the player to nominate, or `PASS` if you don't wish to nominate anyone. (Players who can still be nominated: %P)", options.GetPlayers());
+            sb.AppendLine();
 
             return await RequestOption(sb.ToString(), options);
         }
