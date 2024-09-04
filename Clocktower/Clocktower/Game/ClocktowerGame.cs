@@ -31,7 +31,7 @@ namespace Clocktower.Game
             var startGameTasks = agents.Select(async agent => await agent.StartGame());
             await Task.WhenAll(startGameTasks);
 
-            grimoire.AssignCharacters(storyteller);
+            await grimoire.AssignCharacters(storyteller);
         }
 
         public void EndGame(Alignment winner)

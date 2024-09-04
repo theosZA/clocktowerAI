@@ -78,6 +78,7 @@ namespace Clocktower.Game
         // Demons
         Imp = 3000,
         Ojo,
-        No_Dashii
+        No_Dashii,
+        Kazali
     }
 }

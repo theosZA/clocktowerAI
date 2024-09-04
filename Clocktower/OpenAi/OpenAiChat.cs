@@ -27,7 +27,7 @@ namespace OpenAi
         {
             chatCompletionApi = new ChatCompletionApi.ChatCompletionApi(model);
             // Start with a default sub-chat useful for holding the system message and any other non-summarizable pre-chat messages.
-            subChats.Add(new SubChat(chatCompletionApi, string.Empty, summarizePrompt: null));
+            AddNewSubChat(string.Empty, summarizePrompt: null);
         }
 
         /// <summary>
@@ -39,13 +39,7 @@ namespace OpenAi
         public OpenAiChat(string model, IEnumerable<(Role role, string message)> messages)
         {
             chatCompletionApi = new ChatCompletionApi.ChatCompletionApi(model);
-
-            var subChat = new SubChat(chatCompletionApi, string.Empty, summarizePrompt: null);
-            foreach (var (role, message) in messages)
-            {
-                subChat.AddMessage(role, message);
-            }
-            subChats.Add(subChat);
+            AddNewSubChat(string.Empty, summarizePrompt: null, messages);
         }
 
         public void AddUserMessage(string message)
@@ -61,18 +55,31 @@ namespace OpenAi
         public async Task StartNewSubChat(string name, string? summarizePrompt = null)
         {
             await subChats.Last().Summarize(subChats.SkipLast(1));
-
-            var subChat = new SubChat(chatCompletionApi, name, summarizePrompt);
-            subChat.OnChatMessageAdded += InternalChatMessageAddedHandler;
-            subChat.OnChatMessagesRemoved += InternalChatMessagesRemovedHandler;
-            subChat.OnSubChatSummarized += InternalSubChatSummarizedHandler;
-            subChat.OnAssistantRequest += InternalAssistantRequestHandler;
-            subChats.Add(subChat);
+            AddNewSubChat(name, summarizePrompt);
         }
 
         public void TrimMessages(int count)
         {
             subChats.Last().TrimMessages(count);
+        }
+
+        private void AddNewSubChat(string name, string? summarizePrompt = null, IEnumerable<(Role role, string message)>? messages = null)
+        {
+            var subChat = new SubChat(chatCompletionApi, name, summarizePrompt);
+            subChat.OnChatMessageAdded += InternalChatMessageAddedHandler;
+            subChat.OnChatMessagesRemoved += InternalChatMessagesRemovedHandler;
+            subChat.OnSubChatSummarized += InternalSubChatSummarizedHandler;
+            subChat.OnAssistantRequest += InternalAssistantRequestHandler;
+
+            if (messages != null)
+            {
+                foreach (var (role, message) in messages)
+                {
+                    subChat.AddMessage(role, message);
+                }
+            }
+
+            subChats.Add(subChat);
         }
 
         private void InternalChatMessageAddedHandler(string subChatName, Role role, string message)

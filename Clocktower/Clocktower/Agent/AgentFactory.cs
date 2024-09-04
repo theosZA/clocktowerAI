@@ -46,7 +46,7 @@ namespace Clocktower.Agent
             observer.OnDay += robotTriggers.OnDay;
             observer.OnNight += robotTriggers.OnNight;
             observer.OnNominationsStart += robotTriggers.OnNominationStart;
-            agent.OnInitialCharacter += robotTriggers.OnInitialCharacter;
+            agent.OnAssignCharacter += robotTriggers.OnAssignCharacter;
             agent.OnGainingCharacterAbility += robotTriggers.OnGainingCharacterAbility;
             agent.OnDead += robotTriggers.OnDead;
             agent.YourDemonIs += robotTriggers.YourDemonIs;
@@ -83,7 +83,7 @@ namespace Clocktower.Agent
                 form.Show();
                 return Task.CompletedTask;
             };
-            agent.OnInitialCharacter += form.AssignCharacter;
+            agent.OnAssignCharacter += form.AssignCharacter;
             agent.OnGainingCharacterAbility += form.OnGainCharacterAbility;
             agent.OnDead += form.YouAreDead;
 

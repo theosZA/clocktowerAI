@@ -5,6 +5,7 @@ if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
 StartNight
 FortuneTellerRedHerring
 Philosopher
+KazaliMinions
 MinionInformation
 DemonInformation
 Poisoner

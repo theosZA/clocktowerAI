@@ -114,26 +114,6 @@ namespace Clocktower.Agent.Requester
             return await ai.RequestShenanigans(options, sb.ToString());
         }
 
-        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
-        {
-            var sb = new StringBuilder(prompt);
-
-            switch (statement)
-            {
-                case IMarkupRequester.Statement.Morning:
-                    sb.Append(" There's no need to waste time encouraging collaboration and transparency - instead this is a chance to share information (or misinformation) that you want to publicly share.");
-                    break;
-
-                case IMarkupRequester.Statement.Evening:
-                    sb.Append(" This is a good chance to share speculation about what you think is happening in the game, who you think may be evil, and who would be a good player to execute today.");
-                    break;
-            }
-
-            sb.Append(" (You may always choose to say nothing. You should provide your reasoning as an internal monologue for what you want to say, if anything.)");
-
-            return await ai.RequestDialogue(sb.ToString());
-        }
-
         public async Task<IOption> RequestNomination(string prompt, IReadOnlyCollection<IOption> options)
         {
             var potentialNominees = options.Where(option => option is PlayerOption)
@@ -203,6 +183,33 @@ namespace Clocktower.Agent.Requester
             var sb = new StringBuilder(prompt);
             sb.Append(" You may include some reasoning for what you want to say. Only once you've heard what the other player has to say, and there's nothing more to discuss, you can choose to terminate the conversation.");
             return await ai.RequestChatDialogue(sb.ToString());
+        }
+
+        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
+        {
+            var sb = new StringBuilder(prompt);
+
+            switch (statement)
+            {
+                case IMarkupRequester.Statement.Morning:
+                    sb.Append(" There's no need to waste time encouraging collaboration and transparency - instead this is a chance to share information (or misinformation) that you want to publicly share.");
+                    break;
+
+                case IMarkupRequester.Statement.Evening:
+                    sb.Append(" This is a good chance to share speculation about what you think is happening in the game, who you think may be evil, and who would be a good player to execute today.");
+                    break;
+            }
+
+            sb.Append(" (You may always choose to say nothing. You should provide your reasoning as an internal monologue for what you want to say, if anything.)");
+
+            return await ai.RequestDialogue(sb.ToString());
+        }
+
+        public async Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        {
+            var sb = new StringBuilder(prompt);
+            sb.Append(" You should include your reasoning for who you will choose and which minion characters you'd prefer to have on your evil team.");
+            await ai.RequestKazaliMinions(kazaliMinionsOption, sb.ToString());
         }
 
         private static void AppendAliveSubsetOfPlayers(StringBuilder stringBuilder, IEnumerable<Player> players)

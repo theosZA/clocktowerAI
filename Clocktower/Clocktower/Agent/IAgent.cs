@@ -40,6 +40,8 @@ namespace Clocktower.Agent
         Task ResponseForFisherman(string advice);
         Task OnGainCharacterAbility(Character character);
 
+        Task<KazaliMinionsOption> RequestChoiceOfKazaliMinions(int minionCount, IReadOnlyCollection<Player> players, IReadOnlyCollection<Character> minionCharacters);
+
         Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);

@@ -81,32 +81,16 @@ namespace Clocktower.Agent.Requester
                 }
                 else
                 {
-                    var juggleDialog = new JuggleDialog(jugglerOption.PossiblePlayers, jugglerOption.ScriptCharacters);
+                    var juggleDialog = new PlayersAsCharactersDialog("Choose your juggles", 5, jugglerOption.PossiblePlayers, jugglerOption.ScriptCharacters);
                     var result = juggleDialog.ShowDialog();
                     if (result == DialogResult.OK)
                     {
-                        jugglerOption.AddJuggles(juggleDialog.GetJuggles());
+                        jugglerOption.AddJuggles(juggleDialog.GetPlayersAsCharacters());
                     }
                 }
             }
 
             return choice;
-        }
-
-        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
-        {
-            await notifier.Notify(prompt);
-
-            var autoActText = statement switch
-            {
-                IMarkupRequester.Statement.RollCall => form.AutoClaim.HasValue ? $"I am the {TextUtilities.CharacterToText(form.AutoClaim.Value)}." : string.Empty,
-                IMarkupRequester.Statement.SelfNomination => "There are reasons for me to be executed now. Trust me.",
-                IMarkupRequester.Statement.Prosection => "I believe they are evil and should be executed.",
-                IMarkupRequester.Statement.Defence => "I'm not evil. Please believe me.",
-                _ => string.Empty
-            };
-
-            return await GetSpeech(autoActText);
         }
 
         public async Task<IOption> RequestNomination(string prompt, IReadOnlyCollection<IOption> options)
@@ -134,6 +118,44 @@ namespace Clocktower.Agent.Requester
                 await notifier.Notify(TextUtilities.FormatMarkupText("%b: %n", form.PlayerName, speech));
             }
             return (speech, false);
+        }
+
+        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
+        {
+            await notifier.Notify(prompt);
+
+            var autoActText = statement switch
+            {
+                IMarkupRequester.Statement.RollCall => form.AutoClaim.HasValue ? $"I am the {TextUtilities.CharacterToText(form.AutoClaim.Value)}." : string.Empty,
+                IMarkupRequester.Statement.SelfNomination => "There are reasons for me to be executed now. Trust me.",
+                IMarkupRequester.Statement.Prosection => "I believe they are evil and should be executed.",
+                IMarkupRequester.Statement.Defence => "I'm not evil. Please believe me.",
+                _ => string.Empty
+            };
+
+            return await GetSpeech(autoActText);
+        }
+
+        public Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        {
+            if (form.AutoAct)
+            {
+                var players = kazaliMinionsOption.PossiblePlayers.ToList().RandomPickN(kazaliMinionsOption.MinionCount, random);
+                var characters = kazaliMinionsOption.MinionCharacters.ToList().RandomPickN(kazaliMinionsOption.MinionCount, random);
+                kazaliMinionsOption.ChooseMinions(players.Zip(characters));
+            }
+            else
+            {
+                var kazaliDialog = new PlayersAsCharactersDialog("Choose your minions", kazaliMinionsOption.MinionCount, kazaliMinionsOption.PossiblePlayers, kazaliMinionsOption.MinionCharacters,
+                                                                 allowEmptyChoices: false, allowDuplicatePlayers: false, allowDuplicateCharacters: false);
+                var result = kazaliDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    kazaliMinionsOption.ChooseMinions(kazaliDialog.GetPlayersAsCharacters());
+                }
+            }
+            
+            return Task.CompletedTask;
         }
 
         private async Task<IOption> RequestOption(string prompt, IReadOnlyCollection<IOption> options)

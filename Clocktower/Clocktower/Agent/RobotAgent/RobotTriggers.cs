@@ -47,7 +47,7 @@ namespace Clocktower.Agent.RobotAgent
             }
         }
 
-        public Task OnInitialCharacter(Character character, Alignment alignment)
+        public Task OnAssignCharacter(Character character, Alignment alignment)
         {
             Character = character;
             OnStatusChange?.Invoke();

@@ -75,14 +75,6 @@ namespace Clocktower.Agent.Requester
             return await prompter.RequestShenanigans(options, sb.ToString());
         }
 
-        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
-        {
-            var sb = new StringBuilder(prompt);
-            sb.AppendLine(" You may respond with `PASS` if you don't want to say anything.");
-
-            return await prompter.RequestDialogue(sb.ToString());
-        }
-
         public async Task<IOption> RequestNomination(string prompt, IReadOnlyCollection<IOption> options)
         {
             var sb = new StringBuilder(prompt);
@@ -120,9 +112,34 @@ namespace Clocktower.Agent.Requester
         public async Task<(string dialogue, bool endChat)> RequestMessageForChat(string prompt)
         {
             var sb = new StringBuilder(prompt);
-            sb.Append(" To end the conversation respond with `PASS` or conclude what you wish to say with \"Goodbye\".");
+            sb.AppendLine(" To end the conversation respond with `PASS` or conclude what you wish to say with \"Goodbye\".");
 
             return await prompter.RequestChatDialogue(sb.ToString());
+        }
+
+        public async Task<string> RequestStatement(string prompt, IMarkupRequester.Statement statement)
+        {
+            var sb = new StringBuilder(prompt);
+            sb.AppendLine(" You may respond with `PASS` if you don't want to say anything.");
+
+            return await prompter.RequestDialogue(sb.ToString());
+        }
+
+        public async Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        {
+            var sb = new StringBuilder(prompt);
+            sb.Append(" Respond with `");
+            for (int i = 0; i < kazaliMinionsOption.MinionCount; ++i)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append($"player_{i + 1} as character");
+            }
+            sb.AppendLine($"` (for exactly {kazaliMinionsOption.MinionCount} minion{(kazaliMinionsOption.MinionCount == 1 ? string.Empty : "s")})");
+
+            await prompter.RequestKazaliMinions(kazaliMinionsOption, sb.ToString());
         }
 
         private async Task<IOption> RequestOption(string prompt, IReadOnlyCollection<IOption> options)

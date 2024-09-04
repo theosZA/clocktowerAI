@@ -56,7 +56,15 @@ namespace Clocktower.Setup
 
         public void UpdateCounter(int playerCount)
         {
-            Counter.Text = $"{SelectedCount} of {string.Join('/', characterTypeDistribution.GetPossibleCounts(characterType, playerCount))}";
+            var counts = characterTypeDistribution.GetPossibleCounts(characterType, playerCount).ToList();
+            if (counts.Count() > 3 && counts.Max() - counts.Min() == counts.Count() - 1)
+            {
+                Counter.Text = $"{SelectedCount} of {counts.Min()}-{counts.Max()}";
+            }
+            else
+            {
+                Counter.Text = $"{SelectedCount} of {string.Join('/', counts)}";
+            }
         }
 
         public bool IsCountOkay(int playerCount)

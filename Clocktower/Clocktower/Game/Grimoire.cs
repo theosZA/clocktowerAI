@@ -57,22 +57,22 @@ namespace Clocktower.Game
             this.winner = winner;
         }
 
-        public void AssignCharacters(IStoryteller storyteller)
+        public async Task AssignCharacters(IStoryteller storyteller)
         {
             foreach (var player in players)
             {
                 storyteller.AssignCharacter(player);
-                player.Agent.AssignCharacter(player.Character, player.Alignment);
+                await player.Agent.AssignCharacter(player.Character, player.Alignment);
             }
         }
 
-        public void ChangeCharacter(Player player, Character newCharacter)
+        public async Task ChangeCharacter(Player player, Character newCharacter)
         {
             foreach (var affectedPlayer in players)
             {
                 affectedPlayer.Tokens.ClearTokensForPlayer(player);
             }
-            player.ChangeCharacter(newCharacter);
+            await player.ChangeCharacter(newCharacter);
         }
 
         public void ClearTokensOnPlayerDeath(Player player)

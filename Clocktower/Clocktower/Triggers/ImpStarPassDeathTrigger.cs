@@ -24,7 +24,7 @@ namespace Clocktower.Triggers
             var newImp = await GetNewImp();
             if (newImp != null)
             {
-                grimoire.ChangeCharacter(newImp, Character.Imp);
+                await grimoire.ChangeCharacter(newImp, Character.Imp);
                 storyteller.AssignCharacter(newImp);
             }
         }

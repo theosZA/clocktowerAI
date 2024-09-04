@@ -46,6 +46,7 @@ namespace Clocktower.Storyteller
 
         void AssignCharacter(Player player);
 
+        void KazaliMinions(Player kazali, IReadOnlyCollection<(Player, Character)> minionChoices);
         void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters);
         void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 

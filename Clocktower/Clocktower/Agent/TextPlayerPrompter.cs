@@ -1,4 +1,5 @@
 ﻿using Clocktower.Options;
+using System.Text;
 
 namespace Clocktower.Agent
 {
@@ -50,6 +51,21 @@ namespace Clocktower.Agent
             }
 
             return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
+        }
+
+        public async Task RequestKazaliMinions(KazaliMinionsOption kazaliMinionsOption, string prompt)
+        {
+            while (!kazaliMinionsOption.AssignmentOk)
+            {
+                var response = (await Request(prompt)).Trim();
+                if (!kazaliMinionsOption.AddMinionChoicesFromText(response))
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendFormattedText($"That is not a valid assignment of minions. Make sure to choose exactly %b minion{(kazaliMinionsOption.MinionCount == 1 ? string.Empty : "s")}. ", kazaliMinionsOption.MinionCount);
+                    sb.AppendFormattedText("Choose distinct players from %P. Choose distinct Minion characters from %C.", kazaliMinionsOption.PossiblePlayers, kazaliMinionsOption.MinionCharacters);
+                    prompt = sb.ToString();
+                }
+            }
         }
 
         private async Task<IOption> RetryRequestChoice(IReadOnlyCollection<IOption> options)

@@ -34,14 +34,14 @@ namespace Clocktower.Events
             {   // The Philosopher believes they've gained their new ability, but they haven't.
                 // We treat this like they're a drunk version of the character whose ability they think they've gained for as long
                 // as they are drunk or poisoned.
-                philosopher.GainCharacterAbility(character);
+                await philosopher.GainCharacterAbility(character);
                 philosopher.Tokens.Add(Token.IsTheBadPhilosopher, philosopher);
 
                 storyteller.ChoiceFromPhilosopher(philosopher, philosopherDrunkedPlayer: null, character);
             }
             else
             {   // Sober and healthy Philosopher.
-                philosopher.GainCharacterAbility(character);
+                await philosopher.GainCharacterAbility(character);
 
                 var philosopherDrunkedPlayer = grimoire.Players.FirstOrDefault(player => player.RealCharacter == character);
                 philosopherDrunkedPlayer?.Tokens.Add(Token.PhilosopherDrunk, philosopher);

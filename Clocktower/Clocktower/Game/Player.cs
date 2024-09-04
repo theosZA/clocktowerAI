@@ -70,7 +70,7 @@ namespace Clocktower.Game
             }
         }
 
-        public void ChangeCharacter(Character newCharacter)
+        public async Task ChangeCharacter(Character newCharacter)
         {
             var currentCharacterInfo = new List<Character>();
             if (Tokens.HasToken(Token.IsTheDrunk))
@@ -85,7 +85,8 @@ namespace Clocktower.Game
             characterHistory.Add(currentCharacterInfo);
 
             Character = newCharacter;
-            Agent.AssignCharacter(Character, Alignment);
+            Alignment = newCharacter.Alignment();
+            await Agent.AssignCharacter(Character, Alignment);
 
             if (newCharacter == Character.Juggler)
             {
@@ -93,7 +94,7 @@ namespace Clocktower.Game
             }
         }
 
-        public void GainCharacterAbility(Character newCharacter)
+        public async Task GainCharacterAbility(Character newCharacter)
         {
             if (CannibalAbility == Character.Philosopher)
             {
@@ -112,7 +113,7 @@ namespace Clocktower.Game
             {
                 Character = newCharacter;
             }
-            Agent.OnGainCharacterAbility(newCharacter);
+            await Agent.OnGainCharacterAbility(newCharacter);
 
             if (newCharacter == Character.Juggler)
             {

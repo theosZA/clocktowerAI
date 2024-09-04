@@ -28,6 +28,5 @@ namespace Clocktower.Agent.RobotAgent.Model
             // All responses are valid.
             throw new NotImplementedException();
         }
-
     }
 }

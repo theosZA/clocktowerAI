@@ -30,7 +30,7 @@ namespace Clocktower.Setup
             {
                 CharacterType.Townsfolk => GetRequiredTownsfolk(playerCount),
                 CharacterType.Outsider => GetRequiredOutsiders(playerCount, Array.Empty<Character>()),
-                CharacterType.Minion => new[] { GetRequiredMinions(playerCount) },
+                CharacterType.Minion => new[] { GetMinionCount(playerCount) },
                 CharacterType.Demon => new[] { 1 },
                 _ => throw new InvalidEnumArgumentException(nameof(characterType))
             };
@@ -55,6 +55,20 @@ namespace Clocktower.Setup
         /// <returns>The modification to the Outsider count.</returns>
         public int GetRandomOutsiderModificationByEvil()
         {
+            if (isCharacterSelected(Character.Kazali))
+            {
+                // While we could include ridiculous Outsider counts on a supporting script (like Whale Bucket),
+                // let's choose a sensible Outsider count based on player count.
+                // Rarely we'll have -1 or +2, and more commonly we'll have +0 or +1.
+                return random.Next(10) switch
+                {
+                    0 => -1,
+                    >= 1 and <= 4 => 0,
+                    >= 5 and <= 8 => +1,
+                    _ => +2
+                };
+            }
+
             int outsiderModification = 0;
 
             if (isCharacterSelected(Character.Baron))
@@ -102,7 +116,7 @@ namespace Clocktower.Setup
         public int GetTownsfolkCount(int playerCount, int outsiderModification)
         {
             int demonCount = 1;
-            int minionCount = GetRequiredMinions(playerCount);
+            int minionCount = GetMinionCount(playerCount);
             int outsiderCount = GetOutsiderCount(playerCount, outsiderModification);
             int townsfolkCount = playerCount - (outsiderCount + minionCount + demonCount);
 
@@ -136,13 +150,33 @@ namespace Clocktower.Setup
         /// <returns>The number of Minions that should be included.</returns>
         public int GetMinionCount(int playerCount)
         {
-            return GetRequiredMinions(playerCount);
+            if (isCharacterSelected(Character.Kazali))
+            {
+                return 0;
+            }
+
+            return GetBaseMinionCount(playerCount);
+        }
+
+        /// <summary>
+        /// Calculates how many Minions should be included only taking into account the number of players and no other setup considerations.
+        /// </summary>
+        /// <param name="playerCount">The number of players in the game.</param>
+        /// <returns>The number of Minions that should be included by default.</returns>
+        public static int GetBaseMinionCount(int playerCount)
+        {
+            return playerCount switch
+            {
+                <= 9 => 1,
+                <= 12 => 2,
+                _ => 3
+            };
         }
 
         private IEnumerable<int> GetRequiredTownsfolk(int playerCount)
         {
             int demonCount = 1;
-            int minionCount = GetRequiredMinions(playerCount);
+            int minionCount = GetMinionCount(playerCount);
 
             foreach (int outsiderCount in GetRequiredOutsiders(playerCount, Array.Empty<Character>()))
             {
@@ -163,18 +197,13 @@ namespace Clocktower.Setup
 
         private IEnumerable<int> GetRequiredOutsiders(int playerCount, IEnumerable<Character> excludingCharacters)
         {
-            int baseOutsiders = playerCount switch
-            {
-                7 => 0,
-                8 => 1,
-                9 => 2,
-                10 => 0,
-                11 => 1,
-                12 => 2,
-                13 => 0,
-                14 => 1,
-                _ => 2
-            };
+            if (isCharacterSelected(Character.Kazali))
+            {   // Any number of Outsiders is allowed.
+                int max = Math.Min(script.OfCharacterType(CharacterType.Outsider).Count(), playerCount - 1);
+                return Enumerable.Range(0, max + 1);
+            }
+
+            int baseOutsiders = GetBaseOutsiderCount(playerCount);
 
             var possibleOutsiderAdjustments = new List<IReadOnlyCollection<int>>();
             var outsiderAdjustingCharacters = new[] { Character.Baron, Character.Godfather, Character.Balloonist }.Except(excludingCharacters).ToList();
@@ -193,16 +222,6 @@ namespace Clocktower.Setup
             return possibleCumulativeOutsiderAdjustments.Distinct()
                                                         .Select(adjustment => Clamp(baseOutsiders + adjustment, 0, maximumOutsiders))
                                                         .Distinct();
-        }
-
-        private static int GetRequiredMinions(int playerCount)
-        {
-            return playerCount switch
-            {
-                <= 9 => 1,
-                <= 12 => 2,
-                _ => 3
-            };
         }
 
         private int GetBaseOutsiderCount(int playerCount)

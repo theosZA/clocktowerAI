@@ -11,7 +11,7 @@ namespace Clocktower.Triggers
             this.grimoire = grimoire;
         }
 
-        public Task RunTrigger(DeathInformation deathInformation)
+        public async Task RunTrigger(DeathInformation deathInformation)
         {
             if (deathInformation.dyingPlayer.CharacterType == CharacterType.Demon && grimoire.Players.Count(player => player.Alive) >= 5)
             {
@@ -20,11 +20,9 @@ namespace Clocktower.Triggers
                 {
                     deathInformation.hasScarletWomanJustBecomeDemon = true;
                     storyteller.ScarletWomanTrigger(deathInformation.dyingPlayer, scarletWoman);
-                    grimoire.ChangeCharacter(scarletWoman, deathInformation.dyingPlayer.Character);
+                    await grimoire.ChangeCharacter(scarletWoman, deathInformation.dyingPlayer.Character);
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         private readonly IStoryteller storyteller;

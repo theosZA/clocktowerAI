@@ -37,6 +37,23 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromOjo(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
         }
 
+        public static Wrapper<int> MockKazaliMinionChoice(this IAgent agent, IReadOnlyCollection<(Character currentCharacter, Character minionCharacter)> assignment)
+        {
+            Wrapper<int> minionCount = new();
+            agent.RequestChoiceOfKazaliMinions(Arg.Any<int>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>())
+                .Returns(args =>
+                {
+                    minionCount.Value = args.ArgAt<int>(0);
+                    var players = args.ArgAt<IReadOnlyCollection<Player>>(1);
+                    var characters = args.ArgAt<IReadOnlyCollection<Character>>(2);
+                    var minions = assignment.Select(assignment => (players.First(player => player.RealCharacter == assignment.currentCharacter), assignment.minionCharacter));
+                    var kazaliMinionsOption = new KazaliMinionsOption(minionCount.Value, players, characters);
+                    kazaliMinionsOption.ChooseMinions(minions);
+                    return kazaliMinionsOption;
+                });
+            return minionCount;
+        }
+
         public static void MockAssassin(this IAgent agent, Character? target)
         {
             if (target == null)

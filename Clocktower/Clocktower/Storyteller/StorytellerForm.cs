@@ -393,6 +393,33 @@ namespace Clocktower.Storyteller
             }
         }
 
+        public void KazaliMinions(Player kazali, IReadOnlyCollection<(Player, Character)> minionChoices)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendFormattedText("%p has chosen the following ", kazali, StorytellerView);
+            if (minionChoices.Count == 1)
+            {
+                sb.Append("minion: ");
+            }
+            else
+            {
+                sb.Append("minions: ");
+            }
+            bool first = true;
+            foreach (var choice in minionChoices)
+            {
+                if (!first)
+                {
+                    sb.Append(", ");
+                }
+                sb.AppendFormattedText("%p as %c", choice.Item1, choice.Item2, StorytellerView);
+                first = false;
+            }
+
+            AddMarkupText(sb.ToString());
+        }
+
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             var sb = new StringBuilder();

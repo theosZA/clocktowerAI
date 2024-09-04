@@ -119,6 +119,11 @@ namespace Clocktower.Agent.RobotAgent
             return await RequestOptionFromJson<PublicAction>(options, prompt);
         }
 
+        public async Task RequestKazaliMinions(KazaliMinionsOption kazaliMinionsOption, string prompt)
+        {
+            await RequestOptionFromJson<KazaliMinions>(new[] { kazaliMinionsOption }, prompt);
+        }
+
         private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string prompt) where T: IOptionSelection
         {
             for (int retry = 0; retry < 3; retry++)

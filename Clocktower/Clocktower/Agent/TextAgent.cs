@@ -27,7 +27,7 @@ namespace Clocktower.Agent
         public IGameObserver Observer { get; }
 
         public Func<Task>? OnStartGame { get; set; }
-        public Func<Character, Alignment, Task>? OnInitialCharacter { get; set; }
+        public Func<Character, Alignment, Task>? OnAssignCharacter { get; set; }
         public Func<Character, Task>? OnGainingCharacterAbility { get; set; }
         public Func<Task>? OnDead { get; set; }
         public Func<Player, Task>? YourDemonIs { get; set; }
@@ -45,12 +45,19 @@ namespace Clocktower.Agent
 
         public async Task AssignCharacter(Character character, Alignment alignment)
         {
-            this.character = character;
-            await SendMessage("You are the %c. You are %a.", character, alignment);
-
-            if (OnInitialCharacter != null)
+            if (this.character.HasValue)
             {
-                await OnInitialCharacter(character, alignment);
+                await SendMessage("You are now the %c. You are %a.", character, alignment);
+            }
+            else
+            {
+                await SendMessage("You are the %c. You are %a.", character, alignment);
+            }
+            this.character = character;
+
+            if (OnAssignCharacter != null)
+            {
+                await OnAssignCharacter(character, alignment);
             }
         }
 
@@ -295,6 +302,16 @@ namespace Clocktower.Agent
             {
                 await OnGainingCharacterAbility(character);
             }
+        }
+
+        public async Task<KazaliMinionsOption> RequestChoiceOfKazaliMinions(int minionCount, IReadOnlyCollection<Player> players, IReadOnlyCollection<Character> minionCharacters)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText($"As the %c, please choose %n player{(minionCount == 1 ? string.Empty : "s")} to be your minion{(minionCount == 1 ? string.Empty : "s")}", Character.Kazali, minionCount);
+
+            var kazaliMinionsOption = new KazaliMinionsOption(minionCount, players, minionCharacters);
+            await requester.RequestKazaliMinions(sb.ToString(), kazaliMinionsOption);
+            return kazaliMinionsOption;
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)

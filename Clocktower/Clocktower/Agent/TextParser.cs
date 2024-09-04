@@ -1,6 +1,5 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
-using static System.Windows.Forms.Design.AxImporter;
 
 namespace Clocktower.Agent
 {
@@ -100,6 +99,41 @@ namespace Clocktower.Agent
 
             // For each of our options, we're going to score it based on how closely the AI response matches what it's looking for.
             return options.Select(option => (option, Score(option, text))).MaxBy(pair => pair.Item2).option;
+        }
+
+        public static (Player, Character)? ReadPlayerAsCharacterFromText(string text, IReadOnlyCollection<Player> possiblePlayers, IReadOnlyCollection<Character> possibleCharacters)
+        {
+            // If the player is being helpful they'll have written the juggle in the form "PLAYER as CHARACTER".
+            if (text.Contains(" as ", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return ReadPlayerAsCharacterFromText(text.TextBefore(" as ", StringComparison.InvariantCultureIgnoreCase), text.TextAfter(" as ", StringComparison.InvariantCultureIgnoreCase),
+                                                     possiblePlayers, possibleCharacters);
+            }
+
+            // Otherwise we're going to just look for player name and character name matches in the text - this is obviously fragile.
+            return ReadPlayerAsCharacterFromText(text, text, possiblePlayers, possibleCharacters);
+        }
+
+        public static IEnumerable<(Player, Character)?> ReadPlayersAsCharactersFromText(string text, IReadOnlyCollection<Player> possiblePlayers, IReadOnlyCollection<Character> possibleCharacters)
+        {
+            return text.Trim().Split(',').Select(textFragment => ReadPlayerAsCharacterFromText(textFragment, possiblePlayers, possibleCharacters)).ToList();
+        }
+
+        private static (Player, Character)? ReadPlayerAsCharacterFromText(string playerText, string characterText, IReadOnlyCollection<Player> possiblePlayers, IReadOnlyCollection<Character> possibleCharacters)
+        {
+            var player = ReadPlayerFromText(playerText, possiblePlayers);
+            if (player == null)
+            {
+                return null;
+            }
+
+            var character = ReadCharacterFromText(characterText, possibleCharacters);
+            if (!character.HasValue)
+            {
+                return null;
+            }
+
+            return (player, character.Value);
         }
 
         private static IOption? CleanUpText(ref string text, IReadOnlyCollection<IOption> options)

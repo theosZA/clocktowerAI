@@ -43,5 +43,6 @@ namespace Clocktower.Agent.Requester
 
         Task<string> RequestStatement(string prompt, Statement statement);
 
+        Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption);
     }
 }
