@@ -61,6 +61,15 @@
             tokens.RemoveAll(pair => pair.player == playerWhoHasDied && IsTokenThatExpiresOnPlayerDeath(pair.token));
         }
 
+        /// <summary>
+        /// Call when a player loses their ability but doesn't know it. This might be because they became the Drunk or the Marionette during the game.
+        /// </summary>
+        /// <param name="player">The player who has lost their ability.</param>
+        public void ClearTokensOnPlayerLosingAbility(Player player)
+        {
+            tokens.RemoveAll(pair => pair.player == player && IsTokenToBeRemovedOnLosingAbility(pair.token));
+        }
+
         public void ClearTokensForPlayer(Player assigningPlayer)
         {
             tokens.RemoveAll(pair => pair.player == assigningPlayer);
@@ -145,6 +154,19 @@
                 || token == Token.ChosenByButler
                 || token == Token.JugglerBeforeFirstDay
                 || token == Token.CannibalEaten
+                || token == Token.CannibalPoisoned
+                || token == Token.CannibalDrunk;
+        }
+
+        private static bool IsTokenToBeRemovedOnLosingAbility(Token token)
+        {   // These are only tokens that have an active effect on the game.
+            return token == Token.PhilosopherDrunk
+                || token == Token.NoDashiiPoisoned
+                || token == Token.PoisonedByPoisoner
+                || token == Token.CursedByWitch
+                || token == Token.PickedByDevilsAdvocate
+                || token == Token.ProtectedByDevilsAdvocate
+                || token == Token.ProtectedByMonk
                 || token == Token.CannibalPoisoned
                 || token == Token.CannibalDrunk;
         }

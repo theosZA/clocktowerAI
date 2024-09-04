@@ -82,7 +82,11 @@ namespace Clocktower.Agent.Requester
                 }
                 else
                 {
-                    var juggleDialog = new PlayersAsCharactersDialog("Choose your juggles", 5, jugglerOption.PossiblePlayers, jugglerOption.ScriptCharacters);
+                    var juggleDialog = new PlayersAsCharactersDialog("Choose your juggles", 5, jugglerOption.PossiblePlayers, jugglerOption.ScriptCharacters,
+                                                                     juggles =>
+                                                                     {
+                                                                         return juggles.All(juggle => jugglerOption.PossiblePlayers.Contains(juggle.player) && jugglerOption.ScriptCharacters.Contains(juggle.character));
+                                                                     });
                     var result = juggleDialog.ShowDialog();
                     if (result == DialogResult.OK)
                     {
@@ -148,7 +152,7 @@ namespace Clocktower.Agent.Requester
             else
             {
                 var kazaliDialog = new PlayersAsCharactersDialog("Choose your minions", kazaliMinionsSelection.MinionCount, kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters,
-                                                                 allowEmptyChoices: false, allowDuplicatePlayers: false, allowDuplicateCharacters: false);
+                                                                 kazaliMinionsSelection.ValidateSelection);
                 var result = kazaliDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {

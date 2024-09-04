@@ -59,15 +59,23 @@ namespace Clocktower.Agent
             while (true)
             {
                 var response = (await Request(prompt)).Trim();
-                if (kazaliMinionsSelection.SelectMinions(response))
+                var (ok, error) = kazaliMinionsSelection.SelectMinions(response);
+                if (ok)
                 {
                     return;
                 }
 
-                var sb = new StringBuilder();
-                sb.AppendFormattedText($"That is not a valid assignment of minions. Make sure to choose exactly %b minion{(kazaliMinionsSelection.MinionCount == 1 ? string.Empty : "s")}. ", kazaliMinionsSelection.MinionCount);
-                sb.AppendFormattedText("Choose distinct players from %P. Choose distinct Minion characters from %C.", kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters);
-                prompt = sb.ToString();
+                if (string.IsNullOrEmpty(error))
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendFormattedText($"That is not a valid assignment of minions. Make sure to choose exactly %b minion{(kazaliMinionsSelection.MinionCount == 1 ? string.Empty : "s")}. ", kazaliMinionsSelection.MinionCount);
+                    sb.AppendFormattedText("Choose distinct players from %P. Choose distinct Minion characters from %C.", kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters);
+                    prompt = sb.ToString();
+                }
+                else
+                {
+                    prompt = error;
+                }
             }
         }
 

@@ -125,13 +125,15 @@ namespace Clocktower.Agent.RobotAgent
             for (int retry = 0; retry < 3; retry++)
             {
                 var response = await RequestObject<KazaliMinions>(prompt);
-                var responseSelection = response.MinionAssignments.Select(assignment => assignment.GetAssignment(kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters));
-                if (responseSelection.All(assignment => assignment.HasValue) &&
-                    kazaliMinionsSelection.SelectMinions(responseSelection.Select(assignment => assignment!.Value).ToList()))
+                var (ok, error) = kazaliMinionsSelection.SelectMinions(response.MinionAssignments);
+                if (ok)
                 {
                     return;
                 }
-                prompt = response.ErrorText(kazaliMinionsSelection);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    prompt = error;
+                }
             }
             throw new Exception("AI has failed to pick minions as Kazali");
         }

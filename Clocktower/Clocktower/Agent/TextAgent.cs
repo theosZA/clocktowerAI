@@ -309,7 +309,11 @@ namespace Clocktower.Agent
         {
             var sb = new StringBuilder();
             int minionCount = kazaliMinionsSelection.MinionCount;
-            sb.AppendFormattedText($"As the %c, please choose %n player{(minionCount == 1 ? string.Empty : "s")} to be your minion{(minionCount == 1 ? string.Empty : "s")}", Character.Kazali, minionCount);
+            sb.AppendFormattedText($"As the %c, please choose %n player{(minionCount == 1 ? string.Empty : "s")} to be your minion{(minionCount == 1 ? string.Empty : "s")}.", Character.Kazali, minionCount);
+            if (kazaliMinionsSelection.CharacterLimitations.TryGetValue(Character.Marionette, out var marionettePlayers))
+            {
+                sb.AppendFormattedText(" (Reminder that if you choose to create a %c, it must be one of your neighbors, %p or %p.)", Character.Marionette, marionettePlayers.ElementAt(0), marionettePlayers.ElementAt(1));
+            }
             await requester.RequestKazaliMinions(sb.ToString(), kazaliMinionsSelection);
         }
 

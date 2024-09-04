@@ -2,3 +2,4 @@
 Organ Grinder / Butler: If the Organ Grinder is causing secret voting, the Butler may raise their hand to vote but their vote is only counted if their master voted too.
 Marionette / Balloonist: If the Marionette thinks that they are the Balloonist, +1 Outsider was added.
 Marionette / Snitch: The Marionette does not learn 3 not in-play characters. The Demon learns an extra 3 instead.
+Kazali / Marionette: If the Kazali chooses to create a Marionette, they must choose one of their neighbors.

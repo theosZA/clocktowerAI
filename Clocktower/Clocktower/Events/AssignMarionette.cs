@@ -15,8 +15,7 @@ namespace Clocktower.Events
         {
             var marionetteCandidates = GetMarionetteCandidates().ToList();
             var marionette = marionetteCandidates.Count == 1 ? marionetteCandidates[0] : await storyteller.GetMarionette(marionetteCandidates);
-            marionette.Tokens.Add(Token.IsTheMarionette, marionette);
-            marionette.Alignment = Alignment.Evil;
+            await grimoire.ChangeCharacter(marionette, Character.Marionette);
             storyteller.AssignCharacter(marionette);
         }
 

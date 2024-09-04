@@ -216,7 +216,8 @@ namespace Clocktower.Agent
         {
             return script.Where(character => character == Character.Godfather
                                           || character == Character.Baron
-                                          || character == Character.Balloonist);
+                                          || character == Character.Balloonist
+                                          || character == Character.Kazali);
         }
 
         private static readonly Regex descriptionRegex = new(@"^([\w\s]+):(.+)$");

@@ -5,13 +5,11 @@ namespace Clocktower.Agent
     public partial class PlayersAsCharactersDialog : Form
     {
         public PlayersAsCharactersDialog(string title, int count, IReadOnlyCollection<Player> players, IReadOnlyCollection<Character> characters,
-                                         bool allowEmptyChoices = true, bool allowDuplicatePlayers = true, bool allowDuplicateCharacters = true)
+                                         Func<IReadOnlyCollection<(Player player, Character character)>, bool> validationFunction)
         {
             this.players = players;
             this.characters = characters;
-            this.allowEmptyChoices = allowEmptyChoices;
-            this.allowDuplicatePlayers = allowDuplicatePlayers;
-            this.allowDuplicateCharacters = allowDuplicateCharacters;
+            this.validationFunction = validationFunction;
 
             InitializeComponent();
             Text = title;
@@ -75,36 +73,13 @@ namespace Clocktower.Agent
 
         private bool IsSubmissionAllowed()
         {
-            // Check missing players.
-            if (!allowEmptyChoices && comboBoxes.Any(row => string.IsNullOrEmpty(row.playersComboBox.Text)))
-            {
-                return false;
-            }
-            // Check missing characters.
-            if (!allowEmptyChoices && comboBoxes.Any(row => string.IsNullOrEmpty(row.charactersComboBox.Text)))
-            {
-                return false;
-            }
-            // Check duplicate players.
-            if (!allowDuplicatePlayers && comboBoxes.DistinctBy(row => row.playersComboBox.Text).Count() != comboBoxes.Count)
-            {
-                return false;
-            }
-            // Check duplicate characters.
-            if (!allowDuplicateCharacters && comboBoxes.DistinctBy(row => row.charactersComboBox.Text).Count() != comboBoxes.Count)
-            {
-                return false;
-            }
-
-            return true;
+            return validationFunction(GetPlayersAsCharacters().ToList());
         }
 
         private readonly IReadOnlyCollection<Player> players;
         private readonly IReadOnlyCollection<Character> characters;
         private readonly List<(ComboBox playersComboBox, ComboBox charactersComboBox)> comboBoxes = new();
 
-        private readonly bool allowEmptyChoices;
-        private readonly bool allowDuplicatePlayers;
-        public readonly bool allowDuplicateCharacters;
+        private readonly Func<IReadOnlyCollection<(Player player, Character minionCharacter)>, bool> validationFunction;
     }
 }

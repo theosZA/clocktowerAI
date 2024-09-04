@@ -41,6 +41,10 @@ namespace Clocktower.Game
         /// </summary>
         public IReadOnlyCollection<List<Character>> CharacterHistory => characterHistory;
 
+        /// <summary>
+        /// Returns true if the player doesn't have the ability they think they do. Technically this includes a few cases where they aren't actually
+        /// drunk or poisoned like for a Marionette or Lunatic.
+        /// </summary>
         public bool DrunkOrPoisoned => Tokens.DrunkOrPoisoned;
 
         public TokensOnPlayer Tokens { get; }

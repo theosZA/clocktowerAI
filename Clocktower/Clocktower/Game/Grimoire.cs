@@ -68,6 +68,17 @@ namespace Clocktower.Game
 
         public async Task ChangeCharacter(Player player, Character newCharacter)
         {
+            if (newCharacter == Character.Marionette)
+            {
+                foreach (var affectedPlayer in players)
+                {
+                    affectedPlayer.Tokens.ClearTokensOnPlayerLosingAbility(player);
+                }
+                player.Tokens.Add(Token.IsTheMarionette, player);
+                player.Alignment = Alignment.Evil;
+                return;
+            }
+
             foreach (var affectedPlayer in players)
             {
                 affectedPlayer.Tokens.ClearTokensForPlayer(player);

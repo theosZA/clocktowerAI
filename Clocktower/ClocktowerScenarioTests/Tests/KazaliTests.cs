@@ -1,6 +1,7 @@
 using Clocktower;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using ClocktowerScenarioTests.Mocks;
 
 namespace ClocktowerScenarioTests.Tests
@@ -237,6 +238,34 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             await setup.Agent(Character.Saint).DidNotReceive().YouAreDead();
+        }
+
+        [Test]
+        public async Task Kazali_MarionetteJinx()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Soldier,Mayor");
+            KazaliMinionsSelection? kazaliMinionsSelection = null;
+            setup.Agent(Character.Kazali).When(agent => agent.RequestSelectionOfKazaliMinions(Arg.Any<KazaliMinionsSelection>()))
+                .Do(args =>
+                {
+                    kazaliMinionsSelection = args.ArgAt<KazaliMinionsSelection>(0);
+                    var minion = (kazaliMinionsSelection.PossiblePlayers.First(player => player.RealCharacter == Character.Fisherman), Character.Marionette);
+                    kazaliMinionsSelection.SelectMinions(new[] { minion });
+                });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(kazaliMinionsSelection, Is.Not.Null);
+            Assert.That(kazaliMinionsSelection.CharacterLimitations.TryGetValue(Character.Marionette, out var marionetteCandidates), Is.True);
+            Assert.That(marionetteCandidates!.Count(), Is.EqualTo(2));
+            Assert.That(marionetteCandidates!.ElementAt(0).Character, Is.EqualTo(Character.Fisherman));
+            Assert.That(marionetteCandidates!.ElementAt(1).Character, Is.EqualTo(Character.Mayor));
+            await setup.Agent(Character.Fisherman).DidNotReceive().AssignCharacter(Character.Marionette, Alignment.Evil);
+            await setup.Agent(Character.Fisherman).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>());
         }
     }
 }
