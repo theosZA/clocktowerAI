@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent.RobotAgent.Model;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using OpenAi;
 
 namespace Clocktower.Agent.RobotAgent
@@ -119,9 +120,20 @@ namespace Clocktower.Agent.RobotAgent
             return await RequestOptionFromJson<PublicAction>(options, prompt);
         }
 
-        public async Task RequestKazaliMinions(KazaliMinionsOption kazaliMinionsOption, string prompt)
+        public async Task RequestKazaliMinions(KazaliMinionsSelection kazaliMinionsSelection, string prompt)
         {
-            await RequestOptionFromJson<KazaliMinions>(new[] { kazaliMinionsOption }, prompt);
+            for (int retry = 0; retry < 3; retry++)
+            {
+                var response = await RequestObject<KazaliMinions>(prompt);
+                var responseSelection = response.MinionAssignments.Select(assignment => assignment.GetAssignment(kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters));
+                if (responseSelection.All(assignment => assignment.HasValue) &&
+                    kazaliMinionsSelection.SelectMinions(responseSelection.Select(assignment => assignment!.Value).ToList()))
+                {
+                    return;
+                }
+                prompt = response.ErrorText(kazaliMinionsSelection);
+            }
+            throw new Exception("AI has failed to pick minions as Kazali");
         }
 
         private async Task<IOption> RequestOptionFromJson<T>(IReadOnlyCollection<IOption> options, string prompt) where T: IOptionSelection

@@ -1,4 +1,5 @@
 ﻿using Clocktower.Options;
+using Clocktower.Selection;
 using System.Text;
 
 namespace Clocktower.Agent
@@ -53,18 +54,20 @@ namespace Clocktower.Agent
             return GetMatchingOption(options, choiceAsText) ?? await RetryRequestChoice(options);
         }
 
-        public async Task RequestKazaliMinions(KazaliMinionsOption kazaliMinionsOption, string prompt)
+        public async Task RequestKazaliMinions(KazaliMinionsSelection kazaliMinionsSelection, string prompt)
         {
-            while (!kazaliMinionsOption.AssignmentOk)
+            while (true)
             {
                 var response = (await Request(prompt)).Trim();
-                if (!kazaliMinionsOption.AddMinionChoicesFromText(response))
+                if (kazaliMinionsSelection.SelectMinions(response))
                 {
-                    var sb = new StringBuilder();
-                    sb.AppendFormattedText($"That is not a valid assignment of minions. Make sure to choose exactly %b minion{(kazaliMinionsOption.MinionCount == 1 ? string.Empty : "s")}. ", kazaliMinionsOption.MinionCount);
-                    sb.AppendFormattedText("Choose distinct players from %P. Choose distinct Minion characters from %C.", kazaliMinionsOption.PossiblePlayers, kazaliMinionsOption.MinionCharacters);
-                    prompt = sb.ToString();
+                    return;
                 }
+
+                var sb = new StringBuilder();
+                sb.AppendFormattedText($"That is not a valid assignment of minions. Make sure to choose exactly %b minion{(kazaliMinionsSelection.MinionCount == 1 ? string.Empty : "s")}. ", kazaliMinionsSelection.MinionCount);
+                sb.AppendFormattedText("Choose distinct players from %P. Choose distinct Minion characters from %C.", kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters);
+                prompt = sb.ToString();
             }
         }
 

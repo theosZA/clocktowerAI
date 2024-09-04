@@ -1,4 +1,5 @@
 ﻿using Clocktower.Options;
+using Clocktower.Selection;
 
 namespace Clocktower.Agent.Requester
 {
@@ -43,6 +44,6 @@ namespace Clocktower.Agent.Requester
 
         Task<string> RequestStatement(string prompt, Statement statement);
 
-        Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption);
+        Task RequestKazaliMinions(string prompt, KazaliMinionsSelection kazaliMinionsSelection);
     }
 }

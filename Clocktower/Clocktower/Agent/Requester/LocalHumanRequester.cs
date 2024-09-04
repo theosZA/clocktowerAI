@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent.Notifier;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 
 namespace Clocktower.Agent.Requester
 {
@@ -136,22 +137,22 @@ namespace Clocktower.Agent.Requester
             return await GetSpeech(autoActText);
         }
 
-        public Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        public Task RequestKazaliMinions(string prompt, KazaliMinionsSelection kazaliMinionsSelection)
         {
             if (form.AutoAct)
             {
-                var players = kazaliMinionsOption.PossiblePlayers.ToList().RandomPickN(kazaliMinionsOption.MinionCount, random);
-                var characters = kazaliMinionsOption.MinionCharacters.ToList().RandomPickN(kazaliMinionsOption.MinionCount, random);
-                kazaliMinionsOption.ChooseMinions(players.Zip(characters));
+                var players = kazaliMinionsSelection.PossiblePlayers.ToList().RandomPickN(kazaliMinionsSelection.MinionCount, random);
+                var characters = kazaliMinionsSelection.MinionCharacters.ToList().RandomPickN(kazaliMinionsSelection.MinionCount, random);
+                kazaliMinionsSelection.SelectMinions(players.Zip(characters).ToList());
             }
             else
             {
-                var kazaliDialog = new PlayersAsCharactersDialog("Choose your minions", kazaliMinionsOption.MinionCount, kazaliMinionsOption.PossiblePlayers, kazaliMinionsOption.MinionCharacters,
+                var kazaliDialog = new PlayersAsCharactersDialog("Choose your minions", kazaliMinionsSelection.MinionCount, kazaliMinionsSelection.PossiblePlayers, kazaliMinionsSelection.MinionCharacters,
                                                                  allowEmptyChoices: false, allowDuplicatePlayers: false, allowDuplicateCharacters: false);
                 var result = kazaliDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    kazaliMinionsOption.ChooseMinions(kazaliDialog.GetPlayersAsCharacters());
+                    kazaliMinionsSelection.SelectMinions(kazaliDialog.GetPlayersAsCharacters().ToList());
                 }
             }
             

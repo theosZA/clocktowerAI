@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using System.Text;
 
 namespace Clocktower.Agent.Requester
@@ -125,11 +126,11 @@ namespace Clocktower.Agent.Requester
             return await prompter.RequestDialogue(sb.ToString());
         }
 
-        public async Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        public async Task RequestKazaliMinions(string prompt, KazaliMinionsSelection kazaliMinionsSelection)
         {
             var sb = new StringBuilder(prompt);
             sb.Append(" Respond with `");
-            for (int i = 0; i < kazaliMinionsOption.MinionCount; ++i)
+            for (int i = 0; i < kazaliMinionsSelection.MinionCount; ++i)
             {
                 if (i > 0)
                 {
@@ -137,9 +138,9 @@ namespace Clocktower.Agent.Requester
                 }
                 sb.Append($"player_{i + 1} as character");
             }
-            sb.AppendLine($"` (for exactly {kazaliMinionsOption.MinionCount} minion{(kazaliMinionsOption.MinionCount == 1 ? string.Empty : "s")})");
+            sb.AppendLine($"` (for exactly {kazaliMinionsSelection.MinionCount} minion{(kazaliMinionsSelection.MinionCount == 1 ? string.Empty : "s")})");
 
-            await prompter.RequestKazaliMinions(kazaliMinionsOption, sb.ToString());
+            await prompter.RequestKazaliMinions(kazaliMinionsSelection, sb.ToString());
         }
 
         private async Task<IOption> RequestOption(string prompt, IReadOnlyCollection<IOption> options)

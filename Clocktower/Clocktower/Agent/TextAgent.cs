@@ -3,6 +3,7 @@ using Clocktower.Agent.Observer;
 using Clocktower.Agent.Requester;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using System.Text;
 
 namespace Clocktower.Agent
@@ -304,14 +305,12 @@ namespace Clocktower.Agent
             }
         }
 
-        public async Task<KazaliMinionsOption> RequestChoiceOfKazaliMinions(int minionCount, IReadOnlyCollection<Player> players, IReadOnlyCollection<Character> minionCharacters)
+        public async Task RequestSelectionOfKazaliMinions(KazaliMinionsSelection kazaliMinionsSelection)
         {
             var sb = new StringBuilder();
+            int minionCount = kazaliMinionsSelection.MinionCount;
             sb.AppendFormattedText($"As the %c, please choose %n player{(minionCount == 1 ? string.Empty : "s")} to be your minion{(minionCount == 1 ? string.Empty : "s")}", Character.Kazali, minionCount);
-
-            var kazaliMinionsOption = new KazaliMinionsOption(minionCount, players, minionCharacters);
-            await requester.RequestKazaliMinions(sb.ToString(), kazaliMinionsOption);
-            return kazaliMinionsOption;
+            await requester.RequestKazaliMinions(sb.ToString(), kazaliMinionsSelection);
         }
 
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)

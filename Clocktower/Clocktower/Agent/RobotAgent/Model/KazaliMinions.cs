@@ -1,5 +1,6 @@
 ﻿using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using System.ComponentModel.DataAnnotations;
 
 namespace Clocktower.Agent.RobotAgent.Model
@@ -7,7 +8,7 @@ namespace Clocktower.Agent.RobotAgent.Model
     /// <summary>
     /// Robot agent model for specifying which players are to be which minions.
     /// </summary>
-    internal class KazaliMinions : IOptionSelection
+    internal class KazaliMinions
     {
         [Required(AllowEmptyStrings = true)]
         public string Reasoning { get; set; } = string.Empty;
@@ -15,45 +16,22 @@ namespace Clocktower.Agent.RobotAgent.Model
         [Required]
         public IEnumerable<PlayerAsCharacter> MinionAssignments { get; set; } = Enumerable.Empty<PlayerAsCharacter>();
 
-        public IOption? PickOption(IReadOnlyCollection<IOption> options)
+        public string ErrorText(KazaliMinionsSelection kazaliMinionsSelection)
         {
-            var kazaliMinionsOption = (KazaliMinionsOption)options.First(option => option is KazaliMinionsOption);
-            var minionAssignments = MinionAssignments.Select(assignment => assignment.GetAssignment(kazaliMinionsOption.PossiblePlayers, kazaliMinionsOption.MinionCharacters)).ToList();
-            if (minionAssignments.Count != kazaliMinionsOption.MinionCount)
-            {
-                return null;
-            }
-            if (minionAssignments.Any(assignment => !assignment.HasValue))
-            {
-                return null;
-            }
-
-            kazaliMinionsOption.ChooseMinions(minionAssignments.Select(assignment => assignment!.Value));
-            if (!kazaliMinionsOption.AssignmentOk)
-            {
-                return null;
-            }
-
-            return kazaliMinionsOption;
-        }
-
-        public string NoMatchingOptionPrompt(IReadOnlyCollection<IOption> options)
-        {
-            var kazaliMinionsOption = (KazaliMinionsOption)options.First(option => option is KazaliMinionsOption);
             var minionAssignments = MinionAssignments.ToList();
-            if (minionAssignments.Count != kazaliMinionsOption.MinionCount)
+            if (minionAssignments.Count != kazaliMinionsSelection.MinionCount)
             {
-                return $"You must have exactly {kazaliMinionsOption.MinionCount} minion assignments.";
+                return $"You must have exactly {kazaliMinionsSelection.MinionCount} minion assignments.";
             }
 
             var players = new HashSet<Player>();
             var characters = new HashSet<Character>();
             foreach (var minionAssignment in minionAssignments)
             {
-                var player = TextParser.ReadPlayerFromText(minionAssignment.Player, kazaliMinionsOption.PossiblePlayers);
+                var player = TextParser.ReadPlayerFromText(minionAssignment.Player, kazaliMinionsSelection.PossiblePlayers);
                 if (player == null)
                 {
-                    return $"{minionAssignment.Player} is not a valid choice of player. Choose from: {string.Join(", ", kazaliMinionsOption.PossiblePlayers.Select(player => player.Name))}.";
+                    return $"{minionAssignment.Player} is not a valid choice of player. Choose from: {string.Join(", ", kazaliMinionsSelection.PossiblePlayers.Select(player => player.Name))}.";
                 }
                 if (players.Contains(player))
                 {
@@ -61,10 +39,10 @@ namespace Clocktower.Agent.RobotAgent.Model
                 }
                 players.Add(player);
 
-                var character = TextParser.ReadCharacterFromText(minionAssignment.Character, kazaliMinionsOption.MinionCharacters);
+                var character = TextParser.ReadCharacterFromText(minionAssignment.Character, kazaliMinionsSelection.MinionCharacters);
                 if (character == null)
                 {
-                    return $"{minionAssignment.Character} is not a valid choice of Minion character. Choose from: {string.Join(", ", kazaliMinionsOption.MinionCharacters.Select(character => TextUtilities.CharacterToText(character)))}.";
+                    return $"{minionAssignment.Character} is not a valid choice of Minion character. Choose from: {string.Join(", ", kazaliMinionsSelection.MinionCharacters.Select(character => TextUtilities.CharacterToText(character)))}.";
                 }
                 if (characters.Contains(character.Value))
                 {

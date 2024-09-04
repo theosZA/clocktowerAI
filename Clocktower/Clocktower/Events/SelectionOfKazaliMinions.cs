@@ -1,12 +1,13 @@
 ﻿using Clocktower.Game;
+using Clocktower.Selection;
 using Clocktower.Setup;
 using Clocktower.Storyteller;
 
 namespace Clocktower.Events
 {
-    internal class ChoiceOfKazaliMinions : IGameEvent
+    internal class SelectionOfKazaliMinions : IGameEvent
     {
-        public ChoiceOfKazaliMinions(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> script)
+        public SelectionOfKazaliMinions(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> script)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
@@ -21,10 +22,11 @@ namespace Clocktower.Events
                 var possiblePlayers = grimoire.Players.Where(player => player != kazali).ToList();
                 var minionCharacters = script.Where(character => character.CharacterType() == CharacterType.Minion).ToList();
 
-                var kazaliMinions = await kazali.Agent.RequestChoiceOfKazaliMinions(minionCount, possiblePlayers, minionCharacters);
+                var kazaliMinionSelection = new KazaliMinionsSelection(minionCount, possiblePlayers, minionCharacters);
+                await kazali.Agent.RequestSelectionOfKazaliMinions(kazaliMinionSelection);
 
-                storyteller.KazaliMinions(kazali, kazaliMinions.MinionAssignment);
-                foreach (var (player, character) in kazaliMinions.MinionAssignment)
+                storyteller.KazaliMinions(kazali, kazaliMinionSelection.Minions);
+                foreach (var (player, character) in kazaliMinionSelection.Minions)
                 {
                     await grimoire.ChangeCharacter(player, character);
                 }

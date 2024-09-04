@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent.RobotAgent;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 using System.Text;
 
 namespace Clocktower.Agent.Requester
@@ -205,11 +206,11 @@ namespace Clocktower.Agent.Requester
             return await ai.RequestDialogue(sb.ToString());
         }
 
-        public async Task RequestKazaliMinions(string prompt, KazaliMinionsOption kazaliMinionsOption)
+        public async Task RequestKazaliMinions(string prompt, KazaliMinionsSelection kazaliMinionsSelection)
         {
             var sb = new StringBuilder(prompt);
             sb.Append(" You should include your reasoning for who you will choose and which minion characters you'd prefer to have on your evil team.");
-            await ai.RequestKazaliMinions(kazaliMinionsOption, sb.ToString());
+            await ai.RequestKazaliMinions(kazaliMinionsSelection, sb.ToString());
         }
 
         private static void AppendAliveSubsetOfPlayers(StringBuilder stringBuilder, IEnumerable<Player> players)

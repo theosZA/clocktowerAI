@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 
 namespace ClocktowerScenarioTests.Mocks
 {
@@ -40,16 +41,13 @@ namespace ClocktowerScenarioTests.Mocks
         public static Wrapper<int> MockKazaliMinionChoice(this IAgent agent, IReadOnlyCollection<(Character currentCharacter, Character minionCharacter)> assignment)
         {
             Wrapper<int> minionCount = new();
-            agent.RequestChoiceOfKazaliMinions(Arg.Any<int>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>())
-                .Returns(args =>
+            agent.When(agent => agent.RequestSelectionOfKazaliMinions(Arg.Any<KazaliMinionsSelection>()))
+                .Do(args =>
                 {
-                    minionCount.Value = args.ArgAt<int>(0);
-                    var players = args.ArgAt<IReadOnlyCollection<Player>>(1);
-                    var characters = args.ArgAt<IReadOnlyCollection<Character>>(2);
-                    var minions = assignment.Select(assignment => (players.First(player => player.RealCharacter == assignment.currentCharacter), assignment.minionCharacter));
-                    var kazaliMinionsOption = new KazaliMinionsOption(minionCount.Value, players, characters);
-                    kazaliMinionsOption.ChooseMinions(minions);
-                    return kazaliMinionsOption;
+                    var kazaliMinionsSelection = args.ArgAt<KazaliMinionsSelection>(0);
+                    minionCount.Value = kazaliMinionsSelection.MinionCount;
+                    var minions = assignment.Select(assignment => (kazaliMinionsSelection.PossiblePlayers.First(player => player.RealCharacter == assignment.currentCharacter), assignment.minionCharacter)).ToList();
+                    kazaliMinionsSelection.SelectMinions(minions);
                 });
             return minionCount;
         }

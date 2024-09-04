@@ -1,6 +1,7 @@
 ﻿using Clocktower.Agent.Observer;
 using Clocktower.Game;
 using Clocktower.Options;
+using Clocktower.Selection;
 
 namespace Clocktower.Agent
 {
@@ -40,7 +41,7 @@ namespace Clocktower.Agent
         Task ResponseForFisherman(string advice);
         Task OnGainCharacterAbility(Character character);
 
-        Task<KazaliMinionsOption> RequestChoiceOfKazaliMinions(int minionCount, IReadOnlyCollection<Player> players, IReadOnlyCollection<Character> minionCharacters);
+        Task RequestSelectionOfKazaliMinions(KazaliMinionsSelection kazaliMinionsSelection);
 
         Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);
