@@ -1,5 +1,4 @@
-﻿using Clocktower.Game;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Clocktower.Agent.RobotAgent.Model
 {

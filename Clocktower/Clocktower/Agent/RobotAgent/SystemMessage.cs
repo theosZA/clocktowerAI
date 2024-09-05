@@ -6,7 +6,9 @@ namespace Clocktower.Agent.RobotAgent
     {
         public static string GetSystemMessage(string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
-            return $"We are going to play a game of 'Blood on the Clocktower'. This is a social deduction game where the players are divided into good Townsfolk and Outsiders and evil Minions and Demons. " +
+            return $"You are {playerName}, a player in a game of 'Blood on the Clocktower'." +
+            $"{personality} It's just as important that you bring out your personality in your conversations and public statements than it is to try to win.\r\n" +
+            $"'Blood on the Clocktower' is a social deduction game where the players are divided into good Townsfolk and Outsiders and evil Minions and Demons. " +
             "The evil players know who is on which side and they win when there are only two players left alive, one of which is their Demon. " +
             "The good players don't know who is on which side and must use their character abilities and social skills to determine who the evil players are. The good players win if the Demon dies, usually by executing them. " +
             "The game is split into two phases: a day phase and a night phase.\r\n" +
@@ -29,8 +31,7 @@ namespace Clocktower.Agent.RobotAgent
             TextBuilder.ScriptToText(scriptName, script) +
             TextBuilder.SetupToText(playerNames.Count, script) +
             TextBuilder.PlayersToText(playerNames) +
-            $"You are {playerName}, a player in the game. (Your clockwise neighbour is {ClockwiseNeighbour(playerNames, playerName)} and your anti-clockwise neighbour is {AnticlockwiseNeighbour(playerNames, playerName)}.) " +
-            "{personality} Try to bring out your personality in your conversations with other players.\r\n";
+            $" (Your clockwise neighbour is {ClockwiseNeighbour(playerNames, playerName)} and your anti-clockwise neighbour is {AnticlockwiseNeighbour(playerNames, playerName)}.)";
         }
 
         private static string ClockwiseNeighbour(IReadOnlyCollection<string> playerNames, string fromPlayer)
