@@ -70,6 +70,15 @@ namespace Clocktower.Selection
             return SelectMinions(minions);
         }
 
+        public void ReplaceMinionPick(Player player, Character minionCharacter)
+        {
+            int index = minions.FindIndex(selection => selection.player == player);
+            if (index != -1)
+            {
+                minions[index] = (player, minionCharacter);
+            }
+        }
+
         private (bool ok, string? error) DetailedValidateSelection(IReadOnlyCollection<(Player player, Character minionCharacter)> minions)
         {
             if (minions.Count != MinionCount)

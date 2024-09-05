@@ -267,5 +267,68 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Fisherman).DidNotReceive().AssignCharacter(Character.Marionette, Alignment.Evil);
             await setup.Agent(Character.Fisherman).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>());
         }
+
+        [Test]
+        public async Task Kazali_SoldierJinx()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Soldier,Mayor");
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Soldier, Character.Poisoner) });
+            setup.Agent(Character.Soldier).RequestChoiceOfMinionForSoldierSelectedByKazali(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForCharacterFromArg(Character.Scarlet_Woman));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Soldier).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Soldier).DidNotReceive().AssignCharacter(Character.Poisoner, Alignment.Evil);
+            await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
+                                                                   Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 0),
+                                                                   Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
+            await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 1 &&
+                                                                                                                minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
+                                                                 Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 3));
+        }
+
+        [Test]
+        public async Task Kazali_SoldierPicksPickedMinionCharacter()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Soldier,Mayor,Monk,Virgin,Recluse");
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] 
+            { 
+                (Character.Soldier, Character.Poisoner),
+                (Character.Monk, Character.Scarlet_Woman)
+            });
+            setup.Agent(Character.Soldier).RequestChoiceOfMinionForSoldierSelectedByKazali(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForCharacterFromArg(Character.Scarlet_Woman));
+            setup.Agent(Character.Kazali).RequestNewKazaliMinion(Arg.Is<Player>(player => player.RealCharacter == Character.Monk), Character.Scarlet_Woman, Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForCharacterFromArg(Character.Baron, 2));
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Soldier).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Soldier).DidNotReceive().AssignCharacter(Character.Poisoner, Alignment.Evil);
+            await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
+                                                                   Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
+                                                                                                                        fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Monk),
+                                                                   Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));;
+
+            await setup.Agent(Character.Monk).Received().AssignCharacter(Character.Baron, Alignment.Evil);
+            await setup.Agent(Character.Monk).DidNotReceive().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
+                                                                   Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
+                                                                                                                        fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
+                                                                   Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0)); ;
+
+            await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 1 &&
+                                                                                                                minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
+                                                                 Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 3));
+        }
     }
 }

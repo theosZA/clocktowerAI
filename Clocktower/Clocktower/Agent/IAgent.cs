@@ -42,6 +42,8 @@ namespace Clocktower.Agent
         Task OnGainCharacterAbility(Character character);
 
         Task RequestSelectionOfKazaliMinions(KazaliMinionsSelection kazaliMinionsSelection);
+        Task<IOption> RequestNewKazaliMinion(Player minionTarget, Character unavailableMinionCharacter, IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceOfMinionForSoldierSelectedByKazali(IReadOnlyCollection<IOption> options);
 
         Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);

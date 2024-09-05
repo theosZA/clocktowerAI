@@ -12,6 +12,11 @@
             return players.Where(player => player.Character == character);
         }
 
+        public static IEnumerable<Player> WithCharacterType(this IEnumerable<Player> players, CharacterType characterType)
+        {
+            return players.Where(player => player.CharacterType == characterType);
+        }
+
         public static IEnumerable<Player> WithToken(this IEnumerable<Player> players, Token token) 
         {
             return players.Where(player => player.Tokens.HasToken(token));

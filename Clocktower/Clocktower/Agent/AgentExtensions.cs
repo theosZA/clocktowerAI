@@ -5,6 +5,16 @@ namespace Clocktower.Agent
 {
     internal static class AgentExtensions
     {
+        public static async Task<Character> RequestNewKazaliMinion(this IAgent agent, Player minionTarget, Character unavailableMinionCharacter, IEnumerable<Character> availableMinionCharacters)
+        {
+            return (await agent.RequestNewKazaliMinion(minionTarget, unavailableMinionCharacter, availableMinionCharacters.ToOptions())).GetCharacter();
+        }
+
+        public static async Task<Character> RequestChoiceOfMinionForSoldierSelectedByKazali(this IAgent agent, IEnumerable<Character> availableMinionCharacters)
+        {
+            return (await agent.RequestChoiceOfMinionForSoldierSelectedByKazali(availableMinionCharacters.ToOptions())).GetCharacter();
+        }
+
         public static async Task<Player> RequestChoiceFromDemon(this IAgent agent, Character demonCharacter, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromDemon(demonCharacter, players.ToOptions())).GetPlayer();

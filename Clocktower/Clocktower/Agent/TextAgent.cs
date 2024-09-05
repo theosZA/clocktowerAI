@@ -317,6 +317,22 @@ namespace Clocktower.Agent
             await requester.RequestKazaliMinions(sb.ToString(), kazaliMinionsSelection);
         }
 
+        public async Task<IOption> RequestNewKazaliMinion(Player minionTarget, Character unavailableMinionCharacter, IReadOnlyCollection<IOption> options)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("Your previous choice as the %c for %p to become the %c is no longer valid. Please choose a new Minion for %p to become.",
+                                   Character.Kazali, minionTarget, unavailableMinionCharacter, minionTarget);
+            return await requester.RequestCharacter(sb.ToString(), options);
+        }
+
+        public async Task<IOption> RequestChoiceOfMinionForSoldierSelectedByKazali(IReadOnlyCollection<IOption> options)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("You have been chosen by the %c to become a Minion. Since you are currently the %c, you may choose which Minion to become.", Character.Kazali, Character.Soldier);
+            return await requester.RequestCharacter(sb.ToString(), options);
+
+        }
+
         public async Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options)
         {
             var sb = new StringBuilder();

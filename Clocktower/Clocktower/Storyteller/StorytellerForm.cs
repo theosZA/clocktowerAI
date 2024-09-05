@@ -420,6 +420,21 @@ namespace Clocktower.Storyteller
             AddMarkupText(sb.ToString());
         }
 
+        public void NewKazaliMinion(Player kazali, Player minionTarget, Character oldMinionCharacter, Character newMinionCharacter)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("Since %c is no longer available, %p has selected for %p to become the %c.", oldMinionCharacter, kazali, minionTarget, newMinionCharacter, StorytellerView);
+            AddMarkupText(sb.ToString());
+        }
+
+        public void KazaliSoldierMinion(Player soldier, Character minionCharacterPickedBySoldier)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("Because the %c picked the %c to become their minion, %p may choose which minion to become. They have chosen to become the %c.",
+                                   Character.Kazali, Character.Soldier, soldier, minionCharacterPickedBySoldier, StorytellerView);
+            AddMarkupText(sb.ToString());
+        }
+
         public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             var sb = new StringBuilder();
