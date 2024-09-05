@@ -3,11 +3,11 @@
 if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
   AssignDrunk
 StartNight
-FortuneTellerRedHerring
 Philosopher
 KazaliMinions
 MinionInformation
 DemonInformation
+FortuneTellerRedHerring
 Poisoner
 GodfatherInformation
 DevilsAdvocate
