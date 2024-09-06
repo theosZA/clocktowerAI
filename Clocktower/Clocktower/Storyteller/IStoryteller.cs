@@ -13,6 +13,7 @@ namespace Clocktower.Storyteller
         void PrivateChatMessage(Player speaker, Player listener, string message);
 
         Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates);
+        Task<IOption> GetWidowPing(Player widow, IReadOnlyCollection<IOption> widowPingCandidates);
         Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetAdditionalDemonBluffs(Player demon, Player snitch, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions);
@@ -74,6 +75,7 @@ namespace Clocktower.Storyteller
         void ChoiceFromDemon(Player demon, Player target);
         void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims);
         void ChoiceFromPoisoner(Player poisoner, Player target);
+        void ChoiceFromWidow(Player widow, Player target);
         void ChoiceFromWitch(Player witch, Player target);
         void ChoiceFromAssassin(Player assassin, Player? target);
         void ChoiceFromGodfather(Player godfather, Player target);

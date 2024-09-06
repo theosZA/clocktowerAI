@@ -111,6 +111,14 @@ namespace ClocktowerScenarioTests.Mocks
                 .ReturnsMatchingOptionFromOptionsArg(fakeCharacterAbility, argIndex: 2);
         }
 
+        public static List<Character> MockWidowPing(this IStoryteller storyteller, Character playerWhoWillLearnOfWidow)
+        {
+            List<Character> playersWhoCanLearnOfWidow = new();
+            storyteller.GetWidowPing(Arg.Is<Player>(player => player.RealCharacter == Character.Widow), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(Character.Soldier, playersWhoCanLearnOfWidow, argIndex: 1);
+            return playersWhoCanLearnOfWidow;
+        }
+
         public static List<Character> MockGetNewImp(this IStoryteller storyteller, Character starPassTarget)
         {
             List<Character> starPassTargets = new();

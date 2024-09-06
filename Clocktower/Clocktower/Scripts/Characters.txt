@@ -43,6 +43,7 @@ Witch: Each night, choose a player: if they nominate tomorrow, they die. If just
 Organ Grinder: All voting is done in secret and the vote tally is not public. Votes for you only count if you vote.
 Devils Advocate: Each night, choose a living player (different to last night): if executed tomorrow, they don't die.
 Marionette: You think you are a good character, but you are not. The Demon knows who you are. [You neighbor the Demon]
+Widow: On your first night, look at the Grimoire and choose a player: they are poisoned. 1 good player knows a Widow is in play.
 
 // Demons
 Imp: Each night (except the first night), choose a player: they die. If you choose yourself, you die and a Minion becomes the Imp.

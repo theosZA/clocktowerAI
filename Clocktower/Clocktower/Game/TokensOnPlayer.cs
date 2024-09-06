@@ -121,6 +121,7 @@
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
                 || token == Token.PoisonedByPoisoner
+                || token == Token.PoisonedByWidow
                 || token == Token.CannibalPoisoned
                 || token == Token.CannibalDrunk;
         }
@@ -128,6 +129,7 @@
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
         {
             return token == Token.PoisonedByPoisoner
+                || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
@@ -147,6 +149,7 @@
             return token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
                 || token == Token.PoisonedByPoisoner
+                || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
                 || token == Token.PickedByDevilsAdvocate
                 || token == Token.ProtectedByDevilsAdvocate
@@ -163,6 +166,7 @@
             return token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
                 || token == Token.PoisonedByPoisoner
+                || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
                 || token == Token.PickedByDevilsAdvocate
                 || token == Token.ProtectedByDevilsAdvocate
@@ -194,6 +198,7 @@
                 Token.PhilosopherDrunk => "Philosopher drunk",
                 Token.NoDashiiPoisoned => "poisoned by the No Dashii",
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
+                Token.PoisonedByWidow => "poisoned by the Widow",
                 Token.CannibalPoisoned => "poisoned from a bad meal",
                 Token.CursedByWitch => "cursed by the Witch",
                 Token.ProtectedByDevilsAdvocate => "protected by the Devil's Advocate",

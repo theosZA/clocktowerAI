@@ -17,6 +17,11 @@
             return players.Where(player => player.CharacterType == characterType);
         }
 
+        public static IEnumerable<Player> WithAlignment(this IEnumerable<Player> players, Alignment alignment)
+        {
+            return players.Where(player => player.Alignment == alignment);
+        }
+
         public static IEnumerable<Player> WithToken(this IEnumerable<Player> players, Token token) 
         {
             return players.Where(player => player.Tokens.HasToken(token));

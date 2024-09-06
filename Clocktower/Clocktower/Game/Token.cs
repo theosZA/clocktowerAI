@@ -14,6 +14,7 @@
         PhilosopherDrunk,
         NoDashiiPoisoned,
         PoisonedByPoisoner,
+        PoisonedByWidow,
         CannibalPoisoned,
         CursedByWitch,
         ProtectedByDevilsAdvocate,

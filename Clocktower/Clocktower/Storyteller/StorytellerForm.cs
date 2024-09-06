@@ -44,6 +44,13 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(marionetteCandidates);
         }
 
+        public async Task<IOption> GetWidowPing(Player widow, IReadOnlyCollection<IOption> widowPingCandidates)
+        {
+            AddFormattedText("Choose one good player who will learn that %p is the %c...", widow, Character.Widow);
+
+            return await PopulateOptions(widowPingCandidates);
+        }
+
         public async Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions)
         {
             AddFormattedText("Choose 3 out-of-play characters to show to the demon, %p...", demon, StorytellerView);
@@ -605,6 +612,11 @@ namespace Clocktower.Storyteller
         public void ChoiceFromPoisoner(Player poisoner, Player target)
         {
             AddFormattedText("%p has chosen to poison %p.", poisoner, target, StorytellerView);
+        }
+
+        public void ChoiceFromWidow(Player widow, Player target)
+        {
+            AddFormattedText("%p has chosen to poison %p.", widow, target, StorytellerView);
         }
 
         public void ChoiceFromWitch(Player witch, Player target)

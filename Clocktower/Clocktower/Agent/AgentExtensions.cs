@@ -30,6 +30,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromPoisoner(players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromWidow(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromWidow(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> RequestChoiceFromWitch(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromWitch(players.ToOptions())).GetPlayer();

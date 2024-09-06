@@ -79,6 +79,7 @@ namespace Clocktower.Events
                 case "Witch":                       return new ChoiceFromWitch(storyteller, grimoire);
                 case "Spy":                         return new ShowGrimoireToSpy(storyteller, grimoire);
                 case "DevilsAdvocate":              return new ChoiceFromDevilsAdvocate(storyteller, grimoire);
+                case "Widow":                       return new ChoiceFromWidow(storyteller, grimoire);
 
                 // Demons
                 case "Imp":                         return new ChoiceFromDemon(Character.Imp, storyteller, grimoire, deaths);

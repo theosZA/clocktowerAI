@@ -272,11 +272,11 @@ namespace Clocktower.Agent
             await SendMessage("You learn that %b of your juggles were correct.", jugglerCount);
         }
 
-        public async Task ShowGrimoireToSpy(Grimoire grimoire)
+        public async Task ShowGrimoire(Character character, Grimoire grimoire)
         {
             var sb = new StringBuilder();
 
-            sb.AppendFormattedText("As the %c, you can now look over the Grimoire...", Character.Spy);
+            sb.AppendFormattedText("As the %c, you can now look over the Grimoire...", character);
             sb.AppendLine();
             sb.Append(TextBuilder.GrimoireToText(grimoire));
 
@@ -285,9 +285,12 @@ namespace Clocktower.Agent
 
         public async Task ShowNightwatchman(Player nightwatchman)
         {
-            var sb = new StringBuilder();
-            sb.AppendFormattedText("You learn that %p is the %c.", nightwatchman, Character.Nightwatchman);
-            await SendMessage(sb);
+            await SendMessage("You learn that %p is the %c.", nightwatchman, Character.Nightwatchman);
+        }
+
+        public async Task LearnOfWidow()
+        {
+            await SendMessage("You learn that there is a %c in the game.", Character.Widow);
         }
 
         public async Task ResponseForFisherman(string advice)
@@ -350,6 +353,11 @@ namespace Clocktower.Agent
         public async Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options)
         {
             return await RequestPlayer(options, "As the %c, please choose a player to poison.", Character.Poisoner);
+        }
+
+        public async Task<IOption> RequestChoiceFromWidow(IReadOnlyCollection<IOption> options)
+        {
+            return await RequestPlayer(options, "As the %c, please choose a player to poison.", Character.Widow);
         }
 
         public async Task<IOption> RequestChoiceFromWitch(IReadOnlyCollection<IOption> options)

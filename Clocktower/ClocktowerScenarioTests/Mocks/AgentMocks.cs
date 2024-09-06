@@ -74,6 +74,11 @@ namespace ClocktowerScenarioTests.Mocks
             agent.RequestChoiceFromPoisoner(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
         }
 
+        public static void MockWidow(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromWidow(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static void MockWitch(this IAgent agent, Character target)
         {
             agent.RequestChoiceFromWitch(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);

@@ -25,7 +25,7 @@ namespace Clocktower.Events
 
         public async Task RunEvent(Player spy)
         {
-            await spy.Agent.ShowGrimoireToSpy(grimoire);
+            await spy.Agent.ShowGrimoire(Character.Spy, grimoire);
             storyteller.ShowGrimoireToSpy(spy, grimoire);
         }
 

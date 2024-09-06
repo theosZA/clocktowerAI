@@ -9,6 +9,7 @@ MinionInformation
 DemonInformation
 FortuneTellerRedHerring
 Poisoner
+Widow
 GodfatherInformation
 DevilsAdvocate
 Witch
