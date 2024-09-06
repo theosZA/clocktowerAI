@@ -458,9 +458,28 @@ namespace Clocktower.Agent
             return await requester.RequestShenanigans("You have the option now to use or bluff any abilities that are to be publicly used during the day.", options);
         }
 
-        public async Task<IOption> GetNomination(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> GetNomination(Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock, IReadOnlyCollection<IOption> options)
         {
-            return await requester.RequestNomination("You may nominate a player.", options);
+            var sb = new StringBuilder();
+            sb.Append("You may nominate a player.");
+            if (playerOnTheBlock != null && votesToTie.HasValue)
+            {
+                sb.AppendFormattedText(" (%p is currently on the block with %b votes", playerOnTheBlock, votesToTie.Value);
+                if (votesToPutOnBlock.HasValue)
+                {
+                    sb.AppendFormattedText(" and it will require %b votes to replace them on the block.)", votesToPutOnBlock.Value);
+                }
+                else
+                {
+                    sb.Append(" and that can't be beaten, only tied.)");
+                }
+            }
+            else if (votesToPutOnBlock.HasValue)
+            {
+                sb.AppendFormattedText(" (No one is currently on the block and it will require %b votes to put someone on the block.)", votesToPutOnBlock.Value);
+            }
+
+            return await requester.RequestNomination(sb.ToString(), options);
         }
 
         public async Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote)

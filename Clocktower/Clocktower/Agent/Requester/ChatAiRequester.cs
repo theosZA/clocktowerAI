@@ -126,7 +126,8 @@ namespace Clocktower.Agent.Requester
                           "as well as the possibility of not nominating anyone. Normally you want to be nominating players you suspect are evil, especially the Demon. " +
                           "(If you're evil, then you want to be nominating players that you can frame as evil.) Though sometimes strategic considerations might make you " +
                           "want to nominate a good player instead. Also keep in mind how many votes will be required and whether you think that it's possible you'll get " +
-                          "the needed votes for execution from your fellow players.");
+                          "the needed votes for execution from your fellow players. (Once one player has been successfully nominated by a clear majority and is on the block, " +
+                          "it's normally quite difficult to get the votes for another player.) ");
             sb.AppendFormattedText("Then either provide the name of the player to nominate or don't provide the name of player if you don't wish to nominate at this time. " +
                                    "The players you can nominate are: %P.", potentialNominees);
             if (potentialNominees.Any(player => !player.Alive))

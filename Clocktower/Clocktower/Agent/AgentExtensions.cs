@@ -90,9 +90,9 @@ namespace Clocktower.Agent
             return await agent.PromptFishermanAdvice(OptionsBuilder.YesOrNo) is YesOption;
         }
 
-        public static async Task<Player?> GetNomination(this IAgent agent, IEnumerable<Player> players)
+        public static async Task<Player?> GetNomination(this IAgent agent, Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock, IEnumerable<Player> players)
         {
-            return (await agent.GetNomination(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
+            return (await agent.GetNomination(playerOnTheBlock, votesToTie, votesToPutOnBlock, players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
         }
 
         public static async Task<bool> GetVote(this IAgent agent, Player nominee, bool ghostVote)

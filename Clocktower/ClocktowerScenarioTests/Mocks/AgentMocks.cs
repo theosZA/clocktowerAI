@@ -9,7 +9,7 @@ namespace ClocktowerScenarioTests.Mocks
     {
         public static void MockNomination(this IAgent agent, Character nominee)
         {
-            agent.GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(nominee);
+            agent.GetNomination(Arg.Any<Player?>(), Arg.Any<int?>(), Arg.Any<int?>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(nominee, argIndex: 3);
         }
 
         public static void MockVote(this IAgent agent, bool voteToExecute)

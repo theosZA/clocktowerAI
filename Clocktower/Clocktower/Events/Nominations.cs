@@ -55,6 +55,8 @@ namespace Clocktower.Events
 
         private async Task<(Player nominator, Player nominee)?> RequestNomination()
         {
+            var (votesToTie, votesToPutOnBlock) = GetVotesRequired();    
+
             // Only alive players who haven't yet nominated can nominate.
             var players = grimoire.Players.Where(player => player.Alive)
                                           .Except(playersWhoHaveAlreadyNominated)
@@ -63,7 +65,7 @@ namespace Clocktower.Events
 
             foreach (var player in players)
             {
-                var nominee = await player.Agent.GetNomination(grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated));
+                var nominee = await player.Agent.GetNomination(grimoire.PlayerToBeExecuted, votesToTie, votesToPutOnBlock, grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated));
                 if (nominee != null)
                 {
                     return (player, nominee);

@@ -44,7 +44,8 @@ namespace ClocktowerScenarioTests.Tests
 
             // Night 1 & Day 1
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Empath);
-            setup.Agent(Character.Imp).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Philosopher));
+            setup.Agent(Character.Imp).GetNomination(Arg.Any<Player?>(), Arg.Any<int?>(), Arg.Any<int?>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForRealCharacterFromArg(Character.Philosopher, argIndex: 3));
 
             await game.RunNightAndDay();
             Assert.Multiple(() =>

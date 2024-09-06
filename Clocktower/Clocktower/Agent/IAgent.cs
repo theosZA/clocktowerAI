@@ -65,7 +65,7 @@ namespace Clocktower.Agent
 
         Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options);
 
-        Task<IOption> GetNomination(IReadOnlyCollection<IOption> options);
+        Task<IOption> GetNomination(Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock, IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote);
         Task<IOption> OfferPrivateChat(IReadOnlyCollection<IOption> options);
 

@@ -65,11 +65,11 @@ namespace ClocktowerScenarioTests.Tests
                     slayerOption.SetTarget(slayerOption.PossiblePlayers.First(player => player.Character == Character.Tinker));
                     return slayerOption;
                 });
-            setup.Agent(Character.Imp).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>())
+            setup.Agent(Character.Imp).GetNomination(Arg.Any<Player?>(), Arg.Any<int?>(), Arg.Any<int?>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args =>
                 {
                     shouldKill = false;
-                    return args.GetPassOptionFromArg();
+                    return args.GetPassOptionFromArg(argIndex: 3);
                 });
 
             // Act

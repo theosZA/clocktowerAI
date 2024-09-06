@@ -199,7 +199,8 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Virgin,Soldier,Ravenkeeper,Fisherman,Philosopher");
             setup.Agent(Character.Philosopher).MockPhilosopher(Character.Virgin);
-            setup.Agent(Character.Soldier).GetNomination(Arg.Any<IReadOnlyCollection<IOption>>()).Returns(args => args.GetOptionForRealCharacterFromArg(Character.Virgin));
+            setup.Agent(Character.Soldier).GetNomination(Arg.Any<Player?>(), Arg.Any<int?>(), Arg.Any<int?>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args => args.GetOptionForRealCharacterFromArg(Character.Virgin, argIndex: 3));
 
             // Act
             await game.StartGame();
