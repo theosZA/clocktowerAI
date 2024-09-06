@@ -82,12 +82,12 @@ namespace Clocktower.Agent.RobotAgent
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string prompt)
         {
             var response = await RequestObject<PrivateDialogue>(prompt);
-            return (response.Dialogue, response.TerminateConversation);
+            return (CleanUpDialogue(response.Dialogue), response.TerminateConversation);
         }
 
         public async Task<string> RequestDialogue(string prompt)
         {
-            return (await RequestObject<PublicDialogue>(prompt)).Dialogue;
+            return CleanUpDialogue((await RequestObject<PublicDialogue>(prompt)).Dialogue);
         }
 
         public async Task<IOption> RequestUseAbility(IReadOnlyCollection<IOption> options, string prompt)
@@ -171,6 +171,23 @@ namespace Clocktower.Agent.RobotAgent
         private void InternalOnTokenCount(int promptTokens, int completionTokens, int totalTokens)
         {
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
+        }
+
+        private static string CleanUpDialogue(string dialogue)
+        {
+            // Sometimes the AI won't end their JSON dialogue correctly and we get a garbage continuation.
+            // We look for the likely real conclusion to the dialogue: "} or ”}
+            // and exclude everything from there onward.
+            dialogue = dialogue.TextBefore("\"}").TextBefore("”}");
+
+            // Sometimes the AI will wrap their entire dialogue in quote marks.
+            if ((dialogue[0] == '"' || dialogue[0] == '“') &&
+                (dialogue[^1] == '"' || dialogue[^1] == '”'))
+            {
+                dialogue = dialogue[1..^2];
+            }
+
+            return dialogue;
         }
 
         private readonly GameChat gameChat;
