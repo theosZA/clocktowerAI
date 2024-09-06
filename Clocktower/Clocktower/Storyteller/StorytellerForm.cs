@@ -311,7 +311,7 @@ namespace Clocktower.Storyteller
         public async Task<IOption> GetPlayerForBalloonist(Player balloonist, Player? previousPlayerSeenByBalloonist, IReadOnlyCollection<IOption> balloonistOptions)
         {
             var sb = new StringBuilder();
-            sb.AppendFormattedText("Who should %p see as the %c today?", balloonist, Character.Balloonist, StorytellerView);
+            sb.AppendFormattedText("Who should %p see with their %c ability?", balloonist, Character.Balloonist, StorytellerView);
             if (previousPlayerSeenByBalloonist != null)
             {
                 sb.AppendFormattedText(" Last night they saw %p.", previousPlayerSeenByBalloonist, StorytellerView);
