@@ -47,6 +47,9 @@ namespace Clocktower.Game
                                                grimoire.Players.Where(player => player.Alignment == Winner.Value).ToList(),
                                                grimoire.Players.Where(player => player.Alignment != Winner.Value).ToList());
             }
+
+            var endGameTasks = agents.Select(async agent => await agent.EndGame());
+            await Task.WhenAll(endGameTasks);
         }
 
         public async Task RunNightAndDay()

@@ -28,6 +28,7 @@ namespace Clocktower.Agent
         public IGameObserver Observer { get; }
 
         public Func<Task>? OnStartGame { get; set; }
+        public Func<Task>? OnEndGame { get; set; }
         public Func<Character, Alignment, Task>? OnAssignCharacter { get; set; }
         public Func<Character, Task>? OnGainingCharacterAbility { get; set; }
         public Func<Task>? OnDead { get; set; }
@@ -42,6 +43,14 @@ namespace Clocktower.Agent
             }
 
             await notifier.Start(PlayerName, players, scriptName, script);
+        }
+
+        public async Task EndGame()
+        {
+            if (OnEndGame != null)
+            {
+                await OnEndGame();
+            }
         }
 
         public async Task AssignCharacter(Character character, Alignment alignment)

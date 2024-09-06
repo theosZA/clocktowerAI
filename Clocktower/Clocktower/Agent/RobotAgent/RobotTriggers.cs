@@ -88,6 +88,11 @@ namespace Clocktower.Agent.RobotAgent
             return Task.CompletedTask;
         }
 
+        public async Task EndGame()
+        {
+            await clocktowerChat.Request("With the game concluded, do you have any final thoughts to share? Any surprises in the reveal of which player was which character? And do you think you could have improved any aspects of your own gameplay?");
+        }
+
         private async Task PromptForBluff()
         {
             if (Character == null)

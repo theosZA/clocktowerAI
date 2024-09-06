@@ -51,6 +51,7 @@ namespace Clocktower.Agent
             agent.OnDead += robotTriggers.OnDead;
             agent.YourDemonIs += robotTriggers.YourDemonIs;
             agent.YourMinionsAre += robotTriggers.YourMinionsAre;
+            agent.OnEndGame += robotTriggers.EndGame;
 
             var form = new RobotAgentForm(robotTriggers);
             chatAi.OnChatMessage += form.OnChatMessage;
