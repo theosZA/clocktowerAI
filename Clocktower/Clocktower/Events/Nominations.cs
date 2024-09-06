@@ -137,11 +137,13 @@ namespace Clocktower.Events
             {
                 anyVotesConductedInSecret = true;
                 await observers.AnnounceVoteResult(nominee, voteCount: null, VoteResult.UnknownResult);
+                await storyteller.Observer.AnnounceVoteResult(nominee, voteCount, voteResult);
             }
             else if (anyVotesConductedInSecret)
             {   // This is the case when an Organ Grinder has died. This vote was public, but the players don't know
                 // if this vote changed anything.
                 await observers.AnnounceVoteResult(nominee, voteCount, VoteResult.UnknownResult);
+                await storyteller.Observer.AnnounceVoteResult(nominee, voteCount, voteResult);
             }
             else
             {
