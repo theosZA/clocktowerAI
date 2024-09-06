@@ -75,6 +75,14 @@ namespace ClocktowerScenarioTests.Mocks
             return empathNumbers;
         }
 
+        public static List<int> MockGetOracleNumber(this IStoryteller storyteller, int oracleNumber)
+        {
+            List<int> oracleNumbers = new();
+            storyteller.GetOracleNumber(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(oracleNumber, oracleNumbers, argIndex: 2);
+            return oracleNumbers;
+        }
+
         public static List<Character> MockGetPlayerForBalloonist(this IStoryteller storyteller, Character seenPlayer)
         {
             List<Character> possiblePlayers = new();

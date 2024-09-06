@@ -31,6 +31,7 @@ namespace Clocktower.Agent
         Task NotifyShugenja(Direction direction);
 
         Task NotifyEmpath(Player neighbourA, Player neighbourB, int evilCount);
+        Task NotifyOracle(int evilCount);
         Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading);
         Task NotifyRavenkeeper(Player target, Character character);
         Task NotifyUndertaker(Player executedPlayer, Character character);

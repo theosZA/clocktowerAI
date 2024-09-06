@@ -22,6 +22,7 @@ Noble: You start knowing 3 players, 1 and only 1 of which is evil.
 Cannibal: You have the ability of the recently killed executee. If they are evil, you are poisoned until a good player dies by execution.
 Balloonist: Each night, you learn a player of a different character type than last night. [+0 or +1 Outsider]
 Nightwatchman: Once per game, at night, choose a player: they learn who you are.
+Oracle: Each night (except the first night), you learn how many dead players are evil.
 
 // Outsiders
 Tinker: You might die at any time.

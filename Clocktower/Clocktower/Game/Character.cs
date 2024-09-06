@@ -53,6 +53,7 @@ namespace Clocktower.Game
         Cannibal,
         Balloonist,
         Nightwatchman,
+        Oracle,
 
         // Outsiders
         Tinker = 1000,

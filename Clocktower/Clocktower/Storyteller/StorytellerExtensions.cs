@@ -80,6 +80,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetEmpathNumber(empath, neighbourA, neighbourB, empathOptions.ToOptions())).GetNumber();
         }
 
+        public static async Task<int> GetOracleNumber(this IStoryteller storyteller, Player oracle, IEnumerable<Player> deadPlayers, IEnumerable<int> oracleOptions)
+        {
+            return (await storyteller.GetOracleNumber(oracle, deadPlayers.ToList(), oracleOptions.ToOptions())).GetNumber();
+        }
+
         public static async Task<int> GetJugglerNumber(this IStoryteller storyteller, Player juggler, int realJugglerNumber)
         {
             return (await storyteller.GetJugglerNumber(juggler, realJugglerNumber, Enumerable.Range(0, 6).ToOptions())).GetNumber();

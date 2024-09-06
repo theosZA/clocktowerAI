@@ -19,6 +19,7 @@ CannibalInformation    // If the Cannibal gains the ability of a "start knowing"
 Empath
 FortuneTeller
 Undertaker
+Oracle
 Juggler
 Balloonist
 Nightwatchman

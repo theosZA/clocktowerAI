@@ -30,6 +30,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetNobleInformation(Player noble, IReadOnlyCollection<IOption> nobleInformationOptions);
         Task<IOption> GetChefNumber(Player chef, IEnumerable<Player> playersThatCanMisregister, IReadOnlyCollection<IOption> chefOptions);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
+        Task<IOption> GetOracleNumber(Player oracle, IReadOnlyCollection<Player> deadPlayers, IReadOnlyCollection<IOption> oracleOptions);
         Task<IOption> GetJugglerNumber(Player juggler, int realJugglerNumber, IReadOnlyCollection<IOption> jugglerOptions);
         Task<IOption> GetFortuneTellerReading(Player fortuneTeller, Player targetA, Player targetB, IReadOnlyCollection<IOption> fortuneTellerOptions);
         Task<IOption> GetShugenjaDirection(Player shugenja, Grimoire grimoire, IReadOnlyCollection<IOption> shugenjaOptions);
@@ -64,6 +65,7 @@ namespace Clocktower.Storyteller
         void NotifyNoble(Player noble, IReadOnlyCollection<Player> nobleInformation);
         void NotifyShugenja(Player shugenja, Direction direction);
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);
+        void NotifyOracle(Player oracle, int evilCount);
         void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading);
         void NotifyUndertaker(Player undertaker, Player executedPlayer, Character executedCharacter);
         void NotifyBalloonist(Player balloonist, Player newPlayer);

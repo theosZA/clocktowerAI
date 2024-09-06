@@ -199,18 +199,44 @@ namespace Clocktower.Storyteller
             sb.AppendFormattedText("Choose what number to show to %p. Their living neighbours are %p and %p.", empath, neighbourA, neighbourB, StorytellerView);
             if (!AppendDrunkDisclaimer(sb, empath))
             {
-                if (neighbourA.Alignment != Alignment.Evil && neighbourA.CanRegisterAsEvil)
+                foreach (var player in new[] { neighbourA, neighbourB })
                 {
-                    sb.AppendFormattedText(" Remember that %p could register as %a.", neighbourA, Alignment.Evil, StorytellerView);
-                }
-                else if (neighbourB.Alignment != Alignment.Evil && neighbourB.CanRegisterAsEvil)
-                {
-                    sb.AppendFormattedText(" Remember that %p could register as %a.", neighbourB, Alignment.Evil, StorytellerView);
+                    if (player.Alignment != Alignment.Evil && player.CanRegisterAsEvil)
+                    {
+                        sb.AppendFormattedText(" Remember that %p could register as %a.", player, Alignment.Evil, StorytellerView);
+                    }
+                    if (player.Alignment == Alignment.Evil && player.CanRegisterAsGood)
+                    {
+                        sb.AppendFormattedText(" Remember that %p could register as %a.", player, Alignment.Good, StorytellerView);
+                    }
                 }
             }
             await notifier.Notify(sb.ToString());
 
             return await PopulateOptions(empathOptions);
+        }
+
+        public async Task<IOption> GetOracleNumber(Player oracle, IReadOnlyCollection<Player> deadPlayers, IReadOnlyCollection<IOption> oracleOptions)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("Choose what number to show to %p. The dead players are %P.", oracle, deadPlayers, StorytellerView);
+            if (!AppendDrunkDisclaimer(sb, oracle))
+            {
+                foreach (var player in deadPlayers)
+                {
+                    if (player.Alignment != Alignment.Evil && player.CanRegisterAsEvil)
+                    {
+                        sb.AppendFormattedText(" Remember that %p could register as %a.", player, Alignment.Evil, StorytellerView);
+                    }
+                    if (player.Alignment == Alignment.Evil && player.CanRegisterAsGood)
+                    {
+                        sb.AppendFormattedText(" Remember that %p could register as %a.", player, Alignment.Good, StorytellerView);
+                    }
+                }
+            }
+            await notifier.Notify(sb.ToString());
+
+            return await PopulateOptions(oracleOptions);
         }
 
         public async Task<IOption> GetJugglerNumber(Player juggler, int realJugglerNumber, IReadOnlyCollection<IOption> jugglerOptions)
@@ -533,7 +559,12 @@ namespace Clocktower.Storyteller
 
         public void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount)
         {
-            AddFormattedText($"%p learns that %b of their living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", empath, evilCount, neighbourA, neighbourB, StorytellerView);
+            AddFormattedText($"%p learns that %b of their living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} %a.", empath, evilCount, neighbourA, neighbourB, Alignment.Evil, StorytellerView);
+        }
+
+        public void NotifyOracle(Player oracle, int evilCount)
+        {
+            AddFormattedText($"%p learns that %b of the dead players {(evilCount == 1 ? "is" : "are")} %a.", oracle, evilCount, Alignment.Evil, StorytellerView);
         }
 
         public void NotifyFortuneTeller(Player fortuneTeller, Player targetA, Player targetB, bool reading)

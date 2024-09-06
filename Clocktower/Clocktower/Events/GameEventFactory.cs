@@ -66,6 +66,7 @@ namespace Clocktower.Events
                 case "Juggler":                     return new NotifyJuggler(storyteller, grimoire);
                 case "Balloonist":                  return new NotifyBalloonist(storyteller, grimoire);
                 case "Nightwatchman":               return new ChoiceFromNightwatchman(storyteller, grimoire);
+                case "Oracle":                      return new NotifyOracle(storyteller, grimoire);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

@@ -219,7 +219,17 @@ namespace Clocktower.Agent
                 await Learn(evilCount);
                 return;
             }
-            await SendMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} evil.", evilCount, neighbourA, neighbourB);
+            await SendMessage($"You learn that %b of your living neighbours (%p and %p) {(evilCount == 1 ? "is" : "are")} %a.", evilCount, neighbourA, neighbourB, Alignment.Evil);
+        }
+
+        public async Task NotifyOracle(int evilCount)
+        {
+            if (character == Character.Cannibal)
+            {
+                await Learn(evilCount);
+                return;
+            }
+            await SendMessage($"You learn that %b of the dead players {(evilCount == 1 ? "is" : "are")} %a.", evilCount, Alignment.Evil);
         }
 
         public async Task NotifyFortuneTeller(Player targetA, Player targetB, bool reading)
