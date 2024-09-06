@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace OpenAi.ChatCompletionApi
 {
@@ -74,11 +75,20 @@ namespace OpenAi.ChatCompletionApi
 
         private static T? StringToType<T>(string response)
         {
-            if (typeof(T) == typeof(string))
+            try
             {
-                return (T)(object)response;
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)(object)response;
+                }
+
+                return JsonConvert.DeserializeObject<T>(response);
             }
-            return JsonConvert.DeserializeObject<T>(response);
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception.ToString());
+                return default;
+            }
         }
 
         private readonly List<(Role role, string message)> messages = new();
