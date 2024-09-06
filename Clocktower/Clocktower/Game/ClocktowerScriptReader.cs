@@ -30,10 +30,26 @@ namespace Clocktower.Game
                 {
                     if (item is JValue value)
                     {
-                        var character = value.ToString();
-                        if (!string.IsNullOrEmpty(character))
+                        var characterText = value.ToString();
+                        if (!string.IsNullOrEmpty(characterText))
                         {
-                            yield return Enum.Parse<Character>(character, ignoreCase: true);
+                            if (Enum.TryParse<Character>(characterText, ignoreCase: true, out var character))
+                            {
+                                yield return character;
+                            }
+                            else
+                            {   // Script tool now strips out underscores from character names.
+                                var matches = Enum.GetValues<Character>().Where(character => string.Equals(characterText, character.ToString().Replace("_", string.Empty), StringComparison.InvariantCultureIgnoreCase))
+                                                                         .ToList();
+                                if (matches.Any())
+                                {
+                                    yield return matches.First();
+                                }
+                                else
+                                {
+                                    throw new Exception($"Unknown character {characterText}");
+                                }
+                            }
                         }
                     }
                 }
