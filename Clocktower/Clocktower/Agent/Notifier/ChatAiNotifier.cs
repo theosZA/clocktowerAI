@@ -20,7 +20,7 @@ namespace Clocktower.Agent.Notifier
 
         public Task Notify(string markupText)
         {
-            chat?.AddMessage(CleanMarkupText(markupText));
+            chat?.AddMessage(markupText);
             return Task.CompletedTask;
         }
 
@@ -46,19 +46,6 @@ namespace Clocktower.Agent.Notifier
             }
 
             return sb.ToString();
-        }
-
-        private static string CleanMarkupText(string markupText)
-        {
-            // Remove coloured text as the AI won't necessarily understand how to interpret the codes.
-            string colourPattern = @"(\[color:[^\]]+\])|(\[\/color\])";
-            markupText = Regex.Replace(markupText, colourPattern, string.Empty);
-
-            // Remove quote blocks.
-            string quotePattern = @">>>\s?";
-            markupText = Regex.Replace(markupText, quotePattern, string.Empty);
-
-            return markupText;
         }
 
         private readonly ClocktowerChatAi chat;
