@@ -88,5 +88,6 @@ namespace Clocktower.Storyteller
         void ChoiceFromButler(Player butler, Player target);
 
         void ScarletWomanTrigger(Player demon, Player scarletWoman);
+        void AcrobatTrigger(Player acrobat, Player triggeringGoodNeighbour);
     }
 }

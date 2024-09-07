@@ -23,6 +23,7 @@ Oracle
 Juggler
 Balloonist
 Nightwatchman
+Acrobat
 Butler
 Spy
 EndNight

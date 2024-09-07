@@ -717,6 +717,11 @@ namespace Clocktower.Storyteller
             AddFormattedText("%p has died and so %p becomes the new %c.", demon, scarletWoman, demon.RealCharacter, StorytellerView);
         }
 
+        public void AcrobatTrigger(Player acrobat, Player triggeringGoodNeighbour)
+        {
+            AddFormattedText("%p dies since %p is drunk or poisoned.", acrobat, triggeringGoodNeighbour, StorytellerView);
+        }
+
         private void AddFormattedText(string text, params object[] objects)
         {
             var markupText = TextUtilities.FormatMarkupText(text, objects);
