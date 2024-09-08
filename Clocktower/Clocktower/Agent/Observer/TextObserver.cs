@@ -218,6 +218,19 @@ namespace Clocktower.Agent.Observer
             await SendMessage(sb);
         }
 
+        public async Task AnnounceDamselGuess(Player minion, Player damsel, bool success)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendFormattedText("%p claims to be a minion and guesses that %p is the %c.", minion, damsel, Character.Damsel, storytellerView);
+            if (!success)
+            {
+                sb.Append(" The game continues.");
+            }
+
+            await SendMessage(sb);
+        }
+
         public async Task PublicStatement(Player player, string statement)
         {
             await SendMessage("%p:\n>>> %n", player, statement, storytellerView);

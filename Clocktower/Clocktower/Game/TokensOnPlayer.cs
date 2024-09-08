@@ -217,6 +217,7 @@
                 Token.BalloonistPing => "seen by the Balloonist",
                 Token.JuggledCorrectly => "juggled correctly by the Juggler",
                 Token.CannibalEaten => "has ability as Cannibal",
+                Token.DamselGuessUsed => "unsuccessful minion-Damsel guess",
                 _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
             };
         }

@@ -67,7 +67,7 @@ namespace Clocktower.Agent.Requester
                 }
                 else
                 {
-                    var slayerPrompt = TextUtilities.FormatMarkupText("Choose who you wish to target with your claimed %c ability.\n", Character.Slayer);
+                    var slayerPrompt = TextUtilities.FormatMarkupText("Choose who you wish to target with your claimed %c ability.", Character.Slayer);
                     var slayerOptions = slayerOption.PossiblePlayers.ToOptions();
                     var slayerChoice = await RequestOption(slayerPrompt, slayerOptions);
                     slayerOption.SetTarget(slayerChoice.GetPlayer());
@@ -92,6 +92,21 @@ namespace Clocktower.Agent.Requester
                     {
                         jugglerOption.AddJuggles(juggleDialog.GetPlayersAsCharacters());
                     }
+                }
+            }
+            else if (choice is MinionGuessingDamselOption damselOption)
+            {
+                // We need to choose who to guess as Damsel.
+                if (form.AutoAct)
+                {
+                    damselOption.SetTarget(damselOption.PossiblePlayers.Where(player => player.Alive && player.Name != form.PlayerName).ToList().RandomPick(random));
+                }
+                else
+                {
+                    var minionDamselPrompt = TextUtilities.FormatMarkupText("Choose who you wish to guess as the %c.", Character.Damsel);
+                    var damselOptions = damselOption.PossiblePlayers.ToOptions();
+                    var damselChoice = await RequestOption(minionDamselPrompt, damselOptions);
+                    damselOption.SetTarget(damselChoice.GetPlayer());
                 }
             }
 
@@ -203,6 +218,15 @@ namespace Clocktower.Agent.Requester
                     return slayerOption;
                 }
             }
+            // If Damsel guess is an option and we are a minion, pick it 10% of the time.
+            if (form.Character?.CharacterType() == CharacterType.Minion && random.Next(10) == 0)
+            {
+                var damselOption = options.FirstOrDefault(option => option is MinionGuessingDamselOption);
+                if (damselOption != null)
+                {
+                    return damselOption;
+                }
+            }
 
             // If Pass is an option, pick it 40% of the time.
             var passOption = options.FirstOrDefault(option => option is PassOption);
@@ -219,6 +243,7 @@ namespace Clocktower.Agent.Requester
                                      .Where(option => option is not VoteOption voteOption || (voteOption.Nominee.Alive && voteOption.Nominee.Name != form.PlayerName))
                                      .Where(option => option is not SlayerShotOption)
                                      .Where(option => option is not JugglerOption)
+                                     .Where(option => option is not MinionGuessingDamselOption)
                                      .ToList();
             if (autoOptions.Count > 0)
             {

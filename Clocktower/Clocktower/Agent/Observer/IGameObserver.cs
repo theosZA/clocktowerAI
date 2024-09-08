@@ -27,6 +27,7 @@ namespace Clocktower.Agent.Observer
 
         Task AnnounceSlayerShot(Player slayer, Player target, bool success);
         Task AnnounceJuggles(Player juggler, IEnumerable<(Player player, Character character)> juggles);
+        Task AnnounceDamselGuess(Player minion, Player damsel, bool success);
 
         Task PublicStatement(Player player, string statement);
         Task PrivateChatStarts(Player playerA, Player playerB);

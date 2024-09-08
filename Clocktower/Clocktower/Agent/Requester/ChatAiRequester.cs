@@ -94,13 +94,18 @@ namespace Clocktower.Agent.Requester
             sb.AppendLine(" You can explain your reasoning but should include one of the following options.");
             if (options.Any(option => option is JugglerOption))
             {
-                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
-                                             $"5 player-character pairs if you wish to claim %c and guess players as specific characters. (Players and characters may be repeated.)", Game.Character.Juggler);
+                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Character.Juggler)}\", \"Target\"=\"PLAYER_NAME AS CHARACTER, PLAYER_NAME AS CHARACTER, ...\"` with up to " +
+                                             $"5 player-character pairs if you wish to claim to be the %c and guess players as specific characters. (Players and characters may be repeated.)", Character.Juggler);
                 sb.AppendLine();
             }
             if (options.Any(option => option is SlayerShotOption))
             {
-                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Game.Character.Slayer)}\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim %c and target the specified player.", Game.Character.Slayer);
+                sb.AppendFormattedText($"- `\"Claim\"=\"{TextUtilities.CharacterToText(Character.Slayer)}\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim to be the %c and target the specified player.", Character.Slayer);
+                sb.AppendLine();
+            }
+            if (options.Any(option => option is MinionGuessingDamselOption))
+            {
+                sb.AppendFormattedText($"- `\"Claim\"=\"Minion\", \"Target\"=\"PLAYER_NAME\"` if you wish to claim to be a minion and guess that the specified player is the %c.", Character.Damsel);
                 sb.AppendLine();
             }
             if (options.Any(option => option is PassOption))

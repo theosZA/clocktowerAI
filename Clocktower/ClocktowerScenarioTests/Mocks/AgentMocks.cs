@@ -246,6 +246,18 @@ namespace ClocktowerScenarioTests.Mocks
                 });
         }
 
+        public static void MockMinionDamselGuess(this IAgent agent, Character target)
+        {
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+                .Returns(args =>
+                {
+                    var options = args.ArgAt<IReadOnlyCollection<IOption>>(0);
+                    var damselOption = (MinionGuessingDamselOption)options.First(option => option is MinionGuessingDamselOption);
+                    damselOption.SetTarget(damselOption.PossiblePlayers.First(player => player.Character == target));
+                    return damselOption;
+                });
+        }
+
         public static void MockFishermanOption(this IAgent agent, bool getAdvice)
         {
             agent.PromptFishermanAdvice(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(getAdvice);

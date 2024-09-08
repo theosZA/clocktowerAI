@@ -97,7 +97,7 @@ namespace Clocktower.Agent
                 return passOption;
             }
 
-            // For each of our options, we're going to score it based on how closely the AI response matches what it's looking for.
+            // For each of our options, we're going to score it based on how closely the response matches what it's looking for.
             return options.Select(option => (option, Score(option, text))).MaxBy(pair => pair.Item2).option;
         }
 
@@ -250,6 +250,32 @@ namespace Clocktower.Agent
                     if (jugglerOption.AddJugglesFromText(juggleText))
                     {
                         return jugglerScore;
+                    }
+                }
+                return 0;
+            }
+            else if (option is MinionGuessingDamselOption damselOption)
+            {
+                // Ideally we should be able to find the text "minion:" in our string to identify that this is an attempted minion-Damsel guess.
+                int damselScore = 0;
+                int? targetPos = null;
+                if (text.Contains("Minion:", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    damselScore = 90;
+                    targetPos = text.IndexOf("Minion:", StringComparison.InvariantCultureIgnoreCase) + 7;
+                }
+                else if (text.Contains("Minion", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    damselScore = 40;
+                    targetPos = text.IndexOf("Minion", StringComparison.InvariantCultureIgnoreCase) + 6;
+                }
+                if (targetPos.HasValue)
+                {
+                    var target = text[targetPos.Value..];
+                    damselOption.SetTargetFromText(target);
+                    if (damselOption != null)
+                    {
+                        return damselScore;
                     }
                 }
                 return 0;

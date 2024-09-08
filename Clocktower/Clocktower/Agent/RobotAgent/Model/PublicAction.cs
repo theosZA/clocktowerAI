@@ -89,6 +89,10 @@ namespace Clocktower.Agent.RobotAgent.Model
                 case SlayerShotOption slayerOption:
                     slayerOption.SetTargetFromText(Target);
                     break;
+
+                case MinionGuessingDamselOption damselOption:
+                    damselOption.SetTargetFromText(Target);
+                    break;
             }
         }
 
@@ -108,6 +112,7 @@ namespace Clocktower.Agent.RobotAgent.Model
             {
                 JugglerOption _ => TextUtilities.CharacterToText(Character.Juggler),
                 SlayerShotOption _ => TextUtilities.CharacterToText(Character.Slayer),
+                MinionGuessingDamselOption _ => "Minion",
                 _ => null,
             };
         }
@@ -125,8 +130,13 @@ namespace Clocktower.Agent.RobotAgent.Model
                     break;
 
                 case SlayerShotOption _:
-                    sb.Append($"\"{Target}\" is not a valid Slayer-shot target. ");
+                    sb.AppendFormattedText($"\"{Target}\" is not a valid %c-shot target. ", Character.Slayer);
                     sb.AppendFormattedText("If you wish to claim %c, make sure to provide \"Target\"=\"PLAYER_NAME\"` with the name of the player you wish to target.", Character.Slayer);
+                    break;
+
+                case MinionGuessingDamselOption _:
+                    sb.AppendFormattedText($"\"{Target}\" is not a valid %c guess. ", Character.Damsel);
+                    sb.AppendFormattedText("If you wish to claim to be a minion, make sure to provide \"Target\"=\"PLAYER_NAME\"` with the name of the player you wish to guess as the %c.", Character.Damsel);
                     break;
             }
 

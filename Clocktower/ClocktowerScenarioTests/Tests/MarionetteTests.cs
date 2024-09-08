@@ -90,7 +90,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Slayer).Received().AssignCharacter(Character.Slayer, Alignment.Good);
             await setup.Agent(Character.Slayer).DidNotReceive().AssignCharacter(Character.Marionette, Arg.Any<Alignment>());
-            await setup.Agent(Character.Slayer).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>());
+            await setup.Agent(Character.Slayer).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>());
         }
 
         [Test]
@@ -110,7 +110,8 @@ namespace ClocktowerScenarioTests.Tests
                     seenMinions.AddRange(args.ArgAt<IReadOnlyCollection<Player>>(0).Select(player => player.Character));
                 });
             var fellowMinions = new List<Character>();
-            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Is<Player>(player => player.Character == Character.Imp), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Is<Player>(player => player.Character == Character.Imp), Arg.Any<IReadOnlyCollection<Player>>(),
+                                                                               Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args =>
                 {
                     fellowMinions.AddRange(args.ArgAt<IReadOnlyCollection<Player>>(1).Select(player => player.Character));

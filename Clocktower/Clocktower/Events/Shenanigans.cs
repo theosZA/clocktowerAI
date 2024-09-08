@@ -32,6 +32,10 @@ namespace Clocktower.Events
             foreach (var player in players)
             {
                 await RunShenanigansForPlayer(player);
+                if (grimoire.Finished)
+                {   // No more public actions needed if this player's public action ends the game.
+                    return;
+                }
             }
         }
 
@@ -57,6 +61,10 @@ namespace Clocktower.Events
             {
                 await HandleJugglerClaim(player, juggles);
             }
+            else if (shenanigan is MinionGuessingDamselOption damselGuess && damselGuess.Target != null)
+            {
+                await HandleDamselGuess(player, damselGuess.Target);
+            }
         }
 
         private IReadOnlyCollection<IOption> BuildShenaniganOptions(Player player)
@@ -73,6 +81,11 @@ namespace Clocktower.Events
                 {
                     AddJugglerOptions(options);
                 }
+                if (player.Character.CharacterType() == CharacterType.Minion && scriptCharacters.Contains(Character.Damsel))
+                {   // Ideally we'd also exclude this option if the player knows that an unsuccesful guess has already been made,
+                    // but that's hard to be certain of when a script might obfuscate who are minions, e.g. with a Marionette in play.
+                    AddDamselOptions(options);
+                }
             }
             else
             {   // Include options for all claims on the script
@@ -88,6 +101,11 @@ namespace Clocktower.Events
                     {
                         AddJugglerOptions(options);
                     }
+                }
+                if (scriptCharacters.Contains(Character.Damsel))
+                {   // Strictly speaking dead minions should be allowed to guess the Damsel.
+                    // For convenience though, we're only allowing public actions from living players.
+                    AddDamselOptions(options);
                 }
             }
 
@@ -111,6 +129,11 @@ namespace Clocktower.Events
         private void AddJugglerOptions(IList<IOption> options)
         {
             options.Add(new JugglerOption(grimoire.Players, scriptCharacters));
+        }
+
+        private void AddDamselOptions(IList<IOption> options)
+        {
+            options.Add(new MinionGuessingDamselOption(grimoire.Players));
         }
 
         private async Task HandleSlayerClaim(Player slayer, Player target)
@@ -152,6 +175,29 @@ namespace Clocktower.Events
                     }
                 }
             }
+        }
+
+        private async Task HandleDamselGuess(Player minion, Player damsel)
+        {
+            if (minion.CharacterType == CharacterType.Minion)
+            { 
+                if (damsel.HasHealthyAbility(Character.Damsel) && !damsel.Tokens.HasToken(Token.DamselGuessUsed))
+                {
+                    await observers.AnnounceDamselGuess(minion, damsel, success: true);
+                    grimoire.EndGame(damsel.Alignment == Alignment.Good ? Alignment.Evil : Alignment.Good);
+                    return;
+                }
+
+                var realDamsels = grimoire.Players.Where(player => player.Character == Character.Damsel);
+                foreach (var realDamsel in realDamsels)
+                {
+                    if (!realDamsel.Tokens.HasToken(Token.DamselGuessUsed))
+                    {
+                        realDamsel.Tokens.Add(Token.DamselGuessUsed, minion);
+                    }
+                }
+            }
+            await observers.AnnounceDamselGuess(minion, damsel, success: false);
         }
 
         private async Task<bool> DoesKillTarget(Player purportedSlayer, Player target)

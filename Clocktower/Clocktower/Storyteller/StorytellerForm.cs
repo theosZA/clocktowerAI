@@ -468,7 +468,7 @@ namespace Clocktower.Storyteller
             AddMarkupText(sb.ToString());
         }
 
-        public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, bool damselInPlay, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             var sb = new StringBuilder();
             if (fellowMinions.Any())
@@ -479,10 +479,15 @@ namespace Clocktower.Storyteller
             {
                 sb.AppendFormattedText($"%p learns that %p is their demon", minion, demon, StorytellerView);
             }
+            if (damselInPlay)
+            {
+                sb.AppendFormattedText(", and that there is a %c in play", Character.Damsel, StorytellerView);
+            }
             if (notInPlayCharacters.Any())
             {
                 sb.AppendFormattedText(", and that the following characters are not in play: %C", notInPlayCharacters, StorytellerView);
             }
+            sb.Append('.');
             AddMarkupText(sb.ToString());
         }
 

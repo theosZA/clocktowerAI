@@ -64,6 +64,11 @@ namespace Clocktower.Agent.Requester
                                        Character.Juggler);
                 sb.AppendLine();
             }
+            if (options.Any(option => option is MinionGuessingDamselOption))
+            {
+                sb.AppendFormattedText("- `Minion: player_name` if you wish to claim to be a minion and guess the specified player as the %c.", Character.Damsel);
+                sb.AppendLine();
+            }
             if (options.Any(option => option is PassOption))
             {
                 sb.AppendLine("- `PASS` if you don't wish to use or bluff any of these abilities.");

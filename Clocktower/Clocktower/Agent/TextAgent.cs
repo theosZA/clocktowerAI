@@ -81,7 +81,7 @@ namespace Clocktower.Agent
             }
         }
 
-        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters)
+        public async Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, bool damselInPlay, IReadOnlyCollection<Character> notInPlayCharacters)
         {
             var sb = new StringBuilder();
 
@@ -92,6 +92,10 @@ namespace Clocktower.Agent
             else
             {
                 sb.AppendFormattedText("As a minion, you learn that %p is your demon.", demon);
+            }
+            if (damselInPlay)
+            {
+                sb.AppendFormattedText(" You also learn that there is a %c in play.", Character.Damsel);
             }
             if (notInPlayCharacters.Any())
             {

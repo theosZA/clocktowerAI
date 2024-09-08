@@ -64,6 +64,7 @@ namespace Clocktower.Game
         Butler,
         Snitch,
         Acrobat,
+        Damsel,
 
         // Minions
         Godfather = 2000,

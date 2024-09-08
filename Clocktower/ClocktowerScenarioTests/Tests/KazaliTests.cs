@@ -32,6 +32,7 @@ namespace ClocktowerScenarioTests.Tests
                 await setup.Agent(Character.Fisherman).AssignCharacter(Character.Baron, Alignment.Evil);
                 await setup.Agent(Character.Fisherman).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                          Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 0),
+                                                                         false,
                                                                          Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 1 && 
                                                                                                                     minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman),
@@ -70,10 +71,12 @@ namespace ClocktowerScenarioTests.Tests
                 await setup.Agent(Character.Fisherman).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                          Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
                                                                                                                               fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Virgin),
+                                                                         false,
                                                                          Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Virgin).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                       Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
                                                                                                                            fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman),
+                                                                      false,
                                                                       Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 2 &&
                                                                                                                     minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman &&
@@ -118,16 +121,19 @@ namespace ClocktowerScenarioTests.Tests
                                                                          Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 2 &&
                                                                                                                               fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Virgin &&
                                                                                                                               fellowMinions.ElementAt(1).CharacterHistory.ElementAt(0)[0] == Character.Tinker),
+                                                                         false,
                                                                          Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Virgin).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                       Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 2 &&
                                                                                                                            fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman &&
                                                                                                                            fellowMinions.ElementAt(1).CharacterHistory.ElementAt(0)[0] == Character.Tinker),
+                                                                      false,
                                                                       Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Tinker).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                       Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 2 &&
                                                                                                                            fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman &&
                                                                                                                            fellowMinions.ElementAt(1).CharacterHistory.ElementAt(0)[0] == Character.Virgin),
+                                                                      false,
                                                                       Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
                 await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 3 &&
                                                                                                                     minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Fisherman &&
@@ -265,7 +271,7 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(marionetteCandidates!.ElementAt(0).Character, Is.EqualTo(Character.Fisherman));
             Assert.That(marionetteCandidates!.ElementAt(1).Character, Is.EqualTo(Character.Mayor));
             await setup.Agent(Character.Fisherman).DidNotReceive().AssignCharacter(Character.Marionette, Alignment.Evil);
-            await setup.Agent(Character.Fisherman).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>());
+            await setup.Agent(Character.Fisherman).DidNotReceive().MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>());
         }
 
         [Test]
@@ -286,6 +292,7 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Soldier).DidNotReceive().AssignCharacter(Character.Poisoner, Alignment.Evil);
             await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                    Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 0),
+                                                                   false,
                                                                    Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));
             await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 1 &&
                                                                                                                 minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
@@ -317,6 +324,7 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                    Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
                                                                                                                         fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Monk),
+                                                                   false,
                                                                    Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0));;
 
             await setup.Agent(Character.Monk).Received().AssignCharacter(Character.Baron, Alignment.Evil);
@@ -324,6 +332,7 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Soldier).MinionInformation(Arg.Is<Player>(player => player.RealCharacter == Character.Kazali),
                                                                    Arg.Is<IReadOnlyCollection<Player>>(fellowMinions => fellowMinions.Count() == 1 &&
                                                                                                                         fellowMinions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
+                                                                   false,
                                                                    Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 0)); ;
 
             await setup.Agent(Character.Kazali).DemonInformation(Arg.Is<IReadOnlyCollection<Player>>(minions => minions.Count() == 1 &&

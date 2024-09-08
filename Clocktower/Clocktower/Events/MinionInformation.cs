@@ -18,11 +18,12 @@ namespace Clocktower.Events
             var minions = grimoire.Players.Where(player => player.CharacterType == CharacterType.Minion && player.RealCharacter != Character.Marionette)
                                           .ToList();
             var demon = grimoire.Players.First(player => player.CharacterType == CharacterType.Demon);
+            bool damselInPlay = grimoire.PlayersWithHealthyAbility(Character.Damsel).Any();
             foreach (var minion in minions)
             {
                 var minionBluffs = await GetMinionBluffs(minion);
-                await minion.Agent.MinionInformation(demon, minions.Except(new[] { minion }).ToList(), minionBluffs);
-                storyteller.MinionInformation(minion, demon, minions.Except(new[] { minion }).ToList(), minionBluffs);
+                await minion.Agent.MinionInformation(demon, minions.Except(new[] { minion }).ToList(), damselInPlay, minionBluffs);
+                storyteller.MinionInformation(minion, demon, minions.Except(new[] { minion }).ToList(), damselInPlay, minionBluffs);
             }
         }
 

@@ -52,7 +52,7 @@ namespace Clocktower.Storyteller
         void NewKazaliMinion(Player kazali, Player minionTarget, Character oldMinionCharacter, Character newMinionCharacter);
         void KazaliSoldierMinion(Player soldier, Character minionCharacterPickedBySoldier);
 
-        void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, IReadOnlyCollection<Character> notInPlayCharacters);
+        void MinionInformation(Player minion, Player demon, IReadOnlyCollection<Player> fellowMinions, bool damselInPlay, IReadOnlyCollection<Character> notInPlayCharacters);
         void DemonInformation(Player demon, IReadOnlyCollection<Player> minions, IReadOnlyCollection<Character> notInPlayCharacters);
 
         void NotifyGodfather(Player godfather, IReadOnlyCollection<Character> outsiders);

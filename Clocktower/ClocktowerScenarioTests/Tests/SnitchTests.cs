@@ -12,7 +12,7 @@ namespace ClocktowerScenarioTests.Tests
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Saint,Soldier,Slayer,Mayor");
             var minionBluffs = new List<Character>();
-            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args => minionBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
 
             // Act
@@ -30,9 +30,9 @@ namespace ClocktowerScenarioTests.Tests
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Baron,Ravenkeeper,Snitch,Soldier,Slayer,Scarlet_Woman");
             var baronBluffs = new List<Character>();
             var scarletWomanBluffs = new List<Character>();
-            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args => baronBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
-            setup.Agent(Character.Scarlet_Woman).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Scarlet_Woman).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args => scarletWomanBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
             setup.Storyteller.GetMinionBluffs(Arg.Is<Player>(minion => minion.Character == Character.Baron), Arg.Any<IReadOnlyCollection<IOption>>())
                 .Returns(args => args.GetMatchingOptionFromOptionsArg((Character.Chef, Character.Butler, Character.Monk), argIndex: 1));
@@ -63,9 +63,9 @@ namespace ClocktowerScenarioTests.Tests
 
             var baronBluffs = new List<Character>();
             var scarletWomanBluffs = new List<Character>();
-            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Baron).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args => baronBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
-            setup.Agent(Character.Scarlet_Woman).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<IReadOnlyCollection<Character>>()))
+            setup.Agent(Character.Scarlet_Woman).When(agent => agent.MinionInformation(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<Player>>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<Character>>()))
                 .Do(args => scarletWomanBluffs.AddRange(args.ArgAt<IReadOnlyCollection<Character>>(2)));
 
             // Act
