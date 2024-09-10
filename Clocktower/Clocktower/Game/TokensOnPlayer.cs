@@ -123,7 +123,8 @@
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CannibalPoisoned
-                || token == Token.CannibalDrunk;
+                || token == Token.CannibalDrunk
+                || token == Token.DamselJinxPoisoned;
         }
 
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
@@ -218,6 +219,7 @@
                 Token.JuggledCorrectly => "juggled correctly by the Juggler",
                 Token.CannibalEaten => "has ability as Cannibal",
                 Token.DamselGuessUsed => "unsuccessful minion-Damsel guess",
+                Token.DamselJinxPoisoned => "poisoned due to jinx",
                 _ => string.Empty,  // All other tokens shouldn't be shown on the Grimoire - they're an implementation detail.
             };
         }

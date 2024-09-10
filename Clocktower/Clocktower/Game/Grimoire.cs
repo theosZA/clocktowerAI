@@ -63,11 +63,31 @@ namespace Clocktower.Game
             {
                 storyteller.AssignCharacter(player);
                 await player.Agent.AssignCharacter(player.Character, player.Alignment);
+
+                if (player.Character == Character.Spy || player.Character == Character.Widow)
+                {
+                    OnSpyOrWindowInPlay();
+                }
+
+                if (player.Character == Character.Damsel)
+                {
+                    OnDamselInPlay(player);
+                }
             }
         }
 
         public async Task ChangeCharacter(Player player, Character newCharacter)
         {
+            if (newCharacter == Character.Spy || newCharacter == Character.Widow)
+            {
+                OnSpyOrWindowInPlay();
+            }
+
+            if (newCharacter == Character.Damsel)
+            {
+                OnDamselInPlay(player);
+            }
+
             if (newCharacter == Character.Marionette)
             {
                 foreach (var affectedPlayer in players)
@@ -84,6 +104,23 @@ namespace Clocktower.Game
                 affectedPlayer.Tokens.ClearTokensForPlayer(player);
             }
             await player.ChangeCharacter(newCharacter);
+        }
+
+        public async Task GainCharacterAbility(Player player, Character characterAbility)
+        {
+            player.Tokens.Remove(Token.DamselJinxPoisoned);
+
+            await player.GainCharacterAbility(characterAbility);
+
+            if (player.Character == Character.Spy || player.Character == Character.Widow)
+            {
+                OnSpyOrWindowInPlay();
+            }
+
+            if (player.Character == Character.Damsel)
+            {
+                OnDamselInPlay(player);
+            }
         }
 
         public void ClearTokensOnPlayerDeath(Player player)
@@ -151,7 +188,29 @@ namespace Clocktower.Game
             return players[index];
         }
 
+        private void OnSpyOrWindowInPlay()
+        {
+            spyOrWidowHasBeenInPlay = true;
+
+            foreach (var damsel in players.WithCharacter(Character.Damsel))
+            {
+                damsel.Tokens.Add(Token.DamselJinxPoisoned, damsel);
+            }
+        }
+
+        private void OnDamselInPlay(Player damsel)
+        {
+            if (spyOrWidowHasBeenInPlay)
+            {
+                damsel.Tokens.Add(Token.DamselJinxPoisoned, damsel);
+            }
+        }
+
         private readonly List<Player> players;
         private Alignment? winner;
+
+        // Flag to indicate that a minion has had the chance to see the Grimoire.
+        // There are jinxes that ensure that this isn't overpowered.
+        private bool spyOrWidowHasBeenInPlay = false;
     }
 }

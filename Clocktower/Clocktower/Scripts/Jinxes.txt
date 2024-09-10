@@ -1,6 +1,9 @@
 ﻿Cannibal / Juggler: If the Juggler guesses on their first day and dies by execution, tonight the living Cannibal learns how many guesses the Juggler got correct.
-Organ Grinder / Butler: If the Organ Grinder is causing secret voting, the Butler may raise their hand to vote but their vote is only counted if their master voted too.
 Marionette / Balloonist: If the Marionette thinks that they are the Balloonist, +1 Outsider was added.
+Marionette / Damsel: The Marionette does not learn that a Damsel is in play.
 Marionette / Snitch: The Marionette does not learn 3 not in-play characters. The Demon learns an extra 3 instead.
+Organ Grinder / Butler: If the Organ Grinder is causing secret voting, the Butler may raise their hand to vote but their vote is only counted if their master voted too.
+Spy / Damsel: If the Spy is (or has been) in play, the Damsel is poisoned.
+Widow / Damsel: If the Widow is (or has been) in play, the Damsel is poisoned.
 Kazali / Marionette: If the Kazali chooses to create a Marionette, they must choose one of their neighbors.
 Kazali / Soldier: If the Kazali turns the Soldier into a Minion, the Soldier chooses which not-in-play Minion to become.

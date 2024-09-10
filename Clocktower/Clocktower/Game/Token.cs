@@ -34,6 +34,7 @@
         JuggledCorrectly,
         CannibalEaten,
         DamselGuessUsed,
+        DamselJinxPoisoned,
         // Special marker (not actually represented by a token in the real game).
         DiedAtNight = 3000,
         // Not real tokens, just used here for tracking stuff needed for this implementation.
