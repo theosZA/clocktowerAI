@@ -96,6 +96,25 @@ namespace ClocktowerScenarioTests.Tests
             Assert.That(game.Finished, Is.False);
         }
 
+        [Test]
+        public async Task Damsel_Dead()
+        {
+            // Night 1 & Day 1
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Damsel,Fisherman,Baron,Mayor");
+            await game.StartGame();
+
+            setup.Agent(Character.Imp).MockNomination(Character.Damsel);
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Baron).MockMinionDamselGuess(Character.Damsel);
+
+            await game.RunNightAndDay();
+
+            Assert.That(game.Finished, Is.False);
+        }
+
         [TestCase(Character.Imp)]
         [TestCase(Character.Damsel)]
         [TestCase(Character.Mayor)]
@@ -150,6 +169,44 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(game.Finished, Is.True);
             Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+        }
+
+        [Test]
+        public async Task CannibalDamsel_LosesWhenGuessed()
+        {
+            // Night 1 & Day 1
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Damsel,Cannibal,Baron,Mayor");
+            await game.StartGame();
+
+            setup.Agent(Character.Imp).MockNomination(Character.Damsel);
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Baron).MockMinionDamselGuess(Character.Cannibal);
+            await game.RunNightAndDay();
+
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+        }
+
+        [Test]
+        public async Task Cannibal_WithDamselAbilityFromMinion()
+        {
+            // Night 1 & Day 1
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Soldier,Ravenkeeper,Cannibal,Fisherman,Baron,Scarlet_Woman");
+            await game.StartGame();
+
+            setup.Agent(Character.Imp).MockNomination(Character.Scarlet_Woman);
+            setup.Storyteller.MockCannibalChoice(Character.Damsel);
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Baron).MockMinionDamselGuess(Character.Cannibal);
+            await game.RunNightAndDay();
+
+            Assert.That(game.Finished, Is.False);
         }
 
         [Test]
