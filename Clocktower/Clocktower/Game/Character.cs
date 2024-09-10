@@ -24,6 +24,7 @@
 //    - Cases for when this character ability is chosen by the Philosopher.
 //    - Cases for when this character ability is gained by the Cannibal or poisoned Cannibal.
 // 8. Add jinxes. These include adding the descriptions to Jinxes.txt, scenario tests to cover the jinxes, and implementations for the jinxes.
+// 9. Note any house rules that are implemented for the character in HouseRules.txt.
 
 namespace Clocktower.Game
 {

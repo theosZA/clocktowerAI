@@ -40,6 +40,18 @@ namespace Clocktower.Agent
                 sb.AppendLine(CharacterToText(demon, characterDescriptions));
             }
 
+            var houseRules = ReadHouseRulesFromFile("Scripts\\HouseRules.txt").Where(houseRule => script.Contains(houseRule.character)).ToList();
+            if (houseRules.Any())
+            {
+                sb.AppendLine("## House Rules");
+                sb.AppendLine("There are house rules that will be implemented in this game for the following characters.");
+                foreach (var (character, houseRule) in houseRules)
+                {
+                    sb.AppendFormattedText($"- %c: {houseRule}", character);
+                    sb.AppendLine();
+                }
+            }
+
             var jinxes = ReadJinxesFromFile("Scripts\\Jinxes.txt").Where(jinx => script.Contains(jinx.character1) && script.Contains(jinx.character2)).ToList();
             if (jinxes.Any())
             {
@@ -164,6 +176,31 @@ namespace Clocktower.Agent
                 }
             }
             return characterDescriptions;
+        }
+
+        private static IReadOnlyCollection<(Character character, string houseRule)> ReadHouseRulesFromFile(string fileName)
+        {
+            var houseRules = new List<(Character, string)>();
+            var lines = File.ReadAllLines(fileName);
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("//"))
+                {
+                    Match match = descriptionRegex.Match(line);
+                    if (match.Success)
+                    {
+                        string characterName = match.Groups[1].Value.Trim().Replace(" ", "_");
+                        string houseRule = match.Groups[2].Value.Trim();
+
+                        if (!Enum.TryParse(characterName, ignoreCase: true, out Character character))
+                        {
+                            throw new Exception($"Unknown character {characterName} in house rules file \"{fileName}\"");
+                        }
+                        houseRules.Add((character, houseRule));
+                    }
+                }
+            }
+            return houseRules;
         }
 
         private static IReadOnlyCollection<(Character character1, Character character2, string jinx)> ReadJinxesFromFile(string fileName)
