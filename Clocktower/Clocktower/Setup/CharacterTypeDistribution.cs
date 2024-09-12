@@ -206,7 +206,7 @@ namespace Clocktower.Setup
             int baseOutsiders = GetBaseOutsiderCount(playerCount);
 
             var possibleOutsiderAdjustments = new List<IReadOnlyCollection<int>>();
-            var outsiderAdjustingCharacters = new[] { Character.Baron, Character.Godfather, Character.Balloonist }.Except(excludingCharacters).ToList();
+            var outsiderAdjustingCharacters = new[] { Character.Baron, Character.Godfather, Character.Balloonist, Character.Huntsman }.Except(excludingCharacters).ToList();
             foreach (var character in outsiderAdjustingCharacters)
             {
                 if (isCharacterSelected(character))
@@ -259,6 +259,7 @@ namespace Clocktower.Setup
                     break;
 
                 case Character.Balloonist:
+                case Character.Huntsman:
                     yield return 0;
                     yield return +1;
                     break;

@@ -121,8 +121,12 @@ namespace Clocktower.Game
                 setup.Value.UpdateCounter(PlayerCount);
             }
 
+            bool huntsmanNeedsDamsel = IsCharacterSelected(Character.Huntsman) && !IsCharacterSelected(Character.Damsel);
+            setupForCharacterType[CharacterType.Outsider].SetColor(Character.Damsel, huntsmanNeedsDamsel ? Color.Red : Color.Black);
+
             startButton.Enabled = setupForCharacterType.All(setup => setup.Value.IsCountOkay(PlayerCount))
-                               && GetRequiredTotal() == setupForCharacterType.Sum(setup => setup.Value.SelectedCount);
+                               && GetRequiredTotal() == setupForCharacterType.Sum(setup => setup.Value.SelectedCount)
+                               && !huntsmanNeedsDamsel;
         }
 
         private int GetRequiredTotal()
@@ -160,10 +164,13 @@ namespace Clocktower.Game
             int minionCount = characterTypeDistribution.GetMinionCount(PlayerCount);
             setupForCharacterType[CharacterType.Minion].RandomizeSelection(minionCount, random, forcedCharacters);
 
-            // At this point we need to determine the distribution between Townsfolk and Outsiders. This is complicated by the fact that one Townsfolk (Balloonist) can
-            // change the Outsider count (if they aren't the Drunk). What we'll do is assume for the moment that there will be no modifications to the Outsider count
-            // from Townsfolk and see what Townsfolk characters are drawn. If one of them is the Balloonist then we'll randomly determine if they are applying a +0 or +1
-            // to the Outsider count, and if it's a +1 modification then we'll remove a random non-Balloonist Townsfolk.
+            // At this point we need to determine the distribution between Townsfolk and Outsiders. This is complicated by the fact that two Townsfolk (Balloonist
+            // and Huntsman) can potentially change the Outsider count (if they aren't the Drunk). What we'll do is assume for the moment that there will be no modifications
+            // to the Outsider count from Townsfolk and see what Townsfolk characters are drawn.
+            // - If one of them is the Balloonist then we'll randomly determine if they are applying a +0 or +1 to the Outsider count, and if it's a +1 modification then
+            //   we'll remove a random non-Balloonist Townsfolk.
+            // - If one of them is the Huntsman then we'll randomly pick the Outsiders and see if the Damsel is added. If not, then we'll add the Damsel and remove a
+            //   non-Balloonist, non-Huntsman Townsfolk.
 
             int outsiderModification = characterTypeDistribution.GetRandomOutsiderModificationByEvil();
             int townsfolkCount = characterTypeDistribution.GetTownsfolkCount(PlayerCount, outsiderModification);
@@ -181,6 +188,12 @@ namespace Clocktower.Game
             while (newTownsfolkCount > setupForCharacterType[CharacterType.Townsfolk].SelectedCount)
             {   // Add townsfolk (other than Balloonist).
                 setupForCharacterType[CharacterType.Townsfolk].AddRandomCharacter(random, new[] { Character.Balloonist });
+            }
+
+            if (IsCharacterSelected(Character.Huntsman) && !IsCharacterSelected(Character.Damsel))
+            {
+                setupForCharacterType[CharacterType.Outsider].SelectCharacter(Character.Damsel);
+                setupForCharacterType[CharacterType.Townsfolk].RemoveRandomCharacter(random, new[] { Character.Balloonist, Character.Huntsman });
             }
 
             UpdateCounters();

@@ -54,6 +54,14 @@ namespace Clocktower.Setup
             }
         }
 
+        public void SelectCharacter(Character character)
+        {
+            if (checkBoxes.TryGetValue(character, out var checkBox))
+            {
+                checkBox.Checked = true;
+            }
+        }
+
         public void UpdateCounter(int playerCount)
         {
             var counts = characterTypeDistribution.GetPossibleCounts(characterType, playerCount).ToList();
@@ -64,6 +72,14 @@ namespace Clocktower.Setup
             else
             {
                 Counter.Text = $"{SelectedCount} of {string.Join('/', counts)}";
+            }
+        }
+
+        public void SetColor(Character character, Color color)
+        {
+            if (checkBoxes.TryGetValue(character, out var checkBox))
+            {
+                checkBox.ForeColor = color;
             }
         }
 
