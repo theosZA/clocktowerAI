@@ -23,6 +23,7 @@ Cannibal: You have the ability of the recently killed executee. If they are evil
 Balloonist: Each night, you learn a player of a different character type than last night. [+0 or +1 Outsider]
 Nightwatchman: Once per game, at night, choose a player: they learn who you are.
 Oracle: Each night (except the first night), you learn how many dead players are evil.
+Huntsman: Once per game, at night, choose a living player: the Damsel, if chosen, becomes a not-in-play Townsfolk. [+the Damsel]
 
 // Outsiders
 Tinker: You might die at any time.

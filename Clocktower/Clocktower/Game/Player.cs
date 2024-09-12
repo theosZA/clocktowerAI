@@ -201,6 +201,7 @@ namespace Clocktower.Game
                 case Character.Slayer:
                 case Character.Virgin:
                 case Character.Nightwatchman:
+                case Character.Huntsman:
                 case Character.Assassin:
                     if (Tokens.HasToken(Token.UsedOncePerGameAbility))
                     {

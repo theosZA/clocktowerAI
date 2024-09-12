@@ -433,6 +433,21 @@ namespace Clocktower.Agent
             return await RequestPlayer(options, "As the %c, you may use your once-per-game ability tonight so that one player will learn who you are.", Character.Nightwatchman);
         }
 
+        public async Task<IOption> RequestChoiceFromHuntsman(IReadOnlyCollection<IOption> options)
+        {
+            if (character == Character.Cannibal)
+            {
+                bool useAbility = await CannibalRequestUseAbility(OptionsBuilder.YesOrNo) is YesOption;
+                if (!useAbility)
+                {
+                    return options.First(option => option is PassOption);
+                }
+                return await CannibalRequestPlayer(options.Where(option => option is not PassOption).ToList());
+            }
+
+            return await RequestPlayer(options, "As the %c, you may use your once-per-game ability tonight to guess who the %c might be.", Character.Huntsman, Character.Damsel);
+        }
+
         public async Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options)
         {
             if (character == Character.Cannibal)

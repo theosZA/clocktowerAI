@@ -193,5 +193,10 @@ namespace ClocktowerScenarioTests.Mocks
         {
             storyteller.GetFortuneTellerReading(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(reading, argIndex: 3);
         }
+
+        public static void MockNewDamselCharacter(this IStoryteller storyteller, Character newCharacter)
+        {
+            storyteller.ChooseDamselCharacter(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(newCharacter, argIndex: 2);
+        }
     }
 }

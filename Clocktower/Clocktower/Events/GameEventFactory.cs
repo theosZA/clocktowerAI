@@ -67,6 +67,7 @@ namespace Clocktower.Events
                 case "Balloonist":                  return new NotifyBalloonist(storyteller, grimoire);
                 case "Nightwatchman":               return new ChoiceFromNightwatchman(storyteller, grimoire);
                 case "Oracle":                      return new NotifyOracle(storyteller, grimoire);
+                case "Huntsman":                    return new ChoiceFromHuntsman(storyteller, grimoire, setup.Script, random, firstNight: dayNumber == 1);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

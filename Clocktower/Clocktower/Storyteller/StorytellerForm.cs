@@ -414,6 +414,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(characterAbilityOptions);
         }
 
+        public async Task<IOption> ChooseDamselCharacter(Player damsel, Player huntsman, IReadOnlyCollection<IOption> characterOptions)
+        {
+            AddFormattedText("%p has successfully guessed that %p is the %c. What Townsfolk character should %p become?", huntsman, damsel, Character.Damsel, damsel, StorytellerView);
+            return await PopulateOptions(characterOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Character != player.RealCharacter)
@@ -715,6 +721,11 @@ namespace Clocktower.Storyteller
         public void ChoiceFromButler(Player butler, Player target)
         {
             AddFormattedText("%p has chosen %p to be their master.", butler, target, StorytellerView);
+        }
+
+        public void FailedHuntsmanGuess(Player huntsman, Player damsel)
+        {
+            AddFormattedText("%p has guessed that %p is the %c. There is no effect.", huntsman, damsel, Character.Damsel, StorytellerView);
         }
 
         public void ScarletWomanTrigger(Player demon, Player scarletWoman)

@@ -18,36 +18,7 @@ namespace Clocktower.Events
             // Check if we have a Philosopher who just turned tonight.
             foreach (var philosopher in grimoire.Players.Where(player => player.Alive && IsNewPhilosopher(player)))
             {
-                switch (philosopher.Character)
-                {
-                    case Character.Chef:
-                        await new NotifyChef(storyteller, grimoire).RunEvent(philosopher);
-                        break;
-
-                    case Character.Steward:
-                        await new NotifySteward(storyteller, grimoire).RunEvent(philosopher);
-                        break;
-
-                    case Character.Noble:
-                        await new NotifyNoble(storyteller, grimoire, random).RunEvent(philosopher);
-                        break;
-
-                    case Character.Investigator:
-                        await new NotifyInvestigator(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
-                        break;
-
-                    case Character.Librarian:
-                        await new NotifyLibrarian(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
-                        break;
-
-                    case Character.Washerwoman:
-                        await new NotifyWasherwoman(storyteller, grimoire, scriptCharacters, random).RunEvent(philosopher);
-                        break;
-
-                    case Character.Shugenja:
-                        await new NotifyShugenja(storyteller, grimoire).RunEvent(philosopher);
-                        break;
-                }
+                await StartKnowing.Notify(philosopher, philosopher.Character, storyteller, grimoire, scriptCharacters, random);
             }
         }
 

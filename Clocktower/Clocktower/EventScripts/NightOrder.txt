@@ -1,4 +1,4 @@
-﻿StartNight
+StartNight
 Philosopher
 Poisoner
 Monk
@@ -12,6 +12,8 @@ Kazali
 Assassin
 Godfather
 // Sweetheart - this is their theoretical place in the night order, but they actually drunk someone immediately on death
+Huntsman
+// Damsel - this is their theoretical place in the night order, but they switch as part of the Huntsman ability
 Tinker
 PhilosopherInformation // If the Philosopher chooses a "start knowing" character, this is when they will learn that information
 CannibalInformation    // If the Cannibal gains the ability of a "start knowing" character, this is when they will learn that information

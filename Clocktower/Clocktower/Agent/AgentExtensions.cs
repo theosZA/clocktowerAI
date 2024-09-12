@@ -70,6 +70,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromNightwatchman(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
         }
 
+        public static async Task<Player?> RequestChoiceFromHuntsman(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromHuntsman(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
+        }
+
         public static async Task<Player> RequestChoiceFromMonk(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromMonk(players.ToOptions())).GetPlayer();

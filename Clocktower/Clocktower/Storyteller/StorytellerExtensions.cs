@@ -95,6 +95,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.ChooseFakeCannibalAbility(cannibal, executedPlayer, cannibalAbilityOptions.ToOptions())).GetCharacter();
         }
 
+        public static async Task<Character> ChooseDamselCharacter(this IStoryteller storyteller, Player damsel, Player huntsman, IEnumerable<Character> damselCharacterOptions)
+        {
+            return (await storyteller.ChooseDamselCharacter(damsel, huntsman, damselCharacterOptions.ToOptions())).GetCharacter();
+        }
+
         public static async Task<bool> GetFortuneTellerReading(this IStoryteller storyteller, Player fortuneTeller, Player targetA, Player targetB)
         {
             return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;
