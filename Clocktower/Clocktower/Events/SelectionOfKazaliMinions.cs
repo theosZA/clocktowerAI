@@ -56,6 +56,8 @@ namespace Clocktower.Events
 
         private async Task UpdatePlayerWithMinionCharacter(Player player, Character minionCharacter, Player kazali, KazaliMinionsSelection kazaliMinionsSelection)
         {
+            Character oldCharacter = player.Character;
+
             if (player.HasHealthyAbility(Character.Soldier))
             {
                 // A Soldier selected by the Kazali instead chooses which not-in-play Minion to become.
@@ -73,6 +75,21 @@ namespace Clocktower.Events
 
             await grimoire.ChangeCharacter(player, minionCharacter);
             storyteller.AssignCharacter(player);
+
+            // If there is now a Huntsman in play without a Damsel, we need to create a new Damsel.
+            if (oldCharacter == Character.Damsel)
+            {
+                var minionPlayers = kazaliMinionsSelection.Minions.Select(minion => minion.player).ToList();
+                var huntsman = grimoire.Players.WithCharacter(Character.Huntsman).Except(minionPlayers).FirstOrDefault();
+                if (huntsman != null)
+                {
+                    var goodPlayers = grimoire.Players.WithAlignment(Alignment.Good).Except(minionPlayers);
+                    var newDamsel = await storyteller.ChooseNewDamsel(player, huntsman, goodPlayers);
+
+                    await grimoire.ChangeCharacter(newDamsel, Character.Damsel);
+                    storyteller.AssignCharacter(newDamsel);
+                }
+            }
         }
 
         private async Task<Character> UpdateSoldierAsMinion(Player soldier, KazaliMinionsSelection kazaliMinionsSelection)

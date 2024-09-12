@@ -46,6 +46,7 @@ namespace Clocktower.Storyteller
         Task<string> GetFishermanAdvice(Player fisherman);
         Task<IOption> ChooseFakeCannibalAbility(Player cannibal, Player executedPlayer, IReadOnlyCollection<IOption> characterAbilityOptions);
         Task<IOption> ChooseDamselCharacter(Player damsel, Player huntsman, IReadOnlyCollection<IOption> characterOptions);
+        Task<IOption> ChooseNewDamsel(Player damsel, Player huntsman, IReadOnlyCollection<IOption> playerOptions);
 
         void AssignCharacter(Player player);
 

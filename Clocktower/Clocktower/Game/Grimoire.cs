@@ -83,11 +83,6 @@ namespace Clocktower.Game
                 OnSpyOrWindowInPlay();
             }
 
-            if (newCharacter == Character.Damsel)
-            {
-                OnDamselInPlay(player);
-            }
-
             if (newCharacter == Character.Marionette)
             {
                 foreach (var affectedPlayer in players)
@@ -103,6 +98,12 @@ namespace Clocktower.Game
             {
                 affectedPlayer.Tokens.ClearTokensForPlayer(player);
             }
+
+            if (newCharacter == Character.Damsel)
+            {
+                OnDamselInPlay(player);
+            }
+
             await player.ChangeCharacter(newCharacter);
         }
 

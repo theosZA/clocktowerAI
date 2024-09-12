@@ -100,6 +100,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.ChooseDamselCharacter(damsel, huntsman, damselCharacterOptions.ToOptions())).GetCharacter();
         }
 
+        public static async Task<Player> ChooseNewDamsel(this IStoryteller storyteller, Player damsel, Player huntsman, IEnumerable<Player> playerOptions)
+        {
+            return (await storyteller.ChooseNewDamsel(damsel, huntsman, playerOptions.ToOptions())).GetPlayer();
+        }
+
         public static async Task<bool> GetFortuneTellerReading(this IStoryteller storyteller, Player fortuneTeller, Player targetA, Player targetB)
         {
             return await storyteller.GetFortuneTellerReading(fortuneTeller, targetA, targetB, OptionsBuilder.YesOrNo) is YesOption;

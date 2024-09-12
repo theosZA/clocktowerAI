@@ -420,6 +420,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(characterOptions);
         }
 
+        public async Task<IOption> ChooseNewDamsel(Player damsel, Player huntsman, IReadOnlyCollection<IOption> playerOptions)
+        {
+            AddFormattedText("%p is no longer the %c and there is still a %c in play. Which good player should become the %c?", damsel, Character.Damsel, Character.Huntsman, Character.Damsel, StorytellerView);
+            return await PopulateOptions(playerOptions);
+        }
+
         public void AssignCharacter(Player player)
         {
             if (player.Character != player.RealCharacter)

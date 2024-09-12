@@ -169,5 +169,41 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(empathNumber.Value, Is.EqualTo(1));
         }
+
+        [Test]
+        public async Task KazaliHuntsmanJinx()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Soldier,Ravenkeeper,Damsel,Mayor,Fisherman,Huntsman");
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { ( Character.Damsel, Character.Baron) });
+            setup.Storyteller.MockNewDamsel(Character.Mayor);
+            setup.Agent(Character.Huntsman).MockHuntsmanOption(Character.Damsel);   // picks the current Damsel, formerly the Mayor
+            setup.Storyteller.MockNewDamselCharacter(Character.Empath);
+            var empathNumber = setup.Agent(Character.Mayor).MockNotifyEmpath(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(empathNumber.Value, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task KazaliHuntsmanJinx_WithSpyDamselJinx()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Soldier,Ravenkeeper,Damsel,Mayor,Fisherman,Huntsman");
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Damsel, Character.Spy) });
+            setup.Storyteller.MockNewDamsel(Character.Mayor);
+            setup.Agent(Character.Damsel).MockMinionDamselGuess(Character.Damsel);  // picks the current Damsel, formerly the Mayor
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.False);
+        }
     }
 }
