@@ -46,7 +46,7 @@ namespace Clocktower.Storyteller
 
         public async Task<IOption> GetWidowPing(Player widow, IReadOnlyCollection<IOption> widowPingCandidates)
         {
-            AddFormattedText("Choose one good player who will learn that %p is the %c...", widow, Character.Widow);
+            AddFormattedText("Choose one good player who will learn that there is a %c in play...", Character.Widow);
 
             return await PopulateOptions(widowPingCandidates);
         }
