@@ -229,5 +229,43 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             await setup.Agent(Character.Saint).Received().YouAreDead();
         }
+
+        [Test]
+        public async Task Monk_ProtectFromNoDashiiPoisonDuringNight()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("No_Dashii,Empath,Ravenkeeper,Saint,Baron,Monk,Mayor");
+            setup.Storyteller.MockGetEmpathNumber(2);
+            var empathNumber = setup.Agent(Character.Empath).MockNotifyEmpath();
+            setup.Agent(Character.Monk).MockMonkChoice(Character.Empath);
+            setup.Agent(Character.No_Dashii).MockDemonKill(Character.Empath);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(empathNumber.Value, Is.EqualTo(1)); // unpoisoned
+        }
+
+        [Test]
+        public async Task Monk_CanNotProtectFromNoDashiiPoisonDuringDay()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("No_Dashii,Slayer,Ravenkeeper,Saint,Baron,Monk,Mayor");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Monk).MockMonkChoice(Character.Slayer);
+            setup.Agent(Character.No_Dashii).MockDemonKill(Character.Saint);
+            setup.Agent(Character.Slayer).MockSlayerOption(Character.No_Dashii);
+
+            await game.RunNightAndDay();
+
+            Assert.That(game.Finished, Is.False);   // Slayer is poisoned
+        }
     }
 }

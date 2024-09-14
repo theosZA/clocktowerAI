@@ -133,7 +133,6 @@ namespace Clocktower.Game
                 || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByDevilsAdvocate
-                || token == Token.ProtectedByMonk
                 || token == Token.ChosenByButler
                 || token == Token.JugglerHasJuggled;
         }
@@ -143,7 +142,8 @@ namespace Clocktower.Game
             return token == Token.Executed
                 || token == Token.PhilosopherUsedAbilityTonight
                 || token == Token.JuggledCorrectly
-                || token == Token.CannibalFirstNightWithAbility;
+                || token == Token.CannibalFirstNightWithAbility
+                || token == Token.ProtectedByMonk;
         }
 
         private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
