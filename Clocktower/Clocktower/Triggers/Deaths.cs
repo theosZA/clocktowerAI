@@ -48,6 +48,11 @@ namespace Clocktower.Triggers
                 return;
             }
 
+            if (!player.Alive)
+            {
+                return;
+            }
+
             var deathInformation = new DeathInformation
             {
                 dyingPlayer = player,
