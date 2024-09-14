@@ -55,7 +55,7 @@ namespace Clocktower.Events
 
         private async Task<(Player nominator, Player nominee)?> RequestNomination()
         {
-            var (votesToTie, votesToPutOnBlock) = GetVotesRequired();    
+            var (playerOnTheBlock, votesToTie, votesToPutOnBlock) = GetKnownVotesRequired();
 
             // Only alive players who haven't yet nominated can nominate.
             var players = grimoire.Players.Where(player => player.Alive)
@@ -65,7 +65,7 @@ namespace Clocktower.Events
 
             foreach (var player in players)
             {
-                var nominee = await player.Agent.GetNomination(grimoire.PlayerToBeExecuted, votesToTie, votesToPutOnBlock, grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated));
+                var nominee = await player.Agent.GetNomination(playerOnTheBlock, votesToTie, votesToPutOnBlock, grimoire.Players.Except(playersWhoHaveAlreadyBeenNominated));
                 if (nominee != null)
                 {
                     return (player, nominee);
@@ -159,6 +159,17 @@ namespace Clocktower.Events
                 grimoire.PlayerToBeExecuted = nominee;
                 highestVoteCount = voteCount;
             }
+        }
+
+        private (Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock) GetKnownVotesRequired()
+        {
+            if (anyVotesConductedInSecret)
+            {
+                return (null, null, null);
+            }
+
+            var (votesToTie, votesToPutOnBlock) = GetVotesRequired();
+            return (grimoire.PlayerToBeExecuted, votesToTie, votesToPutOnBlock);
         }
 
         private (int? votesToTie, int? votesToPutOnBlock) GetVotesRequired()
