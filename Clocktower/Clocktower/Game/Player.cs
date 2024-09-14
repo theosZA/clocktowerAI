@@ -210,7 +210,7 @@ namespace Clocktower.Game
                     break;
 
                 case Character.Juggler:
-                    if (!Tokens.HasToken(Token.JugglerFirstDay))
+                    if (!Tokens.HasToken(Token.JugglerFirstDay) || Tokens.HasToken(Token.JugglerHasJuggled))
                     {
                         return false;
                     }

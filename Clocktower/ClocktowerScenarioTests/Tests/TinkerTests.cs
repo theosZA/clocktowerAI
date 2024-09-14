@@ -57,7 +57,7 @@ namespace ClocktowerScenarioTests.Tests
                 });
 
             // - Tinker should trigger between Slayer choice and nominations.
-            setup.Agent(Character.Slayer).PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+            setup.Agent(Character.Slayer).PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>(), false, null)
                 .Returns(args =>
                 {
                     shouldKill = true;

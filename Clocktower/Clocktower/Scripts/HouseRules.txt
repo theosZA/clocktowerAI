@@ -1,1 +1,1 @@
-﻿Damsel: Minion guesses for a Damsel may only be made by living players, and before a day's nominations.
+Damsel: Minion guesses for a Damsel may only be made by living players.

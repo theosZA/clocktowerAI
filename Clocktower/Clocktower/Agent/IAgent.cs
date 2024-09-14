@@ -66,7 +66,7 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options);
         Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options);
 
-        Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options);
+        Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options, bool afterNominations, Player? playerOnTheBlock);
 
         Task<IOption> GetNomination(Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock, IReadOnlyCollection<IOption> options);
         Task<IOption> GetVote(IReadOnlyCollection<IOption> options, bool ghostVote);

@@ -224,7 +224,7 @@ namespace ClocktowerScenarioTests.Mocks
 
         public static void MockSlayerOption(this IAgent agent, Character target)
         {
-            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>(), Arg.Any<Player?>())
                 .Returns(args =>
                 {
                     var options = args.ArgAt<IReadOnlyCollection<IOption>>(0);
@@ -236,7 +236,7 @@ namespace ClocktowerScenarioTests.Mocks
 
         public static void MockJugglerOption(this IAgent agent, IEnumerable<(Character player, Character character)> juggles)
         {
-            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>(), Arg.Any<Player?>())
                 .Returns(args =>
                 {
                     var options = args.ArgAt<IReadOnlyCollection<IOption>>(0);
@@ -248,7 +248,7 @@ namespace ClocktowerScenarioTests.Mocks
 
         public static void MockMinionDamselGuess(this IAgent agent, Character target)
         {
-            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>())
+            agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>(), Arg.Any<Player?>())
                 .Returns(args =>
                 {
                     var options = args.ArgAt<IReadOnlyCollection<IOption>>(0);

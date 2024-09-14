@@ -45,7 +45,8 @@ namespace Clocktower.Events
                 case "EveningPublicStatements":     return new PublicStatements(grimoire, observers, random, morning: false);
                 case "FinalPublicStatements":       return new PublicStatements(grimoire, observers, random, morning: false) { OnlyAlivePlayers = true };
                 case "RollCall":                    return new RollCall(grimoire, observers);
-                case "Shenanigans":                 return new Shenanigans(storyteller, grimoire, deaths, observers, setup.Script, random, dayNumber);
+                case "Shenanigans":                 return new Shenanigans(storyteller, grimoire, deaths, observers, setup.Script, random, dayNumber, afterNominations: false);
+                case "LastChanceShenanigans":       return new Shenanigans(storyteller, grimoire, deaths, observers, setup.Script, random, dayNumber, afterNominations: true);
 
                 // Townsfolk
                 case "Chef":                        return new NotifyChef(storyteller, grimoire);

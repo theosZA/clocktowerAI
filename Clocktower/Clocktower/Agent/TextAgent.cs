@@ -491,9 +491,27 @@ namespace Clocktower.Agent
             return await RequestUseAbility(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Character.Fisherman);
         }
 
-        public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options)
+        public async Task<IOption> PromptShenanigans(IReadOnlyCollection<IOption> options, bool afterNominations, Player? playerOnTheBlock)
         {
-            return await requester.RequestShenanigans("You have the option now to use or bluff any abilities that are to be publicly used during the day.", options);
+            var sb = new StringBuilder();
+            if (afterNominations)
+            {
+                if (playerOnTheBlock != null)
+                {
+                    sb.AppendFormattedText("Nomintations are now closed and %p is to be executed. ", playerOnTheBlock);
+                }
+                else
+                {
+                    sb.Append("Nominations are now closed and no one is to be executed. ");
+                }
+                sb.Append("You have a last chance today to use or bluff any abilities that are to be publicly used during the day.");
+            }
+            else
+            {
+                sb.Append("Before nominations open, you have the option now to use or bluff any abilities that are to be publicly used during the day.");
+            }
+
+            return await requester.RequestShenanigans(sb.ToString(), options);
         }
 
         public async Task<IOption> GetNomination(Player? playerOnTheBlock, int? votesToTie, int? votesToPutOnBlock, IReadOnlyCollection<IOption> options)

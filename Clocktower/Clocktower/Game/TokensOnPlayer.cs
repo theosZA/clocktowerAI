@@ -1,4 +1,4 @@
-﻿namespace Clocktower.Game
+namespace Clocktower.Game
 {
     public class TokensOnPlayer
     {
@@ -134,7 +134,8 @@
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
-                || token == Token.ChosenByButler;
+                || token == Token.ChosenByButler
+                || token == Token.JugglerHasJuggled;
         }
 
         private static bool IsTokenThatExpiresAtEndOfNight(Token token)

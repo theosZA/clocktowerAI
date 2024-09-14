@@ -392,7 +392,7 @@ namespace ClocktowerScenarioTests.Tests
             await game.RunNightAndDay();
 
             await setup.Agent(Character.Juggler).DidNotReceive().NotifyJuggler(Arg.Any<int>());
-            await setup.Agent(Character.Cannibal).Received().NotifyJuggler(1);  // By the Cannibal-Juggler jinx, the Cannibal receives the result from the acutal Juggler's guesses on night 2.
+            await setup.Agent(Character.Cannibal).Received().NotifyJuggler(1);  // By the Cannibal-Juggler jinx, the Cannibal receives the result from the actual Juggler's guesses on night 2.
             setup.Agent(Character.Cannibal).ClearReceivedCalls();
 
             // Night 3 & Day 3

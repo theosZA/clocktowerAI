@@ -1,6 +1,5 @@
 ﻿using Clocktower.Game;
 using Clocktower.Storyteller;
-using System.Numerics;
 
 namespace Clocktower.Events
 {

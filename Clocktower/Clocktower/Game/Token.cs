@@ -44,6 +44,7 @@
         NeverBluffingShenanigans,   // a player may opt out of future "Shenanigans" phases unless they gain an ability which can be used then
         JugglerBeforeFirstDay,
         JugglerFirstDay,
+        JugglerHasJuggled,
         CannibalFirstNightWithAbility,
         CannibalDrunk   // when the Cannibal has specifically gained the Drunk's ability
     }

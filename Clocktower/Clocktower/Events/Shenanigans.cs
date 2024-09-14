@@ -14,7 +14,7 @@ namespace Clocktower.Events
     /// </summary>
     internal class Shenanigans : IGameEvent
     {
-        public Shenanigans(IStoryteller storyteller, Grimoire grimoire, Deaths deaths, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random, int dayNumber)
+        public Shenanigans(IStoryteller storyteller, Grimoire grimoire, Deaths deaths, IGameObserver observers, IReadOnlyCollection<Character> scriptCharacters, Random random, int dayNumber, bool afterNominations)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
@@ -23,6 +23,7 @@ namespace Clocktower.Events
             this.scriptCharacters = scriptCharacters;
             this.random = random;
             this.dayNumber = dayNumber;
+            this.afterNominations = afterNominations;
         }
 
         public async Task RunEvent()
@@ -47,7 +48,7 @@ namespace Clocktower.Events
                 return;
             }
 
-            var shenanigan = await player.Agent.PromptShenanigans(options);
+            var shenanigan = await player.Agent.PromptShenanigans(options, afterNominations, grimoire.PlayerToBeExecuted);
 
             if (shenanigan is AlwaysPassOption)
             {
@@ -160,7 +161,8 @@ namespace Clocktower.Events
             {
                 return;
             }
-            
+            juggler.Tokens.Add(Token.JugglerHasJuggled, juggler);
+
             foreach (var juggle in juggles.Juggles)
             {
                 if (juggle.player.RealCharacter == juggle.character)
@@ -228,5 +230,6 @@ namespace Clocktower.Events
         private readonly IReadOnlyCollection<Character> scriptCharacters;
         private readonly Random random;
         private readonly int dayNumber;
+        private readonly bool afterNominations;
     }
 }

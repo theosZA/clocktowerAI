@@ -20,5 +20,6 @@ if Grimoire.Players.Alive() == 3:
 
 Nominations
 
+LastChanceShenanigans
 Tinker
 EndDay
