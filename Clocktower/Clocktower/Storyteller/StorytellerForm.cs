@@ -394,6 +394,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldRegisterForSnakeCharmer(Player snakeCharmer, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            AddFormattedText("%p has targeted %p with their ability as the %c. Should %p register as the Demon and trigger a character swap?", snakeCharmer, target, Character.Snake_Charmer, target, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<string> GetFishermanAdvice(Player fisherman)
         {
             var sb = new StringBuilder();
@@ -692,6 +698,23 @@ namespace Clocktower.Storyteller
         public void ChoiceFromDevilsAdvocate(Player devilsAdvocate, Player target)
         {
             AddFormattedText("%p has chosen to protect %p.", devilsAdvocate, target, StorytellerView);
+        }
+
+        public void ChoiceFromSnakeCharmer(Player snakeCharmer, Player target, bool success)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("%p has chosen %p with their %c ability. ", snakeCharmer, target, Character.Snake_Charmer, StorytellerView);
+            
+            if (success)
+            {
+                sb.AppendFormattedText("%p and %p swap characters and alignments, and %p is now poisoned.", snakeCharmer, target, target, StorytellerView);
+            }
+            else
+            {
+                sb.Append("There is no effect.");
+            }
+
+            AddMarkupText(sb.ToString());
         }
 
         public void ChoiceFromMonk(Player monk, Player target)

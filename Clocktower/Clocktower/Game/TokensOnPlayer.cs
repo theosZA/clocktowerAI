@@ -124,6 +124,7 @@ namespace Clocktower.Game
                 || token == Token.PoisonedByWidow
                 || token == Token.CannibalPoisoned
                 || token == Token.CannibalDrunk
+                || token == Token.SnakeCharmerPoisoned
                 || token == Token.DamselJinxPoisoned;
         }
 
@@ -202,6 +203,7 @@ namespace Clocktower.Game
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
                 Token.PoisonedByWidow => "poisoned by the Widow",
                 Token.CannibalPoisoned => "poisoned from a bad meal",
+                Token.SnakeCharmerPoisoned => "poisoned from a Snake Charmer swap",
                 Token.CursedByWitch => "cursed by the Witch",
                 Token.ProtectedByDevilsAdvocate => "protected by the Devil's Advocate",
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",

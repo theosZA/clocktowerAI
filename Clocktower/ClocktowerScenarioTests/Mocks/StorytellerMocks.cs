@@ -105,6 +105,12 @@ namespace ClocktowerScenarioTests.Mocks
                 .ReturnsYesNoOptionFromArg(shouldRegister, argIndex: 3);
         }
 
+        public static void MockShouldRegisterForSnakeCharmer(this IStoryteller storyteller, Character player, bool shouldRegisterAsDemon)
+        {
+            storyteller.ShouldRegisterForSnakeCharmer(Arg.Any<Player>(), Arg.Is<Player>(p => p.Character == player), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsYesNoOptionFromArg(shouldRegisterAsDemon, argIndex: 2);
+        }
+
         public static List<int> MockGetChefNumber(this IStoryteller storyteller, int chefNumber)
         {
             List<int> chefNumbers = new();

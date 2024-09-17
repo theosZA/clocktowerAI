@@ -159,5 +159,10 @@ namespace Clocktower.Storyteller
         {
             return await storyteller.ShouldRegisterForJuggle(juggler, juggledPlayer, juggledCharacter, OptionsBuilder.YesOrNo) is YesOption;
         }
+        
+        public static async Task<bool> ShouldRegisterForSnakeCharmer(this IStoryteller storyteller, Player snakeCharmer, Player target)
+        {
+            return await storyteller.ShouldRegisterForSnakeCharmer(snakeCharmer, target, OptionsBuilder.YesOrNo) is YesOption;
+        }
     }
 }

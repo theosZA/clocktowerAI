@@ -457,6 +457,23 @@ namespace Clocktower.Agent
             return await RequestTwoPlayers(options, "As the %c, please choose two players to learn about tonight.", Character.Fortune_Teller);
         }
 
+        public async Task<IOption> RequestChoiceFromSnakeCharmer(IReadOnlyCollection<IOption> options)
+        {
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestPlayer(options);
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c, please choose an alive player to see if they are the Demon.", Character.Snake_Charmer);
+            if (options.Any(option => option is PlayerOption playerOption && playerOption.Player.Name == PlayerName))
+            {
+                sb.Append(" (Remember that you are always allowed to choose yourself if you don't wish to risk swapping with the Demon.)");
+            }
+
+            return await RequestPlayer(options, sb.ToString());
+        }
+
         public async Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options)
         {
             if (character == Character.Cannibal)

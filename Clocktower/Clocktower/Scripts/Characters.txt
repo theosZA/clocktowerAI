@@ -24,6 +24,7 @@ Balloonist: Each night, you learn a player of a different character type than la
 Nightwatchman: Once per game, at night, choose a player: they learn who you are.
 Oracle: Each night (except the first night), you learn how many dead players are evil.
 Huntsman: Once per game, at night, choose a living player: the Damsel, if chosen, becomes a not-in-play Townsfolk. [+the Damsel]
+Snake Charmer: Each night, choose an alive player: a chosen Demon swaps characters and alignments with you and is then poisoned.
 
 // Outsiders
 Tinker: You might die at any time.

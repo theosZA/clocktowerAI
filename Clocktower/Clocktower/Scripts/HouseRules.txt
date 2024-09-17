@@ -1,1 +1,2 @@
-Damsel: Minion guesses for a Damsel may only be made by living players.
+﻿Damsel: Minion guesses for a Damsel may only be made by living players.
+Snake Charmer: On the first night, the Snake Charmer acts before the Demons and Minions can learn each other.

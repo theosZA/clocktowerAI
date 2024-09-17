@@ -208,6 +208,13 @@ namespace ClocktowerScenarioTests.Mocks
             return ravenkeeperOptions;
         }
 
+        public static List<Character> MockSnakeCharmerChoice(this IAgent agent, Character choice)
+        {
+            List<Character> snakeCharmerOptions = new();
+            agent.RequestChoiceFromSnakeCharmer(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, snakeCharmerOptions);
+            return snakeCharmerOptions;
+        }
+
         public static List<Character> MockMonkChoice(this IAgent agent, Character choice)
         {
             List<Character> monkOptions = new();

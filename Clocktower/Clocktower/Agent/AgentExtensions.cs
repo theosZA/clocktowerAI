@@ -60,11 +60,6 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromPhilosopher(characters.ToOptions().Prepend(new PassOption()).ToList())).GetCharacterOptional();
         }
 
-        public static async Task<(Player targetA, Player targetB)> RequestChoiceFromFortuneTeller(this IAgent agent, IReadOnlyCollection<Player> players)
-        {
-            return (await agent.RequestChoiceFromFortuneTeller(players.ToTwoPlayersOptions())).GetTwoPlayers();
-        }
-
         public static async Task<Player?> RequestChoiceFromNightwatchman(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromNightwatchman(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
@@ -73,6 +68,16 @@ namespace Clocktower.Agent
         public static async Task<Player?> RequestChoiceFromHuntsman(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromHuntsman(players.ToOptions().Prepend(new PassOption()).ToList())).GetPlayerOptional();
+        }
+
+        public static async Task<(Player targetA, Player targetB)> RequestChoiceFromFortuneTeller(this IAgent agent, IReadOnlyCollection<Player> players)
+        {
+            return (await agent.RequestChoiceFromFortuneTeller(players.ToTwoPlayersOptions())).GetTwoPlayers();
+        }
+
+        public static async Task<Player> RequestChoiceFromSnakeCharmer(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromSnakeCharmer(players.ToOptions())).GetPlayer();
         }
 
         public static async Task<Player> RequestChoiceFromMonk(this IAgent agent, IEnumerable<Player> players)

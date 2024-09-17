@@ -1,6 +1,7 @@
 StartNight
 Philosopher
 Poisoner
+SnakeCharmer
 Monk
 DevilsAdvocate
 Witch

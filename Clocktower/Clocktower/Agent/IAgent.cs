@@ -61,6 +61,7 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceFromNightwatchman(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromHuntsman(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromFortuneTeller(IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromSnakeCharmer(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromMonk(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromButler(IReadOnlyCollection<IOption> options);

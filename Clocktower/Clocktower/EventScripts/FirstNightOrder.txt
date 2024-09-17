@@ -4,6 +4,7 @@ if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
   AssignDrunk
 StartNight
 Philosopher
+SnakeCharmer
 KazaliMinions
 MinionInformation
 DemonInformation

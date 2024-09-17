@@ -16,6 +16,7 @@
         PoisonedByPoisoner,
         PoisonedByWidow,
         CannibalPoisoned,
+        SnakeCharmerPoisoned,
         CursedByWitch,
         ProtectedByDevilsAdvocate,
         FortuneTellerRedHerring,
