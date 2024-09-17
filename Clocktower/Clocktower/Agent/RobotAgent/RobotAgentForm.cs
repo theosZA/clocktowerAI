@@ -1,5 +1,6 @@
 ﻿using Clocktower.Agent.Notifier;
 using Clocktower.Agent.RobotAgent;
+using Clocktower.Game;
 using OpenAi;
 
 namespace Clocktower.Agent
@@ -60,6 +61,10 @@ namespace Clocktower.Agent
             if (robotTriggers.Character != null)
             {
                 Text += " (";
+                if (robotTriggers.Character.Value.Alignment() != robotTriggers.Alignment)
+                {
+                    Text += $"{robotTriggers.Alignment} ";
+                }
                 if (robotTriggers.OriginalCharacter != null)
                 {
                     Text += $"{TextUtilities.CharacterToText(robotTriggers.OriginalCharacter.Value)}-";

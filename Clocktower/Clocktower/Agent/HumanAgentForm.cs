@@ -75,6 +75,7 @@ namespace Clocktower.Agent
         public async Task AssignCharacter(Character character, Alignment alignment)
         {
             this.character = character;
+            this.alignment = alignment;
 
             await SetTitleText();
 
@@ -83,6 +84,13 @@ namespace Clocktower.Agent
             {
                 autoClaim = script.OfAlignment(Alignment.Good).ToList().RandomPick(random);
             }
+        }
+
+        public async Task ChangeAlignment(Alignment alignment)
+        {
+            this.alignment = alignment;
+
+            await SetTitleText();
         }
 
         public async Task OnGainCharacterAbility(Character character)
@@ -106,6 +114,10 @@ namespace Clocktower.Agent
             if (character != null)
             {
                 Text += " (";
+                if (character.Value.Alignment() != alignment)
+                {
+                    Text += $"{alignment} ";
+                }
                 if (originalCharacter != null)
                 {
                     Text += $"{TextUtilities.CharacterToText(originalCharacter.Value)}-";
@@ -152,6 +164,7 @@ namespace Clocktower.Agent
         private readonly List<Character> script;
         private readonly Random random;
 
+        private Alignment alignment;
         private Character? originalCharacter;
         private Character? character;
         private Character? autoClaim;

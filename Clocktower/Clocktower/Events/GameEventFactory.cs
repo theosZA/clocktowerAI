@@ -28,6 +28,7 @@ namespace Clocktower.Events
                 // Set-up events
                 case "AssignMarionette":            return new AssignMarionette(storyteller, grimoire);
                 case "AssignDrunk":                 return new AssignDrunk(storyteller, setup, grimoire);
+                case "AssignEvilTownsfolk":         return new AssignEvilTownsfolk(storyteller, grimoire);
                 case "FortuneTellerRedHerring":     return new AssignFortuneTellerRedHerring(storyteller, grimoire);
                 case "DemonInformation":            return new DemonInformation(storyteller, grimoire, setup.Script, random);
                 case "MinionInformation":           return new MinionInformation(storyteller, grimoire, setup.Script, random);
@@ -70,6 +71,7 @@ namespace Clocktower.Events
                 case "Oracle":                      return new NotifyOracle(storyteller, grimoire);
                 case "Huntsman":                    return new ChoiceFromHuntsman(storyteller, grimoire, setup.Script, random, firstNight: dayNumber == 1);
                 case "SnakeCharmer":                return new ChoiceFromSnakeCharmer(storyteller, grimoire);
+                case "BountyHunter":                return new NotifyBountyHunter(storyteller, grimoire);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

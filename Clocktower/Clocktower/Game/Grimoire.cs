@@ -90,7 +90,7 @@ namespace Clocktower.Game
                     affectedPlayer.Tokens.ClearTokensOnPlayerLosingAbility(player);
                 }
                 player.Tokens.Add(Token.IsTheMarionette, player);
-                player.Alignment = Alignment.Evil;
+                await player.ChangeAlignment(Alignment.Evil, notifyAgent: false);
                 return;
             }
 
@@ -130,6 +130,8 @@ namespace Clocktower.Game
             {
                 affectedPlayer.Tokens.ClearTokensOnPlayerDeath(player);
             }
+
+            player.Tokens.Remove(Token.BountyHunterPing);
         }
 
         public IEnumerable<Player> GetAllPlayersEndingWithPlayer(Player lastPlayer)

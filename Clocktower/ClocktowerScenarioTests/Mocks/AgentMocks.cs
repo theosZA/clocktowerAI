@@ -102,6 +102,14 @@ namespace ClocktowerScenarioTests.Mocks
             return receivedStewardPing;
         }
 
+        public static Wrapper<Character> MockNotifyBountyHunter(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<Character> receivedBountyHunterPing = new();
+            agent.When(agent => agent.NotifyBountyHunter(Arg.Any<Player>()))
+                    .Do(args => args.PopulateFromArg(receivedBountyHunterPing, gameToEnd: gameToEnd));
+            return receivedBountyHunterPing;
+        }
+
         public static List<Character> MockNotifyNoble(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             List<Character> noblePings = new();

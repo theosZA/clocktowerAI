@@ -15,6 +15,7 @@ namespace Clocktower.Agent
         Task EndGame();
 
         Task AssignCharacter(Character character, Alignment alignment);
+        Task ChangeAlignment(Alignment alignment);
         Task YouAreDead();
 
         Task MinionInformation(Player demon, IReadOnlyCollection<Player> fellowMinions, bool damselInPlay, IReadOnlyCollection<Character> notInPlayCharacters);
@@ -27,6 +28,7 @@ namespace Clocktower.Agent
         Task NotifyInvestigator(Player playerA, Player playerB, Character character);
         Task NotifyChef(int evilPairCount);
         Task NotifySteward(Player goodPlayer);
+        Task NotifyBountyHunter(Player evilPlayer);
         Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation);
         Task NotifyShugenja(Direction direction);
 

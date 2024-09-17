@@ -16,6 +16,11 @@ namespace ClocktowerScenarioTests.Mocks
             storyteller.GetMarionette(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(marionetteCharacter);
         }
 
+        public static void MockGetEvilTownsfolk(this IStoryteller storyteller, Character evilTownsfolk)
+        {
+            storyteller.GetEvilTownsfolk(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(evilTownsfolk, argIndex: 1);
+        }
+
         public static void MockGetSweetheartDrunk(this IStoryteller storyteller, Character sweetheartDrunk)
         {
             storyteller.GetSweetheartDrunk(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(sweetheartDrunk);
@@ -27,6 +32,14 @@ namespace ClocktowerScenarioTests.Mocks
             storyteller.GetStewardPing(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
                 .ReturnsMatchingOptionFromOptionsArg(stewardPing, stewardPingOptions, argIndex: 1);
             return stewardPingOptions;
+        }
+
+        public static List<Character> MockGetBountyHunterPing(this IStoryteller storyteller, Character bountyHunterPing)
+        {
+            List<Character> bountyHunterPingOptions = new();
+            storyteller.GetBountyHunterPing(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(bountyHunterPing, bountyHunterPingOptions, argIndex: 1);
+            return bountyHunterPingOptions;
         }
 
         public static void MockGetNobleInformation(this IStoryteller storyteller, Character playerA, Character playerB, Character playerC)

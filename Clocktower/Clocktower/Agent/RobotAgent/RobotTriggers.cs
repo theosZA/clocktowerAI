@@ -16,6 +16,8 @@ namespace Clocktower.Agent.RobotAgent
         public Character? Character { get; private set; }
         public Character? OriginalCharacter { get; private set; }
 
+        public Alignment Alignment { get; private set; } 
+
         public bool Alive { get; private set; } = true;
 
         public RobotTriggers(string playerName, ClocktowerChatAi clocktowerChat)
@@ -50,6 +52,15 @@ namespace Clocktower.Agent.RobotAgent
         public Task OnAssignCharacter(Character character, Alignment alignment)
         {
             Character = character;
+            Alignment = alignment;
+            OnStatusChange?.Invoke();
+
+            return Task.CompletedTask;
+        }
+
+        public Task OnChangeAlignment(Alignment alignment)
+        {
+            Alignment = alignment;
             OnStatusChange?.Invoke();
 
             return Task.CompletedTask;

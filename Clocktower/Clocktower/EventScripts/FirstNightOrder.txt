@@ -2,6 +2,7 @@
   AssignMarionette
 if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
   AssignDrunk
+AssignEvilTownsfolk
 StartNight
 Philosopher
 SnakeCharmer
@@ -27,6 +28,7 @@ Steward
 Noble
 Balloonist
 Shugenja
+BountyHunter
 Nightwatchman
 Spy
 EndNight

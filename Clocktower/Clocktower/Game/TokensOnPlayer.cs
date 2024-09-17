@@ -217,6 +217,7 @@ namespace Clocktower.Game
                 Token.InvestigatorPing => "seen by the Investigator",
                 Token.InvestigatorWrong => "incorrectly seen by the Investigator",
                 Token.StewardPing => "seen by the Steward",
+                Token.BountyHunterPing => "seen by the Bounty Hunter",
                 Token.NoblePing => "seen by the Noble",
                 Token.BalloonistPing => "seen by the Balloonist",
                 Token.JuggledCorrectly => "juggled correctly by the Juggler",

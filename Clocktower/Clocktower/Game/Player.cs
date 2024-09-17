@@ -24,7 +24,7 @@ namespace Clocktower.Game
         /// <summary>
         /// The player's real alignment. The player may believe differently, e.g. if they're a Marionette or Lunatic.
         /// </summary>
-        public Alignment Alignment { get; set; }
+        public Alignment Alignment { get; private set; }
 
         /// <summary>
         /// The player's real character. The player may believe differently, e.g. if they're a Drunk or Lunatic.
@@ -74,6 +74,11 @@ namespace Clocktower.Game
             }
         }
 
+        /// <summary>
+        /// The player becomes the new character and takes on the default alignment for that character.
+        /// The player is notified about their change in character.
+        /// </summary>
+        /// <param name="newCharacter">The new character that this player becomes.</param>
         public async Task ChangeCharacter(Character newCharacter)
         {
             var currentCharacterInfo = new List<Character>();
@@ -95,6 +100,27 @@ namespace Clocktower.Game
             if (newCharacter == Character.Juggler)
             {
                 Tokens.Add(Token.JugglerBeforeFirstDay, this);
+            }
+        }
+
+        /// <summary>
+        /// The player changes their alignment to the given alignment. The player is notified about their
+        /// change in alignment unless specified otherwise.
+        /// </summary>
+        /// <param name="newAlignment">The new alignment that this player becomes.</param>
+        /// <param name="notifyAgent">Notify the player about the alignment change only if true.</param>
+        public async Task ChangeAlignment(Alignment newAlignment, bool notifyAgent = true)
+        {
+            if (Alignment == newAlignment)
+            {
+                return;
+            }
+
+            Alignment = newAlignment;
+            
+            if (notifyAgent)
+            {
+                await Agent.ChangeAlignment(Alignment);
             }
         }
 

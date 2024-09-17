@@ -32,6 +32,7 @@
         StewardPing,
         NoblePing,
         BalloonistPing,
+        BountyHunterPing,
         JuggledCorrectly,
         CannibalEaten,
         DamselGuessUsed,

@@ -10,6 +10,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetMarionette(marionetteCandidates.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> GetEvilTownsfolk(this IStoryteller storyteller, Player bountyHunter, IEnumerable<Player> evilTownsfolkCandidates)
+        {
+            return (await storyteller.GetEvilTownsfolk(bountyHunter, evilTownsfolkCandidates.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> GetWidowPing(this IStoryteller storyteller, Player widow, IReadOnlyCollection<Player> widowPingCandidates)
         {
             return (await storyteller.GetWidowPing(widow, widowPingCandidates.ToOptions())).GetPlayer();
@@ -63,6 +68,11 @@ namespace Clocktower.Storyteller
         public static async Task<Player> GetStewardPing(this IStoryteller storyteller, Player steward, IEnumerable<Player> stewardPingCandidates)
         {
             return (await storyteller.GetStewardPing(steward, stewardPingCandidates.ToOptions())).GetPlayer();
+        }
+
+        public static async Task<Player> GetBountyHunterPing(this IStoryteller storyteller, Player bountyHunter, IEnumerable<Player> bountyHunterPingCandidates)
+        {
+            return (await storyteller.GetBountyHunterPing(bountyHunter, bountyHunterPingCandidates.ToOptions())).GetPlayer();
         }
 
         public static async Task<IEnumerable<Player>> GetNobleInformation(this IStoryteller storyteller, Player noble, IEnumerable<Player> possibleEvilPlayers, IEnumerable<Player> possibleGoodPlayers)

@@ -30,6 +30,7 @@ namespace Clocktower.Agent
         public Func<Task>? OnStartGame { get; set; }
         public Func<Task>? OnEndGame { get; set; }
         public Func<Character, Alignment, Task>? OnAssignCharacter { get; set; }
+        public Func<Alignment, Task>? OnChangeAlignment { get; set; }
         public Func<Character, Task>? OnGainingCharacterAbility { get; set; }
         public Func<Task>? OnDead { get; set; }
         public Func<Player, Task>? YourDemonIs { get; set; }
@@ -64,10 +65,22 @@ namespace Clocktower.Agent
                 await SendMessage("You are the %c. You are %a.", character, alignment);
             }
             this.character = character;
+            this.alignment = alignment;
 
             if (OnAssignCharacter != null)
             {
                 await OnAssignCharacter(character, alignment);
+            }
+        }
+
+        public async Task ChangeAlignment(Alignment alignment)
+        {
+            await SendMessage("You are now %a.", alignment);
+            this.alignment = alignment;
+
+            if (OnChangeAlignment != null)
+            {
+                await OnChangeAlignment(alignment);
             }
         }
 
@@ -193,6 +206,16 @@ namespace Clocktower.Agent
                 return;
             }
             await SendMessage("You learn that %p is a good player.", goodPlayer);
+        }
+
+        public async Task NotifyBountyHunter(Player evilPlayer)
+        {
+            if (character == Character.Cannibal)
+            {
+                await Learn(evilPlayer);
+                return;
+            }
+            await SendMessage("You learn that %p is an evil player.", evilPlayer);
         }
 
         public async Task NotifyNoble(IReadOnlyCollection<Player> nobleInformation)
@@ -733,5 +756,6 @@ namespace Clocktower.Agent
         private readonly string scriptName;
         private readonly IReadOnlyCollection<Character> script;
         private Character? character;
+        private Alignment alignment;
     }
 }

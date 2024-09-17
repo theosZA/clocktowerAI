@@ -164,6 +164,12 @@ namespace Clocktower
 
         private static void AppendCharacterHistory(this StringBuilder sb, Player player)
         {
+            if (player.Alignment != player.RealCharacter.Alignment())
+            {
+                sb.AppendAlignment(player.Alignment);
+                sb.Append(' ');
+            }
+
             foreach (var characterInfo in player.CharacterHistory)
             {
                 sb.AppendCharacterSequence(characterInfo);

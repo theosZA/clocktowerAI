@@ -44,6 +44,14 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(marionetteCandidates);
         }
 
+        public async Task<IOption> GetEvilTownsfolk(Player bountyHunter, IReadOnlyCollection<IOption> evilTownsfolkCandidates)
+        {
+            AddFormattedText("Because a %c is in this game, choose one Townsfolk who will be evil...", Character.Bounty_Hunter);
+
+            return await PopulateOptions(evilTownsfolkCandidates);
+
+        }
+
         public async Task<IOption> GetWidowPing(Player widow, IReadOnlyCollection<IOption> widowPingCandidates)
         {
             AddFormattedText("Choose one good player who will learn that there is a %c in play...", Character.Widow);
@@ -165,6 +173,16 @@ namespace Clocktower.Storyteller
             await notifier.Notify(sb.ToString());
 
             return await PopulateOptions(stewardPingCandidates);
+        }
+
+        public async Task<IOption> GetBountyHunterPing(Player bountyHunter, IReadOnlyCollection<IOption> bountyHunterPingCandidates)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("Choose one player who %p will see as an evil player. (This should almost always be a living player to ensure they can continue to gain from their ability.)", bountyHunter, StorytellerView);
+            AppendDrunkDisclaimer(sb, bountyHunter);
+            await notifier.Notify(sb.ToString());
+
+            return await PopulateOptions(bountyHunterPingCandidates);
         }
 
         public async Task<IOption> GetNobleInformation(Player noble, IReadOnlyCollection<IOption> nobleInformationOptions)
@@ -567,12 +585,17 @@ namespace Clocktower.Storyteller
 
         public void NotifyNoble(Player noble, IReadOnlyCollection<Player> nobleInformation)
         {
-            AddFormattedText("%p learns that there is exactly 1 evil player among %P\n", noble, nobleInformation, StorytellerView);
+            AddFormattedText("%p learns that there is exactly 1 evil player among %P", noble, nobleInformation, StorytellerView);
         }
 
         public void NotifySteward(Player steward, Player goodPlayer)
         {
             AddFormattedText("%p learns that %p is a good player.", steward, goodPlayer, StorytellerView);
+        }
+
+        public void NotifyBountyHunter(Player bountyHunter, Player evilPlayer)
+        {
+            AddFormattedText("%p learns that %p is an evil player.", bountyHunter, evilPlayer, StorytellerView);
         }
 
         public void NotifyShugenja(Player shugenja, Direction direction)

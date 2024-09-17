@@ -25,6 +25,7 @@ Undertaker
 Oracle
 Juggler
 Balloonist
+BountyHunter
 Nightwatchman
 Acrobat
 Butler

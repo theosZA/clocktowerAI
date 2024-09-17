@@ -13,6 +13,7 @@ namespace Clocktower.Storyteller
         void PrivateChatMessage(Player speaker, Player listener, string message);
 
         Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates);
+        Task<IOption> GetEvilTownsfolk(Player bountyHunter, IReadOnlyCollection<IOption> evilTownsfolkCandidates);
         Task<IOption> GetWidowPing(Player widow, IReadOnlyCollection<IOption> widowPingCandidates);
         Task<IOption> GetDemonBluffs(Player demon, IReadOnlyCollection<IOption> demonBluffOptions);
         Task<IOption> GetAdditionalDemonBluffs(Player demon, Player snitch, IReadOnlyCollection<IOption> demonBluffOptions);
@@ -27,6 +28,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetInvestigatorPings(Player investigator, IReadOnlyCollection<IOption> investigatorPingCandidates);
         Task<IOption> GetLibrarianPings(Player librarian, IReadOnlyCollection<IOption> librarianPingCandidates);
         Task<IOption> GetStewardPing(Player steward, IReadOnlyCollection<IOption> stewardPingCandidates);
+        Task<IOption> GetBountyHunterPing(Player bountyHunter, IReadOnlyCollection<IOption> bountyHunterPingCandidates);
         Task<IOption> GetNobleInformation(Player noble, IReadOnlyCollection<IOption> nobleInformationOptions);
         Task<IOption> GetChefNumber(Player chef, IEnumerable<Player> playersThatCanMisregister, IReadOnlyCollection<IOption> chefOptions);
         Task<IOption> GetEmpathNumber(Player empath, Player neighbourA, Player neighbourB, IReadOnlyCollection<IOption> empathOptions);
@@ -65,6 +67,7 @@ namespace Clocktower.Storyteller
         void NotifyInvestigator(Player investigator, Player playerA, Player playerB, Character character);
         void NotifyChef(Player chef, int evilPairCount);
         void NotifySteward(Player steward, Player goodPlayer);
+        void NotifyBountyHunter(Player bountyHunter, Player evilPlayer);
         void NotifyNoble(Player noble, IReadOnlyCollection<Player> nobleInformation);
         void NotifyShugenja(Player shugenja, Direction direction);
         void NotifyEmpath(Player empath, Player neighbourA, Player neighbourB, int evilCount);

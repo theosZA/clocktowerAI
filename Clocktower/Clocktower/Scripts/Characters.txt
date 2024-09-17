@@ -25,6 +25,7 @@ Nightwatchman: Once per game, at night, choose a player: they learn who you are.
 Oracle: Each night (except the first night), you learn how many dead players are evil.
 Huntsman: Once per game, at night, choose a living player: the Damsel, if chosen, becomes a not-in-play Townsfolk. [+the Damsel]
 Snake Charmer: Each night, choose an alive player: a chosen Demon swaps characters and alignments with you and is then poisoned.
+Bounty Hunter: You start knowing 1 evil player. If the player you know dies, you learn another evil player tonight. [1 Townsfolk is evil]
 
 // Outsiders
 Tinker: You might die at any time.
