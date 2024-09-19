@@ -7,6 +7,24 @@ namespace ClocktowerScenarioTests.Tests
     public class MayorTests
     {
         [Test]
+        public async Task Mayor_WinsGame()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Cannibal,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
+            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { Character.Cannibal, Character.Saint, Character.Baron, Character.Fisherman });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Good));
+        }
+
+        [Test]
         public async Task Mayor_SafeFromImp()
         {
             // Arrange
@@ -244,6 +262,26 @@ namespace ClocktowerScenarioTests.Tests
 
             // Assert
             Assert.That(game.Finished, Is.False);
+        }
+
+        [Test]
+        public async Task EvilMayor_WinsGame()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Ojo,Bounty_Hunter,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Mayor);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Mayor);
+            setup.Agent(Character.Ojo).MockOjo(Character.Imp);
+            setup.Storyteller.MockGetOjoVictims(Character.Imp, new[] { Character.Bounty_Hunter, Character.Saint, Character.Baron, Character.Fisherman });
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
         }
     }
 }
