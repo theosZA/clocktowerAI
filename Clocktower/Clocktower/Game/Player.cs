@@ -75,11 +75,11 @@ namespace Clocktower.Game
         }
 
         /// <summary>
-        /// The player becomes the new character and takes on the default alignment for that character.
-        /// The player is notified about their change in character.
+        /// The player becomes the new character and, if specified, new alignment. The player is notified about their change in character and alignment.
         /// </summary>
         /// <param name="newCharacter">The new character that this player becomes.</param>
-        public async Task ChangeCharacter(Character newCharacter)
+        /// <param name="newAlignment">If specified, the new alignment that this player becomes, otherwise the new alignment is the default alignment for the character.</param>
+        public async Task ChangeCharacter(Character newCharacter, Alignment? newAlignment = null)
         {
             var currentCharacterInfo = new List<Character>();
             if (Tokens.HasToken(Token.IsTheDrunk))
@@ -94,7 +94,7 @@ namespace Clocktower.Game
             characterHistory.Add(currentCharacterInfo);
 
             Character = newCharacter;
-            Alignment = newCharacter.Alignment();
+            Alignment = newAlignment ?? newCharacter.Alignment();
             await Agent.AssignCharacter(Character, Alignment);
 
             if (newCharacter == Character.Juggler)

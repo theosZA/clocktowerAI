@@ -37,14 +37,13 @@ namespace Clocktower.Events
                 // in those cases we won't have had a successful snake charming.
 
                 var snakeCharmerCharacter = snakeCharmer.RealCharacter;
+                var snakeCharmerAlignment = snakeCharmer.Alignment;
+
                 var demonCharacter = target.RealCharacter;
+                var demonAlignment = target.Alignment;
 
-                await grimoire.ChangeCharacter(snakeCharmer, demonCharacter);
-                await grimoire.ChangeCharacter(target, snakeCharmerCharacter);
-
-                // Note that we aren't actively swapping alignments at the moment, because we don't currently
-                // have alignments that are distinct from the characters. As soon as we add the Bounty Hunter,
-                // we'll need to ensure that an evil Demon swapped by an evil Snake Charmer remains evil.
+                await grimoire.ChangeCharacter(snakeCharmer, demonCharacter, demonAlignment);
+                await grimoire.ChangeCharacter(target, snakeCharmerCharacter, snakeCharmerAlignment);
 
                 target.Tokens.Add(Token.SnakeCharmerPoisoned, target);
             }

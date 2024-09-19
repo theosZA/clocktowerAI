@@ -241,5 +241,23 @@ namespace ClocktowerScenarioTests.Tests
 
             await setup.Agent(Character.Imp).Received().YouAreDead();
         }
+
+        [Test]
+        public async Task EvilSnakeCharmer()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Snake_Charmer,Ravenkeeper,Saint,Baron,Bounty_Hunter,Mayor");
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Snake_Charmer);
+            setup.Agent(Character.Snake_Charmer).MockSnakeCharmerChoice(Character.Imp);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Baron);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Snake_Charmer).Received().AssignCharacter(Character.Imp, Alignment.Evil);
+            await setup.Agent(Character.Imp).Received().AssignCharacter(Character.Snake_Charmer, Alignment.Evil);
+        }
     }
 }

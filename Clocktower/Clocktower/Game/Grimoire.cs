@@ -76,7 +76,7 @@ namespace Clocktower.Game
             }
         }
 
-        public async Task ChangeCharacter(Player player, Character newCharacter)
+        public async Task ChangeCharacter(Player player, Character newCharacter, Alignment? newAlignment = null)
         {
             if (newCharacter == Character.Spy || newCharacter == Character.Widow)
             {
@@ -104,7 +104,7 @@ namespace Clocktower.Game
                 OnDamselInPlay(player);
             }
 
-            await player.ChangeCharacter(newCharacter);
+            await player.ChangeCharacter(newCharacter, newAlignment);
         }
 
         public async Task GainCharacterAbility(Player player, Character characterAbility)
