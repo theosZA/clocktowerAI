@@ -7,11 +7,12 @@ namespace Clocktower.Events
 {
     internal class ChoiceFromPhilosopher : IGameEvent
     {
-        public ChoiceFromPhilosopher(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> scriptCharacters)
+        public ChoiceFromPhilosopher(IStoryteller storyteller, Grimoire grimoire, IReadOnlyCollection<Character> scriptCharacters, bool firstNight)
         {
             this.storyteller = storyteller;
             this.grimoire = grimoire;
             this.scriptCharacters = scriptCharacters;
+            this.firstNight = firstNight;
         }
 
         public async Task RunEvent()
@@ -67,11 +68,25 @@ namespace Clocktower.Events
                         await new CannibalDeathTrigger(storyteller, grimoire, scriptCharacters).RunCannibal(grimoire.MostRecentlyExecutedPlayerToDie, philosopher);
                     }
                     break;
+
+                case Character.Bounty_Hunter:
+                    if (firstNight && grimoire.AnyPlayerWithRealCharacter(Character.Kazali))
+                    {   // If it's still the first night and the Demon is specifically the Kazali, then the Storyteller will choose
+                        // the evil townsfolk only after the Kazali Minions have been chosen.
+                        break;
+                    }
+                    var evilTownsfolk = await storyteller.GetEvilTownsfolk(philosopher, grimoire.Players.WithCharacterType(CharacterType.Townsfolk), optional: true);
+                    if (evilTownsfolk != null)
+                    {
+                        await evilTownsfolk.ChangeAlignment(Alignment.Evil);
+                    }
+                    break;
             }
         }
 
         private readonly IStoryteller storyteller;
         private readonly Grimoire grimoire;
         private readonly IReadOnlyCollection<Character> scriptCharacters;
+        private readonly bool firstNight;
     }
 }

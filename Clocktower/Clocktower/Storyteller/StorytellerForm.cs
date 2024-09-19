@@ -46,7 +46,14 @@ namespace Clocktower.Storyteller
 
         public async Task<IOption> GetEvilTownsfolk(Player bountyHunter, IReadOnlyCollection<IOption> evilTownsfolkCandidates)
         {
-            AddFormattedText("Because a %c is in this game, choose one Townsfolk who will be evil...", Character.Bounty_Hunter);
+            if (evilTownsfolkCandidates.Any(option => option is PassOption))
+            {
+                AddFormattedText("%p is now a %c, so you may optionally choose one Townsfolk to become evil...", bountyHunter, Character.Bounty_Hunter, StorytellerView);
+            }
+            else
+            {
+                AddFormattedText("Because a %c is in this game, choose one Townsfolk who will be evil...", Character.Bounty_Hunter);
+            }
 
             return await PopulateOptions(evilTownsfolkCandidates);
 

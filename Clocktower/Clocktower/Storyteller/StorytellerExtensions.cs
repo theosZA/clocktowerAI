@@ -10,9 +10,14 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetMarionette(marionetteCandidates.ToOptions())).GetPlayer();
         }
 
-        public static async Task<Player> GetEvilTownsfolk(this IStoryteller storyteller, Player bountyHunter, IEnumerable<Player> evilTownsfolkCandidates)
+        public static async Task<Player?> GetEvilTownsfolk(this IStoryteller storyteller, Player bountyHunter, IEnumerable<Player> evilTownsfolkCandidates, bool optional = false)
         {
-            return (await storyteller.GetEvilTownsfolk(bountyHunter, evilTownsfolkCandidates.ToOptions())).GetPlayer();
+            var options = evilTownsfolkCandidates.ToOptions().ToList();
+            if (optional)
+            {
+                options.Insert(0, new PassOption());
+            }
+            return (await storyteller.GetEvilTownsfolk(bountyHunter, options)).GetPlayerOptional();
         }
 
         public static async Task<Player> GetWidowPing(this IStoryteller storyteller, Player widow, IReadOnlyCollection<Player> widowPingCandidates)

@@ -2,11 +2,14 @@
   AssignMarionette
 if Setup.IsCharacterSelected(Clocktower.Game.Character.Drunk):
   AssignDrunk
-AssignEvilTownsfolk
+if !Grimoire.AnyPlayerWithRealCharacter(Clocktower.Game.Character.Kazali):
+  AssignEvilTownsfolk
 StartNight
 Philosopher
 SnakeCharmer
 KazaliMinions
+if Grimoire.AnyPlayerWithRealCharacter(Clocktower.Game.Character.Kazali):
+  AssignEvilTownsfolk
 MinionInformation
 DemonInformation
 FortuneTellerRedHerring

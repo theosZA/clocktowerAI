@@ -339,5 +339,76 @@ namespace ClocktowerScenarioTests.Tests
                                                                                                                 minions.ElementAt(0).CharacterHistory.ElementAt(0)[0] == Character.Soldier),
                                                                  Arg.Is<IReadOnlyCollection<Character>>(bluffs => bluffs.Count() == 3));
         }
+
+        [Test]
+        public async Task Kazali_BountyHunterJinx()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Bounty_Hunter,Mayor");
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Bounty_Hunter, Character.Scarlet_Woman) });
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Mayor);    // Should not trigger due to jinx.
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Bounty_Hunter).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Mayor).DidNotReceive().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task Kazali_PicksPhilosopherBountyHunter()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Bounty_Hunter);
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Philosopher, Character.Scarlet_Woman) });
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Mayor);    // Should not trigger due to jinx.
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Philosopher).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Mayor).DidNotReceive().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task Kazali_DoesNotPickPhilosopherBountyHunter_CreatesEvilTownsfolk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Bounty_Hunter);
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Fisherman, Character.Scarlet_Woman) });
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Mayor);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Mayor);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Fisherman).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+            await setup.Agent(Character.Mayor).Received().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task Kazali_DoesNotPickPhilosopherBountyHunter_DoesNotCreateEvilTownsfolk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Kazali,Fisherman,Ravenkeeper,Saint,Sweetheart,Philosopher,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Bounty_Hunter);
+            setup.Agent(Character.Kazali).MockKazaliMinionChoice(new[] { (Character.Fisherman, Character.Scarlet_Woman) });
+            setup.Storyteller.MockGetBountyHunterPing(Character.Kazali);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            await setup.Agent(Character.Fisherman).Received().AssignCharacter(Character.Scarlet_Woman, Alignment.Evil);
+        }
     }
 }

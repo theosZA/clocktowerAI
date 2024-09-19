@@ -57,7 +57,7 @@ namespace Clocktower.Events
                 case "Investigator":                return new NotifyInvestigator(storyteller, grimoire, setup.Script, random);
                 case "Librarian":                   return new NotifyLibrarian(storyteller, grimoire, setup.Script, random);
                 case "Monk":                        return new ChoiceFromMonk(storyteller, grimoire);
-                case "Philosopher":                 return new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script);
+                case "Philosopher":                 return new ChoiceFromPhilosopher(storyteller, grimoire, setup.Script, firstNight: dayNumber == 1);
                 case "PhilosopherInformation":      return new NotifyPhilosopherStartKnowing(storyteller, grimoire, setup.Script, random);
                 case "CannibalInformation":         return new NotifyCannibalStartKnowing(storyteller, grimoire, setup.Script, random);
                 case "Shugenja":                    return new NotifyShugenja(storyteller, grimoire);

@@ -221,5 +221,48 @@ namespace ClocktowerScenarioTests.Tests
                 Assert.That(bountyHunterPing.Value, Is.EqualTo(Character.Fisherman));
             });
         }
+
+        [Test]
+        public async Task PhilosopherBountyHunter_CreatesEvilTownsfolk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Philosopher,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Bounty_Hunter);
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Mayor);
+            var bountyHunterPingOptions = setup.Storyteller.MockGetBountyHunterPing(Character.Baron);
+            var bountyHunterPing = setup.Agent(Character.Philosopher).MockNotifyBountyHunter(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(bountyHunterPingOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron, Character.Mayor }));
+                Assert.That(bountyHunterPing.Value, Is.EqualTo(Character.Baron));
+            });
+        }
+
+        [Test]
+        public async Task PhilosopherBountyHunter_DoesNotCreateEvilTownsfolk()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Philosopher,Imp,Baron,Saint,Soldier,Fisherman,Mayor");
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Bounty_Hunter);
+            var bountyHunterPingOptions = setup.Storyteller.MockGetBountyHunterPing(Character.Baron);
+            var bountyHunterPing = setup.Agent(Character.Philosopher).MockNotifyBountyHunter(gameToEnd: game);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(bountyHunterPingOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Baron }));
+                Assert.That(bountyHunterPing.Value, Is.EqualTo(Character.Baron));
+            });
+        }
     }
 }

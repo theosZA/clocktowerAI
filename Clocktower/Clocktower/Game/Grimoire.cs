@@ -175,6 +175,11 @@ namespace Clocktower.Game
             return PlayersWithHealthyAbility(characterAbility).FirstOrDefault();
         }
 
+        public bool AnyPlayerWithRealCharacter(Character realCharacter)
+        {
+            return players.Any(player => player.RealCharacter == realCharacter);
+        }
+
         public (Player, Player) GetLivingNeighbours(Player player)
         {
             int myIndex = players.IndexOf(player);
