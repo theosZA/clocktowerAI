@@ -10,7 +10,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
+            var ogreOptions = setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
             setup.Agent(Character.Imp).MockNomination(Character.Saint);
 
             // Act
@@ -21,6 +21,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(game.Finished, Is.True);
             Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            Assert.That(ogreOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Mayor }));  // Can't pick themself.
             await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
                                                                                  Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)),
                                                                                  Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Ogre)));
@@ -32,7 +33,7 @@ namespace ClocktowerScenarioTests.Tests
         {
             // Arrange
             var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Ravenkeeper,Saint,Baron,Fisherman,Mayor");
-            setup.Agent(Character.Ogre).MockOgreChoice(Character.Baron);
+            var ogreOptions = setup.Agent(Character.Ogre).MockOgreChoice(Character.Baron);
             setup.Agent(Character.Imp).MockNomination(Character.Saint);
 
             // Act
@@ -43,6 +44,7 @@ namespace ClocktowerScenarioTests.Tests
             // Assert
             Assert.That(game.Finished, Is.True);
             Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            Assert.That(ogreOptions, Is.EquivalentTo(new[] { Character.Imp, Character.Ravenkeeper, Character.Saint, Character.Baron, Character.Fisherman, Character.Mayor }));  // Can't pick themself.
             await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
                                                                                  Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Ogre)),
                                                                                  Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)));

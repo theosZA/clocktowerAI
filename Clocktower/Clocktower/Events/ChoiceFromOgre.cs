@@ -22,7 +22,7 @@ namespace Clocktower.Events
 
         public async Task RunOgre(Player ogre)
         {
-            var target = await ogre.Agent.RequestChoiceFromOgre(grimoire.Players);
+            var target = await ogre.Agent.RequestChoiceFromOgre(grimoire.Players.Where(player => player != ogre));
             storyteller.ChoiceFromOgre(ogre, target);
             if (!ShouldProcessOgre(ogre))
             {
