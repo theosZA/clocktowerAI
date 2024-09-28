@@ -36,6 +36,12 @@ namespace Clocktower.Events
                 case Character.Shugenja:
                     await new NotifyShugenja(storyteller, grimoire).RunEvent(player);
                     break;
+
+                // The Ogre isn't actually a start-knowing character, but there's otherwise no spot for it on the night order (after night 1),
+                // so let's run it at this spot.
+                case Character.Ogre:
+                    await new ChoiceFromOgre(storyteller, grimoire).RunOgre(player);
+                    break;
             }
         }
     }
