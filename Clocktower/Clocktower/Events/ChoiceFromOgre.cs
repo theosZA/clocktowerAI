@@ -48,7 +48,7 @@ namespace Clocktower.Events
                 return false;
             }
 
-            if (ogre.RealCharacter == Character.Drunk)
+            if (ogre.RealCharacter == Character.Drunk || ogre.RealCharacter == Character.Marionette)
             {
                 return false;
             }

@@ -245,7 +245,6 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Cannibal).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
         }
 
-
         [Test]
         public async Task DrunkPhilosopherOgre()
         {
@@ -305,6 +304,95 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Cannibal).Observer.Received().AnnounceWinner(Alignment.Evil,
                                                                                      Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Drunk)),
                                                                                      Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Drunk)));
+            await setup.Agent(Character.Cannibal).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
+
+        [Test]
+        public async Task MarionetteOgre()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Ogre,Ravenkeeper,Saint,Baron,Soldier,Mayor")
+                            .WithMarionette(Character.Ogre)
+                            .Build();
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            // Wins as evil, since they never had the Ogre ability.
+            await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Marionette)),
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Marionette)));
+            await setup.Agent(Character.Ogre).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
+
+        [Test]
+        public async Task MarionettePhilosopherOgre()
+        {
+            // Arrange
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Philosopher,Ravenkeeper,Saint,Baron,Fisherman,Mayor")
+                            .WithMarionette(Character.Philosopher)
+                            .Build();
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ogre);
+            setup.Agent(Character.Philosopher).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            // Wins as evil, since the Philosopher was really the Marionette and never gained the Ogre ability.
+            await setup.Agent(Character.Philosopher).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Marionette)),
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Marionette)));
+            await setup.Agent(Character.Philosopher).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
+
+        [Test]
+        public async Task MarionetteCannibalOgre()
+        {
+            var setup = new ClocktowerGameBuilder(playerCount: 7);
+            var game = setup.WithDefaultAgents()
+                            .WithCharacters("Imp,Cannibal,Ogre,Saint,Baron,Soldier,Mayor")
+                            .WithMarionette(Character.Cannibal)
+                            .Build();
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Ogre);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Cannibal).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            // Wins as evil, since the Cannibal was really the Marionette and never gained the Ogre ability.
+            await setup.Agent(Character.Cannibal).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Marionette)),
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Marionette)));
             await setup.Agent(Character.Cannibal).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
         }
     }
