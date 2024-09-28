@@ -395,5 +395,115 @@ namespace ClocktowerScenarioTests.Tests
                                                                                      Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Marionette)));
             await setup.Agent(Character.Cannibal).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
         }
+
+        [Test]
+        public async Task EvilPhilosopherOgre_PicksGood()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Bounty_Hunter,Saint,Baron,Fisherman,Mayor");
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Philosopher);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Imp);
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ogre);
+            setup.Agent(Character.Philosopher).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Philosopher).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Philosopher)),
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Philosopher)));
+            await setup.Agent(Character.Philosopher).Received().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task EvilPhilosopherOgre_PicksEvil()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Bounty_Hunter,Saint,Baron,Fisherman,Mayor");
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Philosopher);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Imp);
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ogre);
+            setup.Agent(Character.Philosopher).MockOgreChoice(Character.Baron);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Philosopher).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Philosopher)),
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Philosopher)));
+            await setup.Agent(Character.Philosopher).Received().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task EvilCannibalOgre_PicksGood()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Cannibal,Saint,Baron,Soldier,Bounty_Hunter");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Cannibal);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Imp);
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Ogre);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Cannibal).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Cannibal)),
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Cannibal)));
+            await setup.Agent(Character.Cannibal).Received().ChangeAlignment(Alignment.Evil);
+        }
+
+        [Test]
+        public async Task EvilCannibalOgre_PicksEvil()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Cannibal,Saint,Baron,Soldier,Bounty_Hunter");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Storyteller.MockGetEvilTownsfolk(Character.Cannibal);
+            setup.Storyteller.MockGetBountyHunterPing(Character.Imp);
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Saint);
+            setup.Agent(Character.Imp).MockNomination(Character.Ogre);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Cannibal).MockOgreChoice(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Cannibal).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Cannibal)),
+                                                                                     Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Cannibal)));
+            await setup.Agent(Character.Cannibal).Received().ChangeAlignment(Alignment.Evil);
+        }
     }
 }
