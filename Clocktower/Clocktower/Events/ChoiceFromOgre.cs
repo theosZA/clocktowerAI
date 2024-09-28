@@ -43,6 +43,16 @@ namespace Clocktower.Events
                 return false;
             }
 
+            if (ogre.Tokens.HasToken(Token.CannibalPoisoned))
+            {
+                return false;
+            }
+
+            if (ogre.RealCharacter == Character.Drunk)
+            {
+                return false;
+            }
+
             return true;
         }
 
