@@ -62,7 +62,7 @@ namespace Clocktower.Events
             {
                 return Alignment.Good;
             }
-            if (!target.CanRegisterAsGood)
+            if (target.Alignment == Alignment.Evil)
             {
                 return Alignment.Evil;
 

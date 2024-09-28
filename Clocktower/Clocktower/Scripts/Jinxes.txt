@@ -6,6 +6,7 @@ Marionette / Huntsman: If the Marionette thinks that they are the Huntsman, the 
 Marionette / Snitch: The Marionette does not learn 3 not in-play characters. The Demon learns an extra 3 instead.
 Organ Grinder / Butler: If the Organ Grinder is causing secret voting, the Butler may raise their hand to vote but their vote is only counted if their master voted too.
 Spy / Damsel: If the Spy is (or has been) in play, the Damsel is poisoned.
+Spy / Ogre: The Spy registers as evil to the Ogre.
 Widow / Damsel: If the Widow is (or has been) in play, the Damsel is poisoned.
 Kazali / Bounty Hunter: An evil Townsfolk is only created if the Bounty Hunter is still in play after the Kazali acts.
 Kazali / Huntsman: If the Kazali chooses the Damsel to become a Minion, and a Huntsman is in play, a good player becomes the Damsel.

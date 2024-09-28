@@ -507,5 +507,27 @@ namespace ClocktowerScenarioTests.Tests
                                                                                      Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Cannibal)));
             await setup.Agent(Character.Cannibal).Received().ChangeAlignment(Alignment.Evil);
         }
+
+        [Test]
+        public async Task Ogre_PicksSpy()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Ravenkeeper,Saint,Spy,Fisherman,Mayor");
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Spy);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Ogre)),
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)));
+            await setup.Agent(Character.Ogre).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
     }
 }
