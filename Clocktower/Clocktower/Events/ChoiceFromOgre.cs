@@ -30,7 +30,7 @@ namespace Clocktower.Events
             }
 
             var newAlignment = await NewAlignment(ogre, target);
-            await ogre.ChangeAlignment(newAlignment, notifyAgent: false);
+            await ogre.ChangeAlignment(newAlignment, notifyAgent: (target.Character == Character.Recluse && newAlignment == Alignment.Evil));
         }
 
         private bool ShouldProcessOgre(Player ogre)

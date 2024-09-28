@@ -529,5 +529,51 @@ namespace ClocktowerScenarioTests.Tests
                                                                                  Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)));
             await setup.Agent(Character.Ogre).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
         }
+
+        [Test]
+        public async Task Ogre_PicksRecluseRegisteringAsGood()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Recluse,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Recluse);
+            setup.Storyteller.MockShouldRegisterAsEvilForOgre(false);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)),
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Ogre)));
+            await setup.Agent(Character.Ogre).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
+
+        [Test]
+        public async Task Ogre_PicksRecluseRegisteringAsEvil()
+        {
+            // Arrange
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Ogre,Recluse,Saint,Baron,Fisherman,Mayor");
+            setup.Agent(Character.Ogre).MockOgreChoice(Character.Recluse);
+            setup.Storyteller.MockShouldRegisterAsEvilForOgre(true);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            // Act
+            await game.StartGame();
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            // Assert
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Ogre).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Ogre)),
+                                                                                 Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Ogre)));
+            await setup.Agent(Character.Ogre).Received().ChangeAlignment(Alignment.Evil);
+        }
     }
 }
