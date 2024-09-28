@@ -237,6 +237,13 @@ namespace ClocktowerScenarioTests.Mocks
             return masterOptions;
         }
 
+        public static List<Character> MockOgreChoice(this IAgent agent, Character choice)
+        {
+            List<Character> ogreOptions = new();
+            agent.RequestChoiceFromOgre(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, ogreOptions);
+            return ogreOptions;
+        }
+
         public static void MockSlayerOption(this IAgent agent, Character target)
         {
             agent.PromptShenanigans(Arg.Any<IReadOnlyCollection<IOption>>(), Arg.Any<bool>(), Arg.Any<Player?>())

@@ -46,6 +46,7 @@ namespace Clocktower.Storyteller
         Task<IOption> ShouldExecuteWithVirgin(Player virgin, Player nominator, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldRegisterForJuggle(Player juggler, Player juggledPlayer, Character juggledCharacter, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldRegisterForSnakeCharmer(Player snakeCharmer, Player target, IReadOnlyCollection<IOption> yesOrNo);
+        Task<IOption> ShouldRegisterAsEvilForOgre(Player ogre, Player target, IReadOnlyCollection<IOption> yesOrNo);
         Task<string> GetFishermanAdvice(Player fisherman);
         Task<IOption> ChooseFakeCannibalAbility(Player cannibal, Player executedPlayer, IReadOnlyCollection<IOption> characterAbilityOptions);
         Task<IOption> ChooseDamselCharacter(Player damsel, Player huntsman, IReadOnlyCollection<IOption> characterOptions);
@@ -94,6 +95,7 @@ namespace Clocktower.Storyteller
         void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character);
         void ChoiceFromPhilosopher(Player philosopher, Player? philosopherDrunkedPlayer, Character newCharacterAbility);
         void ChoiceFromButler(Player butler, Player target);
+        void ChoiceFromOgre(Player ogre, Player target);
         void FailedHuntsmanGuess(Player huntsman, Player damsel);
 
         void ScarletWomanTrigger(Player demon, Player scarletWoman);

@@ -77,6 +77,7 @@ namespace Clocktower.Events
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);
                 case "Butler":                      return new ChoiceFromButler(storyteller, grimoire);
                 case "Acrobat":                     return new CheckAcrobat(storyteller, grimoire, deaths);
+                case "Ogre":                        return new ChoiceFromOgre(storyteller, grimoire);
 
                 // Minions
                 case "Assassin":                    return new ChoiceFromAssassin(storyteller, grimoire, deaths);

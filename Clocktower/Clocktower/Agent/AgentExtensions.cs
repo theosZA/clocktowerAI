@@ -95,6 +95,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromButler(players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromOgre(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromOgre(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<bool> PromptFishermanAdvice(this IAgent agent)
         {
             return await agent.PromptFishermanAdvice(OptionsBuilder.YesOrNo) is YesOption;

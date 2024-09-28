@@ -526,6 +526,15 @@ namespace Clocktower.Agent
             return await RequestPlayer(options, "As the %c, please choose a player. Tomorrow, you will only be able vote on a nomination if they have already voted for that nomination.", Character.Butler);
         }
 
+        public async Task<IOption> RequestChoiceFromOgre(IReadOnlyCollection<IOption> options)
+        {
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestPlayer(options);
+            }
+            return await RequestPlayer(options, "As the %c, please choose a player. Your alignment will become the same as theirs.", Character.Ogre);
+        }
+
         public async Task<IOption> PromptFishermanAdvice(IReadOnlyCollection<IOption> options)
         {
             return await RequestUseAbility(options, "Do you wish to go now to the Storyteller for your %c advice rather than saving it for later?", Character.Fisherman);

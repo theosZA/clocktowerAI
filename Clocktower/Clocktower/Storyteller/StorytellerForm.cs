@@ -425,6 +425,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldRegisterAsEvilForOgre(Player ogre, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            AddFormattedText("%p has targeted %p with their ability as the %c. Should %p register as evil?", ogre, target, Character.Ogre, target, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<string> GetFishermanAdvice(Player fisherman)
         {
             var sb = new StringBuilder();
@@ -780,6 +786,11 @@ namespace Clocktower.Storyteller
         public void ChoiceFromButler(Player butler, Player target)
         {
             AddFormattedText("%p has chosen %p to be their master.", butler, target, StorytellerView);
+        }
+
+        public void ChoiceFromOgre(Player ogre, Player target)
+        {
+            AddFormattedText("%p has chosen to become the alignment of %p.", ogre, target, StorytellerView);
         }
 
         public void FailedHuntsmanGuess(Player huntsman, Player damsel)

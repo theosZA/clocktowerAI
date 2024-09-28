@@ -34,4 +34,5 @@ Shugenja
 BountyHunter
 Nightwatchman
 Spy
+Ogre
 EndNight
