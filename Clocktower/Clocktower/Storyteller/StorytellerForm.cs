@@ -743,7 +743,8 @@ namespace Clocktower.Storyteller
             
             if (success)
             {
-                sb.AppendFormattedText("%p and %p swap characters and alignments, and %p is now poisoned.", snakeCharmer, target, target, StorytellerView);
+                // Omit the characters of each player because it's confusing to read when we use their old characters.
+                sb.AppendFormattedText("%p and %p swap characters and alignments, and %p is now poisoned.", snakeCharmer, target, target);
             }
             else
             {
