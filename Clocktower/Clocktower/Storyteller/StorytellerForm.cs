@@ -681,6 +681,11 @@ namespace Clocktower.Storyteller
             AddFormattedText("%p has chosen to kill %p.", demon, target, StorytellerView);
         }
 
+        public void ChoiceFromPukka(Player pukka, Player target)
+        {
+            AddFormattedText("%p has chosen to poison %p.", pukka, target, StorytellerView);
+        }
+
         public void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims)
         {
             switch (victims.Count)

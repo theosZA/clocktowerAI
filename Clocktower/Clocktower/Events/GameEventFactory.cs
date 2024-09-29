@@ -95,6 +95,7 @@ namespace Clocktower.Events
                 case "Ojo":                         return new ChoiceFromOjo(storyteller, grimoire, deaths, setup.Script);
                 case "Kazali":                      return new ChoiceFromDemon(Character.Kazali, storyteller, grimoire, deaths);
                 case "KazaliMinions":               return new SelectionOfKazaliMinions(storyteller, grimoire, setup.Script);
+                case "Pukka":                       return new ChoiceFromPukka(storyteller, grimoire, deaths);
 
                 default: throw new Exception($"Unknown event name \"{name}\"");
             }

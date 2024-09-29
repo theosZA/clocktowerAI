@@ -20,6 +20,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromDemon(demonCharacter, players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromPukka(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromPukka(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Character> RequestChoiceFromOjo(this IAgent agent, IEnumerable<Character> characters)
         {
             return (await agent.RequestChoiceFromOjo(characters.ToOptions())).GetCharacter();

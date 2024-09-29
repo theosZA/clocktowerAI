@@ -57,3 +57,4 @@ Imp: Each night (except the first night), choose a player: they die. If you choo
 Ojo: Each night (except the first night), choose a character: they die. If they are not in play, the Storyteller chooses who dies.
 No Dashii: Each night (except the first night), choose a player: they die. Your 2 Townsfolk neighbors are poisoned.
 Kazali: Each night (except the first night), choose a player: they die. [You choose which players are which Minions. -? to +? Outsiders]
+Pukka: Each night, choose a player: they are poisoned. The previously poisoned player dies then becomes healthy.

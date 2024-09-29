@@ -13,6 +13,7 @@
         SweetheartDrunk,
         PhilosopherDrunk,
         NoDashiiPoisoned,
+        PoisonedByPukka,
         PoisonedByPoisoner,
         PoisonedByWidow,
         CannibalPoisoned,

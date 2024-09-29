@@ -389,6 +389,13 @@ namespace Clocktower.Agent
             return await requester.RequestPlayerForDemonKill(sb.ToString(), options);
         }
 
+        public async Task<IOption> RequestChoiceFromPukka(IReadOnlyCollection<IOption> options)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("As the %c, please choose a player to poison who will die tomorrow night.", Character.Pukka);
+            return await requester.RequestPlayerForDemonKill(sb.ToString(), options);
+        }
+
         public async Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options)
         {
             var sb = new StringBuilder();

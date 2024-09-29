@@ -88,6 +88,7 @@ namespace Clocktower.Game
         Imp = 3000,
         Ojo,
         No_Dashii,
-        Kazali
+        Kazali,
+        Pukka
     }
 }

@@ -33,6 +33,11 @@ namespace ClocktowerScenarioTests.Mocks
                 });
         }
 
+        public static void MockPukka(this IAgent agent, Character target)
+        {
+            agent.RequestChoiceFromPukka(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);
+        }
+
         public static void MockOjo(this IAgent agent, Character target)
         {
             agent.RequestChoiceFromOjo(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsOptionForCharacterFromArg(target);

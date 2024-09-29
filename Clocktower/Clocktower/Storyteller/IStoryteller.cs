@@ -82,6 +82,7 @@ namespace Clocktower.Storyteller
         void ShowNightwatchman(Player nightwatchman, Player target, bool shown);
 
         void ChoiceFromDemon(Player demon, Player target);
+        void ChoiceFromPukka(Player pukka, Player target);
         void ChoiceFromOjo(Player ojo, Character targetCharacter, IReadOnlyCollection<Player> victims);
         void ChoiceFromPoisoner(Player poisoner, Player target);
         void ChoiceFromWidow(Player widow, Player target);

@@ -120,6 +120,7 @@ namespace Clocktower.Game
             return token == Token.IsTheDrunk
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
+                || token == Token.PoisonedByPukka
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CannibalPoisoned
@@ -151,6 +152,7 @@ namespace Clocktower.Game
         {   // These are generally only tokens that have an active effect on the game and so need to be removed immediately to stop them having their effect.
             return token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
+                || token == Token.PoisonedByPukka
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
@@ -168,6 +170,7 @@ namespace Clocktower.Game
         {   // These are only tokens that have an active effect on the game.
             return token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
+                || token == Token.PoisonedByPukka
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
@@ -200,6 +203,7 @@ namespace Clocktower.Game
                 Token.SweetheartDrunk => "Sweetheart drunk",
                 Token.PhilosopherDrunk => "Philosopher drunk",
                 Token.NoDashiiPoisoned => "poisoned by the No Dashii",
+                Token.PoisonedByPukka => "poisoned by the Pukka",
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
                 Token.PoisonedByWidow => "poisoned by the Widow",
                 Token.CannibalPoisoned => "poisoned from a bad meal",

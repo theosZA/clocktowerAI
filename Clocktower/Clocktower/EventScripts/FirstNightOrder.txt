@@ -18,6 +18,7 @@ Widow
 GodfatherInformation
 DevilsAdvocate
 Witch
+Pukka
 Huntsman
 // Damsel - this is their theoretical place in the night order, but they switch as part of the Huntsman ability
 Washerwoman

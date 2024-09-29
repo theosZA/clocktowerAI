@@ -51,6 +51,7 @@ namespace Clocktower.Agent
         Task<IOption> RequestChoiceOfMinionForSoldierSelectedByKazali(IReadOnlyCollection<IOption> options);
 
         Task<IOption> RequestChoiceFromDemon(Character demonCharacter, IReadOnlyCollection<IOption> options);
+        Task<IOption> RequestChoiceFromPukka(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromOjo(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromPoisoner(IReadOnlyCollection<IOption> options);
         Task<IOption> RequestChoiceFromWidow(IReadOnlyCollection<IOption> options);
