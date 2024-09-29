@@ -152,6 +152,36 @@ namespace ClocktowerScenarioTests.Tests
             await setup.Agent(Character.Philosopher).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
         }
 
+
+        [Test]
+        public async Task PhilosopherOgre_SweetheartDrunk()
+        {
+            var (setup, game) = ClocktowerGameBuilder.BuildDefault("Imp,Philosopher,Ravenkeeper,Saint,Baron,Soldier,Sweetheart");
+            await game.StartGame();
+
+            // Night 1 & Day 1
+            setup.Agent(Character.Imp).MockNomination(Character.Sweetheart);
+            setup.Storyteller.MockGetSweetheartDrunk(Character.Philosopher);
+
+            await game.RunNightAndDay();
+
+            // Night 2 & Day 2
+            setup.Agent(Character.Philosopher).MockPhilosopher(Character.Ogre);
+            setup.Agent(Character.Philosopher).MockOgreChoice(Character.Baron);
+            setup.Agent(Character.Imp).MockDemonKill(Character.Soldier);
+            setup.Agent(Character.Imp).MockNomination(Character.Saint);
+
+            await game.RunNightAndDay();
+            await game.AnnounceWinner();
+
+            Assert.That(game.Finished, Is.True);
+            Assert.That(game.Winner, Is.EqualTo(Alignment.Evil));
+            await setup.Agent(Character.Philosopher).Observer.Received().AnnounceWinner(Alignment.Evil,
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => !players.Any(player => player.RealCharacter == Character.Philosopher)),
+                                                                                        Arg.Is<IReadOnlyCollection<Player>>(players => players.Any(player => player.RealCharacter == Character.Philosopher)));
+            await setup.Agent(Character.Philosopher).DidNotReceive().ChangeAlignment(Arg.Any<Alignment>());
+        }
+
         [Test]
         public async Task CannibalOgre_GoodOgre()
         {

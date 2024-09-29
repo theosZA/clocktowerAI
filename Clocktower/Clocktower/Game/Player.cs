@@ -246,6 +246,33 @@ namespace Clocktower.Game
             return true;
         }
 
+        /// <summary>
+        /// Does the player really have the specified character ability (even if they are drunk or poisoned)?
+        /// This will not include cases where they only think they have the ability, such as the Drunk,
+        /// the Marionette, or the Philosopher who was drunk when they used their Philosopher ability.
+        /// </summary>
+        /// <param name="characterAbility">Character ability to check for.</param>
+        /// <returns>True if the player really has the specified ability, regardless of whether they are drunk or posioned.</returns>
+        public bool ReallyHasAbility(Character characterAbility)
+        {
+            if (!ShouldRunAbility(characterAbility))
+            {
+                return false;
+            }
+
+            if (RealCharacter == Character.Drunk || RealCharacter == Character.Marionette)
+            {
+                return false;
+            }
+
+            if (Tokens.HasToken(Token.IsTheBadPhilosopher) || Tokens.HasToken(Token.CannibalPoisoned))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public void Kill()
         {
             alive = false;
