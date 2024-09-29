@@ -20,7 +20,7 @@ namespace Clocktower.Agent.RobotAgent.Model
             {
                 return options.First(option => option is YesOption);
             }
-            return options.First(option => option is PassOption);
+            return options.First(option => option is NoOption || option is PassOption);
         }
 
         public string NoMatchingOptionPrompt(IReadOnlyCollection<IOption> options)
