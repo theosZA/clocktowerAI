@@ -55,6 +55,11 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetOjoVictims(ojo, targetCharacter, matchingPlayers.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> GetTownsfolkPoisonedByVigormortis(this IStoryteller storyteller, Player minion, Player neighbourA, Player neighbourB)
+        {
+            return (await storyteller.GetTownsfolkPoisonedByVigormortis(minion, new[] { neighbourA, neighbourB }.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> GetDrunk(this IStoryteller storyteller, IEnumerable<Player> drunkCandidates)
         {
             return (await storyteller.GetDrunk(drunkCandidates.ToOptions())).GetPlayer();
@@ -183,6 +188,11 @@ namespace Clocktower.Storyteller
         public static async Task<bool> ShouldRegisterAsEvilForOgre(this IStoryteller storyteller, Player ogre, Player target)
         {
             return await storyteller.ShouldRegisterAsEvilForOgre(ogre, target, OptionsBuilder.YesOrNo) is YesOption;
+        }
+
+        public static async Task<bool> ShouldRegisterAsMinionForVigormortis(this IStoryteller storyteller, Player vigormortis, Player target)
+        {
+            return await storyteller.ShouldRegisterAsMinionForVigormortis(vigormortis, target, OptionsBuilder.YesOrNo) is YesOption;
         }
     }
 }

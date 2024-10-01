@@ -142,7 +142,7 @@ namespace ClocktowerScenarioTests.Mocks
         {
             List<Character> playersWhoCanLearnOfWidow = new();
             storyteller.GetWidowPing(Arg.Is<Player>(player => player.RealCharacter == Character.Widow), Arg.Any<IReadOnlyCollection<IOption>>())
-                .ReturnsMatchingOptionFromOptionsArg(Character.Soldier, playersWhoCanLearnOfWidow, argIndex: 1);
+                .ReturnsMatchingOptionFromOptionsArg(playerWhoWillLearnOfWidow, playersWhoCanLearnOfWidow, argIndex: 1);
             return playersWhoCanLearnOfWidow;
         }
 
@@ -158,6 +158,14 @@ namespace ClocktowerScenarioTests.Mocks
         {
             storyteller.GetOjoVictims(Arg.Any<Player>(), expectedTargetCharacter, Arg.Any<IReadOnlyCollection<IOption>>())
                 .ReturnsMatchingOptionFromOptionsArg(ojoVictims, argIndex: 2);
+        }
+
+        public static List<Character> MockGetTownsfolkPoisonedByVigormortis(this IStoryteller storyteller, Character poisonedTownsfolk)
+        {
+            List<Character> townsfolkNeighbours = new();
+            storyteller.GetTownsfolkPoisonedByVigormortis(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(poisonedTownsfolk, townsfolkNeighbours, argIndex: 1);
+            return townsfolkNeighbours;
         }
 
         public static void MockGetMayorBounce(this IStoryteller storyteller, Character newKill)

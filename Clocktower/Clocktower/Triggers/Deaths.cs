@@ -70,7 +70,10 @@ namespace Clocktower.Triggers
             {
                 await deathTrigger.RunTrigger(deathInformation);
             }
-            grimoire.ClearTokensOnPlayerDeath(deathInformation.dyingPlayer);
+            if (deathInformation.dyingPlayer.CharacterType != CharacterType.Minion || !deathInformation.dyingPlayer.Tokens.HasToken(Token.MinionKilledByVigormortis))
+            {
+                grimoire.ClearTokensOnPlayerDeath(deathInformation.dyingPlayer);
+            }
         }
 
         private IEnumerable<IDeathTrigger> BuildDeathTriggers(IReadOnlyCollection<Character> scriptCharacters)

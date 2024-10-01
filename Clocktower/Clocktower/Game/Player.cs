@@ -208,7 +208,7 @@ namespace Clocktower.Game
                 return false;
             }
 
-            if (!Alive)
+            if (!Alive && (CharacterType != CharacterType.Minion || !Tokens.HasToken(Token.MinionKilledByVigormortis)))
             {
                 return false;
             }

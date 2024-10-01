@@ -89,6 +89,7 @@ namespace Clocktower.Game
         Ojo,
         No_Dashii,
         Kazali,
-        Pukka
+        Pukka,
+        Vigormortis
     }
 }

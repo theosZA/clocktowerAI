@@ -111,6 +111,13 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(victimOptions);
         }
 
+        public async Task<IOption> GetTownsfolkPoisonedByVigormortis(Player minion, IReadOnlyCollection<IOption> poisonOptions)
+        {
+            AddFormattedText("The %c has killed %p, a minion. Choose which of their townsfolk neighbours should be poisoned...", Character.Vigormortis, minion, StorytellerView);
+
+            return await PopulateOptions(poisonOptions);
+        }
+
         public async Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates)
         {
             AddFormattedText("Choose one townsfolk who will be the %c...", Character.Drunk);
@@ -428,6 +435,12 @@ namespace Clocktower.Storyteller
         public async Task<IOption> ShouldRegisterAsEvilForOgre(Player ogre, Player target, IReadOnlyCollection<IOption> yesOrNo)
         {
             AddFormattedText("%p has targeted %p with their ability as the %c. Should %p register as evil?", ogre, target, Character.Ogre, target, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
+        public async Task<IOption> ShouldRegisterAsMinionForVigormortis(Player vigormortis, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            AddFormattedText("%p has killed %p. Should %p register as a minion such that one of their townsfolk neighbours are poisoned?", vigormortis, target, target, StorytellerView);
             return await PopulateOptions(yesOrNo);
         }
 

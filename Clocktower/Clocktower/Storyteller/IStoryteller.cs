@@ -20,6 +20,7 @@ namespace Clocktower.Storyteller
         Task<IOption> GetMinionBluffs(Player minion, IReadOnlyCollection<IOption> minionBluffOptions);
         Task<IOption> GetNewImp(IReadOnlyCollection<IOption> impCandidates);
         Task<IOption> GetOjoVictims(Player ojo, Character targetCharacter, IReadOnlyCollection<IOption> victimOptions);
+        Task<IOption> GetTownsfolkPoisonedByVigormortis(Player minion, IReadOnlyCollection<IOption> poisonOptions);
 
         Task<IOption> GetDrunk(IReadOnlyCollection<IOption> drunkCandidates);
         Task<IOption> GetSweetheartDrunk(IReadOnlyCollection<IOption> drunkCandidates);
@@ -47,6 +48,7 @@ namespace Clocktower.Storyteller
         Task<IOption> ShouldRegisterForJuggle(Player juggler, Player juggledPlayer, Character juggledCharacter, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldRegisterForSnakeCharmer(Player snakeCharmer, Player target, IReadOnlyCollection<IOption> yesOrNo);
         Task<IOption> ShouldRegisterAsEvilForOgre(Player ogre, Player target, IReadOnlyCollection<IOption> yesOrNo);
+        Task<IOption> ShouldRegisterAsMinionForVigormortis(Player vigormortis, Player target, IReadOnlyCollection<IOption> yesOrNo);
         Task<string> GetFishermanAdvice(Player fisherman);
         Task<IOption> ChooseFakeCannibalAbility(Player cannibal, Player executedPlayer, IReadOnlyCollection<IOption> characterAbilityOptions);
         Task<IOption> ChooseDamselCharacter(Player damsel, Player huntsman, IReadOnlyCollection<IOption> characterOptions);

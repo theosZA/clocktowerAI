@@ -10,10 +10,12 @@
         IsTheBadPhilosopher,
         // Normal tokens
         UsedOncePerGameAbility = 1000,
+        MinionKilledByVigormortis,
         SweetheartDrunk,
         PhilosopherDrunk,
         NoDashiiPoisoned,
         PoisonedByPukka,
+        PoisonedByVigormortis,
         PoisonedByPoisoner,
         PoisonedByWidow,
         CannibalPoisoned,

@@ -58,3 +58,4 @@ Ojo: Each night (except the first night), choose a character: they die. If they 
 No Dashii: Each night (except the first night), choose a player: they die. Your 2 Townsfolk neighbors are poisoned.
 Kazali: Each night (except the first night), choose a player: they die. [You choose which players are which Minions. -? to +? Outsiders]
 Pukka: Each night, choose a player: they are poisoned. The previously poisoned player dies then becomes healthy.
+Vigormortis: Each night (except the first night), choose a player: they die. Minions you kill keep their ability & poison 1 Townsfolk neighbor. [-1 Outsider]

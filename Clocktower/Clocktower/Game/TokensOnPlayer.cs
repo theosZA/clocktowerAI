@@ -121,6 +121,7 @@ namespace Clocktower.Game
                 || token == Token.SweetheartDrunk
                 || token == Token.PhilosopherDrunk
                 || token == Token.PoisonedByPukka
+                || token == Token.PoisonedByVigormortis
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CannibalPoisoned
@@ -149,9 +150,11 @@ namespace Clocktower.Game
 
         private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
         {   // These are generally only tokens that have an active effect on the game and so need to be removed immediately to stop them having their effect.
-            return token == Token.PhilosopherDrunk
+            return token == Token.MinionKilledByVigormortis
+                || token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
                 || token == Token.PoisonedByPukka
+                || token == Token.PoisonedByVigormortis
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
@@ -167,9 +170,11 @@ namespace Clocktower.Game
 
         private static bool IsTokenToBeRemovedOnLosingAbility(Token token)
         {   // These are only tokens that have an active effect on the game.
-            return token == Token.PhilosopherDrunk
+            return token == Token.MinionKilledByVigormortis
+                || token == Token.PhilosopherDrunk
                 || token == Token.NoDashiiPoisoned
                 || token == Token.PoisonedByPukka
+                || token == Token.PoisonedByVigormortis
                 || token == Token.PoisonedByPoisoner
                 || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
@@ -199,10 +204,12 @@ namespace Clocktower.Game
                 Token.IsTheCannibalPhilosopher => "is the (Cannibal) Philosopher",
                 Token.IsTheBadPhilosopher => "is the Philosopher (drunk/posioned when used)",
                 Token.UsedOncePerGameAbility => "has used their once-per-game ability",
+                Token.MinionKilledByVigormortis => "has ability (minion killed by Vigormortis)",
                 Token.SweetheartDrunk => "Sweetheart drunk",
                 Token.PhilosopherDrunk => "Philosopher drunk",
                 Token.NoDashiiPoisoned => "poisoned by the No Dashii",
                 Token.PoisonedByPukka => "poisoned by the Pukka",
+                Token.PoisonedByVigormortis => "poisoned by the Vigormortis",
                 Token.PoisonedByPoisoner => "poisoned by the Poisoner",
                 Token.PoisonedByWidow => "poisoned by the Widow",
                 Token.CannibalPoisoned => "poisoned from a bad meal",
