@@ -71,6 +71,10 @@ namespace Clocktower.Setup
 
             int outsiderModification = 0;
 
+            if (isCharacterSelected(Character.Vigormortis))
+            {
+                outsiderModification--;
+            }
             if (isCharacterSelected(Character.Baron))
             {
                 outsiderModification += 2;
@@ -206,7 +210,7 @@ namespace Clocktower.Setup
             int baseOutsiders = GetBaseOutsiderCount(playerCount);
 
             var possibleOutsiderAdjustments = new List<IReadOnlyCollection<int>>();
-            var outsiderAdjustingCharacters = new[] { Character.Baron, Character.Godfather, Character.Balloonist, Character.Huntsman }.Except(excludingCharacters).ToList();
+            var outsiderAdjustingCharacters = new[] { Character.Vigormortis, Character.Baron, Character.Godfather, Character.Balloonist, Character.Huntsman }.Except(excludingCharacters).ToList();
             foreach (var character in outsiderAdjustingCharacters)
             {
                 if (isCharacterSelected(character))
@@ -249,6 +253,10 @@ namespace Clocktower.Setup
         {
             switch (character)
             {
+                case Character.Vigormortis:
+                    yield return -1;
+                    break;
+
                 case Character.Baron:
                     yield return +2;
                     break;
