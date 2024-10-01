@@ -132,7 +132,6 @@ namespace Clocktower.Game
         private static bool IsTokenThatExpiresAtEndOfDay(Token token)
         {
             return token == Token.PoisonedByPoisoner
-                || token == Token.PoisonedByWidow
                 || token == Token.CursedByWitch
                 || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ChosenByButler
