@@ -25,6 +25,7 @@
         FortuneTellerRedHerring,
         GodfatherKillsTonight,
         ProtectedByMonk,
+        KilledByLycanthrope,
         ChosenByButler,
         WasherwomanPing,
         WasherwomanWrong,

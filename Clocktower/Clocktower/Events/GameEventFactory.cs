@@ -73,6 +73,7 @@ namespace Clocktower.Events
                 case "SnakeCharmer":                return new ChoiceFromSnakeCharmer(storyteller, grimoire);
                 case "BountyHunter":                return new NotifyBountyHunter(storyteller, grimoire);
                 case "HighPriestess":               return new NotifyHighPriestess(storyteller, grimoire);
+                case "Lycanthrope":                 return new ChoiceFromLycanthrope(storyteller, grimoire, deaths);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

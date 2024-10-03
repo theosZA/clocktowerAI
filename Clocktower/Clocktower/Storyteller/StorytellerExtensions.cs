@@ -190,6 +190,11 @@ namespace Clocktower.Storyteller
             return await storyteller.ShouldRegisterForSnakeCharmer(snakeCharmer, target, OptionsBuilder.YesOrNo) is YesOption;
         }
 
+        public static async Task<bool> ShouldRegisterAsGoodForLycanthrope(this IStoryteller storyteller, Player lycanthrope, Player target)
+        {
+            return await storyteller.ShouldRegisterAsGoodForLycanthrope(lycanthrope, target, OptionsBuilder.YesOrNo) is YesOption;
+        }
+
         public static async Task<bool> ShouldRegisterAsEvilForOgre(this IStoryteller storyteller, Player ogre, Player target)
         {
             return await storyteller.ShouldRegisterAsEvilForOgre(ogre, target, OptionsBuilder.YesOrNo) is YesOption;

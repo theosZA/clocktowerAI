@@ -442,6 +442,12 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(yesOrNo);
         }
 
+        public async Task<IOption> ShouldRegisterAsGoodForLycanthrope(Player lycanthrope, Player target, IReadOnlyCollection<IOption> yesOrNo)
+        {
+            AddFormattedText("%p has targeted %p with their ability as the %c. Should %p register as good so that they will die and prevent any other deaths tonight?", lycanthrope, target, Character.Lycanthrope, target, StorytellerView);
+            return await PopulateOptions(yesOrNo);
+        }
+
         public async Task<IOption> ShouldRegisterAsEvilForOgre(Player ogre, Player target, IReadOnlyCollection<IOption> yesOrNo)
         {
             AddFormattedText("%p has targeted %p with their ability as the %c. Should %p register as evil?", ogre, target, Character.Ogre, target, StorytellerView);
@@ -785,6 +791,22 @@ namespace Clocktower.Storyteller
         public void ChoiceFromMonk(Player monk, Player target)
         {
             AddFormattedText("%p has chosen to protect %p.", monk, target, StorytellerView);
+        }
+
+        public void ChoiceFromLycanthrope(Player lycanthrope, Player target, bool success)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("%p has targeted %p with their %c ability", lycanthrope, target, Character.Lycanthrope, StorytellerView);
+            if (success)
+            {
+                sb.AppendFormattedText(" and killed them. No other players can die tonight.");
+            }
+            else
+            {
+                sb.AppendFormattedText(" but failed to kill them.");
+            }
+
+            AddMarkupText(sb.ToString());
         }
 
         public void ChoiceFromRavenkeeper(Player ravenkeeper, Player target, Character character)

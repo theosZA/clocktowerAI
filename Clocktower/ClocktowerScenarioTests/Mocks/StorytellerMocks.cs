@@ -214,6 +214,11 @@ namespace ClocktowerScenarioTests.Mocks
             storyteller.ShouldExecuteWithVirgin(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldExecute, argIndex: 2);
         }
 
+        public static void MockShouldRegisterAsGoodForLycanthrope(this IStoryteller storyteller, bool shouldRegisterAsGood)
+        {
+            storyteller.ShouldRegisterAsGoodForLycanthrope(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldRegisterAsGood, argIndex: 2);
+        }
+
         public static void MockShouldRegisterAsEvilForOgre(this IStoryteller storyteller, bool shouldRegisterAsEvil)
         {
             storyteller.ShouldRegisterAsEvilForOgre(Arg.Any<Player>(), Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsYesNoOptionFromArg(shouldRegisterAsEvil, argIndex: 2);

@@ -243,6 +243,13 @@ namespace ClocktowerScenarioTests.Mocks
             return monkOptions;
         }
 
+        public static List<Character> MockLycanthropeChoice(this IAgent agent, Character choice)
+        {
+            List<Character> lycanthropeOptions = new();
+            agent.RequestChoiceFromLycanthrope(Arg.Any<IReadOnlyCollection<IOption>>()).ReturnsMatchingOptionFromOptionsArg(choice, lycanthropeOptions);
+            return lycanthropeOptions;
+        }
+
         public static List<Character> MockButlerChoice(this IAgent agent, Character master)
         {
             List<Character> masterOptions = new();

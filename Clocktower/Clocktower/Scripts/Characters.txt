@@ -27,6 +27,7 @@ Huntsman: Once per game, at night, choose a living player: the Damsel, if chosen
 Snake Charmer: Each night, choose an alive player: a chosen Demon swaps characters and alignments with you and is then poisoned.
 Bounty Hunter: You start knowing 1 evil player. If the player you know dies, you learn another evil player tonight. [1 Townsfolk is evil]
 High Priestess: Each night, learn which player the Storyteller believes you should talk to most.
+Lycanthrope: Each night (except the first night), choose an alive player: if good, they die, but they are the only player that can die tonight.
 
 // Outsiders
 Tinker: You might die at any time.

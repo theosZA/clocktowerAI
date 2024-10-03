@@ -90,6 +90,11 @@ namespace Clocktower.Agent
             return (await agent.RequestChoiceFromMonk(players.ToOptions())).GetPlayer();
         }
 
+        public static async Task<Player> RequestChoiceFromLycanthrope(this IAgent agent, IEnumerable<Player> players)
+        {
+            return (await agent.RequestChoiceFromLycanthrope(players.ToOptions())).GetPlayer();
+        }
+
         public static async Task<Player> RequestChoiceFromRavenkeeper(this IAgent agent, IEnumerable<Player> players)
         {
             return (await agent.RequestChoiceFromRavenkeeper(players.ToOptions())).GetPlayer();

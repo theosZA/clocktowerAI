@@ -34,23 +34,48 @@ namespace Clocktower.Triggers
             player.Kill();
         }
 
-        public async Task NightKill(Player player, Player? killer)
+        /// <summary>
+        /// Process a player dying at night, usually at the hands of another player. The kill may be
+        /// blocked or redirected depending on character abilities.
+        /// </summary>
+        /// <param name="player">The player due to die.</param>
+        /// <param name="killer">The player, if any, instigating the kill.</param>
+        /// <param name="shouldContinueWithKillOnRedirect">
+        /// An optional async predicate in the case that the kill is redirected. Should return false if the redirected kill should immediately fail.
+        /// If the predicate is not provided, it is assumed to continue with the kill as if it was the original target.
+        /// </param>
+        /// <returns>
+        /// The player, if any, that actually died.
+        /// This will be null if the kill failed for any reason including if the player was already dead.
+        /// And this may not be the same as the provided player if the kill was redirected.
+        /// </returns>
+        public async Task<Player?> NightKill(Player player, Player? killer, Func<Player, Task<bool>>? shouldContinueWithKillOnRedirect = null)
         {
             if (player.HasHealthyAbility(Character.Mayor)
                 && !(killer?.CharacterType == CharacterType.Demon && player.ProtectedFromDemonKill)
                 && killer?.Character != Character.Assassin)
             {
                 player = await storyteller.GetMayorBounce(player, killer, grimoire.Players);
+                if (shouldContinueWithKillOnRedirect != null && !await shouldContinueWithKillOnRedirect(player))
+                {
+                    return null;
+                }
+            }
+
+            if (grimoire.Players.Any(player => player.Tokens.HasHealthyToken(Token.KilledByLycanthrope))
+                && killer?.Character != Character.Assassin)
+            {
+                return null;
             }
 
             if (killer?.CharacterType == CharacterType.Demon && player.ProtectedFromDemonKill)
             {
-                return;
+                return null;
             }
 
             if (!player.Alive)
             {
-                return;
+                return null;
             }
 
             var deathInformation = new DeathInformation
@@ -62,6 +87,8 @@ namespace Clocktower.Triggers
             await HandleDeath(deathInformation);
 
             player.Tokens.Add(Token.DiedAtNight, killer ?? player);
+
+            return player;
         }
 
         private async Task HandleDeath(DeathInformation deathInformation)

@@ -145,7 +145,8 @@ namespace Clocktower.Game
                 || token == Token.PhilosopherUsedAbilityTonight
                 || token == Token.JuggledCorrectly
                 || token == Token.CannibalFirstNightWithAbility
-                || token == Token.ProtectedByMonk;
+                || token == Token.ProtectedByMonk
+                || token == Token.KilledByLycanthrope;
         }
 
         private static bool IsTokenThatExpiresOnPlayerDeath(Token token)
@@ -161,6 +162,7 @@ namespace Clocktower.Game
                 || token == Token.PickedByDevilsAdvocate
                 || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
+                || token == Token.KilledByLycanthrope
                 || token == Token.ChosenByButler
                 || token == Token.JugglerBeforeFirstDay
                 || token == Token.CannibalEaten
@@ -181,6 +183,7 @@ namespace Clocktower.Game
                 || token == Token.PickedByDevilsAdvocate
                 || token == Token.ProtectedByDevilsAdvocate
                 || token == Token.ProtectedByMonk
+                || token == Token.KilledByLycanthrope
                 || token == Token.CannibalPoisoned
                 || token == Token.CannibalDrunk;
         }
@@ -219,6 +222,7 @@ namespace Clocktower.Game
                 Token.FortuneTellerRedHerring => "Fortune Teller red herring",
                 Token.GodfatherKillsTonight => "Godfather kills tonight",
                 Token.ProtectedByMonk => "protected by the Monk",
+                Token.KilledByLycanthrope => "killed by the Lycanthrope",
                 Token.ChosenByButler => "chosen by the Butler",
                 Token.WasherwomanPing => "seen by the Washerwoman",
                 Token.WasherwomanWrong => "incorrectly seen by the Washerwoman",

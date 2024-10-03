@@ -523,6 +523,15 @@ namespace Clocktower.Agent
             return await RequestPlayer(options, "As the %c, please choose a player to protect from the demon tonight.", Character.Monk);
         }
 
+        public async Task<IOption> RequestChoiceFromLycanthrope(IReadOnlyCollection<IOption> options)
+        {
+            if (character == Character.Cannibal)
+            {
+                return await CannibalRequestPlayer(options);
+            }
+            return await RequestPlayer(options, "As the %c, please choose a player to try kill tonight.", Character.Lycanthrope);
+        }
+
         public async Task<IOption> RequestChoiceFromRavenkeeper(IReadOnlyCollection<IOption> options)
         {
             if (character == Character.Cannibal)
