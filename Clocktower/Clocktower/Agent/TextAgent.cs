@@ -308,6 +308,16 @@ namespace Clocktower.Agent
             await SendMessage("As the %c, the next player you learn is %p.", Character.Balloonist, newPlayer);
         }
 
+        public async Task NotifyHighPriestess(Player player)
+        {
+            if (character == Character.Cannibal)
+            {
+                await Learn(player);
+                return;
+            }
+            await SendMessage("As the %c, you learn that %p is the player the Storyteller believes you should talk to most.", Character.High_Priestess, player);
+        }
+
         public async Task NotifyJuggler(int jugglerCount)
         {
             if (character == Character.Cannibal)

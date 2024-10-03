@@ -72,6 +72,7 @@ namespace Clocktower.Events
                 case "Huntsman":                    return new ChoiceFromHuntsman(storyteller, grimoire, setup.Script, random, firstNight: dayNumber == 1);
                 case "SnakeCharmer":                return new ChoiceFromSnakeCharmer(storyteller, grimoire);
                 case "BountyHunter":                return new NotifyBountyHunter(storyteller, grimoire);
+                case "HighPriestess":               return new NotifyHighPriestess(storyteller, grimoire);
 
                 // Outsiders
                 case "Tinker":                      return new TinkerOption(storyteller, grimoire, deaths, observers, duringDay);

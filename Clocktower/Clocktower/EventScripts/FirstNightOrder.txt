@@ -36,4 +36,5 @@ BountyHunter
 Nightwatchman
 Spy
 Ogre
+HighPriestess
 EndNight

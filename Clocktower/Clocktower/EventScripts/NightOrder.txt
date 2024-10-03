@@ -32,4 +32,5 @@ Nightwatchman
 Acrobat
 Butler
 Spy
+HighPriestess
 EndNight

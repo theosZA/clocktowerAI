@@ -104,6 +104,14 @@ namespace ClocktowerScenarioTests.Mocks
             return possiblePlayers;
         }
 
+        public static List<Character> MockGetPlayerForHighPriestess(this IStoryteller storyteller, Character seenPlayer)
+        {
+            List<Character> possiblePlayers = new();
+            storyteller.GetPlayerForHighPriestess(Arg.Any<Player>(), Arg.Any<IReadOnlyCollection<IOption>>())
+                .ReturnsMatchingOptionFromOptionsArg(seenPlayer, possiblePlayers, argIndex: 1);
+            return possiblePlayers;
+        }
+
         public static List<int> MockGetJugglerNumber(this IStoryteller storyteller, int jugglerNumber)
         {
             List<int> jugglerNumbers = new();

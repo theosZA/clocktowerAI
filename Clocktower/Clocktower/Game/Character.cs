@@ -58,6 +58,7 @@ namespace Clocktower.Game
         Huntsman,
         Snake_Charmer,
         Bounty_Hunter,
+        High_Priestess,
 
         // Outsiders
         Tinker = 1000,

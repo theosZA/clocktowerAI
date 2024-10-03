@@ -380,6 +380,16 @@ namespace Clocktower.Storyteller
             return await PopulateOptions(balloonistOptions);
         }
 
+        public async Task<IOption> GetPlayerForHighPriestess(Player highPriestess, IReadOnlyCollection<IOption> highPriestessOptions)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormattedText("With their %c ability, who do you believe %p should talk to the most?", Character.High_Priestess, highPriestess, StorytellerView);
+            AppendDrunkDisclaimer(sb, highPriestess);
+            await notifier.Notify(sb.ToString());
+
+            return await PopulateOptions(highPriestessOptions);
+        }
+
         public async Task<IOption> GetMayorBounce(Player mayor, Player? killer, IReadOnlyCollection<IOption> mayorOptions)
         {
             var sb = new StringBuilder();

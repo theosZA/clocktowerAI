@@ -145,9 +145,14 @@ namespace Clocktower.Storyteller
             return (await storyteller.GetCharacterForUndertaker(undertaker, executedPlayer, undertakerOptions.ToOptions())).GetCharacter();
         }
 
-        public static async Task<Player> GetPlayerForBalloonist(this IStoryteller storyteller, Player balloonist, Player? previousPlayerSeenByBalloonist, IReadOnlyCollection<Player> balloonistOptions)
+        public static async Task<Player> GetPlayerForBalloonist(this IStoryteller storyteller, Player balloonist, Player? previousPlayerSeenByBalloonist, IEnumerable<Player> balloonistOptions)
         {
             return (await storyteller.GetPlayerForBalloonist(balloonist, previousPlayerSeenByBalloonist, balloonistOptions.ToOptions())).GetPlayer();
+        }
+
+        public static async Task<Player> GetPlayerForHighPriestess(this IStoryteller storyteller, Player highPriestess, IEnumerable<Player> highPriestessOptions)
+        {
+            return (await storyteller.GetPlayerForHighPriestess(highPriestess, highPriestessOptions.ToOptions())).GetPlayer();
         }
 
         public static async Task<Player> GetMayorBounce(this IStoryteller storyteller, Player mayor, Player? killer, IEnumerable<Player> mayorOptions)

@@ -183,6 +183,14 @@ namespace ClocktowerScenarioTests.Mocks
             return receivedBalloonistPlayer;
         }
 
+        public static Wrapper<Character> MockNotifyHighPriestess(this IAgent agent, ClocktowerGame? gameToEnd = null)
+        {
+            Wrapper<Character> receivedHighPriestessPlayer = new();
+            agent.When(agent => agent.NotifyHighPriestess(Arg.Any<Player>()))
+                .Do(args => args.PopulateFromArg(receivedHighPriestessPlayer, gameToEnd: gameToEnd));
+            return receivedHighPriestessPlayer;
+        }
+
         public static Wrapper<Character> MockNotifyUndertaker(this IAgent agent, ClocktowerGame? gameToEnd = null)
         {
             Wrapper<Character> receivedCharacter = new();
