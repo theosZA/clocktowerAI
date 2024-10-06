@@ -64,7 +64,7 @@ namespace Clocktower
                 return;
             }
 
-            var storyteller = new StorytellerForm(random);
+            var storyteller = StorytellerFactory.CreateLocalHumanStoryteller(random);
             var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
             var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents.ToList(), random);
             await clocktowerGame.StartGame();

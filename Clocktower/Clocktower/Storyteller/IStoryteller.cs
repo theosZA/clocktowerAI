@@ -8,9 +8,7 @@ namespace Clocktower.Storyteller
     {
         IGameObserver Observer { get; }
 
-        void Start();
-
-        void PrivateChatMessage(Player speaker, Player listener, string message);
+        Task StartGame();
 
         Task<IOption> GetMarionette(IReadOnlyCollection<IOption> marionetteCandidates);
         Task<IOption> GetEvilTownsfolk(Player bountyHunter, IReadOnlyCollection<IOption> evilTownsfolkCandidates);
@@ -57,6 +55,8 @@ namespace Clocktower.Storyteller
         Task<IOption> ChooseNewDamsel(Player damsel, Player huntsman, IReadOnlyCollection<IOption> playerOptions);
 
         void AssignCharacter(Player player);
+
+        void PrivateChatMessage(Player speaker, Player listener, string message);
 
         void KazaliMinions(Player kazali, IReadOnlyCollection<(Player, Character)> minionChoices);
         void NewKazaliMinion(Player kazali, Player minionTarget, Character oldMinionCharacter, Character newMinionCharacter);

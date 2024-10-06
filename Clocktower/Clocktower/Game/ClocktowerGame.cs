@@ -26,7 +26,7 @@ namespace Clocktower.Game
 
         public async Task StartGame()
         {
-            storyteller.Start();
+            await storyteller.StartGame();
 
             var startGameTasks = agents.Select(async agent => await agent.StartGame());
             await Task.WhenAll(startGameTasks);
