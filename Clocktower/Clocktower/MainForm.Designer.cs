@@ -32,6 +32,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
             newWhaleBucketToolStripMenuItem = new ToolStripMenuItem();
+            aIStorytellerGameToolStripMenuItem = new ToolStripMenuItem();
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
             mainMenu.SuspendLayout();
@@ -49,7 +50,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, newWhaleBucketToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, newWhaleBucketToolStripMenuItem, aIStorytellerGameToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -57,16 +58,23 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(182, 22);
+            newToolStripMenuItem.Size = new Size(184, 22);
             newToolStripMenuItem.Text = "&New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
             // newWhaleBucketToolStripMenuItem
             // 
             newWhaleBucketToolStripMenuItem.Name = "newWhaleBucketToolStripMenuItem";
-            newWhaleBucketToolStripMenuItem.Size = new Size(182, 22);
+            newWhaleBucketToolStripMenuItem.Size = new Size(184, 22);
             newWhaleBucketToolStripMenuItem.Text = "New &Whale Bucket...";
             newWhaleBucketToolStripMenuItem.Click += newWhaleBucketToolStripMenuItem_Click;
+            // 
+            // aIStorytellerGameToolStripMenuItem
+            // 
+            aIStorytellerGameToolStripMenuItem.Name = "aIStorytellerGameToolStripMenuItem";
+            aIStorytellerGameToolStripMenuItem.Size = new Size(184, 22);
+            aIStorytellerGameToolStripMenuItem.Text = "&AI Storyteller Game...";
+            aIStorytellerGameToolStripMenuItem.Click += aIStorytellerGameToolStripMenuItem_Click;
             // 
             // statusStrip
             // 
@@ -107,5 +115,6 @@
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
         private ToolStripMenuItem newWhaleBucketToolStripMenuItem;
+        private ToolStripMenuItem aIStorytellerGameToolStripMenuItem;
     }
 }

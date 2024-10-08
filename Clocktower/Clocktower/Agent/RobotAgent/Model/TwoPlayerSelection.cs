@@ -1,5 +1,4 @@
-﻿using Clocktower.Game;
-using Clocktower.Options;
+﻿using Clocktower.Options;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 

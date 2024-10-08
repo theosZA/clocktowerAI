@@ -17,7 +17,11 @@ namespace Clocktower.Game
         /// <summary>
         /// The number of players in the game.
         /// </summary>
-        public int PlayerCount => (int)playerCountUpDown.Value;
+        public int PlayerCount 
+        {
+            get => (int)playerCountUpDown.Value;
+            set => playerCountUpDown.Value = value;
+        }
 
         /// <summary>
         /// The characters assigned to each seat (0...n-1).
@@ -97,6 +101,12 @@ namespace Clocktower.Game
             // Is the current Outsider count possible without the Balloonist modification to Outsider count?
             var possibleOutsiderCounts = characterTypeDistribution.GetPossibleOutsiderCountsExcludingCharacter(PlayerCount, Character.Balloonist);
             return possibleOutsiderCounts.Contains(setupForCharacterType[CharacterType.Outsider].SelectedCount);
+        }
+
+        public void RandomizeSetup()
+        {
+            RandomizeBag(this, EventArgs.Empty);
+            StartGame(this, EventArgs.Empty);
         }
 
         private void SetRequiredCharacters()

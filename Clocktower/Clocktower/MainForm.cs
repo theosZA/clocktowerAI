@@ -18,16 +18,10 @@ namespace Clocktower
         {
             try
             {
-                var scriptDialog = new OpenFileDialog
+                var script = ChooseScript();
+                if (script != null)
                 {
-                    Title = "Choose script",
-                    Filter = "Clocktower scripts|*.json",
-                    InitialDirectory = Path.Combine(Application.StartupPath, "Scripts")
-                };
-                var dialogChoice = scriptDialog.ShowDialog();
-                if (dialogChoice == DialogResult.OK)
-                {
-                    await SetupAndRunGame(scriptDialog.FileName);
+                    await SetupAndRunGame(script);
                 }
             }
             catch (Exception exception)
@@ -50,7 +44,43 @@ namespace Clocktower
             }
         }
 
-        private async Task SetupAndRunGame(string? scriptFileName)
+        private async void aIStorytellerGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var script = ChooseScript();
+                if (script != null)
+                {
+                    await SetupAndRunGame(script, randomSetup: true, aiStoryteller: true);
+                }
+            }
+            catch (Exception exception)
+            {
+                statusLabel.Text = exception.Message;
+                Debug.WriteLine(exception.ToString());
+            }
+        }
+
+        private static string? ChooseScript()
+        {
+            var scriptDialog = new OpenFileDialog
+            {
+                Title = "Choose script",
+                Filter = "Clocktower scripts|*.json",
+                InitialDirectory = Path.Combine(Application.StartupPath, "Scripts")
+            };
+            var dialogChoice = scriptDialog.ShowDialog();
+            if (dialogChoice == DialogResult.OK)
+            {
+                return scriptDialog.FileName;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private async Task SetupAndRunGame(string? scriptFileName, bool randomSetup = false, bool aiStoryteller = false)
         {
             var playerConfigsSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
             var playerConfigs = playerConfigsSection.Players.PlayerConfigs.ToList();
@@ -58,15 +88,27 @@ namespace Clocktower
             var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
 
             var setupDialog = new SetupDialog(scriptFileName, random, forcedAlignments, forcedCharacters);
-            var result = setupDialog.ShowDialog();
-            if (result != DialogResult.OK)
+            if (randomSetup)
             {
-                return;
+                setupDialog.PlayerCount = 8;    // TODO: Make customizable
+                setupDialog.RandomizeSetup();
+            }
+            else
+            {
+                var result = setupDialog.ShowDialog();
+                if (result != DialogResult.OK)
+                {
+                    return;
+                }
             }
 
-            var storyteller = StorytellerFactory.CreateLocalHumanStoryteller(random);
-            var agents = await AgentFactory.CreateAgentsFromConfig(setupDialog, random);
-            var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents.ToList(), random);
+            var agents = (await AgentFactory.CreateAgentsFromConfig(setupDialog, random)).ToList();
+            var playerNames = agents.Select(agent => agent.PlayerName).ToList();
+
+            var aiModel = aiStoryteller ? "gpt-4o" : null;  // TODO: Make customizable
+            var storyteller = StorytellerFactory.CreateStoryteller(playerNames, setupDialog.ScriptName, setupDialog.Script, random, aiModel);
+
+            var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents, random);
             await clocktowerGame.StartGame();
             while (!clocktowerGame.Finished)
             {
