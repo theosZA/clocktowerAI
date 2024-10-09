@@ -195,6 +195,10 @@ namespace Clocktower
             currentCharacterInfo.Add(player.Character);
             if (player.ShouldRunAbility(Character.Cannibal) && player.CannibalAbility.HasValue)
             {
+                if (player.Tokens.HasToken(Token.CannibalDrunk))
+                {
+                    currentCharacterInfo.Add(Character.Drunk);
+                }
                 currentCharacterInfo.Add(player.CannibalAbility.Value);
             }
             sb.AppendCharacterSequence(currentCharacterInfo);
