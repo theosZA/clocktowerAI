@@ -255,6 +255,7 @@ namespace Clocktower.Agent
                                           || character == Character.Godfather
                                           || character == Character.Baron
                                           || character == Character.Balloonist
+                                          || character == Character.Huntsman
                                           || character == Character.Kazali);
         }
 
