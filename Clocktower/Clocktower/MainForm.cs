@@ -1,6 +1,7 @@
 using Clocktower.Agent;
 using Clocktower.Agent.Config;
 using Clocktower.Game;
+using Clocktower.Setup;
 using Clocktower.Storyteller;
 using System.Configuration;
 using System.Diagnostics;
@@ -48,11 +49,7 @@ namespace Clocktower
         {
             try
             {
-                var script = ChooseScript();
-                if (script != null)
-                {
-                    await SetupAndRunGame(script, randomSetup: true, aiStoryteller: true);
-                }
+                await SetupAndRunGame(scriptFileName: null, aiStoryteller: true);
             }
             catch (Exception exception)
             {
@@ -80,41 +77,70 @@ namespace Clocktower
             }
         }
 
-        private async Task SetupAndRunGame(string? scriptFileName, bool randomSetup = false, bool aiStoryteller = false)
+        private async Task SetupAndRunGame(string? scriptFileName, bool aiStoryteller = false)
         {
-            var playerConfigsSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
-            var playerConfigs = playerConfigsSection.Players.PlayerConfigs.ToList();
-            var forcedAlignments = playerConfigs.Select(config => config.Alignment).ToList();
-            var forcedCharacters = playerConfigs.Select(config => config.Character).ToList();
-
-            var setupDialog = new SetupDialog(scriptFileName, random, forcedAlignments, forcedCharacters);
-            if (randomSetup)
+            var (gameSetup, aiModel) = DetermineSetup(scriptFileName, aiStoryteller);
+            if (gameSetup == null)
             {
-                setupDialog.PlayerCount = 8;    // TODO: Make customizable
-                setupDialog.RandomizeSetup();
-            }
-            else
-            {
-                var result = setupDialog.ShowDialog();
-                if (result != DialogResult.OK)
-                {
-                    return;
-                }
+                return;
             }
 
-            var agents = (await AgentFactory.CreateAgentsFromConfig(setupDialog, random)).ToList();
+            var agents = (await AgentFactory.CreateAgentsFromConfig(gameSetup, random)).ToList();
             var playerNames = agents.Select(agent => agent.PlayerName).ToList();
 
-            var aiModel = aiStoryteller ? "gpt-4o" : null;  // TODO: Make customizable
-            var storyteller = StorytellerFactory.CreateStoryteller(playerNames, setupDialog.ScriptName, setupDialog.Script, random, aiModel);
+            var storyteller = StorytellerFactory.CreateStoryteller(playerNames, gameSetup.ScriptName, gameSetup.Script, random, aiModel);
 
-            var clocktowerGame = new ClocktowerGame(setupDialog, storyteller, agents, random);
+            var clocktowerGame = new ClocktowerGame(gameSetup, storyteller, agents, random);
             await clocktowerGame.StartGame();
             while (!clocktowerGame.Finished)
             {
                 await clocktowerGame.RunNightAndDay();
             }
             await clocktowerGame.AnnounceWinner();
+        }
+
+        private (IGameSetup? gameSetup, string? aiModel) DetermineSetup(string? scriptFileName, bool aiStoryteller = false)
+        {
+            if (aiStoryteller)
+            {
+                return DetermineSetupForAiStoryteller();
+            }
+
+            return (DetermineSetupForHumanStoryteller(scriptFileName), null);
+        }
+
+        private IGameSetup? DetermineSetupForHumanStoryteller(string? scriptFileName)
+        {
+            var setupDialog = new SetupDialog(scriptFileName, random, ForcedAlignments, ForcedCharacters);
+            var result = setupDialog.ShowDialog();
+            return result == DialogResult.OK ? setupDialog : null;
+        }
+
+        private (IGameSetup? gameSetup, string? aiModel) DetermineSetupForAiStoryteller()
+        {
+            var setupAiGame = new SetupAiGame();
+            var dialogChoice = setupAiGame.ShowDialog();
+            if (dialogChoice != DialogResult.OK)
+            {
+                return (null, null);
+            }
+
+            var setupDialog = new SetupDialog(setupAiGame.ScriptFileName, random, ForcedAlignments, ForcedCharacters)
+            {
+                PlayerCount = setupAiGame.PlayerCount
+            };
+            setupDialog.RandomizeSetup();
+
+            return (setupDialog, setupAiGame.Model);
+        }
+
+        private IReadOnlyCollection<Alignment?> ForcedAlignments => GetPlayerConfiguration().Select(config => config.Alignment).ToList();
+        private IReadOnlyCollection<Character?> ForcedCharacters => GetPlayerConfiguration().Select(config => config.Character).ToList();
+
+        private IEnumerable<PlayerConfig> GetPlayerConfiguration()
+        {
+            var playerConfigurationSection = ConfigurationManager.GetSection("PlayerConfig") as PlayerConfigSection ?? throw new Exception("Invalid or missing PlayerConfig section");
+            return playerConfigurationSection.Players.PlayerConfigs;
         }
 
         private readonly Random random = new();
