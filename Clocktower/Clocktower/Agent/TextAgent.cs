@@ -573,7 +573,7 @@ namespace Clocktower.Agent
             {
                 if (playerOnTheBlock != null)
                 {
-                    sb.AppendFormattedText("Nomintations are now closed and %p is to be executed. ", playerOnTheBlock);
+                    sb.AppendFormattedText("Nominations are now closed and %p is to be executed. ", playerOnTheBlock);
                 }
                 else
                 {
