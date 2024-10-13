@@ -25,34 +25,48 @@ namespace Clocktower.Agent.RobotAgent
         /// </summary>
         public event TokenCountHandler? OnTokenCount;
 
-        public GameChat(string model, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        public GameChat(string chatModel, string reasoningModel, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
             chatLogger = new(playerName);
 
-            openAiChat = new(model);
-            openAiChat.OnChatMessageAdded += OnChatMessageAdded;
-            openAiChat.OnSubChatSummarized += OnSubChatSummarized;
-            openAiChat.OnAssistantRequest += OnAssistantRequest;
-            openAiChat.SystemMessage = SystemMessage.GetSystemMessage(playerName, personality, playerNames, scriptName, script);
+            chat = new OpenAiChat();
+            chat.OnChatMessageAdded += OnChatMessageAdded;
+            chat.OnSubChatSummarized += OnSubChatSummarized;
+            chat.OnAssistantRequest += OnAssistantRequest;
+            chat.SystemMessage = SystemMessage.GetSystemMessage(playerName, personality, playerNames, scriptName, script);
+
+            this.chatModel = chatModel;
+            this.reasoningModel = reasoningModel;
         }
 
         public async Task NewPhase(Phase phase, int dayNumber)
         {
-            var phaseName = phase == Phase.Setup ? "Set-up" : $"{phase} {dayNumber}";
-            var summarizePrompt = phase == Phase.Day ? $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {phaseName.ToLowerInvariant()}. " +
-                                                        "There should be a point for each private chat that you had; a point for the discussion around each nomination; " +
-                                                        "as well as points for any general public discussion or abilities publicly used. " +
-                                                        "Conclude with a list of all players in the game, and for each player list whether they're alive or dead, " +
-                                                        "whether you believe they're good or evil (and in brackets how confident you are of this opinion), " +
-                                                        "and the character or characters that you think they're most likely to be (and in brackets how confident you are of this opinion). " +
-                                                        "For example: * Zeke - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely)."
-                                                     : null;
-            await openAiChat.StartNewSubChat(phaseName, summarizePrompt);
+            chat.StartNewSubChat(PhaseName(phase, dayNumber));
+
+            if (phase == Phase.Night && dayNumber > 1)
+            {
+                // Reason about all your information.
+                var reasoningPrompt = "Use all the information you've learned so far together with logical reasoning to determine each player's likely alignment and character. " +
+                                      "Format your answer as a list, one item for each player with the following information: name; dead or alive; whether you believe they're good or evil " +
+                                      "(and in brackets how confident you are); character or characters that you think they're most likely to be (and in brackets how confident you are); " +
+                                      "and the main pieces of information that led you to this conclusion. For example:\r\n" +
+                                      "- **Zeke** - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely) - I learned they were good on night 1 and so, " +
+                                      "unless I was drunk or poisoned, I trust the private claim that they made to me during day 1.";
+                chat.AddUserMessage(reasoningPrompt);
+                await chat.GetAssistantResponse<string>(reasoningModel);
+
+                // Summarize the previous day.
+                var phaseToSummarize = PhaseName(Phase.Day, dayNumber - 1);
+                var summarizePrompt = $"Please provide a detailed summary, in bullet-point form, of what happened and what you learned in {phaseToSummarize.ToLowerInvariant()}. " +
+                                       "There should be a point for each private chat that you had; a point for the discussion around each nomination; " +
+                                       "as well as points for any general public discussion or abilities publicly used.";
+                await chat.SummarizeSubChat(phaseToSummarize, chatModel, summarizePrompt);
+            }
         }
 
         public void AddMessage(string message)
         {
-            openAiChat.AddUserMessage(message);
+            chat.AddUserMessage(message);
         }
 
         public async Task<T?> Request<T>(string? prompt)
@@ -61,17 +75,12 @@ namespace Clocktower.Agent.RobotAgent
             {
                 AddMessage(prompt);
             }
-            return await openAiChat.GetAssistantResponse<T>();
+            return await chat.GetAssistantResponse<T>(chatModel);
         }
 
-        /// <summary>
-        /// Removes the last few messages from the list of messages. Useful when you don't want unneeded messages cluttering up the chat log.
-        /// Only applies to the current phase.
-        /// </summary>
-        /// <param name="messageCount">The number of messages to remove.</param>
-        public void Trim(int messageCount)
+        private static string PhaseName(Phase phase, int dayNumber)
         {
-            openAiChat.TrimMessages(messageCount);
+            return phase == Phase.Setup ? "Set-up" : $"{phase} {dayNumber}";
         }
 
         private void OnChatMessageAdded(string subChatName, Role role, string message)
@@ -98,7 +107,9 @@ namespace Clocktower.Agent.RobotAgent
             OnTokenCount?.Invoke(promptTokens, completionTokens, totalTokens);
         }
 
-        private readonly OpenAiChat openAiChat;
+        private readonly IChat chat;
         private readonly ChatLogger chatLogger;
+        private readonly string chatModel;
+        private readonly string reasoningModel;
     }
 }

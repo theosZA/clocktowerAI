@@ -14,6 +14,9 @@ namespace Clocktower.Agent.Config
         [ConfigurationProperty("model", IsRequired = false)]
         public string Model => this["model"] as string ?? string.Empty;
 
+        [ConfigurationProperty("reasoning_model", IsRequired = false)]
+        public string ReasoningModel => this["reasoning_model"] as string ?? string.Empty;
+
         [ConfigurationProperty("personality", IsRequired = false)]
         public string Personality => this["personality"] as string ?? string.Empty;
 

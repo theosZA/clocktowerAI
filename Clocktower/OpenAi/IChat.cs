@@ -14,12 +14,6 @@
         /// </summary>
         event ChatMessageAddedHandler OnChatMessageAdded;
 
-        delegate void ChatMessagesRemovedHandler(string subChatName, int startIndex, int count);
-        /// <summary>
-        /// Event triggered when one or message are removed from the chat.
-        /// </summary>
-        event ChatMessagesRemovedHandler OnChatMessagesRemoved;
-
         delegate void SubChatSummarizedHandler(string subChatName, string summary);
         /// <summary>
         /// Event triggered when a sub-chat is summarized.
@@ -44,12 +38,10 @@
 
         /// <summary>
         /// Starts a new sub-chat with the given name. A sub-chat should correspond to a portion of the overall chat for which a convenient summary
-        /// can be made (or for which no summarization is desired). This will automatically close off the previous sub-chat and summarize it if possible.
+        /// can be made (or for which no summarization is desired).
         /// </summary>
         /// <param name="name">The name by which to identify this sub-chat in summaries and when logging.</param>
-        /// <param name="summarizePrompt">A prompt to provide the Chat assistant to have it summarize the sub-chat. If left as null, then no summarization of this new sub-chat will be done.</param>
-        /// <remarks>If no sub-chat is created before the first message is added, then a new non-summarizable, unnamed sub-chat will be created.</remarks>
-        Task StartNewSubChat(string name, string? summarizePrompt = null);
+        void StartNewSubChat(string name);
 
         /// <summary>
         /// Adds a new user message to the tail of current sub-chat.
@@ -58,17 +50,23 @@
         void AddUserMessage(string message);
 
         /// <summary>
-        /// Provides the full chat (with sub-chats summarized if possible) to the Chat assistant and asynchronously returns an assistant message.
+        /// Provides the full chat (with summarized sub-chats) to the Chat assistant and asynchronously returns an assistant message.
         /// This message is also added to the current sub-chat.
         /// </summary>
         /// <typeparam name="T">If the type is not <see cref="string"/>, then the response is provided in the form of an object of type T.</typeparam>
+        /// <param name="model">The Open AI Chat Completion model to use. Refer to the GPT models listed at https://platform.openai.com/docs/models for possible values.</param>
         /// <returns>The resulting assistant message.</returns>
-        Task<T?> GetAssistantResponse<T>();
+        Task<T?> GetAssistantResponse<T>(string model);
 
         /// <summary>
-        /// Removes the last few messages from the current sub-chat. Useful when you don't want valueless messages cluttering up the chat history.
+        /// Summarizes the specified sub-chat, replacing all messages in the sub-chat with the prompt and newly generated summary.
         /// </summary>
-        /// <param name="count">The number of messages to remove.</param>
-        void TrimMessages(int count);
+        /// <param name="subChatName">The name of the sub-chat to summarize.</param>
+        /// <param name="model">The Open AI Chat Completion model to use. Refer to the GPT models listed at https://platform.openai.com/docs/models for possible values.</param>
+        /// <param name="prompt">
+        /// The prompt to provide to the Chat assistant to have it generate a summary of the current sub-chat. Note that the full chat (with previously summarized sub-chats) prior
+        /// to this sub-chat is also included, so the prompt needs to be specific about which content is to be summarized.
+        /// </param>
+        Task SummarizeSubChat(string subChatName, string model, string prompt);
     }
 }

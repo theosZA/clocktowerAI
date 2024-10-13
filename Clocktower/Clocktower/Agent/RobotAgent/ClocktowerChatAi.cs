@@ -28,9 +28,9 @@ namespace Clocktower.Agent.RobotAgent
         /// </summary>
         public event TokenCountHandler? OnTokenCount;
 
-        public ClocktowerChatAi(string model, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        public ClocktowerChatAi(string chatModel, string reasoningModel, string playerName, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
-            gameChat = new GameChat(model, playerName, personality, playerNames, scriptName, script);
+            gameChat = new GameChat(chatModel, reasoningModel, playerName, personality, playerNames, scriptName, script);
             gameChat.OnChatMessage += InternalOnChatMessage;
             gameChat.OnDaySummary += InternalOnDaySummary;
             gameChat.OnTokenCount += InternalOnTokenCount;

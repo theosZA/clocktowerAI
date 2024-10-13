@@ -6,18 +6,15 @@ namespace OpenAi.ChatCompletionApi
     internal class SubChat
     {
         public event IChat.ChatMessageAddedHandler? OnChatMessageAdded;
-        public event IChat.ChatMessagesRemovedHandler? OnChatMessagesRemoved;
         public event IChat.SubChatSummarizedHandler? OnSubChatSummarized;
         public event IChat.AssistantRequestHandler? OnAssistantRequest;
 
-        public IReadOnlyCollection<(Role role, string message)> Messages => summary == null ? messages
-                                                                                            : new[] { (Role.Assistant, summary) };
+        public string Name { get; private init; }
+        public IReadOnlyCollection<(Role role, string message)> Messages => messages;
 
-        public SubChat(ChatCompletionApi chatCompletionApi, string subChatName, string? summarizePrompt)
+        public SubChat(string name)
         {
-            this.chatCompletionApi = chatCompletionApi;
-            this.subChatName = subChatName;
-            this.summarizePrompt = summarizePrompt;
+            Name = name;
         }
 
         public void AddMessage(Role role, string message)
@@ -30,47 +27,42 @@ namespace OpenAi.ChatCompletionApi
             {   // All other messages go to the tail of the sub-chat.
                 messages.Add((role, message));
             }
-            OnChatMessageAdded?.Invoke(subChatName, role, message);
+            OnChatMessageAdded?.Invoke(Name, role, message);
         }
 
-        public async Task<T?> GetAssistantResponse<T>(IEnumerable<SubChat> previousSubChats)
+        public async Task<T?> GetAssistantResponse<T>(string model, IEnumerable<SubChat> previousSubChats)
         {
             var messagesToSend = previousSubChats.SelectMany(subChat => subChat.Messages)
                                                  .Concat(messages)
                                                  .ToList();
-            var (response, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion<T>(messagesToSend);
-            OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: false, messagesToSend, response, promptTokens, completionTokens, totalTokens);
+
+            if (model == "o1-preview" || model == "o1-mini")
+            {   // These models do not currently support system messages. Replace the system messages with user messages.
+                messagesToSend = messagesToSend.Select(m => (m.role == Role.System ? Role.User : m.role, m.message))
+                                               .ToList();
+            }
+
+            var (response, promptTokens, completionTokens, totalTokens) = await ChatCompletionApi.RequestChatCompletion<T>(model, messagesToSend);
+            OnAssistantRequest?.Invoke(Name, isSummaryRequest: false, messagesToSend, response, promptTokens, completionTokens, totalTokens);
 
             AddMessage(Role.Assistant, response);
             return StringToType<T>(response);
         }
 
-        public async Task Summarize(IEnumerable<SubChat> previousSubChats)
+        public async Task Summarize(string model, string prompt, IEnumerable<SubChat> previousSubChats)
         {
-            if (summarizePrompt == null)
-            {   // No summary if there's no prompt.
-                return;
-            }
             var messagesToSend = previousSubChats.SelectMany(subChat => subChat.Messages)
                                                  .Concat(messages)
-                                                 .Append((Role.User, summarizePrompt))
+                                                 .Append((Role.User, prompt))
                                                  .ToList();
-            var (summaryResponse, promptTokens, completionTokens, totalTokens) = await chatCompletionApi.RequestChatCompletion<string>(messagesToSend);
-            OnAssistantRequest?.Invoke(subChatName, isSummaryRequest: true, messagesToSend, summaryResponse, promptTokens, completionTokens, totalTokens);
+            var (summaryResponse, promptTokens, completionTokens, totalTokens) = await ChatCompletionApi.RequestChatCompletion<string>(model, messagesToSend);
+            OnAssistantRequest?.Invoke(Name, isSummaryRequest: true, messagesToSend, summaryResponse, promptTokens, completionTokens, totalTokens);
 
-            if (!summaryResponse.StartsWith(subChatName))
-            {
-                summaryResponse = summaryResponse.Insert(0, $"{subChatName}: ");
-            }
-            summary = summaryResponse;
-            OnSubChatSummarized?.Invoke(subChatName, summary);
-        }
+            messages.Clear();
+            messages.Add((Role.User, prompt));
+            messages.Add((Role.Assistant, summaryResponse));
 
-        public void TrimMessages(int count)
-        {
-            int startIndex = messages.Count - count;
-            messages.RemoveRange(startIndex, count);
-            OnChatMessagesRemoved?.Invoke(subChatName, startIndex, count);
+            OnSubChatSummarized?.Invoke(Name, summaryResponse);
         }
 
         private static T? StringToType<T>(string response)
@@ -92,9 +84,5 @@ namespace OpenAi.ChatCompletionApi
         }
 
         private readonly List<(Role role, string message)> messages = new();
-        private readonly ChatCompletionApi chatCompletionApi;
-        private readonly string subChatName;
-        private readonly string? summarizePrompt;
-        private string? summary;
     }
 }

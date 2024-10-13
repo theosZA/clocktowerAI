@@ -18,25 +18,27 @@ namespace Clocktower.Agent
             var playerConfigs = playerConfigsSection.Players.PlayerConfigs.Take(setup.PlayerCount).ToList();
             var playerNames = playerConfigs.Select(config => config.Name).ToList();
 
-            var agentTasks = playerConfigs.Select(async config => await CreateAgent(config.AgentType, config.Model, config.Name, config.Personality, playerNames, setup.ScriptName, setup.Script, random));
+            var agentTasks = playerConfigs.Select(async config => await CreateAgent(config.AgentType, config.Model, config.ReasoningModel, config.Name, config.Personality, playerNames, setup.ScriptName, setup.Script, random));
             return await Task.WhenAll(agentTasks);
         }
 
-        private static async Task<IAgent> CreateAgent(string agentType, string? model, string name, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script, Random random)
+        private static async Task<IAgent> CreateAgent(string agentType, string? chatModel, string? reasoningModel, string name, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script, Random random)
         {
             return agentType switch
             {
                 "Auto" => CreateLocalHumanAgent(name, playerNames, scriptName, script, random, autoAct: true),
                 "Human" => CreateLocalHumanAgent(name, playerNames, scriptName, script, random),
                 "Discord" => await CreateDiscordHumanAgent(name, playerNames, scriptName, script),
-                "Robot" => CreateRobotAgent(string.IsNullOrEmpty(model) ? DefaultModel : model, name, personality, playerNames, scriptName, script),
+                "Robot" => CreateRobotAgent(string.IsNullOrEmpty(chatModel) ? DefaultChatModel : chatModel,
+                                            string.IsNullOrEmpty(reasoningModel) ? DefaultReasoningModel : reasoningModel,
+                                            name, personality, playerNames, scriptName, script),
                 _ => throw new ArgumentException($"Unknown agent type: {agentType}"),
             };
         }
 
-        private static IAgent CreateRobotAgent(string model, string name, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        private static IAgent CreateRobotAgent(string chatModel, string reasoningModel, string name, string personality, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
-            var chatAi = new ClocktowerChatAi(model, name, personality, playerNames, scriptName, script);
+            var chatAi = new ClocktowerChatAi(chatModel, reasoningModel, name, personality, playerNames, scriptName, script);
             var chatAiNotifier = new ChatAiNotifier(chatAi);
             var chatAiRequester = new ChatAiRequester(chatAi);
             var observer = new TextObserver(chatAiNotifier);
@@ -118,6 +120,7 @@ namespace Clocktower.Agent
 
         private static ChatClient? discordChatClient;
 
-        private const string DefaultModel = "gpt-4o-mini";
+        private const string DefaultChatModel = "gpt-4o-mini";
+        private const string DefaultReasoningModel = "o1-mini";
     }
 }

@@ -7,21 +7,16 @@ using System.Text.Json;
 
 namespace OpenAi.ChatCompletionApi
 {
-    internal class ChatCompletionApi
+    internal static class ChatCompletionApi
     {
         static ChatCompletionApi()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("OPENAI_APIKEY", EnvironmentVariableTarget.User));
         }
 
-        public ChatCompletionApi(string model)
+        public static async Task<(string response, int promptTokens, int completionTokens, int totalTokens)> RequestChatCompletion<T>(string model, IEnumerable<(Role role, string message)> messages)
         {
-            this.model = model;
-        }
-
-        public async Task<(string response, int promptTokens, int completionTokens, int totalTokens)> RequestChatCompletion<T>(IEnumerable<(Role role, string message)> messages)
-        {
-            var request = BuildChatCompletionRequest<T>(messages);
+            var request = BuildChatCompletionRequest<T>(model, messages);
             using var response = await RequestChatCompletion(request);
             var chatResponse = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>() ?? throw new Exception("No chat completion received from Open API");
             var usage = chatResponse.Usage;
@@ -47,7 +42,7 @@ namespace OpenAi.ChatCompletionApi
             });
         }
 
-        private ChatCompletionRequest BuildChatCompletionRequest<T>(IEnumerable<(Role role, string message)> messages)
+        private static ChatCompletionRequest BuildChatCompletionRequest<T>(string model, IEnumerable<(Role role, string message)> messages)
         {
             var request = new ChatCompletionRequest
             {
@@ -69,8 +64,6 @@ namespace OpenAi.ChatCompletionApi
                 Content = message
             };
         }
-
-        private readonly string model;
 
         private static readonly HttpClient httpClient = new(new LoggingHandler(new StreamWriter($"ChatCompletions-{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}.log"), new HttpClientHandler()))
         {

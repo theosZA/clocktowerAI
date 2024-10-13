@@ -8,7 +8,6 @@ namespace OpenAi
     public class OpenAiChat : IChat
     {
         public event IChat.ChatMessageAddedHandler? OnChatMessageAdded;
-        public event IChat.ChatMessagesRemovedHandler? OnChatMessagesRemoved;
         public event IChat.SubChatSummarizedHandler? OnSubChatSummarized;
         public event IChat.AssistantRequestHandler? OnAssistantRequest;
 
@@ -20,26 +19,17 @@ namespace OpenAi
         }
 
         /// <summary>
-        /// Constructor to initiate a conversation with an Open AI Chat Completion assistant.
+        /// Constructor for a conversation with an Open AI Chat Completion assistant. A default unnamed sub-chat is created.
         /// </summary>
-        /// <param name="model">The Open AI Chat Completion model to use. Refer to the GPT models listed at https://platform.openai.com/docs/models for possible values.</param>
-        public OpenAiChat(string model)
+        /// <param name="messages">An optional list of messages added to the default sub-chat.</param>
+        public OpenAiChat(IEnumerable<(Role role, string message)>? messages = null)
         {
-            chatCompletionApi = new ChatCompletionApi.ChatCompletionApi(model);
-            // Start with a default sub-chat useful for holding the system message and any other non-summarizable pre-chat messages.
-            AddNewSubChat(string.Empty, summarizePrompt: null);
+            AddNewSubChat(string.Empty, messages);
         }
 
-        /// <summary>
-        /// Constructor to provide an in-progress conversation with an Open AI Chat Completion assistant
-        /// where all chat has happened on the default sub-chat.
-        /// </summary>
-        /// <param name="model">The Open AI Chat Completion model to use. Refer to the GPT models listed at https://platform.openai.com/docs/models for possible values.</param>
-        /// <param name="messages">A list of messages (with the role whose message it is), all in the default sub-chat.</param>
-        public OpenAiChat(string model, IEnumerable<(Role role, string message)> messages)
+        public void StartNewSubChat(string name)
         {
-            chatCompletionApi = new ChatCompletionApi.ChatCompletionApi(model);
-            AddNewSubChat(string.Empty, summarizePrompt: null, messages);
+            AddNewSubChat(name);
         }
 
         public void AddUserMessage(string message)
@@ -47,27 +37,21 @@ namespace OpenAi
             subChats.Last().AddMessage(Role.User, message);
         }
 
-        public async Task<T?> GetAssistantResponse<T>()
+        public async Task<T?> GetAssistantResponse<T>(string model)
         {
-            return await subChats.Last().GetAssistantResponse<T>(subChats.SkipLast(1));
+            return await subChats.Last().GetAssistantResponse<T>(model, subChats.SkipLast(1));
         }
 
-        public async Task StartNewSubChat(string name, string? summarizePrompt = null)
+        public async Task SummarizeSubChat(string subChatName, string model, string prompt)
         {
-            await subChats.Last().Summarize(subChats.SkipLast(1));
-            AddNewSubChat(name, summarizePrompt);
+            var subChatIndex = subChats.FindIndex(subChat => subChat.Name == subChatName);
+            await subChats[subChatIndex].Summarize(model, prompt, subChats.GetRange(0, subChatIndex));
         }
 
-        public void TrimMessages(int count)
+        private void AddNewSubChat(string name, IEnumerable<(Role role, string message)>? messages = null)
         {
-            subChats.Last().TrimMessages(count);
-        }
-
-        private void AddNewSubChat(string name, string? summarizePrompt = null, IEnumerable<(Role role, string message)>? messages = null)
-        {
-            var subChat = new SubChat(chatCompletionApi, name, summarizePrompt);
+            var subChat = new SubChat(name);
             subChat.OnChatMessageAdded += InternalChatMessageAddedHandler;
-            subChat.OnChatMessagesRemoved += InternalChatMessagesRemovedHandler;
             subChat.OnSubChatSummarized += InternalSubChatSummarizedHandler;
             subChat.OnAssistantRequest += InternalAssistantRequestHandler;
 
@@ -87,11 +71,6 @@ namespace OpenAi
             OnChatMessageAdded?.Invoke(subChatName, role, message);
         }
 
-        private void InternalChatMessagesRemovedHandler(string subChatName, int startIndex, int count)
-        {
-            OnChatMessagesRemoved?.Invoke(subChatName, startIndex, count);
-        }
-
         private void InternalSubChatSummarizedHandler(string subChatName, string summary)
         {
             OnSubChatSummarized?.Invoke(subChatName, summary);
@@ -103,7 +82,6 @@ namespace OpenAi
             OnAssistantRequest?.Invoke(subChatName, isSummaryRequest, messages, response, promptTokens, completionTokens, totalTokens);
         }
 
-        private readonly List<SubChat> subChats = new List<SubChat>();
-        private readonly ChatCompletionApi.ChatCompletionApi chatCompletionApi;
+        private readonly List<SubChat> subChats = new();
     }
 }

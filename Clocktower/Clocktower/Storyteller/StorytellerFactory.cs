@@ -39,10 +39,10 @@ namespace Clocktower.Storyteller
             return storyteller;
         }
 
-        private static IStoryteller CreateRobotStoryteller(string model, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        private static IStoryteller CreateRobotStoryteller(string chatModel, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
-            var chat = new OpenAiChat(model);
-            var chatAiStoryteller = new ChatAiStoryteller(chat, playerNames, scriptName, script);
+            var chat = new OpenAiChat();
+            var chatAiStoryteller = new ChatAiStoryteller(chat, chatModel, playerNames, scriptName, script);
             var notifier = new RawOpenAiNotifier(chat);
             var storyteller = new TextStoryteller(notifier);
             var form = new AiStorytellerForm();

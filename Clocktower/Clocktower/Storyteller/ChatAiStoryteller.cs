@@ -8,9 +8,11 @@ namespace Clocktower.Storyteller
 {
     internal class ChatAiStoryteller
     {
-        public ChatAiStoryteller(OpenAiChat chat, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
+        public ChatAiStoryteller(OpenAiChat chat, string chatModel, IReadOnlyCollection<string> playerNames, string scriptName, IReadOnlyCollection<Character> script)
         {
             this.chat = chat;
+            this.chatModel = chatModel;
+
             this.playerNames = playerNames;
             this.scriptName = scriptName;
             this.script = script;
@@ -89,7 +91,7 @@ namespace Clocktower.Storyteller
             {
                 chat.AddUserMessage(prompt);
             }
-            return await chat.GetAssistantResponse<T>() ?? throw new InvalidDataException($"AI Storyteller did not respond with a valid {typeof(T).Name} object");
+            return await chat.GetAssistantResponse<T>(chatModel) ?? throw new InvalidDataException($"AI Storyteller did not respond with a valid {typeof(T).Name} object");
         }
 
         private string GetSystemMessage()
@@ -118,6 +120,7 @@ namespace Clocktower.Storyteller
         }
 
         private readonly OpenAiChat chat;
+        private readonly string chatModel;
 
         private readonly IReadOnlyCollection<string> playerNames;
         private readonly string scriptName;
