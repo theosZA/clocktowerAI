@@ -46,13 +46,7 @@ namespace Clocktower.Agent.RobotAgent
             if (phase == Phase.Night && dayNumber > 1)
             {
                 // Reason about all your information.
-                var reasoningPrompt = "Use all the information you've learned so far together with logical reasoning to determine each player's likely alignment and character. " +
-                                      "Format your answer as a list, one item for each player with the following information: name; dead or alive; whether you believe they're good or evil " +
-                                      "(and in brackets how confident you are); character or characters that you think they're most likely to be (and in brackets how confident you are); " +
-                                      "and the main pieces of information that led you to this conclusion. For example:\r\n" +
-                                      "- **Zeke** - Alive - Good (very likely) - Slayer (almost certain) or Imp (unlikely) - I learned they were good on night 1 and so, " +
-                                      "unless I was drunk or poisoned, I trust the private claim that they made to me during day 1.";
-                chat.AddUserMessage(reasoningPrompt);
+                chat.AddUserMessage(Prompts.GetReasoningPrompt());
                 await chat.GetAssistantResponse<string>(reasoningModel);
 
                 // Summarize the previous day.
@@ -76,6 +70,15 @@ namespace Clocktower.Agent.RobotAgent
                 AddMessage(prompt);
             }
             return await chat.GetAssistantResponse<T>(chatModel);
+        }
+
+        public async Task<string> RequestReasoning(string? prompt)
+        {
+            if (!string.IsNullOrEmpty(prompt))
+            {
+                AddMessage(prompt);
+            }
+            return await chat.GetAssistantResponse<string>(reasoningModel) ?? string.Empty;
         }
 
         private static string PhaseName(Phase phase, int dayNumber)

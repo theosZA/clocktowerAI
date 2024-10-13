@@ -71,12 +71,14 @@ namespace Clocktower.Agent.RobotAgent
 
         public async Task<string> Request(string? prompt = null, params object[] objects)
         {
-            if (string.IsNullOrEmpty(prompt))
-            {
-                return await gameChat.Request<string>(prompt: null) ?? string.Empty;
-            }
+            var requestPrompt = string.IsNullOrEmpty(prompt) ? null : TextUtilities.FormatText(prompt, objects);
+            return await gameChat.Request<string>(requestPrompt) ?? string.Empty;
+        }
 
-            return await gameChat.Request<string>(TextUtilities.FormatText(prompt, objects)) ?? string.Empty;
+        public async Task<string> RequestReasoning(string? prompt = null, params object[] objects)
+        {
+            var requestPrompt = string.IsNullOrEmpty(prompt) ? null : TextUtilities.FormatText(prompt, objects);
+            return await gameChat.RequestReasoning(requestPrompt) ?? string.Empty;
         }
 
         public async Task<(string dialogue, bool endChat)> RequestChatDialogue(string prompt)
